@@ -1,5 +1,4 @@
 import { Search, ShoppingCart, Menu, UserRound } from "lucide-react";
-
 import logo from "../../../../assets/icons/logo.jpg";
 
 export default function MainHeader() {
