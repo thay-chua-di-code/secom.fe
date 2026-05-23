@@ -25,9 +25,7 @@ export default function MainHeader() {
               Secom
             </h1>
 
-            <p className="text-xs text-sky-100">
-              Next-Gen Secondhand E-Commerce
-            </p>
+            <p className="text-xs text-sky-100">Secondhand E-Commerce</p>
           </div>
         </div>
 

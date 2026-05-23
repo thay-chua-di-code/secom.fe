@@ -3,7 +3,7 @@ import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import { persistStore, persistReducer } from "redux-persist";
 
 import authReducer from "./slice/authSlice";
-
+import userReducer from "./slice/userSlice";
 const storage = {
   getItem: (key) => {
     return Promise.resolve(localStorage.getItem(key));
@@ -24,6 +24,7 @@ const storage = {
 
 const rootReducer = combineReducers({
   auth: authReducer,
+  user: userReducer,
 });
 
 const persistConfig = {
