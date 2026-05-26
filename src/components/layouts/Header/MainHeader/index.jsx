@@ -1,8 +1,19 @@
 import { Search, ShoppingCart, Menu, UserRound } from "lucide-react";
-
 import logo from "../../../../assets/icons/logo.jpg";
+import UserDropdown from "../../../common/UserDropDown/index";
+import { useState } from "react";
 
 export default function MainHeader() {
+  const [openUser, setOpenUser] = useState(false);
+
+  const user = {
+    id: 123,
+    name: "Long Bua Dinh",
+    email: "longdev@gmail.com",
+    avatar:
+      "https://static.wikitide.net/deathbattlewiki/5/51/Portrait.homelander.png",
+  };
+
   return (
     <div className="bg-sky-600 shadow-md">
       <div className="container-custom flex h-20 items-center justify-between gap-4">
@@ -26,9 +37,7 @@ export default function MainHeader() {
               Secom
             </h1>
 
-            <p className="text-xs text-sky-100">
-              Next-Gen Secondhand E-Commerce
-            </p>
+            <p className="text-xs text-sky-100">Secondhand E-Commerce</p>
           </div>
         </div>
 
@@ -50,10 +59,16 @@ export default function MainHeader() {
         {/* ACTIONS */}
         <div className="flex items-center gap-5">
           {/* USER */}
-          <button className="hidden text-white transition hover:scale-105 md:block">
-            <UserRound size={28} />
-          </button>
+          <div
+            className="relative hidden md:block"
+            onClick={() => setOpenUser((prev) => !prev)}
+          >
+            <button className="text-white transition hover:scale-105">
+              <UserRound size={28} />
+            </button>
 
+            <UserDropdown user={user} open={openUser} />
+          </div>
           {/* CART */}
           <button className="relative text-white transition hover:scale-105">
             <ShoppingCart size={30} />

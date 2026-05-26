@@ -3,7 +3,8 @@ import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import { persistStore, persistReducer } from "redux-persist";
 
 import authReducer from "./slice/authSlice";
-
+import userReducer from "./slice/userSlice";
+import categoriesReducer from "./slice/categoriesSlice";
 const storage = {
   getItem: (key) => {
     return Promise.resolve(localStorage.getItem(key));
@@ -24,6 +25,8 @@ const storage = {
 
 const rootReducer = combineReducers({
   auth: authReducer,
+  user: userReducer,
+  categories: categoriesReducer,
 });
 
 const persistConfig = {
@@ -31,7 +34,7 @@ const persistConfig = {
 
   storage,
 
-  whitelist: ["auth"],
+  whitelist: ["auth", "categories"],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

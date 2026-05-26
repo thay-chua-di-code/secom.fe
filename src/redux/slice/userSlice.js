@@ -16,3 +16,7 @@ const userSlice = createSlice({
     },
   },
 });
+
+export const { setPending, setUserInfo } = userSlice.actions;
+
+export default userSlice.reducer;

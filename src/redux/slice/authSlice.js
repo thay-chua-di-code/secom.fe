@@ -2,7 +2,6 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { authService } from "../../service/authService";
 const initialState = {
   token: "",
-  user: null,
   pending: false,
   error: null,
 };
@@ -47,15 +46,11 @@ const authSlice = createSlice({
 
       .addCase(loginThunk.fulfilled, (state, action) => {
         state.loading = false;
-
         state.token = action.payload.accessToken;
-
-        state.user = action.payload.user;
       })
 
       .addCase(loginThunk.rejected, (state, action) => {
         state.loading = false;
-
         state.error = action.payload;
       });
   },
