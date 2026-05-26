@@ -5,9 +5,11 @@ export const authService = {
     try {
       const result = await axiosClient.post(API_ENDPOINTS.AUTH.LOGIN, payload);
       if (result.data) {
-        localStorage.setItem("accessToken", response.data.accessToken);
+        localStorage.setItem("token", response.data.accessToken);
         await dispatch(getMyInfo());
       }
+
+      return result.data;
     } catch (e) {
       console.error(e?.response?.data);
     }
@@ -41,6 +43,18 @@ export const authService = {
         API_ENDPOINTS.AUTH.FORGOT_PWD,
         payload,
       );
+      return result;
+    } catch (e) {
+      console.error(e?.response?.data);
+    }
+  },
+  verify_account: async (payload) => {
+    try {
+      const result = await axiosClient.post(
+        API_ENDPOINTS.AUTH.VERIFY_EMAIL,
+        payload,
+      );
+
       return result;
     } catch (e) {
       console.error(e?.response?.data);

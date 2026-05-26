@@ -1,35 +1,31 @@
 import axios from "axios";
-import store from "../redux/store";
-import { logout } from "../redux/slice/authSlice";
 
 const axiosClient = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
-
   headers: {
     "Content-Type": "application/json",
   },
 });
 
-axiosClient.interceptors.request.use(
-  (config) => {
-    const token = store.getState().auth.token;
+export const setAuthToken = (token) => {
+  if (token) {
+    axiosClient.defaults.headers.Authorization = `Bearer ${token}`;
+  } else {
+    delete axiosClient.defaults.headers.Authorization;
+  }
+};
 
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
+let logoutHandler = null;
 
-    return config;
-  },
-
-  (error) => Promise.reject(error),
-);
+export const setLogoutHandler = (fn) => {
+  logoutHandler = fn;
+};
 
 axiosClient.interceptors.response.use(
   (response) => response,
-
   (error) => {
     if (error.response?.status === 401) {
-      store.dispatch(logout());
+      logoutHandler?.();
     }
 
     return Promise.reject(error);
