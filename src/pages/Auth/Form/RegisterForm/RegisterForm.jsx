@@ -26,14 +26,12 @@ export default function RegisterForm() {
   return (
     <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
       <div className="form_register_container">
-        <Link to="/" className="form_logo">
-          <img src={logo} alt="Logo" />
-        </Link>
-
         <form className="form_register_wrapper" onSubmit={handleSubmitRegister}>
-          <div className="form_header">
+          <div className="form_header flex-col-g-center">
+            <Link to="/" className="form_logo">
+              <img src={logo} alt="Logo" />
+            </Link>
             <h2>Create Account</h2>
-
             <p>Start your shopping journey today</p>
           </div>
 

@@ -28,14 +28,14 @@ export default function LoginForm() {
   return (
     <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
       <div className="form_login_container">
-        {/* LOGO */}
-        <Link to="/" className="form_logo">
-          <img src={logo} alt="Logo" />
-        </Link>
-
         {/* FORM */}
         <form className="form_login_wrapper" onSubmit={handleSubmitLogin}>
-          <div className="form_header">
+          {/* LOGO */}
+
+          <div className="form_header flex-col-g-center">
+            <Link to="/" className="form_logo">
+              <img src={logo} alt="Logo" />
+            </Link>
             <h2>Welcome Back!</h2>
             <p>Login to continue shopping</p>
           </div>

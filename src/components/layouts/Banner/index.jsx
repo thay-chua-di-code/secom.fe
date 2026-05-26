@@ -33,7 +33,7 @@ const Banner = ({ images = [] }) => {
 
   return (
     <div className="w-full relative">
-      <div className="relative w-full h-56 sm:h-80 md:h-96 lg:h-[500px] overflow-hidden rounded-2xl">
+      <div className="relative w-full h-56 sm:h-80 md:h-96 lg:h-[500px] overflow-hidden ">
         {/* SLIDES */}
         <div className="relative w-full h-full">
           {images.map((image, index) => (
@@ -42,7 +42,9 @@ const Banner = ({ images = [] }) => {
               src={image}
               alt={`Banner ${index + 1}`}
               className={`absolute top-0 left-0 w-full h-full object-cover transition-all duration-600 ease-in-out ${
-                index === currentSlide ? "opacity-100 visibility-visible z-20" : "opacity-0 visibility-hidden z-10"
+                index === currentSlide
+                  ? "opacity-100 visibility-visible z-20"
+                  : "opacity-0 visibility-hidden z-10"
               }`}
             />
           ))}

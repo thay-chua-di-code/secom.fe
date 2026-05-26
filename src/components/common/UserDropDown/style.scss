@@ -1,0 +1,150 @@
+.user-dropdown {
+  position: absolute;
+  top: 60px;
+  right: 0;
+  width: 320px;
+  overflow: hidden;
+
+  border-radius: 24px;
+  background: #ffffff;
+
+  box-shadow:
+    0 10px 25px rgba(0, 0, 0, 0.12),
+    0 4px 10px rgba(0, 0, 0, 0.08);
+
+  animation: dropdownFade 0.25s ease;
+
+  .user-dropdown__header {
+    position: relative;
+
+    padding: 24px;
+
+    background: linear-gradient(135deg, #0284c7, #0ea5e9, #38bdf8);
+
+    color: white;
+
+    &::before {
+      content: "";
+
+      position: absolute;
+      inset: 0;
+
+      background: rgba(255, 255, 255, 0.08);
+
+      backdrop-filter: blur(8px);
+    }
+
+    .user-info {
+      position: relative;
+      z-index: 2;
+
+      display: flex;
+      align-items: center;
+      gap: 16px;
+
+      .user-avatar {
+        width: 64px;
+        height: 64px;
+
+        border-radius: 50%;
+        border: 3px solid rgba(255, 255, 255, 0.7);
+
+        object-fit: cover;
+
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      .user-content {
+        h3 {
+          margin: 0;
+
+          font-size: 18px;
+          font-weight: 700;
+        }
+
+        p {
+          margin-top: 4px;
+
+          font-size: 13px;
+          color: rgba(255, 255, 255, 0.85);
+        }
+      }
+    }
+  }
+
+  .user-dropdown__body {
+    padding: 10px;
+
+    .dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+
+      width: 100%;
+      padding: 14px 16px;
+
+      border: none;
+      border-radius: 16px;
+
+      background: transparent;
+
+      font-size: 15px;
+      font-weight: 500;
+      color: #334155;
+
+      cursor: pointer;
+
+      transition: all 0.25s ease;
+
+      svg {
+        color: #0284c7;
+        transition: 0.25s ease;
+      }
+
+      &:hover {
+        transform: translateX(4px);
+
+        background: #f0f9ff;
+
+        color: #0284c7;
+
+        svg {
+          transform: scale(1.1);
+        }
+      }
+
+      &.logout {
+        margin-top: 6px;
+
+        color: #ef4444;
+
+        svg {
+          color: #ef4444;
+        }
+
+        &:hover {
+          background: #fef2f2;
+        }
+      }
+    }
+
+    .divider {
+      margin: 10px 0;
+
+      border: none;
+      border-top: 1px solid #e2e8f0;
+    }
+  }
+}
+
+@keyframes dropdownFade {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
