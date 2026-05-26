@@ -23,7 +23,7 @@ export default function UserDropdown({ user, open }) {
     alert("Hello");
   };
   return (
-    <div className="user-dropdown">
+    <div className={`user-dropdown ${!user ? "guest" : ""}`}>
       {/* HEADER */}
       {user ? (
         <div className="user-dropdown__header">

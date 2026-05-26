@@ -59,11 +59,11 @@ export default function MainHeader() {
         {/* ACTIONS */}
         <div className="flex items-center gap-5">
           {/* USER */}
-          <div className="relative hidden md:block">
-            <button
-              onClick={() => setOpenUser(!openUser)}
-              className="text-white transition hover:scale-105"
-            >
+          <div
+            className="relative hidden md:block"
+            onClick={() => setOpenUser((prev) => !prev)}
+          >
+            <button className="text-white transition hover:scale-105">
               <UserRound size={28} />
             </button>
 
