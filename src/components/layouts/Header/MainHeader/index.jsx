@@ -1,10 +1,14 @@
 import { Search, ShoppingCart, Menu, UserRound } from "lucide-react";
 import logo from "../../../../assets/icons/logo.jpg";
 import UserDropdown from "../../../common/UserDropDown/index";
+import Cart from "../../../common/Cart/index";
 import { useState } from "react";
-
+import Button from "../../../common/Button/Button";
 export default function MainHeader() {
   const [openUser, setOpenUser] = useState(false);
+  const [openCart, setOpenCart] = useState(false);
+
+  console.log("Is Open: ", openCart);
 
   const user = {
     id: 123,
@@ -60,23 +64,30 @@ export default function MainHeader() {
         <div className="flex items-center gap-5">
           {/* USER */}
           <div
-            className="relative hidden md:block"
+            className="relative"
             onClick={() => setOpenUser((prev) => !prev)}
           >
-            <button className="text-white transition hover:scale-105">
+            <Button className="text-white transition hover:scale-105">
               <UserRound size={28} />
-            </button>
+            </Button>
 
             <UserDropdown user={user} open={openUser} />
           </div>
           {/* CART */}
-          <button className="relative text-white transition hover:scale-105">
-            <ShoppingCart size={30} />
+          <div
+            className="relative"
+            onClick={() => setOpenCart((prev) => !prev)}
+          >
+            <Button className="relative text-white transition hover:scale-105">
+              <ShoppingCart size={30} />
 
-            <span className="absolute -right-2 -top-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-white px-1 text-xs font-bold text-sky-600 shadow">
-              2
-            </span>
-          </button>
+              <span className="absolute -right-2 -top-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-white px-1 text-xs font-bold text-sky-600 shadow">
+                2
+              </span>
+            </Button>
+
+            <Cart open={openCart} />
+          </div>
         </div>
       </div>
 
