@@ -13,6 +13,10 @@ export const API_ENDPOINTS = {
     PROFILE: "/profile",
   },
 
+  CATEGORY: {
+    GET_CG: "/categories",
+  },
+
   PRODUCT: {
     LIST: "/products",
     DETAIL: (id) => `/products/${id}`,

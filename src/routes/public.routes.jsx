@@ -47,6 +47,11 @@ export const publicRoutes = [
         path: ROUTES.FORGOT_PWD,
         element: <AuthPage />,
       },
+
+      {
+        path: ROUTES.VERIFY,
+        element: <AuthPage />,
+      },
     ],
   },
 ];

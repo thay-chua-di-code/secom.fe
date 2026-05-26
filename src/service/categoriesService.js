@@ -1,9 +1,15 @@
-const categoriesService = {
-    getCategories: async () => {
-        try {
+import axiosClient from "../api/axiosClient";
+import { API_ENDPOINTS } from "../api/endPoint";
+export const categoriesService = {
+  getCategories: async () => {
+    try {
+      const result = await axiosClient.get(API_ENDPOINTS.CATEGORY.GET_CG);
 
-        } catch (e) => {
-            throw new Error(e.message)
-        }
+      console.log("Service Call:", result);
+
+      return result.data.data;
+    } catch (e) {
+      console.error(e?.response?.data);
     }
-}
+  },
+};

@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { authService } from "../../service/authService";
+import { setAuthToken } from "../../api/axiosClient";
 
 const token = localStorage.getItem("token");
 
@@ -12,14 +13,15 @@ const initialState = {
 
 export const loginThunk = createAsyncThunk(
   "auth/login",
-
   async (payload, thunkAPI) => {
     try {
-      const response = await authService.login(payload);
+      const data = await authService.login(payload);
+      const accessToken = data.accessToken;
 
-      localStorage.setItem("token", response.accessToken);
+      localStorage.setItem("token", accessToken);
 
-      return response.accessToken;
+      setAuthToken(accessToken);
+      return accessToken;
     } catch (error) {
       return thunkAPI.rejectWithValue(
         error.response?.data?.message || "Login failed",
@@ -30,7 +32,6 @@ export const loginThunk = createAsyncThunk(
 
 const authSlice = createSlice({
   name: "auth",
-
   initialState,
 
   reducers: {
