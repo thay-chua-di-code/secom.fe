@@ -4,12 +4,13 @@ export const authService = {
   login: async (payload, dispatch) => {
     try {
       const result = await axiosClient.post(API_ENDPOINTS.AUTH.LOGIN, payload);
+      console.log("Login Result: ", result);
       if (result.data) {
         localStorage.setItem("token", response.data.accessToken);
         await dispatch(getMyInfo());
       }
 
-      return result.data;
+      return result.data.data;
     } catch (e) {
       console.error(e?.response?.data);
     }
