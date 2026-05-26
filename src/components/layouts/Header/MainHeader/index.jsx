@@ -67,7 +67,7 @@ export default function MainHeader() {
             className="relative"
             onClick={() => setOpenUser((prev) => !prev)}
           >
-            <Button className="text-white transition hover:scale-105">
+            <Button className="text-white ">
               <UserRound size={28} />
             </Button>
 
@@ -78,7 +78,7 @@ export default function MainHeader() {
             className="relative"
             onClick={() => setOpenCart((prev) => !prev)}
           >
-            <Button className="relative text-white transition hover:scale-105">
+            <Button className="relative text-white ">
               <ShoppingCart size={30} />
 
               <span className="absolute -right-2 -top-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-white px-1 text-xs font-bold text-sky-600 shadow">

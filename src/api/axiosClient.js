@@ -1,5 +1,6 @@
 import axios from "axios";
 import store from "../redux/store";
+import { logout } from "../redux/slice/authSlice";
 
 const axiosClient = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -20,19 +21,15 @@ axiosClient.interceptors.request.use(
     return config;
   },
 
-  (error) => {
-    return Promise.reject(error);
-  },
+  (error) => Promise.reject(error),
 );
 
 axiosClient.interceptors.response.use(
-  (response) => {
-    return response.data;
-  },
+  (response) => response.data,
 
   (error) => {
     if (error.response?.status === 401) {
-      console.log("Unauthorized");
+      store.dispatch(logout());
     }
 
     return Promise.reject(error);
