@@ -7,6 +7,7 @@ export default function MainHeader() {
   const [openUser, setOpenUser] = useState(false);
 
   const user = {
+    id: 123,
     name: "Long Bua Dinh",
     email: "longdev@gmail.com",
     avatar:

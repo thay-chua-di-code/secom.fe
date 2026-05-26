@@ -3,6 +3,7 @@ import AuthLayout from "../layouts/AuthLayout";
 import { ROUTES } from "../constanst/routes";
 import Home from "../pages/Home/index";
 import AuthPage from "../pages/Auth/index";
+import DetailPage from "../pages/Profile";
 
 export const publicRoutes = [
   {
@@ -12,6 +13,16 @@ export const publicRoutes = [
       {
         index: true,
         element: <Home />,
+      },
+    ],
+  },
+  {
+    path: ROUTES.PROFILE,
+    element: <MainLayout />,
+    children: [
+      {
+        index: true,
+        element: <DetailPage />,
       },
     ],
   },

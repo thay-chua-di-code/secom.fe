@@ -1,27 +1,65 @@
+/* UserDropdown.scss */
+
 .user-dropdown {
   position: absolute;
-  top: 60px;
-  right: 0;
-  width: 320px;
+  top: 52px;
+  left: -120px;
+
+  width: 340px;
   overflow: hidden;
 
-  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 28px;
+
   background: #ffffff;
 
   box-shadow:
-    0 10px 25px rgba(0, 0, 0, 0.12),
-    0 4px 10px rgba(0, 0, 0, 0.08);
+    0 20px 45px rgba(15, 23, 42, 0.18),
+    0 8px 20px rgba(15, 23, 42, 0.08);
 
-  animation: dropdownFade 0.25s ease;
+  backdrop-filter: blur(18px);
+
+  animation: dropdownFade 0.28s ease;
+
+  z-index: 999;
+
+  &::before {
+    content: "";
+
+    position: absolute;
+    top: -10px;
+    right: 28px;
+
+    width: 20px;
+    height: 20px;
+
+    background: #0ea5e9;
+
+    transform: rotate(45deg);
+
+    border-radius: 4px;
+  }
+
+  /* =========================
+     HEADER
+  ========================= */
 
   .user-dropdown__header {
     position: relative;
 
-    padding: 24px;
+    padding: 26px 24px;
 
-    background: linear-gradient(135deg, #0284c7, #0ea5e9, #38bdf8);
+    background:
+      radial-gradient(
+        circle at top right,
+        rgba(255, 255, 255, 0.2),
+        transparent 30%
+      ),
+      linear-gradient(135deg, #0369a1, #0ea5e9, #38bdf8);
 
     color: white;
+
+    overflow: hidden;
 
     &::before {
       content: "";
@@ -29,9 +67,9 @@
       position: absolute;
       inset: 0;
 
-      background: rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.06);
 
-      backdrop-filter: blur(8px);
+      backdrop-filter: blur(10px);
     }
 
     .user-info {
@@ -40,40 +78,108 @@
 
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 18px;
 
       .user-avatar {
-        width: 64px;
-        height: 64px;
+        width: 70px;
+        height: 70px;
 
         border-radius: 50%;
         border: 3px solid rgba(255, 255, 255, 0.7);
 
         object-fit: cover;
 
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        background: white;
+
+        box-shadow:
+          0 10px 25px rgba(0, 0, 0, 0.15),
+          inset 0 0 0 2px rgba(255, 255, 255, 0.2);
       }
 
       .user-content {
+        flex: 1;
+
         h3 {
           margin: 0;
 
-          font-size: 18px;
+          font-size: 20px;
           font-weight: 700;
+          letter-spacing: 0.3px;
         }
 
         p {
-          margin-top: 4px;
+          margin-top: 6px;
 
           font-size: 13px;
-          color: rgba(255, 255, 255, 0.85);
+          line-height: 1.5;
+
+          color: rgba(255, 255, 255, 0.9);
+        }
+
+        .auth-actions {
+          display: flex;
+          gap: 10px;
+
+          margin-top: 18px;
+
+          .login-btn,
+          .register-btn {
+            flex: 1;
+
+            padding: 11px 14px;
+
+            border: none;
+            border-radius: 14px;
+
+            font-size: 14px;
+            font-weight: 700;
+
+            cursor: pointer;
+
+            transition: all 0.25s ease;
+          }
+
+          .login-btn {
+            background: white;
+            color: #0284c7;
+
+            box-shadow: 0 4px 12px rgba(255, 255, 255, 0.25);
+
+            &:hover {
+              transform: translateY(-2px);
+
+              background: #f8fafc;
+            }
+          }
+
+          .register-btn {
+            background: rgba(255, 255, 255, 0.12);
+
+            border: 1px solid rgba(255, 255, 255, 0.3);
+
+            color: white;
+
+            backdrop-filter: blur(10px);
+
+            &:hover {
+              transform: translateY(-2px);
+
+              background: rgba(255, 255, 255, 0.2);
+            }
+          }
         }
       }
     }
   }
 
+  /* =========================
+     BODY
+  ========================= */
+
   .user-dropdown__body {
-    padding: 10px;
+    padding: 12px;
+
+    background: #ffffff;
 
     .dropdown-item {
       display: flex;
@@ -81,15 +187,15 @@
       gap: 14px;
 
       width: 100%;
-      padding: 14px 16px;
+      padding: 15px 16px;
 
       border: none;
-      border-radius: 16px;
+      border-radius: 18px;
 
       background: transparent;
 
       font-size: 15px;
-      font-weight: 500;
+      font-weight: 600;
       color: #334155;
 
       cursor: pointer;
@@ -98,13 +204,13 @@
 
       svg {
         color: #0284c7;
-        transition: 0.25s ease;
+        transition: all 0.25s ease;
       }
 
       &:hover {
         transform: translateX(4px);
 
-        background: #f0f9ff;
+        background: linear-gradient(90deg, #f0f9ff, #e0f2fe);
 
         color: #0284c7;
 
@@ -129,7 +235,7 @@
     }
 
     .divider {
-      margin: 10px 0;
+      margin: 10px 4px;
 
       border: none;
       border-top: 1px solid #e2e8f0;
