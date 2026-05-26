@@ -8,13 +8,32 @@ import "./RegisterForm.scss";
 
 import Button from "../../../../components/common/Button/Button";
 
+import { authService } from "../../../../service/authService";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
+import { useState } from "react";
 
 export default function RegisterForm() {
-  const handleSubmitRegister = (e) => {
+  const [registerData, setRegisterData] = useState({
+    email: "",
+    password: "",
+    fullName: "",
+    confirmPassword: "",
+    role: "Customer",
+  });
+  const handleSubmitRegister = async (e) => {
     e.preventDefault();
+    // if (password.trim() !== confirmPassword.trim()) {
+    //   alert("Password must same confirmPassWord");
+    // }
 
-    alert("Register successfully!");
+    const payload = {
+      email: registerData.email,
+      password: registerData.password,
+      fullName: registerData.fullName,
+      role: registerData.role,
+    };
+
+    await authService.register(payload);
   };
 
   const handleRegisterGoogle = (credentialResponse) => {
@@ -40,7 +59,18 @@ export default function RegisterForm() {
 
             <div className="input_wrapper">
               <User size={18} />
-              <input type="text" placeholder="John Doe" />
+              <input
+                type="text"
+                placeholder="John Doe"
+                value={registerData.fullName}
+                required
+                onChange={(e) =>
+                  setRegisterData((prev) => ({
+                    ...prev,
+                    fullName: e.target.value,
+                  }))
+                }
+              />
             </div>
           </div>
 
@@ -49,7 +79,18 @@ export default function RegisterForm() {
 
             <div className="input_wrapper flex-row-g">
               <Mail size={18} />
-              <input type="email" placeholder="name@gmail.com" />
+              <input
+                type="email"
+                placeholder="name@gmail.com"
+                required
+                value={registerData.email}
+                onChange={(e) =>
+                  setRegisterData((prev) => ({
+                    ...prev,
+                    email: e.target.value,
+                  }))
+                }
+              />
             </div>
           </div>
 
@@ -59,7 +100,18 @@ export default function RegisterForm() {
             <div className="input_wrapper">
               <Lock size={18} />
 
-              <input type="password" placeholder="••••••••" />
+              <input
+                type="password"
+                placeholder="••••••••"
+                required
+                value={registerData.password}
+                onChange={(e) =>
+                  setRegisterData((prev) => ({
+                    ...prev,
+                    password: e.target.value,
+                  }))
+                }
+              />
             </div>
           </div>
 
@@ -69,16 +121,23 @@ export default function RegisterForm() {
             <div className="input_wrapper">
               <CheckCircle2 size={18} />
 
-              <input type="password" placeholder="••••••••" />
+              <input
+                type="password"
+                placeholder="••••••••"
+                required
+                value={registerData.confirmPassword}
+                onChange={(e) =>
+                  setRegisterData((prev) => ({
+                    ...prev,
+                    confirmPassword: e.target.value,
+                  }))
+                }
+              />
             </div>
           </div>
 
           <div className="form_register_btn">
-            <Button
-              fullWidth={true}
-              type="submit"
-              onClick={handleSubmitRegister}
-            >
+            <Button fullWidth={true} type="submit">
               Create Account
             </Button>
 

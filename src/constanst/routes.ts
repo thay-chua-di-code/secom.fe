@@ -1,7 +1,10 @@
 export const ROUTES = {
-  HOME: "/",
+  // AUTH
   LOGIN: "/login",
   REGISTER: "/register",
+  FORGOT_PWD: "/forgot-password",
+  //NORMAL
+  HOME: "/",
   DASHBOARD: "/dashboard",
   PRODUCT_DETAIL: "/product/:id",
   CART: "/cart",

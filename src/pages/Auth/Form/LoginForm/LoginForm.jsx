@@ -1,28 +1,39 @@
+import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
+import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import logo from "../../../../assets/icons/logo.jpg";
 import { Mail, Lock } from "lucide-react";
 import "./LoginForm.scss";
-
+import { authService } from "../../../../service/authService";
 import Button from "../../../../components/common/Button/Button";
-
-import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
-import { useState } from "react";
+import { loginThunk } from "../../../../redux/slice/authSlice";
+import { getMyInfoThunk } from "../../../../redux/slice/userSlice";
 
 export default function LoginForm() {
+  const dispatch = useDispatch();
   const [loginData, setLoginData] = useState({
     email: "",
     password: "",
   });
-  const handleSubmitLogin = (e) => {
+  const handleSubmitLogin = async (e) => {
     e.preventDefault();
+    await dispatch(
+      loginThunk({
+        email: loginData.email,
+        password: loginData.password,
+      }),
+    ).unwrap();
 
-    alert("Login successfully!");
+    await dispatch(getMyInfoThunk());
   };
 
-  const handleLoginGoogle = (credentialResponse) => {
-    console.log(credentialResponse);
-
-    alert("Handle login with Google successfully!");
+  const handleLoginGoogle = async (credentialResponse) => {
+    if (credentialResponse) {
+      await authService.loginGoogle(credentialResponse.credential);
+    } else {
+      alert("Something went wrong!");
+    }
   };
 
   return (
@@ -45,7 +56,15 @@ export default function LoginForm() {
             <label>Your Email</label>
             <div className="input_wrapper">
               <Mail size={18} />
-              <input type="email" placeholder="name@gmail.com" />
+              <input
+                type="email"
+                placeholder="name@gmail.com"
+                required
+                value={loginData.email}
+                onChange={(e) =>
+                  setLoginData((prev) => ({ ...prev, email: e.target.value }))
+                }
+              />
             </div>
           </div>
 
@@ -54,7 +73,21 @@ export default function LoginForm() {
             <label>Your Password</label>
             <div className="input_wrapper">
               <Lock size={18} />
-              <input type="password" placeholder="••••••••" />
+              <input
+                type="password"
+                placeholder="••••••••"
+                required
+                value={loginData.password}
+                onChange={(e) =>
+                  setLoginData((prev) => ({
+                    ...prev,
+                    password: e.target.value,
+                  }))
+                }
+              />
+            </div>
+            <div className="forgot_password">
+              <Link to="/forgot-password">Forgot password?</Link>
             </div>
           </div>
 

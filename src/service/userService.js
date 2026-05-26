@@ -1,12 +1,12 @@
 import axiosClient from "../api/axiosClient";
-import { setUserInfo } from "../redux/slice/userSlice";
+import { API_ENDPOINTS } from "../api/endPoint";
+
 export const userService = {
-  getUserDetail: async (userId, dispatch) => {
+  getMyInfo: async () => {
     try {
-      const response = await axiosClient.get(`/api/users/${userId}`);
-      if (response) {
-        dispatch(setUserInfo(response.data));
-      }
+      const response = await axiosClient.get(API_ENDPOINTS.USER.PROFILE);
+
+      return response.data;
     } catch (error) {
       console.error("Error fetching user details:", error);
       throw error;

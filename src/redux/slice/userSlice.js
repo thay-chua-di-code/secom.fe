@@ -1,22 +1,58 @@
-import { createSlice } from "@reduxjs/toolkit";
-const initialValue = {
-  userInfo: {},
-  pending: false,
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { userService } from "../../service/userService";
+
+const initialState = {
+  userInfo: null,
+  loading: false,
+  error: null,
 };
 
+export const getMyInfoThunk = createAsyncThunk(
+  "user/getMyInfo",
+
+  async (_, thunkAPI) => {
+    try {
+      const response = await userService.getMyInfo();
+
+      return response;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response?.data?.message);
+    }
+  },
+);
+
 const userSlice = createSlice({
-  initialState: initialValue,
   name: "user",
+
+  initialState,
+
   reducers: {
-    setPending: (state, action) => {
-      state.pending = action.payload;
+    clearUserInfo: (state) => {
+      state.userInfo = null;
     },
-    setUserInfo: (state, action) => {
-      state.userInfo = action.payload;
-    },
+  },
+
+  extraReducers: (builder) => {
+    builder
+
+      .addCase(getMyInfoThunk.pending, (state) => {
+        state.loading = true;
+      })
+
+      .addCase(getMyInfoThunk.fulfilled, (state, action) => {
+        state.loading = false;
+
+        state.userInfo = action.payload;
+      })
+
+      .addCase(getMyInfoThunk.rejected, (state, action) => {
+        state.loading = false;
+
+        state.error = action.payload;
+      });
   },
 });
 
-export const { setPending, setUserInfo } = userSlice.actions;
+export const { clearUserInfo } = userSlice.actions;
 
 export default userSlice.reducer;
