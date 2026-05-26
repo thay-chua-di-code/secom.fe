@@ -6,6 +6,7 @@ import AuthPage from "../pages/Auth/index";
 import DetailPage from "../pages/Profile";
 
 export const publicRoutes = [
+  // NORMAL PAGE
   {
     path: ROUTES.HOME,
     element: <MainLayout />,
@@ -26,22 +27,24 @@ export const publicRoutes = [
       },
     ],
   },
+
+  // AUTH
   {
-    path: ROUTES.LOGIN,
+    path: "/",
     element: <AuthLayout />,
     children: [
       {
-        index: true,
+        path: ROUTES.LOGIN,
         element: <AuthPage />,
       },
-    ],
-  },
-  {
-    path: ROUTES.REGISTER,
-    element: <AuthLayout />,
-    children: [
+
       {
-        index: true,
+        path: ROUTES.REGISTER,
+        element: <AuthPage />,
+      },
+
+      {
+        path: ROUTES.FORGOT_PWD,
         element: <AuthPage />,
       },
     ],

@@ -1,29 +1,36 @@
+import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
+import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import logo from "../../../../assets/icons/logo.jpg";
 import { Mail, Lock } from "lucide-react";
 import "./LoginForm.scss";
 import { authService } from "../../../../service/authService";
 import Button from "../../../../components/common/Button/Button";
-
-import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
-import { useState } from "react";
+import { loginThunk } from "../../../../redux/slice/authSlice";
+import { getMyInfoThunk } from "../../../../redux/slice/userSlice";
 
 export default function LoginForm() {
+  const dispatch = useDispatch();
   const [loginData, setLoginData] = useState({
     email: "",
     password: "",
   });
-  const handleSubmitLogin = (e) => {
+  const handleSubmitLogin = async (e) => {
     e.preventDefault();
-    authService.login({
-      email: loginData.email,
-      password: loginData.password,
-    });
+    await dispatch(
+      loginThunk({
+        email: loginData.email,
+        password: loginData.password,
+      }),
+    ).unwrap();
+
+    await dispatch(getMyInfoThunk());
   };
 
   const handleLoginGoogle = async (credentialResponse) => {
     if (credentialResponse) {
-      await authService.loginGoogle({ idToken: credentialResponse });
+      await authService.loginGoogle(credentialResponse.credential);
     } else {
       alert("Something went wrong!");
     }
@@ -78,6 +85,9 @@ export default function LoginForm() {
                   }))
                 }
               />
+            </div>
+            <div className="forgot_password">
+              <Link to="/forgot-password">Forgot password?</Link>
             </div>
           </div>
 

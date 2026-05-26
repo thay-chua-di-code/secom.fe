@@ -18,7 +18,7 @@ export default function RegisterForm() {
     password: "",
     fullName: "",
     confirmPassword: "",
-    role: "user",
+    role: "Customer",
   });
   const handleSubmitRegister = async (e) => {
     e.preventDefault();

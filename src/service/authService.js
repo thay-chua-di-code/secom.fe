@@ -1,24 +1,24 @@
 import axiosClient from "../api/axiosClient";
 import { API_ENDPOINTS } from "../api/endPoint";
 export const authService = {
-  login: async (payload) => {
+  login: async (payload, dispatch) => {
     try {
-      console.log(payload);
       const result = await axiosClient.post(API_ENDPOINTS.AUTH.LOGIN, payload);
-      console.log("return: ", result);
-      return result;
+      if (result.data) {
+        localStorage.setItem("accessToken", response.data.accessToken);
+        await dispatch(getMyInfo());
+      }
     } catch (e) {
       console.error(e?.response?.data);
     }
   },
-  loginGoogle: async (payload) => {
+  loginGoogle: async (idToken) => {
     try {
-      console.log("Payload:", payload.idToken);
       const result = await axiosClient.post(API_ENDPOINTS.AUTH.LOGIN_GG, {
-        idToken: payload.idToken.credential,
+        idToken,
       });
       console.log(result);
-      return result;
+      return result.data;
     } catch (e) {
       console.log(e?.response?.data);
     }
@@ -30,6 +30,17 @@ export const authService = {
         payload,
       );
       console.log("result: ", result);
+      return result;
+    } catch (e) {
+      console.error(e?.response?.data);
+    }
+  },
+  forgot_pwd: async (payload) => {
+    try {
+      const result = await axiosClient.post(
+        API_ENDPOINTS.AUTH.FORGOT_PWD,
+        payload,
+      );
       return result;
     } catch (e) {
       console.error(e?.response?.data);
