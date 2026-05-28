@@ -3,6 +3,7 @@ import { userService } from "../../service/userService";
 
 const initialState = {
   userInfo: {},
+  orderHistory: [],
   loading: false,
   error: null,
 };
@@ -28,6 +29,12 @@ const userSlice = createSlice({
     clearUserInfo: (state) => {
       state.userInfo = {};
     },
+    updateUserInfo: (state, action) => {
+      state.userInfo = { ...state.userInfo, ...action.payload };
+    },
+    getOrderHistory: (state, action) => {
+      state.orderHistory = action.payload;
+    },
   },
 
   extraReducers: (builder) => {
@@ -51,6 +58,6 @@ const userSlice = createSlice({
   },
 });
 
-export const { clearUserInfo } = userSlice.actions;
+export const { clearUserInfo, updateUserInfo, getOrderHistory } = userSlice.actions;
 
 export default userSlice.reducer;

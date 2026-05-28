@@ -8,16 +8,6 @@ export default function MainHeader() {
   const [openUser, setOpenUser] = useState(false);
   const [openCart, setOpenCart] = useState(false);
 
-  console.log("Is Open: ", openCart);
-
-  const user = {
-    id: 123,
-    name: "Long Bua Dinh",
-    email: "longdev@gmail.com",
-    avatar:
-      "https://static.wikitide.net/deathbattlewiki/5/51/Portrait.homelander.png",
-  };
-
   return (
     <div className="bg-sky-600 shadow-md">
       <div className="container-custom flex h-20 items-center justify-between gap-4">
@@ -71,7 +61,7 @@ export default function MainHeader() {
               <UserRound size={28} />
             </Button>
 
-            <UserDropdown user={user} open={openUser} />
+            <UserDropdown open={openUser} />
           </div>
           {/* CART */}
           <div

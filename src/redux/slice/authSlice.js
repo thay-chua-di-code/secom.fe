@@ -6,6 +6,7 @@ const token = localStorage.getItem("token");
 
 const initialState = {
   token: token || null,
+  refreshToken: null,
   loading: false,
   error: null,
   isAuthenticated: !!token,
@@ -16,10 +17,10 @@ export const loginThunk = createAsyncThunk(
   async (payload, thunkAPI) => {
     try {
       const data = await authService.login(payload);
-
+      console.log("data redux: ", data);
       setAuthToken(data.accessToken);
 
-      return data.accessToken;
+      return data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
         error.response?.data?.message || "Login failed",
@@ -49,7 +50,8 @@ const authSlice = createSlice({
 
       .addCase(loginThunk.fulfilled, (state, action) => {
         state.loading = false;
-        state.token = action.payload;
+        state.token = action.payload.accessToken;
+        state.refreshToken = action.payload.refreshToken;
         state.isAuthenticated = true;
       })
 

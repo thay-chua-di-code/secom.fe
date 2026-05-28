@@ -7,10 +7,16 @@ export const API_ENDPOINTS = {
     RESET_PWD: "/auth/password",
     VERIFY_EMAIL: "/auth/verify-email",
     RESEND_VERTIFICATION: "/auth/resend-vertification",
+    LOG_OUT: "/auth/logout",
   },
 
   USER: {
     PROFILE: "/profile",
+  },
+
+  ORDER: {
+    ORDER_PURCHASE: "/orders/purchase",
+    ORDER_DETAIL: (id) => `/orders/${id}`,
   },
 
   CATEGORY: {
