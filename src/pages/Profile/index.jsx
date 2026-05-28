@@ -18,6 +18,9 @@ import { userService } from "../../service/userService";
 
 import { getMyInfoThunk } from "../../redux/slice/userSlice";
 
+import { uploadImageToCloudinary } from "../../utils/uploadImgCloud";
+
+import ChangePassword from "./ChangePwd";
 import OrderHistory from "./Order";
 
 import Button from "../../components/common/Button/Button";
@@ -107,9 +110,15 @@ const ProfilePage = () => {
   };
 
   const handleUploadAvatar = (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files?.[0];
 
     if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      alert("Please select image file");
+
+      return;
+    }
 
     if (file.size > 1024 * 1024) {
       alert("Avatar size must be less than 1MB");
@@ -135,21 +144,29 @@ const ProfilePage = () => {
 
       setLoading(true);
 
-      const formData = new FormData();
-
-      formData.append("fullName", editProfile.fullName);
-
-      formData.append("phoneNumber", editProfile.phoneNumber);
+      let avatarUrl = editProfile.avatarUrl;
 
       if (editProfile.avatarFile) {
-        formData.append("avatarUrl", editProfile.avatarFile);
+        avatarUrl = await uploadImageToCloudinary(editProfile.avatarFile);
       }
 
-      console.log(formData)
+      const payload = {
+        fullName: editProfile.fullName,
+        phoneNumber: editProfile.phoneNumber,
+        avatarUrl,
+      };
 
-      await userService.updateProfile(formData);
+      await userService.updateProfile(payload, dispatch);
 
       await dispatch(getMyInfoThunk());
+
+      setPreviewAvatar(avatarUrl);
+
+      setEditProfile((prev) => ({
+        ...prev,
+        avatarFile: null,
+        avatarUrl,
+      }));
 
       alert("Profile updated successfully");
     } catch (error) {
@@ -239,11 +256,7 @@ const ProfilePage = () => {
         );
 
       case "password":
-        return (
-          <div className="content-box">
-            <h2>Change Password</h2>
-          </div>
-        );
+        return <ChangePassword />;
 
       case "notification":
         return (

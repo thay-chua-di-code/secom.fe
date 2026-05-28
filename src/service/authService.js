@@ -75,4 +75,17 @@ export const authService = {
       console.error(e?.response?.data);
     }
   },
+  change_password: async (payload) => {
+    try {
+      const result = await axiosClient.put(
+        API_ENDPOINTS.AUTH.CHANGE_PWD,
+        payload,
+      );
+
+      console.log(result);
+      return result;
+    } catch (e) {
+      console.error(e?.response?.data);
+    }
+  },
 };

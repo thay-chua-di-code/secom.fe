@@ -3,6 +3,7 @@ export const API_ENDPOINTS = {
     LOGIN: "/auth/login",
     LOGIN_GG: "/auth/google-login",
     REGISTER: "/auth/register",
+    CHANGE_PWD: "/auth/password",
     FORGOT_PWD: "/auth/forgot-password",
     RESET_PWD: "/auth/password",
     VERIFY_EMAIL: "/auth/verify-email",

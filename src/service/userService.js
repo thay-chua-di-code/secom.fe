@@ -14,11 +14,13 @@ export const userService = {
   updateProfile: async (payload, dispatch) => {
     try {
       const result = await axiosClient.put(API_ENDPOINTS.USER.PROFILE, payload);
-      console.log(result);
+
       dispatch(updateUserInfo(result.data.data));
+
       return result.data.data;
     } catch (e) {
       console.error("Error updating user profile:", e?.response?.data);
+      throw e;
     }
   },
 };

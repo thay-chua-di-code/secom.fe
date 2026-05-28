@@ -5,7 +5,6 @@ export const categoriesService = {
     try {
       const result = await axiosClient.get(API_ENDPOINTS.CATEGORY.GET_CG);
 
-      console.log("Service Call:", result);
 
       return result.data.data;
     } catch (e) {
