@@ -1,6 +1,6 @@
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import logo from "../../../../assets/icons/logo.jpg";
 import { Mail, Lock } from "lucide-react";
@@ -12,20 +12,28 @@ import { getMyInfoThunk } from "../../../../redux/slice/userSlice";
 
 export default function LoginForm() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [loginData, setLoginData] = useState({
     email: "",
     password: "",
   });
   const handleSubmitLogin = async (e) => {
     e.preventDefault();
-    await dispatch(
-      loginThunk({
-        email: loginData.email,
-        password: loginData.password,
-      }),
-    ).unwrap();
 
-    await dispatch(getMyInfoThunk());
+    try {
+      await dispatch(
+        loginThunk({
+          email: loginData.email,
+          password: loginData.password,
+        }),
+      ).unwrap();
+
+      await dispatch(getMyInfoThunk()).unwrap();
+
+      navigate("/");
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const handleLoginGoogle = async (credentialResponse) => {

@@ -1,13 +1,11 @@
 import axiosClient from "../api/axiosClient";
 import { API_ENDPOINTS } from "../api/endPoint";
 export const authService = {
-  login: async (payload, dispatch) => {
+  login: async (payload) => {
     try {
       const result = await axiosClient.post(API_ENDPOINTS.AUTH.LOGIN, payload);
-      console.log("Login Result: ", result);
-      if (result.data) {
-        localStorage.setItem("token", response.data.accessToken);
-        await dispatch(getMyInfo());
+      if (result.data.data) {
+        localStorage.setItem("token", result.data.data.accessToken);
       }
 
       return result.data.data;

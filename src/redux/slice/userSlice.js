@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { userService } from "../../service/userService";
 
 const initialState = {
-  userInfo: null,
+  userInfo: {},
   loading: false,
   error: null,
 };
@@ -23,12 +23,10 @@ export const getMyInfoThunk = createAsyncThunk(
 
 const userSlice = createSlice({
   name: "user",
-
-  initialState,
-
+  initialState: initialState,
   reducers: {
     clearUserInfo: (state) => {
-      state.userInfo = null;
+      state.userInfo = {};
     },
   },
 
