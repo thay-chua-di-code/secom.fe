@@ -5,7 +5,7 @@ import Home from "../pages/Home/index";
 import AuthPage from "../pages/Auth/index";
 import DetailPage from "../pages/Profile";
 import CartPage from "../pages/Cart";
-
+import ProfilePage from "../pages/Profile";
 export const publicRoutes = [
   // NORMAL PAGE
   {
