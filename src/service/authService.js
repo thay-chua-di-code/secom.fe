@@ -31,7 +31,6 @@ export const authService = {
   logout: async (payload, dispatch) => {
     try {
       const result = await axiosClient.post(API_ENDPOINTS.AUTH.LOG_OUT);
-      console.log("logout result:", result);
       dispatch(clearUserInfo());
       dispatch(logout());
       localStorage.removeItem("token");
