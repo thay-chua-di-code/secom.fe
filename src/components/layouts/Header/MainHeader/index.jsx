@@ -3,20 +3,11 @@ import logo from "../../../../assets/icons/logo.jpg";
 import UserDropdown from "../../../common/UserDropDown/index";
 import Cart from "../../../common/Cart/index";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import Button from "../../../common/Button/Button";
 export default function MainHeader() {
   const [openUser, setOpenUser] = useState(false);
   const [openCart, setOpenCart] = useState(false);
-
-  console.log("Is Open: ", openCart);
-
-  const user = {
-    id: 123,
-    name: "Long Bua Dinh",
-    email: "longdev@gmail.com",
-    avatar:
-      "https://static.wikitide.net/deathbattlewiki/5/51/Portrait.homelander.png",
-  };
 
   return (
     <div className="bg-sky-600 shadow-md">
@@ -27,7 +18,7 @@ export default function MainHeader() {
         </button>
 
         {/* LOGO */}
-        <div className="flex items-center gap-3">
+        <Link to="/" className="flex items-center gap-3">
           <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-xl bg-white p-1 shadow-md">
             <img
               src={logo}
@@ -43,7 +34,7 @@ export default function MainHeader() {
 
             <p className="text-xs text-sky-100">Secondhand E-Commerce</p>
           </div>
-        </div>
+        </Link>
 
         {/* SEARCH */}
         <div className="hidden max-w-3xl flex-1 lg:block">
@@ -71,7 +62,7 @@ export default function MainHeader() {
               <UserRound size={28} />
             </Button>
 
-            <UserDropdown user={user} open={openUser} />
+            <UserDropdown open={openUser} />
           </div>
           {/* CART */}
           <div

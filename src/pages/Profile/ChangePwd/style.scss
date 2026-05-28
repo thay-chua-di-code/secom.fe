@@ -1,0 +1,216 @@
+// style.scss
+
+.change-password {
+  width: 100%;
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 32px;
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.04);
+
+  &__header {
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 20px;
+    margin-bottom: 32px;
+
+    h2 {
+      font-size: 28px;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 6px;
+    }
+
+    p {
+      font-size: 14px;
+      color: #64748b;
+    }
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    max-width: 650px;
+  }
+
+  .input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    label {
+      font-size: 14px;
+      font-weight: 600;
+      color: #334155;
+    }
+
+    .input-wrapper {
+      display: flex;
+      align-items: center;
+      height: 54px;
+      border: 1px solid #cbd5e1;
+      border-radius: 14px;
+      padding: 0 16px;
+      background: #fff;
+      transition: all 0.25s ease;
+
+      &:focus-within {
+        border-color: #0284c7;
+        box-shadow:
+          0 0 0 4px rgba(2, 132, 199, 0.1);
+      }
+
+      svg {
+        color: #94a3b8;
+        flex-shrink: 0;
+      }
+
+      input {
+        flex: 1;
+        height: 100%;
+        border: none;
+        outline: none;
+        background: transparent;
+        padding: 0 14px;
+        font-size: 15px;
+        color: #0f172a;
+
+        &::placeholder {
+          color: #94a3b8;
+        }
+      }
+
+      button {
+        border: none;
+        outline: none;
+        background: transparent;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        svg {
+          transition: 0.2s;
+        }
+
+        &:hover svg {
+          color: #0284c7;
+        }
+      }
+    }
+  }
+
+  .change-password-btn {
+    width: 100%;
+    height: 52px;
+    border: none;
+    border-radius: 14px;
+    background: #0284c7;
+    color: white;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.25s ease;
+    margin-top: 8px;
+
+    &:hover {
+      background: #0369a1;
+    }
+
+    &:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+  }
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media screen and (max-width: 1024px) {
+  .change-password {
+    padding: 24px;
+
+    &__header {
+      h2 {
+        font-size: 24px;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .change-password {
+    border-radius: 16px;
+    padding: 20px;
+
+    &__header {
+      margin-bottom: 24px;
+
+      h2 {
+        font-size: 22px;
+      }
+
+      p {
+        font-size: 13px;
+      }
+    }
+
+    &__form {
+      gap: 20px;
+    }
+
+    .input-group {
+      .input-wrapper {
+        height: 50px;
+        padding: 0 14px;
+
+        input {
+          font-size: 14px;
+        }
+      }
+    }
+
+    .change-password-btn {
+      height: 48px;
+      font-size: 14px;
+    }
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .change-password {
+    padding: 16px;
+
+    &__header {
+      padding-bottom: 16px;
+
+      h2 {
+        font-size: 20px;
+      }
+    }
+
+    .input-group {
+      gap: 8px;
+
+      label {
+        font-size: 13px;
+      }
+
+      .input-wrapper {
+        height: 46px;
+        border-radius: 12px;
+
+        input {
+          padding: 0 10px;
+        }
+      }
+    }
+
+    .change-password-btn {
+      height: 46px;
+      border-radius: 12px;
+    }
+  }
+}

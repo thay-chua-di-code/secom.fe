@@ -20,29 +20,42 @@ const mapCartState = (state, cartData) => {
   state.finalTotal = cartData?.finalTotal || 0;
 };
 
-export const fetchCart = createAsyncThunk("cart/fetchCart", async (_, thunkAPI) => {
-  try {
-    const response = await cartService.getCart();
-    return response;
-  } catch (error) {
-    return thunkAPI.rejectWithValue(getErrorMessage(error, "Failed to fetch cart"));
-  }
-});
+export const fetchCart = createAsyncThunk(
+  "cart/fetchCart",
+  async (_, thunkAPI) => {
+    try {
+      const response = await cartService.getCart();
+      return response;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        getErrorMessage(error, "Failed to fetch cart"),
+      );
+    }
+  },
+);
 
-export const addCartItem = createAsyncThunk("cart/addCartItem", async (payload, thunkAPI) => {
-  try {
-    const response = await cartService.addCartItem(payload);
-    return response;
-  } catch (error) {
-    return thunkAPI.rejectWithValue(getErrorMessage(error, "Failed to add item to cart"));
-  }
-});
+export const addCartItem = createAsyncThunk(
+  "cart/addCartItem",
+  async (payload, thunkAPI) => {
+    try {
+      const response = await cartService.addCartItem(payload);
+      return response;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        getErrorMessage(error, "Failed to add item to cart"),
+      );
+    }
+  },
+);
 
 export const updateCartItemQuantity = createAsyncThunk(
   "cart/updateCartItemQuantity",
   async ({ cartItemId, quantity }, thunkAPI) => {
     try {
-      const response = await cartService.updateCartItemQuantity(cartItemId, quantity);
+      const response = await cartService.updateCartItemQuantity(
+        cartItemId,
+        quantity,
+      );
       return response;
     } catch (error) {
       return thunkAPI.rejectWithValue(
@@ -64,7 +77,9 @@ export const applyCartVoucher = createAsyncThunk(
         cart: cartResponse.data || null,
       };
     } catch (error) {
-      return thunkAPI.rejectWithValue(getErrorMessage(error, "Failed to apply voucher"));
+      return thunkAPI.rejectWithValue(
+        getErrorMessage(error, "Failed to apply voucher"),
+      );
     }
   },
 );

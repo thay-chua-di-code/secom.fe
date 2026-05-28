@@ -1,5 +1,9 @@
+import { useSelector } from "react-redux";
 import axiosClient from "../api/axiosClient";
 import { API_ENDPOINTS } from "../api/endPoint";
+import { logout } from "../redux/slice/authSlice";
+import { clearUserInfo } from "../redux/slice/userSlice";
+
 export const authService = {
   login: async (payload) => {
     try {
@@ -22,6 +26,17 @@ export const authService = {
       return result.data;
     } catch (e) {
       console.log(e?.response?.data);
+    }
+  },
+  logout: async (payload, dispatch) => {
+    try {
+      const result = await axiosClient.post(API_ENDPOINTS.AUTH.LOG_OUT);
+      dispatch(clearUserInfo());
+      dispatch(logout());
+      localStorage.removeItem("token");
+      return result.data;
+    } catch (e) {
+      console.error(e?.response?.data);
     }
   },
   register: async (payload) => {
@@ -54,6 +69,19 @@ export const authService = {
         payload,
       );
 
+      return result;
+    } catch (e) {
+      console.error(e?.response?.data);
+    }
+  },
+  change_password: async (payload) => {
+    try {
+      const result = await axiosClient.put(
+        API_ENDPOINTS.AUTH.CHANGE_PWD,
+        payload,
+      );
+
+      console.log(result);
       return result;
     } catch (e) {
       console.error(e?.response?.data);
