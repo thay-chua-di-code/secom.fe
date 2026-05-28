@@ -3,6 +3,7 @@ import logo from "../../../../assets/icons/logo.jpg";
 import UserDropdown from "../../../common/UserDropDown/index";
 import Cart from "../../../common/Cart/index";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import Button from "../../../common/Button/Button";
 export default function MainHeader() {
   const [openUser, setOpenUser] = useState(false);
@@ -17,7 +18,7 @@ export default function MainHeader() {
         </button>
 
         {/* LOGO */}
-        <div className="flex items-center gap-3">
+        <Link to="/" className="flex items-center gap-3">
           <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-xl bg-white p-1 shadow-md">
             <img
               src={logo}
@@ -33,7 +34,7 @@ export default function MainHeader() {
 
             <p className="text-xs text-sky-100">Secondhand E-Commerce</p>
           </div>
-        </div>
+        </Link>
 
         {/* SEARCH */}
         <div className="hidden max-w-3xl flex-1 lg:block">

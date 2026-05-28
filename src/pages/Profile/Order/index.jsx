@@ -6,8 +6,10 @@ import {
   Star,
   Truck,
 } from "lucide-react";
-import { useState } from "react";
-import './style.scss';
+import { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { userService } from "../../../service/userService";
+import "./style.scss";
 const orders = [
   {
     id: "#DH001",
@@ -42,6 +44,15 @@ const tabs = [
 
 const OrderHistory = () => {
   const [activeTab, setActiveTab] = useState("Tất Cả");
+  const { orderHistory } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+  const getOrder = async () => {
+    return await userService.getOrderPurchase(dispatch);
+  };
+
+  useEffect(() => {
+    getOrder();
+  }, [orderHistory]);
 
   return (
     <div className="order-history">

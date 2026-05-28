@@ -16,7 +16,7 @@ export const API_ENDPOINTS = {
   },
 
   ORDER: {
-    ORDER_PURCHASE: "/orders/purchase",
+    ORDER_PURCHASE: "/orders/purchased",
     ORDER_DETAIL: (id) => `/orders/${id}`,
   },
 
