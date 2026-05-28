@@ -34,9 +34,16 @@ export const API_ENDPOINTS = {
 
   DISCOVERY: {},
 
-  CHECKOUT: {},
+  CHECKOUT: {
+    CALCULATE: "/api/checkout/calculate",
+  },
 
   CHATS: {},
 
-  CART: {},
+  CART: {
+    GET_CG: "/api/cart",
+    ADD_ITEM: "/api/cart/items",
+    UPDATE_ITEM: (id) => `/api/cart/items/${id}`,
+    APPLY_VOUCHER: "/api/cart/voucher",
+  },
 };

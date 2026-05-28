@@ -4,7 +4,6 @@ import { ROUTES } from "../constants/routes";
 import Home from "../pages/Home/index";
 import AuthPage from "../pages/Auth/index";
 import DetailPage from "../pages/Profile";
-import CartPage from "../pages/Cart";
 
 export const publicRoutes = [
   // NORMAL PAGE
@@ -25,16 +24,6 @@ export const publicRoutes = [
       {
         index: true,
         element: <DetailPage />,
-      },
-    ],
-  },
-  {
-    path: ROUTES.CART,
-    element: <MainLayout />,
-    children: [
-      {
-        index: true,
-        element: <CartPage />,
       },
     ],
   },

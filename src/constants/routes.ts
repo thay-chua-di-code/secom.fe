@@ -6,8 +6,8 @@ export const ROUTES = {
   VERIFY: "/verify-email",
   //NORMAL
   HOME: "/",
+  CART: "/cart",
   DASHBOARD: "/dashboard",
   PRODUCT_DETAIL: "/product/:id",
-  CART: "/cart",
   PROFILE: "/profile/:id",
 };
