@@ -5,7 +5,7 @@ export const API_ENDPOINTS = {
     REGISTER: "/auth/register",
     CHANGE_PWD: "/auth/password",
     FORGOT_PWD: "/auth/forgot-password",
-    RESET_PWD: "/auth/password",
+    SET_PWD: "/auth/reset-password",
     VERIFY_EMAIL: "/auth/verify-email",
     RESEND_VERTIFICATION: "/auth/resend-vertification",
     LOG_OUT: "/auth/logout",
@@ -22,6 +22,10 @@ export const API_ENDPOINTS = {
 
   CATEGORY: {
     GET_CG: "/categories",
+  },
+
+  DICOVERY: {
+    HOME_PG: "/discovery/homepage",
   },
 
   PRODUCT: {

@@ -5,8 +5,8 @@ import createWebStorage from "redux-persist/es/storage/createWebStorage";
 
 import authReducer from "./slice/authSlice";
 import userReducer from "./slice/userSlice";
-import categoriesReducer from "./slice/categorySlice";
 import cartReducer from "./slice/cartSlice";
+import homeReducer from "./slice/homeSlice";
 
 const createNoopStorage = () => {
   return {
@@ -32,14 +32,14 @@ const storage =
 const rootReducer = combineReducers({
   auth: authReducer,
   user: userReducer,
-  categories: categoriesReducer,
   cart: cartReducer,
+  home: homeReducer,
 });
 
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["auth", "user", "categories"],
+  whitelist: ["auth", "user", "cart"],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

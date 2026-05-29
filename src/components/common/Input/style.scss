@@ -1,0 +1,139 @@
+s.custom-input {
+  display: flex;
+  flex-direction: column;
+
+  gap: 8px;
+
+  &__label {
+    font-size: 14px;
+    font-weight: 600;
+
+    color: #0f172a;
+
+    .required {
+      color: #ef4444;
+      margin-left: 4px;
+    }
+  }
+
+  &__wrapper {
+    position: relative;
+
+    width: 100%;
+    height: 50px;
+
+    display: flex;
+    align-items: center;
+
+    border-radius: 16px;
+
+    border: 1px solid #dbe2ea;
+
+    background: #ffffff;
+
+    overflow: hidden;
+
+    transition: all 0.25s ease;
+
+    &:focus-within {
+      border-color: #0284c7;
+
+      box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.1);
+    }
+
+    &.error {
+      border-color: #ef4444;
+    }
+
+    &.disabled {
+      opacity: 0.7;
+
+      background: #f8fafc;
+    }
+  }
+
+  &__icon {
+    width: 48px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #64748b;
+
+    flex-shrink: 0;
+  }
+
+  &__field {
+    flex: 1;
+
+    width: 100%;
+    height: 100%;
+
+    border: none;
+    outline: none;
+
+    background: transparent;
+
+    padding-right: 12px;
+
+    font-size: 15px;
+    font-weight: 500;
+
+    color: #0f172a;
+
+    &::placeholder {
+      color: #94a3b8;
+      font-weight: 400;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      background: transparent;
+    }
+
+    /* Remove number input arrows */
+    &[type="number"]::-webkit-inner-spin-button,
+    &[type="number"]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    &[type="number"] {
+      -moz-appearance: textfield;
+    }
+  }
+
+  &__action {
+    width: 42px;
+    height: 42px;
+
+    margin-right: 4px;
+
+    border-radius: 999px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #64748b;
+
+    flex-shrink: 0;
+
+    transition: 0.2s ease;
+
+    &:hover {
+      background: #f1f5f9;
+      color: #0f172a;
+    }
+  }
+
+  &__error {
+    font-size: 13px;
+    font-weight: 500;
+
+    color: #ef4444;
+
+    padding-left: 4px;
+  }
+}

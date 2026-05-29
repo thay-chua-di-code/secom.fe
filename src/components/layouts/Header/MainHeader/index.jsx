@@ -1,28 +1,48 @@
-import { Search, ShoppingCart, Menu, UserRound } from "lucide-react";
-import logo from "../../../../assets/icons/logo.jpg";
-import UserDropdown from "../../../common/UserDropDown/index";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { Search, ShoppingCart, Menu, UserRound } from "lucide-react";
+
+import logo from "../../../../assets/icons/logo.jpg";
+import UserDropdown from "../../../common/UserDropDown";
+import Cart from "../../../common/Cart";
 import Button from "../../../common/Button/Button";
+import Input from "../../../common/Input";
+
 import { fetchCart } from "../../../../redux/slice/cartSlice";
-import Cart from "../../../common/Cart/index";
 
 export default function MainHeader() {
   const dispatch = useDispatch();
+
   const [openUser, setOpenUser] = useState(false);
   const [openCart, setOpenCart] = useState(false);
+  const [keyword, setKeyword] = useState("");
+
   const { isAuthenticated } = useSelector((state) => state.auth);
-  const { items } = useSelector((state) => state.cart);
+  const { items = [] } = useSelector((state) => state.cart);
 
-  const cartCount = items.reduce((total, item) => total + (item.quantity || 0), 0);
+  const cartCount = items.reduce(
+    (total, item) => total + (item.quantity || 0),
+    0,
+  );
 
-  // Fetch cart when dropdown opens and user authenticated
+  const handleSearch = () => {
+    const trimmedKeyword = keyword.trim();
+
+    if (!trimmedKeyword) return;
+
+    console.log(trimmedKeyword);
+    // navigate(`/products?keyword=${encodeURIComponent(trimmedKeyword)}`);
+  };
+
   const handleCartToggle = () => {
     setOpenCart((prev) => {
       const nextOpen = !prev;
+
       if (nextOpen && isAuthenticated) {
         dispatch(fetchCart());
       }
+
       return nextOpen;
     });
   };
@@ -36,15 +56,13 @@ export default function MainHeader() {
   };
 
   return (
-    <div className="bg-sky-600 shadow-md">
+    <header className="border-b border-secom-600/40 bg-secom-500 shadow-md">
       <div className="container-custom flex h-20 items-center justify-between gap-4">
-        {/* MOBILE MENU */}
-        <button className="text-white lg:hidden">
+        <button className="text-white transition hover:opacity-80 lg:hidden">
           <Menu size={28} />
         </button>
 
-        {/* LOGO */}
-        <div className="flex items-center gap-3">
+        <Link to="/" className="flex items-center gap-3">
           <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-xl bg-white p-1 shadow-md">
             <img
               src={logo}
@@ -57,42 +75,44 @@ export default function MainHeader() {
             <h1 className="text-2xl font-extrabold tracking-wide text-white">
               Secom
             </h1>
-
-            <p className="text-xs text-sky-100">Secondhand E-Commerce</p>
+            <p className="text-xs text-secom-100">Secondhand E-Commerce</p>
           </div>
-        </div>
+        </Link>
 
-        {/* SEARCH */}
         <div className="hidden max-w-3xl flex-1 lg:block">
-          <div className="flex px-5 overflow-hidden rounded-lg bg-white shadow-lg">
-            <input
-              type="text"
-              placeholder="Search products..."
-              className="flex-1 px-5 py-3 text-sm text-slate-700 placeholder:text-slate-400 outline-none md:text-base"
-            />
-
-            <button className="m-1 flex h-12 w-14 items-center justify-center rounded-xl text-black ">
-              <Search size={20} />
-            </button>
-          </div>
+          <Input
+            type="text"
+            placeholder="Search products..."
+            value={keyword}
+            onChange={(e) => setKeyword(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleSearch();
+              }
+            }}
+            icon={Search}
+            clearable
+            className="header-search"
+          />
         </div>
 
-        {/* ACTIONS */}
         <div className="flex items-center gap-5">
-          {/* USER */}
           <div
-            className="relative hidden md:block"
+            className="relative"
             onClick={() => setOpenUser((prev) => !prev)}
           >
-            <button className="text-white transition hover:scale-105">
+            <Button variant="ghost" className="text-white hover:bg-white/10">
               <UserRound size={28} />
-            </button>
+            </Button>
 
             <UserDropdown user={user} open={openUser} />
           </div>
-          {/* CART */}
+
           <div className="relative" onClick={handleCartToggle}>
-            <Button variant="ghost" className="relative text-white hover:bg-white/10">
+            <Button
+              variant="ghost"
+              className="relative text-white hover:bg-white/10"
+            >
               <ShoppingCart size={30} />
 
               {isAuthenticated && cartCount > 0 ? (
@@ -107,20 +127,22 @@ export default function MainHeader() {
         </div>
       </div>
 
-      {/* MOBILE SEARCH */}
-      <div className="container-custom pb-5 lg:hidden ">
-        <div className="flex px-5 overflow-hidden rounded-lg bg-white shadow-lg">
-          <input
-            type="text"
-            placeholder="Search products..."
-            className="flex-1 px-5 py-3 text-sm text-slate-700 placeholder:text-slate-400 outline-none md:text-basee"
-          />
-
-          <button className="m-1 flex h-11 w-14 items-center justify-center rounded-xl  text-black">
-            <Search size={20} />
-          </button>
-        </div>
+      <div className="container-custom pb-5 lg:hidden">
+        <Input
+          type="text"
+          placeholder="Search products..."
+          value={keyword}
+          onChange={(e) => setKeyword(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              handleSearch();
+            }
+          }}
+          icon={Search}
+          clearable
+          className="header-search"
+        />
       </div>
-    </div>
+    </header>
   );
 }
