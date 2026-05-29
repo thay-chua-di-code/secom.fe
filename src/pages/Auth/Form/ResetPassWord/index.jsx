@@ -15,7 +15,7 @@ const ResetPassWord = () => {
   const handleSubmitResetPassword = async (e) => {
     e.preventDefault();
     const result = await authService.reset_pwd({ token, newPwd });
-    console.log(result);
+    console.log("Rs: ", result);
   };
 
   return (
@@ -37,7 +37,6 @@ const ResetPassWord = () => {
             sure to choose a strong and secure password to protect your account.
           </p>
         </div>
-
 
         {/* NEW PASSWORD */}
         <div className="form_group">

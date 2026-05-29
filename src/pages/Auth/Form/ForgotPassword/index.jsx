@@ -13,10 +13,11 @@ export default function ForgotPasswordForm() {
   const handleSubmitForgotPassword = async (e) => {
     e.preventDefault();
     const result = await authService.forgot_pwd({ email: email });
-    if (result.data.success) {
-      toast.success("Password reset link sent to your email.");
+    console.log(result)
+    if (result.success) {
+      toast.success(result.message || "Password reset link sent to your email.");
     } else {
-      toast.error("Failed to send password reset link.");
+      toast.error(result.message || "Failed to send password reset link.");
     }
   };
 

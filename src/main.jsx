@@ -4,12 +4,15 @@ import "./index.scss";
 import "./styles/tailwind.css";
 import "./styles/main.scss";
 import "react-loading-skeleton/dist/skeleton.css";
+import { Toaster } from "react-hot-toast";
 import App from "./App";
 import store from "./redux/store";
 import ReduxProvider from "./providers/ReduxProvider";
 import { setAuthToken } from "./api/axiosClient";
+
 createRoot(document.getElementById("root")).render(
   <ReduxProvider>
+    <Toaster position="top-right" />
     <App />
   </ReduxProvider>,
 );

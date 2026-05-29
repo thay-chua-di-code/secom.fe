@@ -2,42 +2,158 @@ img {
   display: block;
 }
 
-.banner-dots {
-  position: absolute;
+.banner {
+  width: 100%;
 
-  left: 50%;
-  bottom: 18px;
+  &__container {
+    position: relative;
 
-  transform: translateX(-50%);
+    width: 100%;
+    height: 220px;
 
-  display: flex;
+    overflow: hidden;
 
-  gap: 10px;
+    border-radius: 20px;
 
-  z-index: 30;
-}
+    @media (min-width: 640px) {
+      height: 320px;
+    }
 
-.dot {
-  width: 12px;
-  height: 12px;
+    @media (min-width: 768px) {
+      height: 420px;
+    }
 
-  border-radius: 999px;
-
-  border: none;
-
-  background: rgba(255, 255, 255, 0.5);
-
-  cursor: pointer;
-
-  transition: 0.25s ease;
-
-  &:hover {
-    background: rgba(255, 255, 255, 0.8);
+    @media (min-width: 1024px) {
+      height: 520px;
+    }
   }
 
-  &.active {
-    width: 28px;
+  &__slides {
+    position: relative;
 
-    background: white;
+    width: 100%;
+    height: 100%;
+  }
+
+  &__image {
+    position: absolute;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    opacity: 0;
+    visibility: hidden;
+
+    transition:
+      opacity 0.7s ease,
+      transform 0.7s ease;
+
+    transform: scale(1.03);
+
+    z-index: 1;
+
+    &.active {
+      opacity: 1;
+      visibility: visible;
+
+      transform: scale(1);
+
+      z-index: 5;
+    }
+  }
+
+  &__overlay {
+    position: absolute;
+
+    inset: 0;
+
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.25), transparent);
+
+    z-index: 10;
+  }
+
+  &__btn {
+    position: absolute;
+
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    z-index: 20;
+
+    width: 48px;
+    height: 48px;
+
+    border-radius: 999px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: rgba(0, 0, 0, 0.35);
+
+    color: white;
+
+    backdrop-filter: blur(6px);
+
+    transition: 0.25s ease;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.55);
+
+      transform: translateY(-50%) scale(1.05);
+    }
+
+    &--prev {
+      left: 16px;
+    }
+
+    &--next {
+      right: 16px;
+    }
+  }
+
+  &__dots {
+    position: absolute;
+
+    left: 50%;
+    bottom: 18px;
+
+    transform: translateX(-50%);
+
+    display: flex;
+
+    gap: 10px;
+
+    z-index: 20;
+  }
+
+  &__dot {
+    width: 12px;
+    height: 12px;
+
+    border-radius: 999px;
+
+    border: none;
+
+    background: rgba(255, 255, 255, 0.5);
+
+    cursor: pointer;
+
+    transition: 0.25s ease;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.8);
+    }
+
+    &.active {
+      width: 28px;
+
+      background: white;
+    }
   }
 }

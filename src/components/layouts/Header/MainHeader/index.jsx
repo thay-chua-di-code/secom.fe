@@ -1,18 +1,25 @@
 import { Search, ShoppingCart, Menu, UserRound } from "lucide-react";
 import logo from "../../../../assets/icons/logo.jpg";
-import UserDropdown from "../../../common/UserDropDown/index";
-import Cart from "../../../common/Cart/index";
+import UserDropdown from "../../../common/UserDropDown";
+import Cart from "../../../common/Cart";
+import Button from "../../../common/Button/Button";
+import Input from "../../../common/Input";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import Button from "../../../common/Button/Button";
 import { fetchCart } from "../../../../redux/slice/cartSlice";
 import { Link } from "react-router-dom";
 
 export default function MainHeader() {
   const dispatch = useDispatch();
+
   const [openUser, setOpenUser] = useState(false);
+
   const [openCart, setOpenCart] = useState(false);
+
+  const [keyword, setKeyword] = useState("");
+
   const { isAuthenticated } = useSelector((state) => state.auth);
+
   const { items } = useSelector((state) => state.cart);
 
   const cartCount = items.reduce(
@@ -38,19 +45,16 @@ export default function MainHeader() {
     });
   };
 
-  const user = isAuthenticated
-    ? {
-        id: 123,
-        name: "Long Bua Dinh",
-        email: "longdev@gmail.com",
-        avatar:
-          "https://static.wikitide.net/deathbattlewiki/5/51/Portrait.homelander.png",
-      }
-    : null;
+  const handleSearch = () => {
+    console.log(keyword);
+
+    // navigate(`/products?keyword=${keyword}`)
+  };
 
   return (
-    <div className="border-b border-secom-600/40 bg-secom-500 shadow-md">
+    <header className="border-b border-secom-600/40 bg-secom-500 shadow-md">
       <div className="container-custom flex h-20 items-center justify-between gap-4">
+        {/* MOBILE MENU */}
         <button className="text-white lg:hidden hover:opacity-80">
           <Menu size={28} />
         </button>
@@ -72,20 +76,25 @@ export default function MainHeader() {
           </div>
         </Link>
 
+        {/* DESKTOP SEARCH */}
         <div className="hidden max-w-3xl flex-1 lg:block">
-          <div className="flex overflow-hidden rounded-xl bg-white px-3 shadow-lg focus-within:ring-2 focus-within:ring-secom-300">
-            <input
-              type="text"
-              placeholder="Search products..."
-              className="flex-1 px-3 py-3 text-sm text-gray-700 placeholder:text-gray-400 outline-none md:text-base"
-            />
-
-            <button className="m-1 flex h-11 w-12 items-center justify-center rounded-lg text-secom-600 hover:bg-secom-50">
-              <Search size={20} />
-            </button>
-          </div>
+          <Input
+            type="text"
+            placeholder="Search products..."
+            value={keyword}
+            onChange={(e) => setKeyword(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleSearch();
+              }
+            }}
+            icon={Search}
+            clearable
+            className="header-search"
+          />
         </div>
 
+        {/* RIGHT ACTIONS */}
         <div className="flex items-center gap-5">
           <div
             className="relative"
@@ -98,6 +107,7 @@ export default function MainHeader() {
             <UserDropdown open={openUser} />
           </div>
 
+          {/* CART */}
           <div className="relative" onClick={handleCartToggle}>
             <Button
               variant="ghost"
@@ -117,19 +127,18 @@ export default function MainHeader() {
         </div>
       </div>
 
+      {/* MOBILE SEARCH */}
       <div className="container-custom pb-5 lg:hidden">
-        <div className="flex overflow-hidden rounded-xl bg-white px-3 shadow-lg focus-within:ring-2 focus-within:ring-secom-300">
-          <input
-            type="text"
-            placeholder="Search products..."
-            className="flex-1 px-3 py-3 text-sm text-gray-700 placeholder:text-gray-400 outline-none"
-          />
-
-          <button className="m-1 flex h-11 w-12 items-center justify-center rounded-lg text-secom-600 hover:bg-secom-50">
-            <Search size={20} />
-          </button>
-        </div>
+        <Input
+          type="text"
+          placeholder="Search products..."
+          value={keyword}
+          onChange={(e) => setKeyword(e.target.value)}
+          icon={Search}
+          clearable
+          className="header-search"
+        />
       </div>
-    </div>
+    </header>
   );
 }

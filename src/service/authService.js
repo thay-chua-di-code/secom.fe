@@ -57,7 +57,7 @@ export const authService = {
         API_ENDPOINTS.AUTH.SET_PWD,
         payload,
       );
-      return result;
+      return result.data;
     } catch (e) {
       console.error(e?.response?.data);
     }
@@ -68,7 +68,7 @@ export const authService = {
         API_ENDPOINTS.AUTH.FORGOT_PWD,
         payload,
       );
-      return result;
+      return result.data;
     } catch (e) {
       console.error(e?.response?.data);
     }
