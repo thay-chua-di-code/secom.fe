@@ -24,6 +24,10 @@ export const API_ENDPOINTS = {
     GET_CG: "/categories",
   },
 
+  DICOVERY: {
+    HOME_PG: "/discovery/homepage",
+  },
+
   PRODUCT: {
     LIST: "/products",
     DETAIL: (id) => `/products/${id}`,

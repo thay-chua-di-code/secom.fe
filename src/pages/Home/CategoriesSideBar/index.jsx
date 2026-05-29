@@ -1,19 +1,12 @@
 import "./style.scss";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchCategories } from "../../../redux/slice/categorySlice";
 import CategorySidebarSkeleton from "./Skeleton";
 
 export default function CategorySidebar() {
-  const dispatch = useDispatch();
-
-  const { categories = [], loading } = useSelector((state) => state.categories);
-
-  useEffect(() => {
-    if (!categories?.length) {
-      dispatch(fetchCategories());
-    }
-  }, [dispatch, categories.length]);
+  const { loading, featuredCategories: categories } = useSelector(
+    (state) => state.home,
+  );
 
   if (loading) return <CategorySidebarSkeleton />;
 

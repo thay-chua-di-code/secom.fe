@@ -1,85 +1,103 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+
+import { useSelector } from "react-redux";
 
 import "./styles.scss";
 
-const Banner = ({ images = [] }) => {
+const Banner = () => {
+  const { banners } = useSelector((state) => state.home);
+
   const [currentSlide, setCurrentSlide] = useState(0);
 
+ 
+  const bannerImages =
+    banners?.length > 0
+      ? banners
+      : [
+          "https://images.unsplash.com/photo-1523275335684-37898b6baf30",
+          "https://images.unsplash.com/photo-1505740420928-5e560c06d30e",
+          "https://images.unsplash.com/photo-1491553895911-0055eca6402d",
+        ];
+
   useEffect(() => {
-    if (!images.length) return;
+    if (!bannerImages.length) return;
 
     const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+      setCurrentSlide((prev) =>
+        prev === bannerImages.length - 1 ? 0 : prev + 1,
+      );
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [images]);
+  }, [bannerImages.length]);
 
+  // prev
   const goToPrevious = () => {
-    setCurrentSlide((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+    setCurrentSlide((prev) =>
+      prev === 0 ? bannerImages.length - 1 : prev - 1,
+    );
   };
 
+  // next
   const goToNext = () => {
-    setCurrentSlide((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+    setCurrentSlide((prev) =>
+      prev === bannerImages.length - 1 ? 0 : prev + 1,
+    );
   };
 
+  // dots
   const goToSlide = (index) => {
     setCurrentSlide(index);
   };
 
-  if (!images.length) {
-    return null;
-  }
-
   return (
-    <div className="w-full relative">
-      <div className="relative w-full h-56 sm:h-80 md:h-96 lg:h-[500px] overflow-hidden ">
-        {/* SLIDES */}
-        <div className="relative w-full h-full">
-          {images.map((image, index) => (
+    <section className="banner">
+      <div className="banner__container">
+        {/* Images */}
+        <div className="banner__slides">
+          {bannerImages.map((image, index) => (
             <img
               key={index}
               src={image}
               alt={`Banner ${index + 1}`}
-              className={`absolute top-0 left-0 w-full h-full object-cover transition-all duration-600 ease-in-out ${
-                index === currentSlide
-                  ? "opacity-100 visibility-visible z-20"
-                  : "opacity-0 visibility-hidden z-10"
+              className={`banner__image ${
+                index === currentSlide ? "active" : ""
               }`}
             />
           ))}
         </div>
 
-        {/* Previous Button */}
+        {/* Overlay */}
+        <div className="banner__overlay" />
+
+        {/* Previous */}
         <button
-          className="absolute top-1/2 left-4 z-30 w-12 h-12 rounded-full bg-black/35 hover:bg-black/55 text-white text-2xl transition-all duration-200 hover:scale-105 active:scale-95 backdrop-blur-sm flex items-center justify-center"
+          className="banner__btn banner__btn--prev"
           onClick={goToPrevious}
-          aria-label="Previous Slide"
         >
-          &#10094;
+          <ChevronLeft size={24} />
         </button>
 
-        {/* Next Button */}
-        <button
-          className="absolute top-1/2 right-4 z-30 w-12 h-12 rounded-full bg-black/35 hover:bg-black/55 text-white text-2xl transition-all duration-200 hover:scale-105 active:scale-95 backdrop-blur-sm flex items-center justify-center"
-          onClick={goToNext}
-          aria-label="Next Slide"
-        >
-          &#10095;
+        {/* Next */}
+        <button className="banner__btn banner__btn--next" onClick={goToNext}>
+          <ChevronRight size={24} />
         </button>
 
-        {/* <div className="banner-dots">
-          {images.map((_, index) => (
+        {/* Dots */}
+        <div className="banner__dots">
+          {bannerImages.map((_, index) => (
             <button
               key={index}
-              className={`dot ${index === currentSlide ? "active" : ""}`}
               onClick={() => goToSlide(index)}
-              aria-label={`Go to slide ${index + 1}`}
+              className={`banner__dot ${
+                currentSlide === index ? "active" : ""
+              }`}
             />
           ))}
-        </div> */}
+        </div>
       </div>
-    </div>
+    </section>
   );
 };
 
