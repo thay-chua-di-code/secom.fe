@@ -6,8 +6,6 @@ export const dicoveryService = {
     try {
       const result = await axiosClient.get(API_ENDPOINTS.DICOVERY.HOME_PG);
 
-      console.log("Discovery: ", result);
-
       return result?.data;
     } catch (e) {
       console.log(e?.response?.data);

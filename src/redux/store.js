@@ -7,6 +7,7 @@ import authReducer from "./slice/authSlice";
 import userReducer from "./slice/userSlice";
 import cartReducer from "./slice/cartSlice";
 import homeReducer from "./slice/homeSlice";
+import notificationReducer from "./slice/notificationSlice";
 
 const createNoopStorage = () => {
   return {
@@ -34,6 +35,7 @@ const rootReducer = combineReducers({
   user: userReducer,
   cart: cartReducer,
   home: homeReducer,
+  notification: notificationReducer,
 });
 
 const persistConfig = {

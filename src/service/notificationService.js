@@ -1,25 +1,29 @@
-import axiosClient from "./axiosClient";
+import axiosClient from "../api/axiosClient";
 import { API_ENDPOINTS } from "../api/endPoint";
 export const notificationService = {
   getNotifications: async (payload) => {
-    const response = await axiosClient.get(
+    const result = await axiosClient.get(
       API_ENDPOINTS.NOTIFICATION.GET,
       payload,
     );
 
-    return response.data;
+    return result.data;
   },
 
   markAsRead: async (id) => {
-    const response = await axiosClient.patch(`/notifications/${id}/read`);
+    try {
+      const result = await axiosClient.patch(`/notifications/${id}/read`);
 
-    return response.data;
+      return result.data;
+    } catch (e) {
+      throw new Error(e?.response?.data);
+    }
   },
 
   deleteNotification: async (id) => {
     try {
-      const response = await axiosClient.delete(`/notifications/${id}`);
-      return response.data;
+      const result = await axiosClient.delete(`/notifications/${id}`);
+      return result.data;
     } catch (e) {
       throw new Error(e?.response?.data);
     }
