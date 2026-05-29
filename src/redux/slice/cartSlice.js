@@ -11,21 +11,36 @@ const getErrorMessage = (error, fallbackMessage) => {
   return fallbackMessage;
 };
 
-const mapCartState = (state, cartData) => {
+const unwrapResponseData = (payload) => {
+  return payload?.data ?? payload ?? null;
+};
+
+const extractCartItems = (cartData) => {
+  const items =
+    cartData?.items ??
+    cartData?.cartItems ??
+    cartData?.cart_items ??
+    [];
+
+  return Array.isArray(items) ? items : [];
+};
+
+const mapCartState = (state, payload) => {
+  const cartData = unwrapResponseData(payload);
+
   state.cart = cartData || null;
   state.items = cartData?.items || [];
-  state.voucherCode = cartData?.voucherCode || null;
-  state.subtotal = cartData?.subtotal || 0;
-  state.discountAmount = cartData?.discountAmount || 0;
-  state.finalTotal = cartData?.finalTotal || 0;
+  state.voucherCode = cartData?.voucherCode ?? null;
+  state.subtotal = cartData?.subtotal ?? 0;
+  state.discountAmount = cartData?.discountAmount ?? 0;
+  state.finalTotal = cartData?.finalTotal ?? 0;
 };
 
 export const fetchCart = createAsyncThunk(
   "cart/fetchCart",
   async (_, thunkAPI) => {
     try {
-      const response = await cartService.getCart();
-      return response;
+      return await cartService.getCart();
     } catch (error) {
       return thunkAPI.rejectWithValue(
         getErrorMessage(error, "Failed to fetch cart"),
@@ -38,8 +53,7 @@ export const addCartItem = createAsyncThunk(
   "cart/addCartItem",
   async (payload, thunkAPI) => {
     try {
-      const response = await cartService.addCartItem(payload);
-      return response;
+      return await cartService.addCartItem(payload);
     } catch (error) {
       return thunkAPI.rejectWithValue(
         getErrorMessage(error, "Failed to add item to cart"),
@@ -52,11 +66,7 @@ export const updateCartItemQuantity = createAsyncThunk(
   "cart/updateCartItemQuantity",
   async ({ cartItemId, quantity }, thunkAPI) => {
     try {
-      const response = await cartService.updateCartItemQuantity(
-        cartItemId,
-        quantity,
-      );
-      return response;
+      return await cartService.updateCartItemQuantity(cartItemId, quantity);
     } catch (error) {
       return thunkAPI.rejectWithValue(
         getErrorMessage(error, "Failed to update cart item quantity"),
@@ -73,8 +83,8 @@ export const applyCartVoucher = createAsyncThunk(
       const cartResponse = await cartService.getCart();
 
       return {
-        summary: summaryResponse.data || null,
-        cart: cartResponse.data || null,
+        summary: unwrapResponseData(summaryResponse),
+        cart: cartResponse,
       };
     } catch (error) {
       return thunkAPI.rejectWithValue(
@@ -88,8 +98,7 @@ export const calculateCheckoutSummary = createAsyncThunk(
   "cart/calculateCheckoutSummary",
   async (_, thunkAPI) => {
     try {
-      const response = await cartService.calculateCheckout();
-      return response;
+      return await cartService.calculateCheckout();
     } catch (error) {
       return thunkAPI.rejectWithValue(
         getErrorMessage(error, "Failed to calculate checkout summary"),
@@ -123,6 +132,8 @@ const cartSlice = createSlice({
       state.subtotal = 0;
       state.discountAmount = 0;
       state.finalTotal = 0;
+      state.loading = false;
+      state.actionLoading = false;
       state.error = null;
     },
     setVoucherCode: (state, action) => {
@@ -137,36 +148,39 @@ const cartSlice = createSlice({
       })
       .addCase(fetchCart.fulfilled, (state, action) => {
         state.loading = false;
-        mapCartState(state, action.payload?.data || null);
+        mapCartState(state, action.payload);
       })
       .addCase(fetchCart.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
+
       .addCase(addCartItem.pending, (state) => {
         state.actionLoading = true;
         state.error = null;
       })
       .addCase(addCartItem.fulfilled, (state, action) => {
         state.actionLoading = false;
-        mapCartState(state, action.payload?.data || null);
+        mapCartState(state, action.payload);
       })
       .addCase(addCartItem.rejected, (state, action) => {
         state.actionLoading = false;
         state.error = action.payload;
       })
+
       .addCase(updateCartItemQuantity.pending, (state) => {
         state.actionLoading = true;
         state.error = null;
       })
       .addCase(updateCartItemQuantity.fulfilled, (state, action) => {
         state.actionLoading = false;
-        mapCartState(state, action.payload?.data || null);
+        mapCartState(state, action.payload);
       })
       .addCase(updateCartItemQuantity.rejected, (state, action) => {
         state.actionLoading = false;
         state.error = action.payload;
       })
+
       .addCase(applyCartVoucher.pending, (state) => {
         state.actionLoading = true;
         state.error = null;
@@ -174,19 +188,20 @@ const cartSlice = createSlice({
       .addCase(applyCartVoucher.fulfilled, (state, action) => {
         state.actionLoading = false;
         state.checkoutSummary = action.payload?.summary || null;
-        mapCartState(state, action.payload?.cart || null);
+        mapCartState(state, action.payload?.cart);
       })
       .addCase(applyCartVoucher.rejected, (state, action) => {
         state.actionLoading = false;
         state.error = action.payload;
       })
+
       .addCase(calculateCheckoutSummary.pending, (state) => {
         state.actionLoading = true;
         state.error = null;
       })
       .addCase(calculateCheckoutSummary.fulfilled, (state, action) => {
         state.actionLoading = false;
-        state.checkoutSummary = action.payload?.data || null;
+        state.checkoutSummary = unwrapResponseData(action.payload);
       })
       .addCase(calculateCheckoutSummary.rejected, (state, action) => {
         state.actionLoading = false;
