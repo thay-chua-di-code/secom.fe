@@ -5,6 +5,7 @@ export const ROUTES = {
   FORGOT_PWD: "/forgot-password",
   VERIFY: "/verify-email",
   CHANGE_PWD: "/password",
+  RS_PWD: "/reset-password",
   //NORMAL
   HOME: "/",
   CART: "/cart",

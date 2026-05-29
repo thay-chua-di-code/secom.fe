@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Button from "../../../common/Button/Button";
 import { fetchCart } from "../../../../redux/slice/cartSlice";
+import { Link } from "react-router-dom";
 
 export default function MainHeader() {
   const dispatch = useDispatch();
@@ -14,7 +15,10 @@ export default function MainHeader() {
   const { isAuthenticated } = useSelector((state) => state.auth);
   const { items } = useSelector((state) => state.cart);
 
-  const cartCount = items.reduce((total, item) => total + (item.quantity || 0), 0);
+  const cartCount = items.reduce(
+    (total, item) => total + (item.quantity || 0),
+    0,
+  );
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -51,7 +55,7 @@ export default function MainHeader() {
           <Menu size={28} />
         </button>
 
-        <div className="flex items-center gap-3">
+        <Link to="/" className="flex items-center gap-3">
           <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-xl bg-white p-1 shadow-md">
             <img
               src={logo}
@@ -61,7 +65,9 @@ export default function MainHeader() {
           </div>
 
           <div className="hidden sm:block">
-            <h1 className="text-2xl font-extrabold tracking-wide text-white">Secom</h1>
+            <h1 className="text-2xl font-extrabold tracking-wide text-white">
+              Secom
+            </h1>
             <p className="text-xs text-secom-100">Secondhand E-Commerce</p>
           </div>
         </Link>
@@ -81,7 +87,10 @@ export default function MainHeader() {
         </div>
 
         <div className="flex items-center gap-5">
-          <div className="relative" onClick={() => setOpenUser((prev) => !prev)}>
+          <div
+            className="relative"
+            onClick={() => setOpenUser((prev) => !prev)}
+          >
             <Button variant="ghost" className="text-white hover:bg-white/10">
               <UserRound size={28} />
             </Button>
@@ -90,7 +99,10 @@ export default function MainHeader() {
           </div>
 
           <div className="relative" onClick={handleCartToggle}>
-            <Button variant="ghost" className="relative text-white hover:bg-white/10">
+            <Button
+              variant="ghost"
+              className="relative text-white hover:bg-white/10"
+            >
               <ShoppingCart size={30} />
 
               {isAuthenticated && cartCount > 0 ? (

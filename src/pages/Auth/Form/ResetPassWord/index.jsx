@@ -1,30 +1,28 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { Mail } from "lucide-react";
 import logo from "../../../../assets/icons/logo.jpg";
 import { authService } from "../../../../service/authService";
 import Button from "../../../../components/common/Button/Button";
-import toast from "react-hot-toast";
+
 import "./style.scss";
 
-export default function ForgotPasswordForm() {
-  const [email, setEmail] = useState("");
+const ResetPassWord = () => {
+  const [searchParams] = useSearchParams();
+  const token = searchParams.get("token");
+  const [newPwd, setPwd] = useState("");
 
-  const handleSubmitForgotPassword = async (e) => {
+  const handleSubmitResetPassword = async (e) => {
     e.preventDefault();
-    const result = await authService.forgot_pwd({ email: email });
-    if (result.data.success) {
-      toast.success("Password reset link sent to your email.");
-    } else {
-      toast.error("Failed to send password reset link.");
-    }
+    const result = await authService.reset_pwd({ token, newPwd });
+    console.log(result);
   };
 
   return (
     <div className="forgot_password_container">
       <form
         className="forgot_password_wrapper"
-        onSubmit={handleSubmitForgotPassword}
+        onSubmit={handleSubmitResetPassword}
       >
         {/* LOGO */}
         <div className="form_header">
@@ -32,27 +30,28 @@ export default function ForgotPasswordForm() {
             <img src={logo} alt="Logo" />
           </Link>
 
-          <h2>Forgot Password?</h2>
+          <h2>Reset Your Password?</h2>
 
           <p>
-            Enter your email address and we’ll send you a link to reset your
-            password.
+            Enter your new password and confirm it to reset your password. Make
+            sure to choose a strong and secure password to protect your account.
           </p>
         </div>
 
-        {/* EMAIL */}
+
+        {/* NEW PASSWORD */}
         <div className="form_group">
-          <label>Your Email</label>
+          <label>New Password</label>
 
           <div className="input_wrapper">
             <Mail size={18} />
 
             <input
-              type="email"
-              placeholder="name@gmail.com"
+              type="password"
+              placeholder="Enter your new password"
               required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={newPwd}
+              onChange={(e) => setPwd(e.target.value)}
             />
           </div>
         </div>
@@ -60,7 +59,7 @@ export default function ForgotPasswordForm() {
         {/* BUTTON */}
         <div className="form_actions">
           <Button type="submit" fullWidth={true}>
-            Send Reset Link
+            Reset Password
           </Button>
         </div>
 
@@ -74,4 +73,6 @@ export default function ForgotPasswordForm() {
       </form>
     </div>
   );
-}
+};
+
+export default ResetPassWord;
