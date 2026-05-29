@@ -1,19 +1,13 @@
 import { Search, ShoppingCart, Menu, UserRound } from "lucide-react";
-
 import logo from "../../../../assets/icons/logo.jpg";
-
 import UserDropdown from "../../../common/UserDropDown";
 import Cart from "../../../common/Cart";
 import Button from "../../../common/Button/Button";
 import Input from "../../../common/Input";
-
 import { useEffect, useState } from "react";
-
 import { useDispatch, useSelector } from "react-redux";
-
-import { Link } from "react-router-dom";
-
 import { fetchCart } from "../../../../redux/slice/cartSlice";
+import { Link } from "react-router-dom";
 
 export default function MainHeader() {
   const dispatch = useDispatch();
@@ -65,7 +59,6 @@ export default function MainHeader() {
           <Menu size={28} />
         </button>
 
-        {/* LOGO */}
         <Link to="/" className="flex items-center gap-3">
           <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-xl bg-white p-1 shadow-md">
             <img
@@ -79,7 +72,6 @@ export default function MainHeader() {
             <h1 className="text-2xl font-extrabold tracking-wide text-white">
               Secom
             </h1>
-
             <p className="text-xs text-secom-100">Secondhand E-Commerce</p>
           </div>
         </Link>
@@ -104,7 +96,6 @@ export default function MainHeader() {
 
         {/* RIGHT ACTIONS */}
         <div className="flex items-center gap-5">
-          {/* USER */}
           <div
             className="relative"
             onClick={() => setOpenUser((prev) => !prev)}

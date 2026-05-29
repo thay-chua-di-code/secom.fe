@@ -51,13 +51,24 @@ export const authService = {
       console.error(e?.response?.data);
     }
   },
+  reset_pwd: async (payload) => {
+    try {
+      const result = await axiosClient.post(
+        API_ENDPOINTS.AUTH.SET_PWD,
+        payload,
+      );
+      return result.data;
+    } catch (e) {
+      console.error(e?.response?.data);
+    }
+  },
   forgot_pwd: async (payload) => {
     try {
       const result = await axiosClient.post(
         API_ENDPOINTS.AUTH.FORGOT_PWD,
         payload,
       );
-      return result;
+      return result.data;
     } catch (e) {
       console.error(e?.response?.data);
     }

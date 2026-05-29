@@ -10,9 +10,9 @@ import store from "./redux/store";
 import ReduxProvider from "./providers/ReduxProvider";
 import { setAuthToken } from "./api/axiosClient";
 
-<Toaster position="top-right" />;
 createRoot(document.getElementById("root")).render(
   <ReduxProvider>
+    <Toaster position="top-right" />
     <App />
   </ReduxProvider>,
 );
