@@ -2,6 +2,7 @@ import { Outlet } from "react-router-dom";
 
 import Header from "../components/layouts/Header";
 import Footer from "../components/layouts/Footer";
+import ChatBox from "../components/common/Chatbox";
 
 export default function MainLayout() {
   return (
@@ -13,6 +14,8 @@ export default function MainLayout() {
       </main>
 
       <Footer />
+
+      <ChatBox />
     </div>
   );
 }

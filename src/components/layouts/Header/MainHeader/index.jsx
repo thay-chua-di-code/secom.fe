@@ -1,37 +1,37 @@
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { Search, ShoppingCart, Menu, UserRound } from "lucide-react";
 import logo from "../../../../assets/icons/logo.jpg";
 import UserDropdown from "../../../common/UserDropDown";
-import Cart from "../../../common/Cart";
 import Button from "../../../common/Button/Button";
 import Input from "../../../common/Input";
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import Cart from "../../../common/Cart/index";
 import { fetchCart } from "../../../../redux/slice/cartSlice";
-import { Link } from "react-router-dom";
 
 export default function MainHeader() {
   const dispatch = useDispatch();
 
   const [openUser, setOpenUser] = useState(false);
-
   const [openCart, setOpenCart] = useState(false);
-
   const [keyword, setKeyword] = useState("");
 
   const { isAuthenticated } = useSelector((state) => state.auth);
-
-  const { items } = useSelector((state) => state.cart);
+  const { items = [] } = useSelector((state) => state.cart);
 
   const cartCount = items.reduce(
     (total, item) => total + (item.quantity || 0),
     0,
   );
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      dispatch(fetchCart());
-    }
-  }, [dispatch, isAuthenticated]);
+  const handleSearch = () => {
+    const trimmedKeyword = keyword.trim();
+
+    if (!trimmedKeyword) return;
+
+    console.log(trimmedKeyword);
+    // navigate(`/products?keyword=${encodeURIComponent(trimmedKeyword)}`);
+  };
 
   const handleCartToggle = () => {
     setOpenCart((prev) => {
@@ -45,17 +45,18 @@ export default function MainHeader() {
     });
   };
 
-  const handleSearch = () => {
-    console.log(keyword);
-
-    // navigate(`/products?keyword=${keyword}`)
+  const user = {
+    id: 123,
+    name: "Long Bua Dinh",
+    email: "longdev@gmail.com",
+    avatar:
+      "https://static.wikitide.net/deathbattlewiki/5/51/Portrait.homelander.png",
   };
 
   return (
     <header className="border-b border-secom-600/40 bg-secom-500 shadow-md">
       <div className="container-custom flex h-20 items-center justify-between gap-4">
-        {/* MOBILE MENU */}
-        <button className="text-white lg:hidden hover:opacity-80">
+        <button className="text-white transition hover:opacity-80 lg:hidden">
           <Menu size={28} />
         </button>
 
@@ -76,7 +77,6 @@ export default function MainHeader() {
           </div>
         </Link>
 
-        {/* DESKTOP SEARCH */}
         <div className="hidden max-w-3xl flex-1 lg:block">
           <Input
             type="text"
@@ -94,7 +94,6 @@ export default function MainHeader() {
           />
         </div>
 
-        {/* RIGHT ACTIONS */}
         <div className="flex items-center gap-5">
           <div
             className="relative"
@@ -104,10 +103,9 @@ export default function MainHeader() {
               <UserRound size={28} />
             </Button>
 
-            <UserDropdown open={openUser} />
+            <UserDropdown user={user} open={openUser} />
           </div>
 
-          {/* CART */}
           <div className="relative" onClick={handleCartToggle}>
             <Button
               variant="ghost"
@@ -127,13 +125,17 @@ export default function MainHeader() {
         </div>
       </div>
 
-      {/* MOBILE SEARCH */}
       <div className="container-custom pb-5 lg:hidden">
         <Input
           type="text"
           placeholder="Search products..."
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              handleSearch();
+            }
+          }}
           icon={Search}
           clearable
           className="header-search"
