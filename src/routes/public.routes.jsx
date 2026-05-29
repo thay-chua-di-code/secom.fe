@@ -63,6 +63,11 @@ export const publicRoutes = [
         path: ROUTES.VERIFY,
         element: <AuthPage />,
       },
+
+      {
+        path: ROUTES.RS_PWD,
+        element: <AuthPage />,
+      },
     ],
   },
 ];
