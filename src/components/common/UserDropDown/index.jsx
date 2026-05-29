@@ -2,6 +2,8 @@ import { Package, Heart, LogOut, User } from "lucide-react";
 import Button from "../Button/Button";
 import "./style.scss";
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { authService } from "../../../service/authService";
 
 const UserNotLogin = () => {
   return (
@@ -16,23 +18,34 @@ const UserNotLogin = () => {
     </div>
   );
 };
-export default function UserDropdown({ user, open }) {
+export default function UserDropdown({ open }) {
   if (!open) return null;
 
-  const handleLogout = () => {
-    alert("Hello");
+  const userInfo = useSelector((state) => state.user.userInfo);
+  const auth = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  const handleLogout = async () => {
+    await authService.logout(auth.refreshToken, dispatch);
   };
   return (
-    <div className={`user-dropdown ${!user ? "guest" : ""}`}>
+    <div className={`user-dropdown ${!userInfo ? "guest" : ""}`}>
       {/* HEADER */}
-      {user ? (
+      {userInfo ? (
         <div className="user-dropdown__header">
           <div className="user-info">
-            <img src={user.avatar} alt="avatar" className="user-avatar" />
+            <img
+              src={
+                userInfo.avatarUrl === null
+                  ? "https://images.icon-icons.com/1378/PNG/512/avatardefault_92824.png"
+                  : userInfo.avatarUrl
+              }
+              alt="avatar"
+              className="user-avatar"
+            />
 
             <div className="user-content">
-              <h3>{user.name}</h3>
-              <p>{user.email}</p>
+              <h3>{userInfo.name}</h3>
+              <p>{userInfo.email}</p>
             </div>
           </div>
         </div>
@@ -42,9 +55,9 @@ export default function UserDropdown({ user, open }) {
 
       {/* BODY */}
       <div className="user-dropdown__body">
-        {user && (
+        {userInfo && (
           <div>
-            <Link to={`/profile/${user.id}`} className="dropdown-item">
+            <Link to={`/profile/${userInfo.id}`} className="dropdown-item">
               <User size={20} />
               My Profile
             </Link>
@@ -61,7 +74,7 @@ export default function UserDropdown({ user, open }) {
         )}
 
         <hr className="divider" />
-        {user ? (
+        {userInfo ? (
           <Button
             type="button"
             onClick={handleLogout}

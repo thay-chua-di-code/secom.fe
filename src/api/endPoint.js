@@ -3,14 +3,21 @@ export const API_ENDPOINTS = {
     LOGIN: "/auth/login",
     LOGIN_GG: "/auth/google-login",
     REGISTER: "/auth/register",
+    CHANGE_PWD: "/auth/password",
     FORGOT_PWD: "/auth/forgot-password",
     RESET_PWD: "/auth/password",
     VERIFY_EMAIL: "/auth/verify-email",
     RESEND_VERTIFICATION: "/auth/resend-vertification",
+    LOG_OUT: "/auth/logout",
   },
 
   USER: {
     PROFILE: "/profile",
+  },
+
+  ORDER: {
+    ORDER_PURCHASE: "/orders/purchased",
+    ORDER_DETAIL: (id) => `/orders/${id}`,
   },
 
   CATEGORY: {

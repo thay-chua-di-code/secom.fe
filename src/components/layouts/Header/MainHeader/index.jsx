@@ -64,7 +64,7 @@ export default function MainHeader() {
             <h1 className="text-2xl font-extrabold tracking-wide text-white">Secom</h1>
             <p className="text-xs text-secom-100">Secondhand E-Commerce</p>
           </div>
-        </div>
+        </Link>
 
         <div className="hidden max-w-3xl flex-1 lg:block">
           <div className="flex overflow-hidden rounded-xl bg-white px-3 shadow-lg focus-within:ring-2 focus-within:ring-secom-300">
@@ -86,7 +86,7 @@ export default function MainHeader() {
               <UserRound size={28} />
             </Button>
 
-            <UserDropdown user={user} open={openUser} />
+            <UserDropdown open={openUser} />
           </div>
 
           <div className="relative" onClick={handleCartToggle}>

@@ -4,6 +4,7 @@ export const ROUTES = {
   REGISTER: "/register",
   FORGOT_PWD: "/forgot-password",
   VERIFY: "/verify-email",
+  CHANGE_PWD: "/password",
   //NORMAL
   HOME: "/",
   CART: "/cart",
