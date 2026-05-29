@@ -35,7 +35,9 @@ export default function CartPage() {
 
   useEffect(() => {
     setSelectedItemIds((previous) =>
-      previous.filter((itemId) => items.some((item) => item.cartItemId === itemId)),
+      previous.filter((itemId) =>
+        items.some((item) => item.cartItemId === itemId),
+      ),
     );
   }, [items]);
 
@@ -55,10 +57,15 @@ export default function CartPage() {
   );
 
   const selectedDiscountAmount = selectedItemIds.length > 0 ? 0 : 0;
-  const selectedFinalTotal = Math.max(0, selectedSubtotal - selectedDiscountAmount);
+  const selectedFinalTotal = Math.max(
+    0,
+    selectedSubtotal - selectedDiscountAmount,
+  );
 
-  const allSelected = items.length > 0 && selectedItemIds.length === items.length;
-  const partiallySelected = selectedItemIds.length > 0 && selectedItemIds.length < items.length;
+  const allSelected =
+    items.length > 0 && selectedItemIds.length === items.length;
+  const partiallySelected =
+    selectedItemIds.length > 0 && selectedItemIds.length < items.length;
 
   useEffect(() => {
     if (headerCheckboxRef.current) {
@@ -70,7 +77,9 @@ export default function CartPage() {
     setSelectionMessage("");
     setSelectedItemIds((previous) => {
       if (checked) {
-        return previous.includes(cartItemId) ? previous : [...previous, cartItemId];
+        return previous.includes(cartItemId)
+          ? previous
+          : [...previous, cartItemId];
       }
       return previous.filter((id) => id !== cartItemId);
     });
@@ -83,7 +92,9 @@ export default function CartPage() {
 
   const handleApplyVoucher = (code) => {
     if (!selectedItemIds.length) {
-      setSelectionMessage("Please select at least one item before applying a voucher.");
+      setSelectionMessage(
+        "Please select at least one item before applying a voucher.",
+      );
       return;
     }
     setSelectionMessage("");
@@ -137,8 +148,12 @@ export default function CartPage() {
                 <ShoppingCart size={24} />
               </span>
               <div>
-                <h1 className="text-2xl font-semibold text-slate-900">Shopping Cart</h1>
-                <p className="mt-1 text-sm text-slate-500">Review your selected products before checkout</p>
+                <h1 className="text-2xl font-semibold text-slate-900">
+                  Shopping Cart
+                </h1>
+                <p className="mt-1 text-sm text-slate-500">
+                  Review your selected products before checkout
+                </p>
               </div>
             </div>
           </div>
