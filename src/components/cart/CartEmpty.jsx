@@ -1,21 +1,22 @@
-import { ShoppingCart } from "lucide-react";
+import { ShoppingBag } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export default function CartEmpty() {
   return (
-    <div className="rounded-2xl bg-white px-6 py-16 text-center shadow-sm">
-      <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-slate-100 text-slate-500">
-        <ShoppingCart size={28} />
+    <div className="flex flex-col items-center justify-center py-24">
+      <div className="flex h-32 w-32 items-center justify-center rounded-full bg-secom-50">
+        <ShoppingBag size={64} className="text-secom-600" />
       </div>
-      <h1 className="mt-6 text-2xl font-semibold text-slate-900">Your cart is empty</h1>
-      <p className="mt-2 text-sm text-slate-500">
-        Add products to your cart to continue with checkout.
-      </p>
+
+      <h1 className="mt-8 text-xl font-semibold text-gray-500">
+        Your cart is empty
+      </h1>
+
       <Link
         to="/"
-        className="mt-6 inline-flex items-center justify-center rounded-xl bg-slate-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-slate-800"
+        className="mt-8 inline-flex h-12 min-w-[220px] items-center justify-center rounded-md bg-secom-500 px-8 text-base font-semibold text-white hover:bg-secom-600"
       >
-        Continue shopping
+        Continue Shopping
       </Link>
     </div>
   );

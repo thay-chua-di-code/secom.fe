@@ -1,11 +1,7 @@
 import { Minus, Plus } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
-export default function QuantitySelector({
-  quantity,
-  disabled,
-  onChange,
-}) {
+export default function QuantitySelector({ quantity, disabled, onChange }) {
   const [localQuantity, setLocalQuantity] = useState(quantity);
   const timerRef = useRef(null);
 
@@ -66,16 +62,15 @@ export default function QuantitySelector({
   };
 
   return (
-    <div className="flex items-center rounded-xl border border-slate-200 bg-white">
+    <div className="inline-flex h-9 items-center overflow-hidden rounded-lg border border-gray-300 bg-white">
       <button
         type="button"
-        className="flex h-10 w-10 items-center justify-center text-slate-600 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+        className="flex h-full w-9 items-center justify-center border-r border-gray-300 text-gray-600 transition hover:bg-secom-50 hover:text-secom-600 disabled:cursor-not-allowed disabled:opacity-50"
         onClick={() => scheduleChange(Math.max(1, quantity - 1))}
         disabled={disabled || quantity <= 1}
       >
-        <Minus size={16} />
+        <Minus size={14} />
       </button>
-
       <input
         min="1"
         step="1"
@@ -84,16 +79,15 @@ export default function QuantitySelector({
         onChange={handleInputChange}
         onBlur={commitCurrentValue}
         disabled={disabled}
-        className="h-10 w-14 border-x border-slate-200 text-center text-sm font-medium text-slate-900 outline-none"
+        className="h-full w-10 border-none text-center text-sm font-medium text-gray-900 outline-none disabled:cursor-not-allowed disabled:bg-gray-50"
       />
-
       <button
         type="button"
-        className="flex h-10 w-10 items-center justify-center text-slate-600 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+        className="flex h-full w-9 items-center justify-center border-l border-gray-300 text-gray-600 transition hover:bg-secom-50 hover:text-secom-600 disabled:cursor-not-allowed disabled:opacity-50"
         onClick={() => scheduleChange(quantity + 1)}
         disabled={disabled}
       >
-        <Plus size={16} />
+        <Plus size={14} />
       </button>
     </div>
   );
