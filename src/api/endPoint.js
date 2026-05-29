@@ -48,9 +48,9 @@ export const API_ENDPOINTS = {
   CHATS: {},
 
   CART: {
-    GET_CG: "/api/cart",
-    ADD_ITEM: "/api/cart/items",
-    UPDATE_ITEM: (id) => `/api/cart/items/${id}`,
-    APPLY_VOUCHER: "/api/cart/voucher",
+    GET_CG: "/cart",
+    ADD_ITEM: "/cart/items",
+    UPDATE_ITEM: (id) => `/cart/items/${id}`,
+    APPLY_VOUCHER: "/cart/voucher",
   },
 };

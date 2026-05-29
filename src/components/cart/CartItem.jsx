@@ -1,27 +1,25 @@
-import QuantitySelector from "./QuantitySelector";
+import { ShoppingBag } from "lucide-react";
+import { Link } from "react-router-dom";
 
-const currencyFormatter = new Intl.NumberFormat("en-US", {
-  style: "currency",
-  currency: "USD",
-});
-
-export default function CartItem({ item, disabled, onQuantityChange }) {
+export default function CartEmpty() {
   return (
-    <div className="flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-4 md:flex-row md:items-center md:justify-between">
-      <div className="space-y-2">
-        <h2 className="text-base font-semibold text-slate-900">{item.productName}</h2>
-        <p className="text-sm text-slate-500">Seller ID: {item.sellerId}</p>
-        <div className="flex flex-wrap items-center gap-3 text-sm text-slate-600">
-          <span>Unit price: {currencyFormatter.format(item.unitPrice || 0)}</span>
-          <span>Subtotal: {currencyFormatter.format(item.subtotal || 0)}</span>
+    <div className="flex min-h-[520px] items-center justify-center px-4">
+      <div className="flex flex-col items-center text-center">
+        <div className="flex h-32 w-32 items-center justify-center rounded-full bg-secom-50">
+          <ShoppingBag size={64} className="text-secom-600" />
         </div>
-      </div>
 
-      <QuantitySelector
-        quantity={item.quantity}
-        disabled={disabled}
-        onChange={(quantity) => onQuantityChange(item.cartItemId, quantity)}
-      />
+        <h1 className="mt-8 text-xl font-semibold text-gray-400">
+          Your cart is empty
+        </h1>
+
+        <Link
+          to="/"
+          className="mt-8 inline-flex h-12 min-w-[220px] items-center justify-center rounded-sm bg-secom-500 px-8 text-base font-semibold uppercase text-white shadow-sm transition hover:bg-secom-600"
+        >
+          Continue Shopping
+        </Link>
+      </div>
     </div>
   );
 }

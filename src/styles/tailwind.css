@@ -1,1 +1,17 @@
 @import "tailwindcss";
+
+@theme {
+  --color-secom-50: #EFF8FF;
+  --color-secom-100: #DFF0FF;
+  --color-secom-200: #B9E0FF;
+  --color-secom-300: #78C7FF;
+  --color-secom-400: #1A8FE0;
+  --color-secom-500: #0E7CCB;
+  --color-secom-600: #0666A3;
+  --color-secom-700: #055382;
+  --color-secom-800: #06466C;
+  --color-secom-900: #04304A;
+  --color-surface: #FFFFFF;
+  --color-page: #F5F7FA;
+  --color-border: #E5E7EB;
+}

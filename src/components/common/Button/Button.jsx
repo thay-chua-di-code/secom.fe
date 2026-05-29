@@ -2,21 +2,21 @@ import { cva } from "class-variance-authority";
 import { cn } from "@/utils/cn";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center rounded-xl font-semibold transition-all duration-200 disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex items-center justify-center rounded-lg font-semibold shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-secom-300 disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
-        primary: "bg-sky-600 text-white hover:bg-sky-700 active:scale-[0.98]",
+        primary: "bg-secom-500 text-white hover:bg-secom-600 active:scale-[0.98]",
 
-        secondary: "bg-slate-100 text-slate-800 hover:bg-slate-200",
+        secondary: "border border-secom-500 bg-white text-secom-600 hover:bg-secom-50",
 
-        outline: "border border-slate-300 bg-white hover:bg-slate-100",
+        outline: "border border-gray-300 bg-white text-gray-700 hover:bg-gray-50",
 
-        ghost: "hover:bg-slate-100 text-slate-700",
+        ghost: "text-secom-600 hover:bg-secom-50",
 
-        danger: "bg-red-500 text-white hover:bg-red-600",
+        danger: "bg-red-600 text-white hover:bg-red-700",
 
-        success: "bg-emerald-500 text-white hover:bg-emerald-600",
+        success: "bg-emerald-600 text-white hover:bg-emerald-700",
       },
 
       size: {
