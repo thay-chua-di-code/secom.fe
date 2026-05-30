@@ -1,0 +1,355 @@
+$primary: #0369a1;
+$primary-light: #e0f2fe;
+$white: #fff;
+$text: #0f172a;
+$text-light: #64748b;
+$border: #e2e8f0;
+$bg: #f8fafc;
+
+// Button
+.chat-toggle-btn {
+  position: fixed;
+
+  right: 20px;
+  bottom: 20px;
+
+  z-index: 999;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 14px 20px;
+
+  border: none;
+  border-radius: 999px;
+
+  background: $primary;
+
+  color: $white;
+
+  cursor: pointer;
+
+  transition: 0.25s ease;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+}
+
+/* CONTAINER */
+
+.chatbox-container {
+  position: fixed;
+
+  right: 20px;
+  bottom: 20px;
+
+  width: 950px;
+  height: 700px;
+
+  background: $white;
+
+  border-radius: 24px;
+
+  overflow: hidden;
+
+  display: flex;
+
+  z-index: 1000;
+
+  opacity: 0;
+  visibility: hidden;
+
+  transform: translateY(20px);
+
+  transition: 0.3s ease;
+
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+
+  &--open {
+    opacity: 1;
+    visibility: visible;
+
+    transform: translateY(0);
+  }
+}
+
+/* SIDEBAR */
+
+.chat-sidebar {
+  width: 340px;
+
+  border-right: 1px solid $border;
+
+  display: flex;
+  flex-direction: column;
+
+  background: $white;
+
+  &__header {
+    height: 70px;
+
+    padding: 0 20px;
+
+    border-bottom: 1px solid $border;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__search {
+    margin: 16px;
+
+    height: 48px;
+
+    border: 1px solid $border;
+    border-radius: 14px;
+
+    display: flex;
+    align-items: center;
+
+    padding: 0 14px;
+
+    input {
+      flex: 1;
+
+      height: 100%;
+
+      border: none;
+      outline: none;
+
+      margin-left: 10px;
+    }
+  }
+
+  &__list {
+    flex: 1;
+
+    overflow-y: auto;
+  }
+}
+
+/* CONVERSATION */
+
+.conversation-item {
+  padding: 14px 16px;
+
+  display: flex;
+  gap: 14px;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+
+  &:hover {
+    background: #f8fafc;
+  }
+
+  &.active {
+    background: $primary-light;
+  }
+
+  &__avatar {
+    position: relative;
+
+    img {
+      width: 54px;
+      height: 54px;
+
+      border-radius: 50%;
+
+      object-fit: cover;
+    }
+  }
+
+  .unread-dot {
+    position: absolute;
+
+    top: 0;
+    right: 0;
+
+    width: 12px;
+    height: 12px;
+
+    border-radius: 50%;
+
+    background: red;
+  }
+
+  &__content {
+    flex: 1;
+  }
+
+  &__top {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  &__bottom {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+
+    .count {
+      min-width: 22px;
+      height: 22px;
+
+      border-radius: 999px;
+
+      background: $primary;
+
+      color: $white;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      font-size: 12px;
+    }
+  }
+}
+
+/* CONTENT */
+
+.chat-content {
+  flex: 1;
+
+  display: flex;
+  flex-direction: column;
+
+  background: $bg;
+
+  &__header {
+    height: 70px;
+
+    background: $white;
+
+    border-bottom: 1px solid $border;
+
+    padding: 0 24px;
+
+    display: flex;
+    align-items: center;
+
+    .shop-info {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+
+      img {
+        width: 48px;
+        height: 48px;
+
+        border-radius: 50%;
+      }
+    }
+  }
+
+  &__body {
+    flex: 1;
+
+    padding: 24px;
+
+    overflow-y: auto;
+
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  &__footer {
+    height: 80px;
+
+    background: $white;
+
+    border-top: 1px solid $border;
+
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    padding: 0 20px;
+
+    input {
+      flex: 1;
+
+      height: 50px;
+
+      border: 1px solid $border;
+      border-radius: 999px;
+
+      padding: 0 18px;
+
+      outline: none;
+    }
+
+    button {
+      width: 50px;
+      height: 50px;
+
+      border-radius: 50%;
+
+      background: $primary;
+
+      color: $white;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+}
+
+/* MESSAGE */
+
+.message-wrapper {
+  display: flex;
+
+  &--user {
+    justify-content: flex-end;
+  }
+
+  &--shop {
+    justify-content: flex-start;
+  }
+}
+
+.message {
+  max-width: 70%;
+
+  padding: 14px 16px;
+
+  border-radius: 18px;
+
+  &--user {
+    background: $primary;
+    color: $white;
+  }
+
+  &--shop {
+    background: $white;
+  }
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 768px) {
+  .chatbox-container {
+    inset: 0;
+
+    width: 100%;
+    height: 100dvh;
+
+    border-radius: 0;
+  }
+
+  .chat-sidebar {
+    width: 100%;
+  }
+
+  .chat-content {
+    display: none;
+  }
+}

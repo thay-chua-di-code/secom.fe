@@ -17,10 +17,7 @@ const unwrapResponseData = (payload) => {
 
 const extractCartItems = (cartData) => {
   const items =
-    cartData?.items ??
-    cartData?.cartItems ??
-    cartData?.cart_items ??
-    [];
+    cartData?.items ?? cartData?.cartItems ?? cartData?.cart_items ?? [];
 
   return Array.isArray(items) ? items : [];
 };

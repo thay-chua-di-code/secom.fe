@@ -12,4 +12,5 @@ export const ROUTES = {
   DASHBOARD: "/dashboard",
   PRODUCT_DETAIL: "/product/:id",
   PROFILE: "/profile/:id",
+  NOTIFICATIONS: "/notifications",
 };

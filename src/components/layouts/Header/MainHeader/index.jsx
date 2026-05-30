@@ -4,10 +4,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { Search, ShoppingCart, Menu, UserRound } from "lucide-react";
 
 import logo from "../../../../assets/icons/logo.jpg";
+
 import UserDropdown from "../../../common/UserDropDown";
-import Cart from "../../../common/Cart";
 import Button from "../../../common/Button/Button";
 import Input from "../../../common/Input";
+import Cart from "../../../common/Cart";
 
 import { fetchCart } from "../../../../redux/slice/cartSlice";
 
@@ -18,7 +19,8 @@ export default function MainHeader() {
   const [openCart, setOpenCart] = useState(false);
   const [keyword, setKeyword] = useState("");
 
-  const { isAuthenticated } = useSelector((state) => state.auth);
+  const { isAuthenticated, user } = useSelector((state) => state.auth);
+
   const { items = [] } = useSelector((state) => state.cart);
 
   const cartCount = items.reduce(
@@ -32,7 +34,6 @@ export default function MainHeader() {
     if (!trimmedKeyword) return;
 
     console.log(trimmedKeyword);
-    // navigate(`/products?keyword=${encodeURIComponent(trimmedKeyword)}`);
   };
 
   const handleCartToggle = () => {
@@ -47,23 +48,17 @@ export default function MainHeader() {
     });
   };
 
-  const user = {
-    id: 123,
-    name: "Long Bua Dinh",
-    email: "longdev@gmail.com",
-    avatar:
-      "https://static.wikitide.net/deathbattlewiki/5/51/Portrait.homelander.png",
-  };
-
   return (
-    <header className="border-b border-secom-600/40 bg-secom-500 shadow-md">
-      <div className="container-custom flex h-20 items-center justify-between gap-4">
-        <button className="text-white transition hover:opacity-80 lg:hidden">
-          <Menu size={28} />
+    <header className="sticky top-0 z-40 border-b border-gray-200 bg-white shadow-sm">
+      <div className="container-custom flex h-16 items-center justify-between gap-3 md:h-20">
+        {/* Mobile menu */}
+        <button className="text-black lg:hidden">
+          <Menu size={24} />
         </button>
 
-        <Link to="/" className="flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-xl bg-white p-1 shadow-md">
+        {/* Logo */}
+        <Link to="/" className="flex shrink-0 items-center gap-2 md:gap-3">
+          <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl bg-white shadow md:h-12 md:w-12">
             <img
               src={logo}
               alt="Secom logo"
@@ -72,72 +67,73 @@ export default function MainHeader() {
           </div>
 
           <div className="hidden sm:block">
-            <h1 className="text-2xl font-extrabold tracking-wide text-white">
+            <h1 className="text-xl font-extrabold text-black md:text-2xl">
               Secom
             </h1>
-            <p className="text-xs text-secom-100">Secondhand E-Commerce</p>
+
+            <p className="hidden text-xs text-gray-500 md:block">
+              Secondhand E-Commerce
+            </p>
           </div>
         </Link>
 
-        <div className="hidden max-w-3xl flex-1 lg:block">
-          <Input
-            type="text"
-            placeholder="Search products..."
-            value={keyword}
-            onChange={(e) => setKeyword(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                handleSearch();
-              }
-            }}
-            icon={Search}
-            clearable
-            className="header-search"
-          />
+        {/* Search desktop */}
+        <div className="hidden flex-1 px-4 lg:block">
+          <div className="mx-auto max-w-2xl">
+            <Input
+              type="text"
+              placeholder="Search products..."
+              value={keyword}
+              onChange={(e) => setKeyword(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+              icon={Search}
+              clearable
+              className="header-search"
+            />
+          </div>
         </div>
 
-        <div className="flex items-center gap-5">
-          <div
-            className="relative"
-            onClick={() => setOpenUser((prev) => !prev)}
-          >
-            <Button variant="ghost" className="text-white hover:bg-white/10">
-              <UserRound size={28} />
-            </Button>
+        {/* User & Cart */}
+        <div className="flex shrink-0 items-center gap-2 md:gap-4">
+          {isAuthenticated && (
+            <>
+              <div
+                className="relative"
+                onClick={() => setOpenUser((prev) => !prev)}
+              >
+                <Button variant="ghost" className="text-black">
+                  <UserRound size={24} />
+                </Button>
 
-            <UserDropdown user={user} open={openUser} />
-          </div>
+                <UserDropdown user={user} open={openUser} />
+              </div>
 
-          <div className="relative" onClick={handleCartToggle}>
-            <Button
-              variant="ghost"
-              className="relative text-white hover:bg-white/10"
-            >
-              <ShoppingCart size={30} />
+              <div className="relative" onClick={handleCartToggle}>
+                <Button variant="ghost" className="relative text-black">
+                  <ShoppingCart size={26} />
 
-              {isAuthenticated && cartCount > 0 ? (
-                <span className="absolute -right-2 -top-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-white px-1 text-xs font-bold text-secom-600 shadow">
-                  {cartCount}
-                </span>
-              ) : null}
-            </Button>
+                  {cartCount > 0 && (
+                    <span className="absolute -right-2 -top-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-sky-600 px-1 text-xs font-bold text-white">
+                      {cartCount}
+                    </span>
+                  )}
+                </Button>
 
-            <Cart open={openCart} />
-          </div>
+                <Cart open={openCart} />
+              </div>
+            </>
+          )}
         </div>
       </div>
 
-      <div className="container-custom pb-5 lg:hidden">
+      {/* Mobile search */}
+      <div className="container-custom pb-4 lg:hidden">
         <Input
           type="text"
           placeholder="Search products..."
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              handleSearch();
-            }
-          }}
+          onKeyDown={(e) => e.key === "Enter" && handleSearch()}
           icon={Search}
           clearable
           className="header-search"

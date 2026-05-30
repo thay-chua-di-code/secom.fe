@@ -41,7 +41,11 @@ export const API_ENDPOINTS = {
 
   ORDER: {},
 
-  NOTIFICATION: {},
+  NOTIFICATION: {
+    GET: "/notifications",
+    MARK_READ: (id) => `notifications/${id}/read`,
+    DELETE: (id) => `/notifications/${id}`,
+  },
 
   DISCOVERY: {},
 

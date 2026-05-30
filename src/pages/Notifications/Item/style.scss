@@ -1,0 +1,63 @@
+.notification-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+
+  padding: 16px;
+
+  transition: 0.2s;
+
+  border-bottom: 1px solid #f8fafc;
+
+  &.unread {
+    background: #f0f9ff;
+  }
+
+  &:hover {
+    background: #f8fafc;
+  }
+}
+
+.notification-item__content {
+  flex: 1;
+
+  h4 {
+    font-size: 14px;
+    font-weight: 600;
+
+    color: #0f172a;
+
+    margin-bottom: 5px;
+  }
+
+  p {
+    font-size: 13px;
+
+    color: #475569;
+
+    line-height: 1.5;
+
+    margin-bottom: 6px;
+  }
+
+  span {
+    font-size: 11px;
+
+    color: #94a3b8;
+  }
+}
+
+.notification-item__delete {
+  border: none;
+  background: transparent;
+
+  cursor: pointer;
+
+  color: #94a3b8;
+
+  transition: 0.2s;
+
+  &:hover {
+    color: #ef4444;
+  }
+}

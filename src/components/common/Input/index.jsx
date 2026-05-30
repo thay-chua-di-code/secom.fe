@@ -1,5 +1,4 @@
-import { Eye, EyeOff, Search, X } from "lucide-react";
-
+import { Eye, EyeOff, X } from "lucide-react";
 import { useState } from "react";
 
 import "./style.scss";

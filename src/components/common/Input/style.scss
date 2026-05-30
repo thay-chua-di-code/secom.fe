@@ -1,8 +1,8 @@
-s.custom-input {
+.custom-input {
   display: flex;
   flex-direction: column;
-
   gap: 8px;
+  width: 100%;
 
   &__label {
     font-size: 14px;
@@ -47,7 +47,6 @@ s.custom-input {
 
     &.disabled {
       opacity: 0.7;
-
       background: #f8fafc;
     }
   }
@@ -59,9 +58,9 @@ s.custom-input {
     align-items: center;
     justify-content: center;
 
-    color: #64748b;
-
     flex-shrink: 0;
+
+    color: #64748b;
   }
 
   &__field {
@@ -92,7 +91,7 @@ s.custom-input {
       background: transparent;
     }
 
-    /* Remove number input arrows */
+    /* Remove arrows input number */
     &[type="number"]::-webkit-inner-spin-button,
     &[type="number"]::-webkit-outer-spin-button {
       -webkit-appearance: none;
@@ -116,11 +115,11 @@ s.custom-input {
     align-items: center;
     justify-content: center;
 
-    color: #64748b;
-
     flex-shrink: 0;
 
-    transition: 0.2s ease;
+    color: #64748b;
+
+    transition: all 0.2s ease;
 
     &:hover {
       background: #f1f5f9;
@@ -129,11 +128,72 @@ s.custom-input {
   }
 
   &__error {
+    padding-left: 4px;
+
     font-size: 13px;
     font-weight: 500;
 
     color: #ef4444;
+  }
+}
 
-    padding-left: 4px;
+/* HEADER SEARCH CUSTOM */
+
+.header-search {
+  .custom-input__wrapper {
+    height: 52px;
+
+    border-radius: 999px;
+
+    border: none;
+
+    background: #ffffff;
+
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+
+    &:focus-within {
+      border-color: transparent;
+
+      box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.2);
+    }
+  }
+
+  .custom-input__icon {
+    color: #0284c7;
+  }
+
+  .custom-input__field {
+    font-size: 14px;
+
+    &::placeholder {
+      color: #94a3b8;
+    }
+  }
+
+  .custom-input__action {
+    &:hover {
+      background: #e0f2fe;
+      color: #0284c7;
+    }
+  }
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 640px) {
+  .custom-input {
+    &__wrapper {
+      height: 46px;
+    }
+
+    &__field {
+      font-size: 14px;
+    }
+  }
+
+  .header-search {
+    .custom-input__wrapper {
+      height: 48px;
+    }
   }
 }

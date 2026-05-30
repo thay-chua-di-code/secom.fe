@@ -6,35 +6,28 @@ import AuthPage from "../pages/Auth/index";
 import DetailPage from "../pages/Profile";
 import CartPage from "../pages/Cart";
 import ProfilePage from "../pages/Profile";
+import NotificationPage from "../pages/Notifications";
 export const publicRoutes = [
   // NORMAL PAGE
   {
-    path: ROUTES.HOME,
+    path: "/",
     element: <MainLayout />,
     children: [
       {
-        index: true,
+        path: ROUTES.HOME,
         element: <Home />,
       },
-    ],
-  },
-  {
-    path: ROUTES.PROFILE,
-    element: <MainLayout />,
-    children: [
       {
-        index: true,
+        path: ROUTES.PROFILE,
         element: <ProfilePage />,
       },
-    ],
-  },
-  {
-    path: ROUTES.CART,
-    element: <MainLayout />,
-    children: [
       {
-        index: true,
+        path: ROUTES.CART,
         element: <CartPage />,
+      },
+      {
+        path: ROUTES.NOTIFICATIONS,
+        element: <NotificationPage />,
       },
     ],
   },
@@ -42,7 +35,7 @@ export const publicRoutes = [
   // AUTH
   {
     path: "/",
-    element: <AuthLayout />,
+    element: <MainLayout />,
     children: [
       {
         path: ROUTES.LOGIN,
@@ -53,7 +46,13 @@ export const publicRoutes = [
         path: ROUTES.REGISTER,
         element: <AuthPage />,
       },
+    ],
+  },
 
+  {
+    path: "/",
+    element: <AuthLayout />,
+    children: [
       {
         path: ROUTES.FORGOT_PWD,
         element: <AuthPage />,

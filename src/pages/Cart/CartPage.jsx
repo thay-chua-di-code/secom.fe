@@ -60,9 +60,13 @@ export default function CartPage() {
     0,
   );
   const selectedDiscountAmount = selectedItemIds.length > 0 ? 0 : 0;
-  const selectedFinalTotal = Math.max(0, selectedSubtotal - selectedDiscountAmount);
+  const selectedFinalTotal = Math.max(
+    0,
+    selectedSubtotal - selectedDiscountAmount,
+  );
 
-  const allSelected = items.length > 0 && selectedItemIds.length === items.length;
+  const allSelected =
+    items.length > 0 && selectedItemIds.length === items.length;
   const partiallySelected =
     selectedItemIds.length > 0 && selectedItemIds.length < items.length;
 
@@ -89,7 +93,9 @@ export default function CartPage() {
 
   const handleApplyVoucher = (code) => {
     if (!selectedItemIds.length) {
-      setSelectionMessage("Please select at least one item before applying a voucher.");
+      setSelectionMessage(
+        "Please select at least one item before applying a voucher.",
+      );
       return;
     }
     setSelectionMessage("");
@@ -119,7 +125,7 @@ export default function CartPage() {
       </main>
     );
   }
-  console.log(items.length)
+  console.log(items.length);
   if (items.length === 0) {
     if (error) {
       return (
@@ -150,8 +156,12 @@ export default function CartPage() {
               <ShoppingCart size={24} />
             </span>
             <div>
-              <h1 className="text-2xl font-semibold text-slate-900">Shopping Cart</h1>
-              <p className="mt-1 text-sm text-slate-500">Review your selected products before checkout</p>
+              <h1 className="text-2xl font-semibold text-slate-900">
+                Shopping Cart
+              </h1>
+              <p className="mt-1 text-sm text-slate-500">
+                Review your selected products before checkout
+              </p>
             </div>
           </div>
         </section>
