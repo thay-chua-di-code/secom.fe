@@ -35,7 +35,7 @@ export const publicRoutes = [
   // AUTH
   {
     path: "/",
-    element: <AuthLayout />,
+    element: <MainLayout />,
     children: [
       {
         path: ROUTES.LOGIN,
@@ -46,7 +46,13 @@ export const publicRoutes = [
         path: ROUTES.REGISTER,
         element: <AuthPage />,
       },
+    ],
+  },
 
+  {
+    path: "/",
+    element: <AuthLayout />,
+    children: [
       {
         path: ROUTES.FORGOT_PWD,
         element: <AuthPage />,

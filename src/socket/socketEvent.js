@@ -1,12 +1,7 @@
 export const SOCKET_EVENTS = {
-  CONNECT: "connect",
-  DISCONNECT: "disconnect",
-
-  SEND_MESSAGE: "send_message",
-  RECEIVE_MESSAGE: "receive_message",
-
-  JOIN_ROOM: "join_room",
-  LEAVE_ROOM: "leave_room",
-
-  NOTIFICATION: "notification",
+  CHAT_MESSAGE: "CHAT_MESSAGE",
+  USER_TYPING: "USER_TYPING",
+  USER_ONLINE: "USER_ONLINE",
+  USER_OFFLINE: "USER_OFFLINE",
+  READ_MESSAGE: "READ_MESSAGE",
 };
