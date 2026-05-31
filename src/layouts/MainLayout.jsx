@@ -3,6 +3,7 @@ import { Outlet } from "react-router-dom";
 import Header from "../components/layouts/Header";
 import Footer from "../components/layouts/Footer";
 import ChatBox from "../components/common/Chatbox";
+import Breadcrumb from "../components/common/Breadcrumb";
 
 export default function MainLayout() {
   return (
@@ -10,6 +11,7 @@ export default function MainLayout() {
       <Header />
 
       <main className="container-custom py-6 my-6">
+        <Breadcrumb />
         <Outlet />
       </main>
 

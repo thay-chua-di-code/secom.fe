@@ -40,8 +40,30 @@ export default function MainHeader() {
     setOpenCart((prev) => {
       const nextOpen = !prev;
 
-      if (nextOpen && isAuthenticated) {
-        dispatch(fetchCart());
+      if (nextOpen) {
+        setOpenUser(false);
+
+        if (isAuthenticated) {
+          dispatch(fetchCart());
+        }
+      } else {
+        setOpenUser(false);
+      }
+
+      return nextOpen;
+    });
+  };
+
+  const handleUserToggle = () => {
+    setOpenUser((prev) => {
+      const nextOpen = !prev;
+
+      if (nextOpen) {
+        setOpenCart(false);
+
+        if (isAuthenticated) {
+          dispatch(fetchCart());
+        }
       }
 
       return nextOpen;
@@ -97,10 +119,7 @@ export default function MainHeader() {
         <div className="social-wrapper flex shrink-0 items-center gap-2 md:gap-4">
           {isAuthenticated && (
             <>
-              <div
-                className="relative"
-                onClick={() => setOpenUser((prev) => !prev)}
-              >
+              <div className="relative" onClick={handleUserToggle}>
                 <Button variant="ghost" className="social-btn text-black">
                   <UserRound size={24} />
                 </Button>
