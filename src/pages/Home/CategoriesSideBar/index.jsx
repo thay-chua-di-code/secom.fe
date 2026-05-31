@@ -1,28 +1,39 @@
+import { useState } from "react";
+import { useSelector } from "react-redux";
+import Title from "../../../components/common/Title";
+
 import "./style.scss";
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import CategorySidebarSkeleton from "./Skeleton";
 
 export default function CategorySidebar() {
-  const { loading, featuredCategories: categories } = useSelector(
+  const { featuredCategories: categories = [] } = useSelector(
     (state) => state.home,
   );
 
-  if (loading) return <CategorySidebarSkeleton />;
+  const [activeCategory, setActiveCategory] = useState(null);
 
   return (
-    <div className="category-sidebar hidden lg:block">
-      <div className="category-sidebar__wrapper">
-        <h2 className="category-sidebar__title">Categories</h2>
+    <section className="category-section">
+      <Title title="Categories" />
 
-        <div className="category-sidebar__list">
-          {(categories || []).map((category) => (
-            <button key={category.id} className="category-sidebar__item">
-              <span>{category.name}</span>
-            </button>
-          ))}
-        </div>
+      <h2 className="category-section__heading">Browse By Category</h2>
+
+      <div className="category-section__list">
+        {categories.map((category) => (
+          <button
+            key={category.id}
+            className={`category-card ${
+              activeCategory === category.id ? "active" : ""
+            }`}
+            onClick={() => setActiveCategory(category.id)}
+          >
+            <div className="category-card__avatar">
+              {category.name.charAt(0).toUpperCase()}
+            </div>
+
+            <span>{category.name}</span>
+          </button>
+        ))}
       </div>
-    </div>
+    </section>
   );
 }

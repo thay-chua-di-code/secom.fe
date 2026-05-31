@@ -14,7 +14,6 @@ export const fetchHomepage = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const response = await dicoveryService.getHomePg();
-      console.log(response)
       return response?.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
@@ -27,7 +26,6 @@ export const fetchHomepage = createAsyncThunk(
 const homeSlice = createSlice({
   name: "home",
   initialState,
-
   reducers: {},
 
   extraReducers: (builder) => {
@@ -39,12 +37,9 @@ const homeSlice = createSlice({
 
       .addCase(fetchHomepage.fulfilled, (state, action) => {
         state.loading = false;
-
         state.banners = action.payload.banners;
         state.featuredCategories = action.payload.featuredCategories;
-
         state.featuredProducts = action.payload.featuredProducts;
-
         state.latestProducts = action.payload.latestProducts;
       })
 
