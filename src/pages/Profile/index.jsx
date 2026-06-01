@@ -26,6 +26,7 @@ import OrderHistory from "./Order";
 import Button from "../../components/common/Button/Button";
 
 import "./style.scss";
+import AddressList from "./Address/List";
 
 const menus = [
   {
@@ -39,7 +40,7 @@ const menus = [
     key: "order",
   },
   {
-    title: "Địa Chỉ",
+    title: "Address",
     icon: <MapPin size={18} />,
     key: "address",
   },
@@ -252,6 +253,7 @@ const ProfilePage = () => {
         return (
           <div className="content-box">
             <h2>Addresses</h2>
+            <AddressList />
           </div>
         );
 

@@ -10,7 +10,6 @@
   box-shadow:
     0 20px 45px rgba(15, 23, 42, 0.18),
     0 8px 20px rgba(15, 23, 42, 0.08);
-
   backdrop-filter: blur(18px);
   animation: dropdownFade 0.28s ease;
   z-index: 999;
@@ -23,14 +22,11 @@
     }
     .user-info {
       flex-direction: column;
-
       text-align: center;
-
       .user-avatar {
         width: 82px;
         height: 82px;
       }
-
       .user-content {
         margin-top: 10px;
 
@@ -40,7 +36,6 @@
 
         p {
           margin-top: 10px;
-
           font-size: 14px;
         }
 
@@ -74,16 +69,19 @@
 
   .user-dropdown__header {
     position: relative;
+
     padding: 26px 24px;
+
     background:
       radial-gradient(
         circle at top right,
-        rgba(255, 255, 255, 0.2),
-        transparent 30%
+        rgba(255, 255, 255, 0.12),
+        transparent 35%
       ),
-      linear-gradient(135deg, #0369a1, #0ea5e9, #38bdf8);
+      linear-gradient(135deg, #0f172a 0%, #111827 45%, #1f2937 100%);
 
     color: white;
+
     overflow: hidden;
 
     &::before {

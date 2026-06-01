@@ -49,6 +49,14 @@ body {
   gap: 16px;
 }
 
+.flex-row-center-g {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
 .flex-col-start {
   display: flex;
   flex-direction: column;

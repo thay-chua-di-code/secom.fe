@@ -15,6 +15,10 @@ export const API_ENDPOINTS = {
     PROFILE: "/profile",
   },
 
+  ADDRESS: {
+    GET: "addresses",
+  },
+
   ORDER: {
     ORDER_PURCHASE: "/orders/purchased",
     ORDER_DETAIL: (id) => `/orders/${id}`,

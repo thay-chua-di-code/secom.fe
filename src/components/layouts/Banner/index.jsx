@@ -1,16 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-
+import { useEffect, useState } from "react";
+import { ArrowRight } from "lucide-react";
 import { useSelector } from "react-redux";
-
 import "./styles.scss";
 
-const Banner = () => {
-  const { banners } = useSelector((state) => state.home);
-
+export default function Banner() {
   const [currentSlide, setCurrentSlide] = useState(0);
-
- 
+  const { banners, featuredCategories } = useSelector((state) => state.home);
   const bannerImages =
     banners?.length > 0
       ? banners
@@ -21,84 +16,53 @@ const Banner = () => {
         ];
 
   useEffect(() => {
-    if (!bannerImages.length) return;
-
-    const interval = setInterval(() => {
+    const timer = setInterval(() => {
       setCurrentSlide((prev) =>
         prev === bannerImages.length - 1 ? 0 : prev + 1,
       );
     }, 5000);
 
-    return () => clearInterval(interval);
-  }, [bannerImages.length]);
-
-  // prev
-  const goToPrevious = () => {
-    setCurrentSlide((prev) =>
-      prev === 0 ? bannerImages.length - 1 : prev - 1,
-    );
-  };
-
-  // next
-  const goToNext = () => {
-    setCurrentSlide((prev) =>
-      prev === bannerImages.length - 1 ? 0 : prev + 1,
-    );
-  };
-
-  // dots
-  const goToSlide = (index) => {
-    setCurrentSlide(index);
-  };
+    return () => clearInterval(timer);
+  }, []);
 
   return (
-    <section className="banner">
-      <div className="banner__container">
-        {/* Images */}
-        <div className="banner__slides">
-          {bannerImages.map((image, index) => (
-            <img
-              key={index}
-              src={image}
-              alt={`Banner ${index + 1}`}
-              className={`banner__image ${
-                index === currentSlide ? "active" : ""
-              }`}
-            />
-          ))}
+    <section className="hero">
+      <div className="hero__categories">
+        {featuredCategories.map((item) => (
+          <div key={item.id} className="hero__category">
+            {item.name}
+          </div>
+        ))}
+      </div>
+
+      <div className="hero__banner">
+        <div className="hero__content">
+          <span className="hero__subtitle">
+            {bannerImages[currentSlide].title}
+          </span>
+
+          <h2>{bannerImages[currentSlide].heading}</h2>
+
+          <button>
+            Shop Now
+            <ArrowRight size={18} />
+          </button>
         </div>
 
-        {/* Overlay */}
-        <div className="banner__overlay" />
+        <div className="hero__image">
+          <img src={bannerImages[currentSlide].image} alt="" />
+        </div>
 
-        {/* Previous */}
-        <button
-          className="banner__btn banner__btn--prev"
-          onClick={goToPrevious}
-        >
-          <ChevronLeft size={24} />
-        </button>
-
-        {/* Next */}
-        <button className="banner__btn banner__btn--next" onClick={goToNext}>
-          <ChevronRight size={24} />
-        </button>
-
-        {/* Dots */}
-        <div className="banner__dots">
+        <div className="hero__dots">
           {bannerImages.map((_, index) => (
-            <button
+            <span
               key={index}
-              onClick={() => goToSlide(index)}
-              className={`banner__dot ${
-                currentSlide === index ? "active" : ""
-              }`}
+              className={currentSlide === index ? "active" : ""}
+              onClick={() => setCurrentSlide(index)}
             />
           ))}
         </div>
       </div>
     </section>
   );
-};
-
-export default Banner;
+}

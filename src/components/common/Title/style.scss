@@ -1,0 +1,20 @@
+.title-container {
+  display: flex;
+  align-items: start;
+  justify-content: start;
+  margin-bottom: 10px;
+  padding-left: 10px;
+  .title-block {
+    width: 20px;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #007bff;
+    margin-right: 10px;
+  }
+  .title-text {
+    font-size: 14px;
+    font-weight: 600;
+    color: #007bff;
+    padding-top: 4px;
+  }
+}
