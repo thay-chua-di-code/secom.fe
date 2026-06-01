@@ -287,7 +287,7 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className="profile-page bg-sky-50 min-h-screen py-8 mt-4">
+    <div className="profile-page min-h-screen py-8 mt-4">
       <div className="container-custom">
         <div className="profile-wrapper">
           <div className="sidebar">
