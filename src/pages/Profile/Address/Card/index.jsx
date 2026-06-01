@@ -1,29 +1,40 @@
 import { Phone, MapPin } from "lucide-react";
-
-export default function AddressCard() {
+import "./style.scss";
+import Button from "../../../../components/common/Button/Button";
+import { useDispatch } from "react-redux";
+import { addressService } from "../../../../service/addressService";
+import toast from "react-hot-toast";
+export default function AddressCard({ address, onEdit }) {
+  const dispatch = useDispatch();
+  const handleDelete = async (id) => {
+    const result = await addressService.deleteAdress(id, dispatch);
+    if (result.success) {
+      toast.success("Address deleted successfully");
+    } else {
+      toast.error("Failed to delete address");
+    }
+  };
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition hover:shadow-md">
-      <div className="mb-3 flex items-start justify-between">
+    <div className="address-card">
+      <div className="address-card__header">
         <div>
-          <h3 className="text-base font-semibold text-gray-900">
-            {address.receiverName}
-          </h3>
+          <h3 className="address-card__name">{address.receiverName}</h3>
 
-          <div className="mt-1 flex items-center gap-2 text-sm text-gray-600">
+          <div className="address-card__phone">
             <Phone size={14} />
             <span>{address.phoneNumber}</span>
           </div>
         </div>
 
-        {address.isDefault && (
-          <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-700">
-            Default
-          </span>
+        {address.isDefault ? (
+          <span className="address-card__default">Default</span>
+        ) : (
+          <span className="address-card__not-default">Make it default</span>
         )}
       </div>
 
-      <div className="mb-4 flex items-start gap-2 text-sm text-gray-600">
-        <MapPin size={16} className="mt-0.5 shrink-0" />
+      <div className="address-card__address">
+        <MapPin size={18} />
 
         <div>
           <p>{address.detailAddress}</p>
@@ -36,20 +47,14 @@ export default function AddressCard() {
         </div>
       </div>
 
-      <div className="flex justify-end gap-2">
-        <button
-          onClick={() => onEdit(address)}
-          className="rounded-lg border border-gray-300 px-4 py-2 text-sm transition hover:bg-gray-100"
-        >
+      <div className="address-card__actions">
+        <Button onClick={() => onEdit(address)} className="btn-edit">
           Edit
-        </button>
+        </Button>
 
-        <button
-          onClick={() => onDelete(address.id)}
-          className="rounded-lg bg-red-500 px-4 py-2 text-sm text-white transition hover:bg-red-600"
-        >
+        <Button onClick={() => handleDelete(address.id)} className="btn-delete">
           Delete
-        </button>
+        </Button>
       </div>
     </div>
   );

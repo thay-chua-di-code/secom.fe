@@ -57,7 +57,7 @@ export default function UserDropdown({ open }) {
       <div className="user-dropdown__body">
         {userInfo && (
           <div>
-            <Link to={`/profile/${userInfo.id}`} className="dropdown-item">
+            <Link to={`/profile`} className="dropdown-item">
               <User size={20} />
               My Profile
             </Link>

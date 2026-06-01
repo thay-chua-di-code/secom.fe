@@ -46,7 +46,7 @@ const menus = [
   },
 
   {
-    title: "Đổi Mật Khẩu",
+    title: "Change Password",
     icon: <Lock size={18} />,
     key: "password",
   },
