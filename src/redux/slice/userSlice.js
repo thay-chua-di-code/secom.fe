@@ -3,7 +3,7 @@ import { userService } from "../../service/userService";
 
 const initialState = {
   userInfo: {},
-  address: [],
+  addresses: [],
   orderHistory: [],
   loading: false,
   error: null,
@@ -37,7 +37,35 @@ const userSlice = createSlice({
       state.orderHistory = action.payload;
     },
     getAddress: (state, action) => {
-      state.address = action.payload;
+      state.addresses = action.payload;
+    },
+    setAddresses: (state, action) => {
+      state.addresses.push(action.payload);
+    },
+    updateDefaultAddress: (state, action) => {
+      const updatedAddresses = state.addresses.map((address) => {
+        if (address.id === action.payload) {
+          return { ...address, isDefault: true };
+        } else {
+          return { ...address, isDefault: false };
+        }
+      });
+      state.addresses = updatedAddresses;
+    },
+    updateAddress: (state, action) => {
+      const updatedAddresses = state.addresses.map((address) => {
+        if (address.id === action.payload.id) {
+          return { ...address, ...action.payload };
+        } else {
+          return address;
+        }
+      });
+      state.addresses = updatedAddresses;
+    },
+    deleteAddress: (state, action) => {
+      state.addresses = state.addresses.filter(
+        (address) => address.id !== action.payload,
+      );
     },
   },
 
@@ -62,7 +90,15 @@ const userSlice = createSlice({
   },
 });
 
-export const { clearUserInfo, updateUserInfo, getOrderHistory, getAddress } =
-  userSlice.actions;
+export const {
+  clearUserInfo,
+  updateUserInfo,
+  getOrderHistory,
+  getAddress,
+  setAddresses,
+  updateDefaultAddress,
+  updateAddress,
+  deleteAddress,
+} = userSlice.actions;
 
 export default userSlice.reducer;

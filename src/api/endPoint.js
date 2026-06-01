@@ -17,6 +17,10 @@ export const API_ENDPOINTS = {
 
   ADDRESS: {
     GET: "addresses",
+    POST: "addresses",
+    DELETE: (id) => `addresses/${id}`,
+    PATCH: (id) => `addresses/${id}/default`,
+    PUT: (id) => `addresses/${id}`,
   },
 
   ORDER: {
