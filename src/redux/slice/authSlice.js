@@ -17,7 +17,6 @@ export const loginThunk = createAsyncThunk(
   async (payload, thunkAPI) => {
     try {
       const data = await authService.login(payload);
-      console.log("data redux: ", data);
       setAuthToken(data.accessToken);
 
       return data;
@@ -31,12 +30,10 @@ export const loginThunk = createAsyncThunk(
 const authSlice = createSlice({
   name: "auth",
   initialState,
-
   reducers: {
     logout: (state) => {
       state.token = null;
       state.isAuthenticated = false;
-
       localStorage.removeItem("token");
     },
   },

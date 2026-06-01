@@ -8,7 +8,8 @@ import userReducer from "./slice/userSlice";
 import cartReducer from "./slice/cartSlice";
 import homeReducer from "./slice/homeSlice";
 import notificationReducer from "./slice/notificationSlice";
-
+import orderReducer from "./slice/orderSlice";
+import dashboardReducer from "./slice/dashboardSlice";
 const createNoopStorage = () => {
   return {
     getItem() {
@@ -35,7 +36,9 @@ const rootReducer = combineReducers({
   user: userReducer,
   cart: cartReducer,
   home: homeReducer,
+  order: orderReducer,
   notification: notificationReducer,
+  dashboard: dashboardReducer,
 });
 
 const persistConfig = {

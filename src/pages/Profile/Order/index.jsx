@@ -6,32 +6,10 @@ import {
   Star,
   Truck,
 } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { userService } from "../../../service/userService";
+import { fetchMyOrdersThunk } from "../../../redux/slice/orderSlice";
 import "./style.scss";
-const orders = [
-  {
-    id: "#DH001",
-    shop: "SECOM Official Store",
-    status: "Đang giao",
-    productName: "Tai nghe Gaming RGB",
-    image: "https://picsum.photos/200/200?random=1",
-    price: 450000,
-    quantity: 1,
-    total: 450000,
-  },
-  {
-    id: "#DH002",
-    shop: "Apple Zone",
-    status: "Hoàn thành",
-    productName: "iPhone 15 Pro Max",
-    image: "https://picsum.photos/200/200?random=2",
-    price: 32990000,
-    quantity: 1,
-    total: 32990000,
-  },
-];
 
 const tabs = [
   "Tất Cả",
@@ -44,22 +22,35 @@ const tabs = [
 
 const OrderHistory = () => {
   const [activeTab, setActiveTab] = useState("Tất Cả");
-  const { orderHistory } = useSelector((state) => state.user);
   const dispatch = useDispatch();
-  const getOrder = async () => {
-    return await userService.getOrderPurchase(dispatch);
-  };
+  const orders = useSelector((state) => state.order.orders);
 
   useEffect(() => {
-    getOrder();
-  }, [orderHistory]);
+    dispatch(fetchMyOrdersThunk());
+  }, [dispatch]);
+
+  const filteredOrders = useMemo(() => {
+    if (!orders) return [];
+
+    if (activeTab === "Tất Cả") return orders;
+
+    return orders.filter((o) => {
+      switch (activeTab) {
+        case "Hoàn Thành":
+          return o.status === "Hoàn Thành";
+        case "Đang Giao":
+          return o.status === "Đang giao";
+        default:
+          return true;
+      }
+    });
+  }, [orders, activeTab]);
 
   return (
     <div className="order-history">
       <div className="order-header">
         <div className="search-box">
           <Search size={18} />
-
           <input type="text" placeholder="Tìm theo tên Shop, ID đơn hàng..." />
         </div>
 
@@ -83,18 +74,16 @@ const OrderHistory = () => {
       </div>
 
       <div className="order-list">
-        {orders.map((order) => (
-          <div key={order.id} className="order-card">
+        {filteredOrders.map((order) => (
+          <div key={order.orderId} className="order-card">
             <div className="card-top">
               <div className="shop-info">
                 <PackageCheck size={18} />
-
                 <span>{order.shop}</span>
               </div>
 
               <div className="status">
                 <Truck size={16} />
-
                 <span>{order.status}</span>
               </div>
             </div>
@@ -104,21 +93,20 @@ const OrderHistory = () => {
 
               <div className="product-info">
                 <h3>{order.productName}</h3>
-
                 <span>x{order.quantity}</span>
               </div>
 
-              <div className="price">₫{order.price.toLocaleString()}</div>
+              <div className="price">₫{order.price?.toLocaleString?.()}</div>
             </div>
 
             <div className="card-footer">
               <div className="total">
-                Thành tiền:
-                <span>₫{order.total.toLocaleString()}</span>
+                Sum:
+                <span>₫{order.finalTotal?.toLocaleString?.()}</span>
               </div>
 
               <div className="actions">
-                <button className="outline-btn">Xem Chi Tiết</button>
+                <button className="outline-btn">See Details</button>
 
                 <button className="primary-btn">
                   <Star size={16} />

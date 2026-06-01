@@ -72,15 +72,10 @@ const defaultAvatar =
 
 const ProfilePage = () => {
   const dispatch = useDispatch();
-
   const userInfo = useSelector((state) => state.user.userInfo);
-
   const [activeMenu, setActiveMenu] = useState("profile");
-
   const [loading, setLoading] = useState(false);
-
   const [previewAvatar, setPreviewAvatar] = useState(defaultAvatar);
-
   const [editProfile, setEditProfile] = useState({
     fullName: "",
     phoneNumber: "",
@@ -259,13 +254,6 @@ const ProfilePage = () => {
 
       case "password":
         return <ChangePassword />;
-
-      case "notification":
-        return (
-          <div className="content-box">
-            <h2>Notification Settings</h2>
-          </div>
-        );
 
       case "voucher":
         return (
