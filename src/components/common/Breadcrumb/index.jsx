@@ -1,55 +1,32 @@
 import { Link, useLocation } from "react-router-dom";
-import { ChevronRight } from "lucide-react";
 
-const routeNameMap = {
-  "": "Home",
-  products: "Products",
-  product: "Product Details",
-  categories: "Categories",
-  cart: "Cart",
-  checkout: "Checkout",
-  profile: "My Account",
-  orders: "My Orders",
-  wishlist: "Wishlist",
-  "change-password": "Change Password",
-  login: "Login",
-  register: "Register",
-  about: "About",
-  contact: "Contact",
+const breadcrumbMap = {
+  "/about": "About",
+  "/contact": "Contact",
+  "/cart": "Cart",
+  "/wishlist": "Wishlist",
+  "/profile": "My Account",
+  "/profile/change-password": "Change Password",
+  "/orders": "My Orders",
+  "/products": "Products",
 };
 
 export default function Breadcrumb() {
-  const location = useLocation();
+  const { pathname } = useLocation();
 
-  const pathnames = location.pathname.split("/").filter(Boolean);
+  const currentPage = breadcrumbMap[pathname];
+
+  if (!currentPage || pathname === "/") return null;
 
   return (
-    <nav className="mb-6 flex items-center text-sm text-gray-500">
-      <Link to="/" className="transition hover:text-secom-600">
+    <div className="mb-8 flex items-center gap-2 text-sm">
+      <Link to="/" className="text-gray-500 transition hover:text-black">
         Home
       </Link>
 
-      {pathnames.map((value, index) => {
-        const to = `/${pathnames.slice(0, index + 1).join("/")}`;
+      <span className="text-gray-400">/</span>
 
-        const isLast = index === pathnames.length - 1;
-
-        return (
-          <div key={to} className="flex items-center">
-            <ChevronRight size={16} className="mx-2" />
-
-            {isLast ? (
-              <span className="font-medium text-black">
-                {routeNameMap[value] || value}
-              </span>
-            ) : (
-              <Link to={to} className="transition hover:text-secom-600">
-                {routeNameMap[value] || value}
-              </Link>
-            )}
-          </div>
-        );
-      })}
-    </nav>
+      <span className="font-medium text-black">{currentPage}</span>
+    </div>
   );
 }
