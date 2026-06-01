@@ -42,6 +42,26 @@ const userSlice = createSlice({
     setAddresses: (state, action) => {
       state.addresses.push(action.payload);
     },
+    updateDefaultAddress: (state, action) => {
+      const updatedAddresses = state.addresses.map((address) => {
+        if (address.id === action.payload) {
+          return { ...address, isDefault: true };
+        } else {
+          return { ...address, isDefault: false };
+        }
+      });
+      state.addresses = updatedAddresses;
+    },
+    updateAddress: (state, action) => {
+      const updatedAddresses = state.addresses.map((address) => {
+        if (address.id === action.payload.id) {
+          return { ...address, ...action.payload };
+        } else {
+          return address;
+        }
+      });
+      state.addresses = updatedAddresses;
+    },
     deleteAddress: (state, action) => {
       state.addresses = state.addresses.filter(
         (address) => address.id !== action.payload,
@@ -76,6 +96,8 @@ export const {
   getOrderHistory,
   getAddress,
   setAddresses,
+  updateDefaultAddress,
+  updateAddress,
   deleteAddress,
 } = userSlice.actions;
 

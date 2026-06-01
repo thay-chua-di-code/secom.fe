@@ -6,12 +6,27 @@ import { addressService } from "../../../../service/addressService";
 import toast from "react-hot-toast";
 export default function AddressCard({ address, onEdit }) {
   const dispatch = useDispatch();
+
   const handleDelete = async (id) => {
     const result = await addressService.deleteAdress(id, dispatch);
     if (result.success) {
       toast.success("Address deleted successfully");
     } else {
       toast.error("Failed to delete address");
+    }
+  };
+
+  const handleSetDefault = async () => {
+    if (address.isDefault) return; // Already default, no action needed
+
+    const result = await addressService.makeAddressDefault(
+      address.id,
+      dispatch,
+    );
+    if (result.success) {
+      toast.success("Address set as default successfully");
+    } else {
+      toast.error("Failed to set address as default");
     }
   };
   return (
@@ -29,7 +44,12 @@ export default function AddressCard({ address, onEdit }) {
         {address.isDefault ? (
           <span className="address-card__default">Default</span>
         ) : (
-          <span className="address-card__not-default">Make it default</span>
+          <span
+            className="address-card__not-default"
+            onClick={handleSetDefault}
+          >
+            Make it default
+          </span>
         )}
       </div>
 

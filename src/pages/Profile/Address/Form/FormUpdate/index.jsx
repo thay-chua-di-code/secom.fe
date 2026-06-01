@@ -1,11 +1,14 @@
+import { useEffect, useState } from "react";
 import { X } from "lucide-react";
-import { useState } from "react";
-
-import Button from "../../../../components/common/Button/Button";
-
+import Button from "../../../../../components/common/Button/Button";
+import { addressService } from "../../../../../service/addressService";
+import { useDispatch } from "react-redux";
+import toast from "react-hot-toast";
 import "./style.scss";
 
-export default function FormAdd({ open, onClose, onSubmit }) {
+export default function AddressUpdateModal({ open, onClose, initialData }) {
+  const dispatch = useDispatch();
+
   const [formData, setFormData] = useState({
     receiverName: "",
     phoneNumber: "",
@@ -16,8 +19,14 @@ export default function FormAdd({ open, onClose, onSubmit }) {
     isDefault: false,
   });
 
+  useEffect(() => {
+    if (initialData) {
+      setFormData(initialData);
+    }
+  }, [initialData]);
+
   const handleChange = (e) => {
-    const { name, value, checked, type } = e.target;
+    const { name, value, type, checked } = e.target;
 
     setFormData((prev) => ({
       ...prev,
@@ -25,10 +34,21 @@ export default function FormAdd({ open, onClose, onSubmit }) {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    onSubmit(formData);
+    const result = await addressService.updateAddress(
+      initialData.id,
+      formData,
+      dispatch,
+    );
+
+    if (result?.success) {
+      toast.success("Update address success!");
+      onClose();
+    } else {
+      toast.error("Update failed!");
+    }
   };
 
   if (!open) return null;
@@ -38,11 +58,11 @@ export default function FormAdd({ open, onClose, onSubmit }) {
       <div className="address-modal__overlay" onClick={onClose} />
 
       <div className="address-modal__container w-full max-w-3xl mx-4">
+        {/* HEADER */}
         <div className="address-modal__header">
           <div>
-            <h2>Add New Address</h2>
-
-            <p>Create a shipping address for your orders.</p>
+            <h2>Update Address</h2>
+            <p>Update your shipping address information.</p>
           </div>
 
           <button className="address-modal__close" onClick={onClose}>
@@ -50,101 +70,83 @@ export default function FormAdd({ open, onClose, onSubmit }) {
           </button>
         </div>
 
-        <form onSubmit={handleSubmit}>
-          <div className="grid gap-4 md:grid-cols-2">
+        {/* FORM */}
+        <form onSubmit={handleSubmit} className="address-form">
+          <div className="grid gap-6 md:grid-cols-2">
             <div className="form-group">
               <label>Receiver Name</label>
-
               <input
-                type="text"
                 name="receiverName"
                 value={formData.receiverName}
                 onChange={handleChange}
-                placeholder="Enter receiver name"
               />
             </div>
 
             <div className="form-group">
               <label>Phone Number</label>
-
               <input
-                type="text"
                 name="phoneNumber"
                 value={formData.phoneNumber}
                 onChange={handleChange}
-                placeholder="Enter phone number"
               />
             </div>
           </div>
 
-          <div className="grid gap-4 mt-4 md:grid-cols-3">
+          <div className="grid gap-6 md:grid-cols-3">
             <div className="form-group">
               <label>Province</label>
-
               <input
-                type="text"
                 name="province"
                 value={formData.province}
                 onChange={handleChange}
-                placeholder="Province"
               />
             </div>
 
             <div className="form-group">
               <label>District</label>
-
               <input
-                type="text"
                 name="district"
                 value={formData.district}
                 onChange={handleChange}
-                placeholder="District"
               />
             </div>
 
             <div className="form-group">
               <label>Ward</label>
-
               <input
-                type="text"
                 name="ward"
                 value={formData.ward}
                 onChange={handleChange}
-                placeholder="Ward"
               />
             </div>
           </div>
 
-          <div className="form-group mt-4">
+          <div className="form-group">
             <label>Detail Address</label>
-
             <textarea
-              rows="4"
+              rows={4}
               name="detailAddress"
               value={formData.detailAddress}
               onChange={handleChange}
-              placeholder="Street name, building, apartment..."
             />
           </div>
 
           <div className="default-checkbox">
             <input
               type="checkbox"
-              id="defaultAddress"
               name="isDefault"
               checked={formData.isDefault}
               onChange={handleChange}
+              id="isDefaultUpdate"
             />
-
-            <label htmlFor="defaultAddress">Set as default address</label>
+            <label htmlFor="isDefaultUpdate">Set as default address</label>
           </div>
 
+          {/* FOOTER */}
           <div className="address-modal__footer">
-            <Button type="button" variant="outline" onClick={onClose}>
-              Cancel
+            <Button type="submit" className="address-btn address-btn--save">
+              Update
             </Button>
-
-            <Button type="submit">Save Address</Button>
           </div>
         </form>
       </div>
