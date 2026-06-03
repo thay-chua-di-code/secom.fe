@@ -5,12 +5,11 @@ export const adminService = {
   getDashBoard: async () => {
     try {
       const result = await axiosClient.get(API_ENDPOINTS.ADMIN.DASHBOARD);
-      console.log(result);
       return result.data.data;
     } catch (e) {
       throw new Error(e?.response?.data);
     }
   },
-
+  // [USER]
   
 };
