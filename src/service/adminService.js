@@ -16,26 +16,33 @@ export const adminService = {
       params: { pageNumber, pageSize },
     });
   },
-
   banUser: async (id) => {
     try {
       const result = await axiosClient.patch(API_ENDPOINTS.ADMIN.USER.LOCK(id));
-
       return result;
     } catch (e) {
       throw new Error(e?.response?.data);
     }
   },
-
-  banUser: async (id) => {
+  unBanUser: async (id) => {
     try {
       const result = await axiosClient.patch(
         API_ENDPOINTS.ADMIN.USER.UNLOCK(id),
       );
-
-      return result;
     } catch (e) {
       throw new Error(e?.response?.data);
+    }
+  },
+  // [PRODUCT]
+  getProducts: async (params) => {
+    try {
+      const result = await axiosClient.get(API_ENDPOINTS.ADMIN.PRODUCT.GET, {
+        params,
+      });
+
+      return result.data;
+    } catch (e) {
+      throw new Error(e?.response.message);
     }
   },
 };

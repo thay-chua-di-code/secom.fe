@@ -77,5 +77,10 @@ export const API_ENDPOINTS = {
       LOCK: (id) => `/admin/users/${id}/lock`,
       UNLOCK: (id) => `/admin/users/${id}/unlock`,
     },
+    PRODUCT: {
+      GET: "/admin/products",
+      APPROVE: (id) => `/admin/products/${id}/approve`,
+      REJECT: (id) => `/admin/products/${id}/reject`,
+    },
   },
 };
