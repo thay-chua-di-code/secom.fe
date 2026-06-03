@@ -1,13 +1,13 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchDashboardStatistics } from "../../../redux/slice/admin/adminThunk";
+import { fetchDashboardStatistics } from "../../../redux/slice/admin/dashboard/dashboardThunk";
 import StatCard from "../../../components/common/Admin/StatCard";
 import "./style.scss";
 
 const Dashboard = () => {
   const dispatch = useDispatch();
 
-  const { statistics } = useSelector((state) => state.admin);
+  const statistics = useSelector((state) => state.adminDashboard?.statistics);
 
   useEffect(() => {
     dispatch(fetchDashboardStatistics());

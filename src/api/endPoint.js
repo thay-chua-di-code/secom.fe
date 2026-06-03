@@ -72,5 +72,10 @@ export const API_ENDPOINTS = {
 
   ADMIN: {
     DASHBOARD: "/admin/dashboard",
+    USER: {
+      GET: "/admin/users",
+      LOCK: (id) => `/admin/users/${id}/lock`,
+      UNLOCK: (id) => `/admin/users/${id}/unlock`,
+    },
   },
 };
