@@ -48,7 +48,7 @@ const rootReducer = combineReducers({
   dashboardAdmin: dashboardReducer,
   usersAdmin: userAdminReducer,
   productsAdmin: productAdminReducer,
-  ordersAdmin: orderReducer,
+  ordersAdmin: orderAdminReducer,
 });
 
 const persistConfig = {
