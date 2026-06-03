@@ -69,4 +69,8 @@ export const API_ENDPOINTS = {
     UPDATE_ITEM: (id) => `/cart/items/${id}`,
     APPLY_VOUCHER: "/cart/voucher",
   },
+
+  ADMIN: {
+    DASHBOARD: "/admin/dashboard",
+  },
 };

@@ -4,7 +4,6 @@ import { userService } from "../../service/userService";
 const initialState = {
   userInfo: {},
   addresses: [],
-  orderHistory: [],
   loading: false,
   error: null,
 };
@@ -15,7 +14,7 @@ export const getMyInfoThunk = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const response = await userService.getMyInfo();
-
+      console.log("Profile Thunk Resp:", response);
       return response;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response?.data?.message);
@@ -33,9 +32,7 @@ const userSlice = createSlice({
     updateUserInfo: (state, action) => {
       state.userInfo = { ...state.userInfo, ...action.payload };
     },
-    getOrderHistory: (state, action) => {
-      state.orderHistory = action.payload;
-    },
+
     getAddress: (state, action) => {
       state.addresses = action.payload;
     },

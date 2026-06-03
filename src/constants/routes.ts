@@ -14,3 +14,10 @@ export const ROUTES = {
   PROFILE: "/profile",
   NOTIFICATIONS: "/notifications",
 };
+
+export const ADMIN_ROUTES = {
+  ADMIN_DASHBOARD: "",
+  ADMIN_USERS: "users",
+  ADMIN_PRODUCTS: "products",
+  ADMIN_ORDERS: "orders",
+};

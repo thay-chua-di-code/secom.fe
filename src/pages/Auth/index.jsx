@@ -4,6 +4,7 @@ import LoginForm from "./Form/LoginForm/LoginForm";
 import RegisterForm from "./Form/RegisterForm/RegisterForm";
 import ForgotPasswordForm from "./Form/ForgotPassword/index";
 import Verify from "../Auth/Verify";
+import ResetPassWord from "./Form/ResetPassWord/index";
 import "./style.scss";
 
 const AuthPage = () => {
@@ -15,6 +16,7 @@ const AuthPage = () => {
       {pathname.includes("register") && <RegisterForm />}
       {pathname.includes("forgot-password") && <ForgotPasswordForm />}
       {pathname.includes("verify-email") && <Verify />}
+      {pathname.includes("reset-password") && <ResetPassWord />}
     </div>
   );
 };

@@ -4,6 +4,7 @@ import "./style.scss";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { authService } from "../../../service/authService";
+import { isAdmin } from "../../../utils/auth";
 
 const UserNotLogin = () => {
   return (
@@ -70,6 +71,12 @@ export default function UserDropdown({ open }) {
               <Heart size={20} />
               Wishlist
             </Link>
+            {isAdmin(auth.role) && (
+              <Link to="/admin" className="dropdown-item">
+                <Package size={20} />
+                Admin Dashboard
+              </Link>
+            )}
           </div>
         )}
 

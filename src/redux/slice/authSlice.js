@@ -7,6 +7,7 @@ const token = localStorage.getItem("token");
 const initialState = {
   token: token || null,
   refreshToken: null,
+  role: null,
   loading: false,
   error: null,
   isAuthenticated: !!token,
@@ -17,7 +18,6 @@ export const loginThunk = createAsyncThunk(
   async (payload, thunkAPI) => {
     try {
       const data = await authService.login(payload);
-      console.log("data redux: ", data);
       setAuthToken(data.accessToken);
 
       return data;
@@ -31,12 +31,10 @@ export const loginThunk = createAsyncThunk(
 const authSlice = createSlice({
   name: "auth",
   initialState,
-
   reducers: {
     logout: (state) => {
       state.token = null;
       state.isAuthenticated = false;
-
       localStorage.removeItem("token");
     },
   },
@@ -51,6 +49,7 @@ const authSlice = createSlice({
       .addCase(loginThunk.fulfilled, (state, action) => {
         state.loading = false;
         state.token = action.payload.accessToken;
+        state.role = action.payload.role;
         state.refreshToken = action.payload.refreshToken;
         state.isAuthenticated = true;
       })

@@ -9,6 +9,7 @@ import App from "./App";
 import store from "./redux/store";
 import ReduxProvider from "./providers/ReduxProvider";
 import { setAuthToken } from "./api/axiosClient";
+import { BrowserRouter } from "react-router-dom";
 
 // Restore token from localStorage into axios headers after hydration
 const token = store.getState().auth?.token;
@@ -18,7 +19,9 @@ if (token) {
 
 createRoot(document.getElementById("root")).render(
   <ReduxProvider>
-    <Toaster position="top-right" />
-    <App />
+    <BrowserRouter>
+      <Toaster position="top-right" />
+      <App />
+    </BrowserRouter>
   </ReduxProvider>,
 );

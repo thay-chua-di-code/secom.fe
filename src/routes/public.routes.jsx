@@ -1,38 +1,10 @@
 import MainLayout from "../layouts/MainLayout";
 import AuthLayout from "../layouts/AuthLayout";
 import { ROUTES } from "../constants/routes";
-import Home from "../pages/Home/index";
-import AuthPage from "../pages/Auth/index";
-import DetailPage from "../pages/Profile";
-import CartPage from "../pages/Cart";
-import ProfilePage from "../pages/Profile";
-import NotificationPage from "../pages/Notifications";
-export const publicRoutes = [
-  // NORMAL PAGE
-  {
-    path: "/",
-    element: <MainLayout />,
-    children: [
-      {
-        path: ROUTES.HOME,
-        element: <Home />,
-      },
-      {
-        path: ROUTES.PROFILE,
-        element: <ProfilePage />,
-      },
-      {
-        path: ROUTES.CART,
-        element: <CartPage />,
-      },
-      {
-        path: ROUTES.NOTIFICATIONS,
-        element: <NotificationPage />,
-      },
-    ],
-  },
+import Home from "../pages/Home";
+import AuthPage from "../pages/Auth";
 
-  // AUTH
+export const publicRoutes = [
   {
     path: "/",
     element: <MainLayout />,
@@ -46,13 +18,10 @@ export const publicRoutes = [
         path: ROUTES.REGISTER,
         element: <AuthPage />,
       },
-    ],
-  },
-
-  {
-    path: "/",
-    element: <AuthLayout />,
-    children: [
+      {
+        index: true,
+        element: <Home />,
+      },
       {
         path: ROUTES.FORGOT_PWD,
         element: <AuthPage />,
