@@ -16,8 +16,8 @@ export const ROUTES = {
 };
 
 export const ADMIN_ROUTES = {
-  ADMIN_DASHBOARD: "/admin",
-  ADMIN_USERS: "/admin/users",
-  ADMIN_PRODUCTS: "/admin/products",
-  ADMIN_ORDERS: "/admin/orders",
+  ADMIN_DASHBOARD: "",
+  ADMIN_USERS: "users",
+  ADMIN_PRODUCTS: "products",
+  ADMIN_ORDERS: "orders",
 };

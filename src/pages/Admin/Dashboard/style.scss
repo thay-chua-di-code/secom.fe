@@ -1,0 +1,35 @@
+.dashboard {
+  &__header {
+    margin-bottom: 32px;
+
+    h1 {
+      font-size: 36px;
+      font-weight: 700;
+      color: #111827;
+    }
+
+    p {
+      color: #6b7280;
+      margin-top: 8px;
+    }
+  }
+
+  &__grid {
+    display: grid;
+    gap: 20px;
+    margin-bottom: 30px;
+
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+}
+
+.dashboard-section {
+  margin-bottom: 40px;
+
+  h2 {
+    font-size: 22px;
+    margin-bottom: 20px;
+    font-weight: 600;
+    color: #1e293b;
+  }
+}

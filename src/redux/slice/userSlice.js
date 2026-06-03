@@ -14,7 +14,7 @@ export const getMyInfoThunk = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const response = await userService.getMyInfo();
-
+      console.log("Profile Thunk Resp:", response);
       return response;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response?.data?.message);

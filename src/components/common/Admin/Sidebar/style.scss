@@ -1,0 +1,160 @@
+.sidebar {
+  width: 280px;
+  min-height: 100vh;
+
+  background: #0f172a;
+  color: white;
+
+  display: flex;
+  flex-direction: column;
+
+  padding: 24px;
+
+  transition: all 0.3s ease;
+
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+
+  &__logo {
+    margin-bottom: 40px;
+
+    h2 {
+      font-size: 30px;
+      font-weight: 700;
+
+      /* sky-600 */
+      color: #0284c7;
+
+      margin-bottom: 4px;
+      letter-spacing: 1px;
+    }
+
+    span {
+      color: #94a3b8;
+      font-size: 14px;
+    }
+  }
+
+  &__menu {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    text-decoration: none;
+
+    color: #cbd5e1;
+
+    padding: 14px 16px;
+
+    border-radius: 12px;
+
+    transition: all 0.25s ease;
+
+    svg {
+      transition: all 0.25s ease;
+    }
+
+    &:hover {
+      background: rgba(2, 132, 199, 0.12);
+      color: #38bdf8;
+
+      svg {
+        transform: scale(1.05);
+      }
+    }
+
+    &.active {
+      background: #0284c7;
+      color: white;
+
+      font-weight: 600;
+
+      box-shadow: 0 8px 20px rgba(2, 132, 199, 0.35);
+    }
+  }
+}
+
+
+
+.sidebar-toggle {
+  display: none;
+}
+
+.sidebar-close {
+  display: none;
+}
+
+.sidebar-overlay {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    left: -100%;
+    top: 0;
+    z-index: 1000;
+
+    width: 260px;
+    height: 100vh;
+
+    &.open {
+      left: 0;
+    }
+  }
+
+  .sidebar-toggle {
+    display: flex;
+
+    position: fixed;
+    top: 16px;
+    left: 16px;
+
+    z-index: 1100;
+
+    border: none;
+    background: white;
+
+    width: 45px;
+    height: 45px;
+
+    border-radius: 12px;
+
+    align-items: center;
+    justify-content: center;
+
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+
+    cursor: pointer;
+  }
+
+  .sidebar-close {
+    display: flex;
+
+    margin-left: auto;
+
+    background: transparent;
+    border: none;
+
+    color: white;
+    cursor: pointer;
+
+    margin-bottom: 20px;
+  }
+
+  .sidebar-overlay {
+    display: block;
+
+    position: fixed;
+    inset: 0;
+
+    background: rgba(0, 0, 0, 0.4);
+
+    z-index: 999;
+  }
+}

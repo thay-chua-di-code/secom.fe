@@ -2,6 +2,6 @@ export const isLoggedIn = (user) => {
   return !!user;
 };
 
-export const isAdmin = (user) => {
-  return user?.role === "ADMIN";
+export const isAdmin = (role) => {
+  return role.toLowerCase() === "admin";
 };

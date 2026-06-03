@@ -14,7 +14,7 @@ const ResetPassWord = () => {
 
   const handleSubmitResetPassword = async (e) => {
     e.preventDefault();
-    const result = await authService.reset_pwd({ token, newPwd });
+    const result = await authService.reset_pwd({ token, newPassword: newPwd });
   };
 
   return (

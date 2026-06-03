@@ -6,7 +6,7 @@ import { authService } from "../../../../service/authService";
 import { loginThunk } from "../../../../redux/slice/authSlice";
 import { getMyInfoThunk } from "../../../../redux/slice/userSlice";
 import banner from "../../../../assets/images/SideImage.png";
-
+import toast from "react-hot-toast";
 import "./LoginForm.scss";
 import Button from "../../../../components/common/Button/Button";
 
@@ -23,18 +23,19 @@ export default function LoginForm() {
     e.preventDefault();
 
     try {
-      await dispatch(
+      const result = await dispatch(
         loginThunk({
           email: loginData.email,
           password: loginData.password,
         }),
       ).unwrap();
-
-      await dispatch(getMyInfoThunk()).unwrap();
-
-      navigate("/");
+      if (result) {
+        toast.success("Login successful!");
+        navigate("/");
+        await dispatch(getMyInfoThunk()).unwrap();
+      }
     } catch (error) {
-      console.error(error);
+      toast.error(error?.response?.data?.message || "Login failed!");
     }
   };
 

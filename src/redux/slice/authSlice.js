@@ -7,6 +7,7 @@ const token = localStorage.getItem("token");
 const initialState = {
   token: token || null,
   refreshToken: null,
+  role: null,
   loading: false,
   error: null,
   isAuthenticated: !!token,
@@ -48,6 +49,7 @@ const authSlice = createSlice({
       .addCase(loginThunk.fulfilled, (state, action) => {
         state.loading = false;
         state.token = action.payload.accessToken;
+        state.role = action.payload.role;
         state.refreshToken = action.payload.refreshToken;
         state.isAuthenticated = true;
       })
