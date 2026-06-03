@@ -15,7 +15,6 @@ export const ROUTES = {
   NOTIFICATIONS: "/notifications",
 };
 
-
 export const ADMIN_ROUTES = {
   ADMIN_DASHBOARD: "/admin",
   ADMIN_USERS: "/admin/users",

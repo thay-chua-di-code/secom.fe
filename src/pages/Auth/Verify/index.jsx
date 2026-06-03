@@ -15,7 +15,6 @@ const Verify = () => {
       email: email,
       token: token,
     });
-    console.log(result.data.success);
     if (result.data.success) {
       navigate("/login");
     }
