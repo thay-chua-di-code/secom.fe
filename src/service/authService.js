@@ -30,13 +30,27 @@ export const authService = {
   },
   logout: async (payload, dispatch) => {
     try {
-      const result = await axiosClient.post(API_ENDPOINTS.AUTH.LOG_OUT);
+      const refreshToken = localStorage.getItem("refreshToken");
+
+      const result = await axiosClient.post(
+        API_ENDPOINTS.AUTH.LOG_OUT,
+        { refreshToken },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
       dispatch(clearUserInfo());
       dispatch(logout());
       localStorage.removeItem("token");
+      localStorage.removeItem("refreshToken");
+
       return result.data;
     } catch (e) {
       console.error(e?.response?.data);
+      throw e;
     }
   },
   register: async (payload) => {
