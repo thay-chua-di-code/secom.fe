@@ -3,18 +3,18 @@ import MainLayout from "../layouts/MainLayout";
 import Profile from "../pages/Profile";
 import Cart from "../pages/Cart";
 import Notifications from "../pages/Notifications";
+import { ROUTES } from "../constants/routes";
 
 export const protectedRoutes = [
   {
     element: <ProtectedRoutes />,
     children: [
       {
-        path: "/profile",
         element: <MainLayout />,
         children: [
-          { index: true, element: <Profile /> },
-          { path: "cart", element: <Cart /> },
-          { path: "notifications", element: <Notifications /> },
+          { path: ROUTES.PROFILE, element: <Profile /> },
+          { path: ROUTES.CART, element: <Cart /> },
+          { path: ROUTES.NOTIFICATIONS, element: <Notifications /> },
         ],
       },
     ],

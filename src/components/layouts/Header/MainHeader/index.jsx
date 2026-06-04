@@ -20,7 +20,7 @@ export default function MainHeader() {
   const [keyword, setKeyword] = useState("");
 
   const { isAuthenticated, user } = useSelector((state) => state.auth);
-
+  const userInfo = useSelector((state) => state.user?.userInfo);
   const { items = [] } = useSelector((state) => state.cart);
 
   const cartCount = items.reduce(
@@ -120,8 +120,19 @@ export default function MainHeader() {
           {isAuthenticated && (
             <>
               <div className="relative" onClick={handleUserToggle}>
-                <Button variant="ghost" className="social-btn text-black">
-                  <UserRound size={24} />
+                <Button
+                  variant="ghost"
+                  className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-full border border-gray-200 p-0 shadow-sm transition-all hover:border-sky-500 hover:shadow-md"
+                >
+                  {userInfo?.avatarUrl ? (
+                    <img
+                      src={userInfo.avatarUrl}
+                      alt={userInfo?.fullName || "Avatar"}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <UserRound size={22} />
+                  )}
                 </Button>
 
                 <UserDropdown user={user} open={openUser} />
