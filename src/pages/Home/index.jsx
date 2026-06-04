@@ -5,8 +5,8 @@ import CategorySidebar from "./CategoriesSideBar";
 import Policy from "./Policy";
 import SectionDivider from "../../components/layouts/SectionDivider/index";
 import { fetchHomepage } from "../../redux/slice/homeSlice";
-import FeatureProducts from "./FeatureProducts";
-
+import FeatureProducts from "./Products/FeatureProducts";
+import LastestProduct from "./Products/LatestProducts";
 const Home = () => {
   const dispatch = useDispatch();
 
@@ -33,8 +33,11 @@ const Home = () => {
       <SectionDivider />
 
       {/* Latest Products */}
-      <section className="mt-16 lg:mt-24">{/* <LatestProducts /> */}</section>
+      <section className="mt-16 lg:mt-24">
+        <LastestProduct />
+      </section>
 
+      <SectionDivider />
       {/* Policy */}
       <section className="mt-20 lg:mt-32">
         <Policy />

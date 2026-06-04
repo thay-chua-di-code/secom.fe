@@ -1,18 +1,20 @@
 export const ROUTES = {
-  // AUTH
+  // [AUTH]
   LOGIN: "/login",
   REGISTER: "/register",
   FORGOT_PWD: "/forgot-password",
   VERIFY: "/verify-email",
   CHANGE_PWD: "/password",
   RS_PWD: "/reset-password",
-  //NORMAL
+  // [NORMAL]
   HOME: "/",
   CART: "/cart",
   DASHBOARD: "/dashboard",
   PRODUCT_DETAIL: "/product/:id",
   PROFILE: "/profile",
   NOTIFICATIONS: "/notifications",
+  // [PRODUCT]
+  DETAIL: `product-detail/:id`,
 };
 
 export const ADMIN_ROUTES = {

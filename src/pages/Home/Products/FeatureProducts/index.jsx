@@ -1,5 +1,5 @@
-import Card from "./Card";
-import Title from "../../../components/common/Title";
+import Card from "../Card";
+import Title from "../../../../components/common/Title";
 import { useSelector } from "react-redux";
 import { PackageSearch } from "lucide-react";
 
@@ -11,7 +11,7 @@ export default function FeatureProducts() {
   if (loading) {
     return (
       <section className="featured-products">
-        <Title title="Our Products" />
+        <Title title="Feature Product" />
 
         <div className="featured-products__empty">
           <p>Loading products...</p>

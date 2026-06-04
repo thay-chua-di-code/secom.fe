@@ -1,4 +1,8 @@
-@import "../../../styles/abstracts/variables";
+$primary: #0284c7;
+$bg: #f8fafc;
+$text: #1f2937;
+$danger: #ef4444;
+$success: #22c55e;
 
 .users-page {
   padding: 24px;
@@ -33,8 +37,11 @@
     overflow: hidden;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
   }
+}
 
-  @include tablet {
+/* Tablet */
+@media (max-width: 1024px) {
+  .users-page {
     padding: 16px;
 
     &__header {
@@ -43,8 +50,11 @@
       gap: 10px;
     }
   }
+}
 
-  @include mobile {
+/* Mobile */
+@media (max-width: 640px) {
+  .users-page {
     padding: 12px;
 
     &__header h1 {
@@ -53,7 +63,7 @@
   }
 }
 
-/* User ToolBar*/
+/* User Toolbar */
 .toolbar {
   display: flex;
   justify-content: space-between;
@@ -79,18 +89,21 @@
     padding: 10px 16px;
     border-radius: 8px;
     cursor: pointer;
+    transition: all 0.2s ease;
 
     &:hover {
-      background: darken($primary, 8%);
+      filter: brightness(90%);
     }
   }
+}
 
-  @include mobile {
+@media (max-width: 640px) {
+  .toolbar {
     flex-direction: column;
   }
 }
 
-/* User Table*/
+/* User Table */
 .user-table {
   width: 100%;
   border-collapse: collapse;
@@ -120,18 +133,19 @@
     text-align: center;
     padding: 20px;
   }
+}
 
-  @include mobile {
+@media (max-width: 640px) {
+  .user-table {
     th,
     td {
-      font-size: 12px;
       padding: 8px;
+      font-size: 12px;
     }
   }
 }
 
-/* User Row*/
-
+/* User Row */
 .user-row {
   .role {
     background: #e5e7eb;
@@ -183,7 +197,6 @@
   align-items: center;
   justify-content: center;
   gap: 16px;
-
   margin: 20px 0;
 
   &__btn {
@@ -214,9 +227,10 @@
       color: $primary;
     }
   }
+}
 
-  /* TABLET */
-  @media (max-width: 1024px) {
+@media (max-width: 1024px) {
+  .pagination {
     gap: 12px;
 
     &__btn {
@@ -224,9 +238,10 @@
       font-size: 13px;
     }
   }
+}
 
-  /* MOBILE */
-  @media (max-width: 640px) {
+@media (max-width: 640px) {
+  .pagination {
     flex-direction: column;
     gap: 8px;
 
