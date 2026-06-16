@@ -7,7 +7,7 @@ import Breadcrumb from "../components/common/Breadcrumb";
 
 export default function MainLayout() {
   return (
-    <div className="min-h-screen bg-[#f5f5f5]">
+    <div className="w-full min-h-screen bg-[#f5f5f5]">
       <Header />
 
       <main className="container-custom py-6 my-6">

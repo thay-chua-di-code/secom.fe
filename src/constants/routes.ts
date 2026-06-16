@@ -14,7 +14,11 @@ export const ROUTES = {
   PROFILE: "/profile",
   NOTIFICATIONS: "/notifications",
   // [PRODUCT]
-  DETAIL: `product-detail/:id`,
+  DETAIL: `/product-detail/:id`,
+  // [SELLER]
+  SELLER: {
+    REGISTER: "/seller-register",
+  },
 };
 
 export const ADMIN_ROUTES = {
