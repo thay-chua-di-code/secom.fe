@@ -3,6 +3,7 @@ import MainLayout from "../layouts/MainLayout";
 import Profile from "../pages/Profile";
 import Cart from "../pages/Cart";
 import Notifications from "../pages/Notifications";
+import RegisterSeller from "../pages/RegisterSeller";
 import { ROUTES } from "../constants/routes";
 
 export const protectedRoutes = [
@@ -15,7 +16,7 @@ export const protectedRoutes = [
           { path: ROUTES.PROFILE, element: <Profile /> },
           { path: ROUTES.CART, element: <Cart /> },
           { path: ROUTES.NOTIFICATIONS, element: <Notifications /> },
-          { path: ROUTES.SELLER.REGISTER },
+          { path: ROUTES.SELLER.REGISTER, element: <RegisterSeller /> },
         ],
       },
     ],
