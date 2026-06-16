@@ -6,7 +6,6 @@ export const notificationService = {
       API_ENDPOINTS.NOTIFICATION.GET,
       payload,
     );
-
     return result.data;
   },
 

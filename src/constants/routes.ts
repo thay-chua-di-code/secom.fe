@@ -10,11 +10,15 @@ export const ROUTES = {
   HOME: "/",
   CART: "/cart",
   DASHBOARD: "/dashboard",
-  PRODUCT_DETAIL: "/product/:id",
+  // [Need fix] => /:id
+  PRODUCT_DETAIL: "/product-detail",
   PROFILE: "/profile",
   NOTIFICATIONS: "/notifications",
   // [PRODUCT]
-  DETAIL: `product-detail/:id`,
+  // [SELLER]
+  SELLER: {
+    REGISTER: "/seller-register",
+  },
 };
 
 export const ADMIN_ROUTES = {
