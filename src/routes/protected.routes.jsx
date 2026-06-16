@@ -15,6 +15,7 @@ export const protectedRoutes = [
           { path: ROUTES.PROFILE, element: <Profile /> },
           { path: ROUTES.CART, element: <Cart /> },
           { path: ROUTES.NOTIFICATIONS, element: <Notifications /> },
+          { path: ROUTES.SELLER.REGISTER },
         ],
       },
     ],

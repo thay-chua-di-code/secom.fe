@@ -1,0 +1,186 @@
+.product-review {
+  width: 100%;
+  margin-top: 80px;
+  padding: 0;
+  background: transparent;
+}
+
+.review-header {
+  margin-bottom: 32px;
+
+  h2 {
+    font-size: 32px;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 20px;
+  }
+}
+
+.average-rating {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 24px;
+  border-radius: 12px;
+  background: rgba(14, 165, 233, 0.08);
+  border: 1px solid rgba(14, 165, 233, 0.15);
+
+  .score {
+    font-size: 60px;
+    font-weight: 700;
+    color: #0ea5e9;
+    line-height: 1;
+  }
+
+  .stars {
+    color: #fbbf24;
+    font-size: 24px;
+  }
+
+  p {
+    color: #64748b;
+    margin-top: 6px;
+  }
+}
+
+.review-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 30px 0;
+
+  button {
+    padding: 10px 18px;
+
+    border-radius: 999px;
+    border: 1px solid #cbd5e1;
+
+    background: transparent;
+    color: #334155;
+
+    cursor: pointer;
+
+    transition: all 0.25s ease;
+
+    &:hover {
+      border-color: #0ea5e9;
+      color: #0ea5e9;
+    }
+
+    &.active {
+      background: #0ea5e9;
+      border-color: #0ea5e9;
+      color: white;
+    }
+  }
+}
+
+.review-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.review-item {
+  background: white;
+
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+
+  padding: 24px;
+
+  transition: all 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+  }
+}
+
+.review-user {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  margin-bottom: 16px;
+
+  .avatar {
+    width: 56px;
+    height: 56px;
+
+    border-radius: 50%;
+
+    background: #0ea5e9;
+    color: white;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  h4 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #0f172a;
+    margin-bottom: 4px;
+  }
+
+  .stars {
+    color: #fbbf24;
+    margin-bottom: 4px;
+  }
+
+  span {
+    color: #94a3b8;
+    font-size: 14px;
+  }
+}
+
+.comment {
+  line-height: 1.8;
+  color: #475569;
+  font-size: 15px;
+}
+
+@media (max-width: 1024px) {
+  .average-rating {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 768px) {
+  .review-header {
+    h2 {
+      font-size: 26px;
+    }
+  }
+
+  .average-rating {
+    padding: 20px;
+
+    .score {
+      font-size: 48px;
+    }
+  }
+
+  .review-filter {
+    button {
+      flex: 1;
+      min-width: 100px;
+    }
+  }
+
+  .review-item {
+    padding: 18px;
+  }
+
+  .review-user {
+    .avatar {
+      width: 48px;
+      height: 48px;
+    }
+  }
+}

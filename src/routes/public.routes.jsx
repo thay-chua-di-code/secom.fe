@@ -3,6 +3,7 @@ import AuthLayout from "../layouts/AuthLayout";
 import { ROUTES } from "../constants/routes";
 import Home from "../pages/Home";
 import AuthPage from "../pages/Auth";
+import ProductDetail from "../pages/Products/ProductDetail";
 
 export const publicRoutes = [
   {
@@ -35,6 +36,10 @@ export const publicRoutes = [
       {
         path: ROUTES.RS_PWD,
         element: <AuthPage />,
+      },
+      {
+        path: ROUTES.PRODUCT_DETAIL,
+        element: <ProductDetail />,
       },
     ],
   },
