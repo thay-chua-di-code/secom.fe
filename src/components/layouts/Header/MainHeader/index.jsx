@@ -94,7 +94,7 @@ export default function MainHeader() {
             </h1>
 
             <p className="hidden text-xs text-gray-500 md:block">
-              Secondhand E-Commerce
+              Smart Tech, Recharged.
             </p>
           </div>
         </Link>

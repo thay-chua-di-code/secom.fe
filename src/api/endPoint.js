@@ -41,7 +41,9 @@ export const API_ENDPOINTS = {
     DETAIL: (id) => `/products/${id}`,
   },
 
-  SELLER: {},
+  SELLER: {
+    REGISTER: "/seller/shop/register",
+  },
 
   REVIEW: {},
 

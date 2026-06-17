@@ -9,22 +9,15 @@ import {
   Ticket,
   User,
 } from "lucide-react";
-
 import { useEffect, useState } from "react";
-
 import { useDispatch, useSelector } from "react-redux";
-
 import { userService } from "../../service/userService";
-
 import { getMyInfoThunk } from "../../redux/slice/userSlice";
-
 import { uploadImageToCloudinary } from "../../utils/uploadImgCloud";
-
+import toast from "react-hot-toast";
 import ChangePassword from "./ChangePwd";
 import OrderHistory from "./Order";
-
 import Button from "../../components/common/Button/Button";
-
 import "./style.scss";
 import AddressList from "./Address/List";
 
@@ -111,13 +104,13 @@ const ProfilePage = () => {
     if (!file) return;
 
     if (!file.type.startsWith("image/")) {
-      alert("Please select image file");
+      toast.warn("Please select image file");
 
       return;
     }
 
     if (file.size > 1024 * 1024) {
-      alert("Avatar size must be less than 1MB");
+      toast.warn("Avatar size must be less than 1MB");
 
       return;
     }
@@ -133,7 +126,7 @@ const ProfilePage = () => {
   const handleSaveProfile = async () => {
     try {
       if (!editProfile.fullName.trim()) {
-        alert("Full name is required");
+        toast.warn("Full name is required");
 
         return;
       }
@@ -164,11 +157,11 @@ const ProfilePage = () => {
         avatarUrl,
       }));
 
-      alert("Profile updated successfully");
+      toast.success("Profile updated successfully");
     } catch (error) {
       console.log(error);
 
-      alert("Update profile failed");
+      toast.error("Update profile failed");
     } finally {
       setLoading(false);
     }
