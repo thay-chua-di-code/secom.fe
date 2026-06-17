@@ -36,21 +36,21 @@ export default function StoreInformation() {
     e.preventDefault();
 
     try {
-      if (!formData.shopName.trim()) {
-        return toast.error("Shop name is required");
-      }
+      // if (!formData.shopName.trim()) {
+      //   return toast.error("Shop name is required");
+      // }
 
-      if (!formData.phoneNumber.trim()) {
-        return toast.error("Phone number is required");
-      }
+      // if (!formData.phoneNumber.trim()) {
+      //   return toast.error("Phone number is required");
+      // }
 
-      if (!formData.address.trim()) {
-        return toast.error("Address is required");
-      }
+      // if (!formData.address.trim()) {
+      //   return toast.error("Address is required");
+      // }
 
-      if (!formData.verificationImage) {
-        return toast.error("Verification image is required");
-      }
+      // if (!formData.verificationImage) {
+      //   return toast.error("Verification image is required");
+      // }
 
       setLoading(true);
 
@@ -67,11 +67,11 @@ export default function StoreInformation() {
       });
 
       const payload = {
-        ShopName: formData.shopName,
-        Description: formData.description,
-        PhoneNumber: formData.phoneNumber,
-        Address: formData.address,
-        VerificationImage: verificationImageUrl,
+        shopName: formData.shopName,
+        description: formData.description,
+        phoneNumber: formData.phoneNumber,
+        address: formData.address,
+        verificationImage: verificationImageUrl,
       };
 
       await sellerService.becomeSeller(payload);

@@ -62,12 +62,12 @@ export default function UserDropdown({ open }) {
               <User size={20} />
               My Profile
             </Link>
-            <Link to="/orders" className="dropdown-item">
+            <Link to="/order-self" className="dropdown-item">
               <Package size={20} />
               My Orders
             </Link>
 
-            <Link to="/wishlist" className="dropdown-item">
+            <Link to="/wish-list" className="dropdown-item">
               <Heart size={20} />
               Wishlist
             </Link>

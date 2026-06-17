@@ -7,11 +7,6 @@ export const sellerService = {
       const result = await axiosClient.post(
         API_ENDPOINTS.SELLER.REGISTER,
         payload,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        },
       );
 
       console.log(result);

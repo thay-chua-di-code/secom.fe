@@ -13,6 +13,11 @@ export const ROUTES = {
   // [Need fix] => /:id
   PRODUCT_DETAIL: "/product-detail",
   PROFILE: "/profile",
+  SELF: {
+    WISH_LIST: "/wish-list",
+    ORDER_SELF: "/order-self",
+  },
+
   NOTIFICATIONS: "/notifications",
   // [PRODUCT]
   // [SELLER]

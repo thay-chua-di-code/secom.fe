@@ -1,0 +1,51 @@
+.order-footer {
+  padding: 20px;
+  border-top: 1px solid #eee;
+
+  .total {
+    text-align: right;
+
+    span {
+      margin-left: 10px;
+      color: #0369a1;
+      font-size: 24px;
+      font-weight: 700;
+    }
+  }
+
+  .actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 16px;
+
+    button {
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .primary {
+      background: #0369a1;
+      border: none;
+      color: white;
+    }
+
+    .outline {
+      background: white;
+      border: 1px solid #ddd;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .order-footer {
+    .actions {
+      flex-direction: column;
+
+      button {
+        width: 100%;
+      }
+    }
+  }
+}

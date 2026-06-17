@@ -1,0 +1,16 @@
+.wishlist-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+
+  h2 {
+    font-size: 28px;
+    font-weight: 700;
+  }
+
+  .wishlist-count {
+    color: #666;
+    font-size: 14px;
+  }
+}
