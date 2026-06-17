@@ -14,6 +14,7 @@ export const fetchHomepage = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const response = await dicoveryService.getHomePg();
+      console.log("Response Home: ", response);
       return response?.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
