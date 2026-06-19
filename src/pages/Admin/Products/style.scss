@@ -1,0 +1,174 @@
+.admin-products {
+  padding: 24px;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+
+    h1 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    p {
+      color: #64748b;
+    }
+  }
+
+  &__filter {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 24px;
+
+    input,
+    select {
+      height: 46px;
+      border: 1px solid #dbe2ea;
+      border-radius: 8px;
+      padding: 0 14px;
+      font-size: 15px;
+      outline: none;
+    }
+
+    input {
+      flex: 1;
+    }
+
+    select {
+      min-width: 180px;
+    }
+  }
+}
+
+.add-btn {
+  height: 46px;
+  padding: 0 20px;
+  border: none;
+  border-radius: 8px;
+  background: #0284c7;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:hover {
+    background: #0369a1;
+  }
+}
+
+.table-wrapper {
+  overflow-x: auto;
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 1000px;
+
+  th {
+    text-align: left;
+    background: #f8fafc;
+    padding: 16px;
+    font-weight: 600;
+    color: #475569;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  td {
+    padding: 16px;
+    border-bottom: 1px solid #f1f5f9;
+  }
+
+  tr:hover {
+    background: #fafafa;
+  }
+}
+
+.status {
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+
+  &--approved {
+    color: #15803d;
+    background: #dcfce7;
+  }
+
+  &--pending {
+    color: #b45309;
+    background: #fef3c7;
+  }
+
+  &--rejected {
+    color: #dc2626;
+    background: #fee2e2;
+  }
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.view-btn,
+.approve-btn,
+.reject-btn {
+  height: 36px;
+  padding: 0 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.view-btn {
+  background: #e2e8f0;
+}
+
+.approve-btn {
+  background: #16a34a;
+  color: white;
+}
+
+.reject-btn {
+  background: #dc2626;
+  color: white;
+}
+
+/* Tablet */
+
+@media (max-width: 992px) {
+  .admin-products {
+    &__header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 16px;
+    }
+  }
+}
+
+/* Mobile */
+
+@media (max-width: 768px) {
+  .admin-products {
+    padding: 16px;
+
+    &__filter {
+      flex-direction: column;
+
+      select {
+        width: 100%;
+      }
+    }
+  }
+
+  .add-btn {
+    width: 100%;
+  }
+}

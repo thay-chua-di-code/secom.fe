@@ -21,27 +21,35 @@
 
   &__footer {
     margin-top: 50px;
-
     display: flex;
     justify-content: center;
 
-    button {
+    a {
       width: 230px;
       height: 56px;
 
-      border-radius: 4px;
-
-      border: none;
-
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
       background: #0284c7;
-
-      color: white;
-
+      color: #fff;
       font-size: 16px;
-      font-weight: 500;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      &:hover {
+        background: #0369a1;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(2, 132, 199, 0.25);
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
     }
   }
-
   &__empty {
     min-height: 320px;
 

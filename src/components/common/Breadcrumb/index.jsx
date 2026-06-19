@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-
+import './style.scss'
 const breadcrumbMap = {
   "/about": "About",
   "/contact": "Contact",
@@ -19,7 +19,7 @@ export default function Breadcrumb() {
   if (!currentPage || pathname === "/") return null;
 
   return (
-    <div className="mb-8 flex items-center gap-2 text-sm">
+    <div className="breadcrumb-container mb-8 flex items-center gap-2 text-sm">
       <Link to="/" className="text-gray-500 transition hover:text-black">
         Home
       </Link>

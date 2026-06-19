@@ -2,25 +2,29 @@ import Card from "../Card";
 import Title from "../../../../components/common/Title";
 import { useSelector } from "react-redux";
 import { PackageSearch } from "lucide-react";
-
+import { mockProducts } from "../../../../utils/temporary";
 import "./style.scss";
+import { Link } from "react-router-dom";
 
 export default function FeatureProducts() {
-  const { featuredProducts, loading } = useSelector((state) => state.home);
+  // const { featuredProducts, loading } = useSelector((state) => state.home);
 
-  if (loading) {
-    return (
-      <section className="featured-products">
-        <Title title="Feature Product" />
+  // Temporary
+  // const { loading } = useSelector((state) => state.home);
+  // if (loading) {
+  //   return (
+  //     <section className="featured-products">
+  //       <Title title="Feature Product" />
 
-        <div className="featured-products__empty">
-          <p>Loading products...</p>
-        </div>
-      </section>
-    );
-  }
+  //       <div className="featured-products__empty">
+  //         <p>Loading products...</p>
+  //       </div>
+  //     </section>
+  //   );
+  // }
 
-  if (!featuredProducts || featuredProducts.length === 0) {
+  // Temporary
+  if (!mockProducts || mockProducts.length === 0) {
     return (
       <section className="featured-products">
         <Title title="Our Products" />
@@ -51,14 +55,19 @@ export default function FeatureProducts() {
         <h2>Explore Our Products</h2>
       </div>
 
+      {/* Temporary */}
       <div className="featured-products__grid">
-        {featuredProducts.map((product) => (
+        {/* {featuredProducts.map((product) => (
+          <Card key={product.id} product={product} />
+        ))} */}
+
+        {mockProducts.map((product) => (
           <Card key={product.id} product={product} />
         ))}
       </div>
 
       <div className="featured-products__footer">
-        <button>View All Products</button>
+        <Link to={'/products'}>View All Products</Link>
       </div>
     </section>
   );

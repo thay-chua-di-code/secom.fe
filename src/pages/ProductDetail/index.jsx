@@ -1,10 +1,12 @@
 import { useState } from "react";
-import shipIcon from "../../../assets/icons/icon-ship.png";
-import returnIcon from "../../../assets/icons/icon-return.png";
-import Button from "../../../components/common/Button/Button";
+import shipIcon from "../../assets/icons/icon-ship.png";
+import returnIcon from "../../assets/icons/icon-return.png";
+import Button from "../../components/common/Button/Button";
 import "./style.scss";
 import ProductReview from "./Review";
-
+import { mockProducts } from "../../utils/temporary";
+import { useParams } from "react-router-dom";
+import { formatCurrencyVN } from "../../utils/fncUtils";
 const images = [
   "https://cdn2.cellphones.com.vn/insecure/rs:fill:0:358/q:90/plain/https://cellphones.com.vn/media/catalog/product/l/a/laptop-acer-predator-helios-300_1_.jpg",
   "https://tramanh.vn/wp-content/uploads/2023/09/acer-predator-helios-300-2022-2.jpg",
@@ -13,14 +15,18 @@ const images = [
 ];
 
 export default function ProductDetail() {
-  const [selectedImage, setSelectedImage] = useState(images[0]);
+  const { id } = useParams();
+  const productDetail = mockProducts.find(
+    (product) => product.id.toString() === id,
+  );
+  const [selectedImage, setSelectedImage] = useState(productDetail.images[0]);
   const [quantity, setQuantity] = useState(2);
 
   return (
     <div className="product-detail">
       <div className="product-detail__gallery">
         <div className="thumbnail-list">
-          {images.map((img, index) => (
+          {productDetail.images.map((img, index) => (
             <div
               key={index}
               className={`thumbnail ${selectedImage === img ? "active" : ""}`}
@@ -37,7 +43,7 @@ export default function ProductDetail() {
       </div>
 
       <div className="product-detail__info">
-        <h1>Predator Helios 300</h1>
+        <h1>{productDetail.name}</h1>
 
         <div className="rating">
           <div className="stars">★★★★☆</div>
@@ -46,7 +52,7 @@ export default function ProductDetail() {
           <span className="stock">In Stock</span>
         </div>
 
-        <div className="price">$192.00</div>
+        <div className="price">{formatCurrencyVN(productDetail.price)}</div>
 
         <p className="description">
           PlayStation 5 Controller Skin High quality vinyl with air channel

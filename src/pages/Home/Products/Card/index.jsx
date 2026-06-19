@@ -1,10 +1,10 @@
 import { Heart, Eye, Star } from "lucide-react";
-
+import { Link } from "react-router-dom";
 import "./style.scss";
 
 export default function Card({ product }) {
   return (
-    <div className="product-card">
+    <Link to={`/product-detail/${product.id}`} className="product-card">
       <div className="product-card__image-wrapper">
         {product.isNew && <span className="product-card__badge">NEW</span>}
 
@@ -19,7 +19,7 @@ export default function Card({ product }) {
         </div>
 
         <img
-          src={product.image}
+          src={product.images[0]}
           alt={product.name}
           className="product-card__image"
         />
@@ -44,6 +44,6 @@ export default function Card({ product }) {
           </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }

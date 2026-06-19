@@ -11,7 +11,12 @@ export const ROUTES = {
   CART: "/cart",
   DASHBOARD: "/dashboard",
   // [Need fix] => /:id
-  PRODUCT_DETAIL: "/product-detail",
+  // [PRODUCT]
+  PRODUCT: {
+    PRODUCT_DETAIL: "/product-detail/:id",
+    PRODUCTS: "/products",
+  },
+
   PROFILE: "/profile",
   SELF: {
     WISH_LIST: "/wish-list",
@@ -19,10 +24,10 @@ export const ROUTES = {
   },
 
   NOTIFICATIONS: "/notifications",
-  // [PRODUCT]
   // [SELLER]
   SELLER: {
     REGISTER: "/seller-register",
+    MAIN_PAGE: "/seller-page",
   },
 };
 

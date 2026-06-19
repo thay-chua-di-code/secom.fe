@@ -10,7 +10,7 @@ export default function MainLayout() {
     <div className="w-full min-h-screen bg-[#f5f5f5]">
       <Header />
 
-      <main className="container-custom py-6 my-6">
+      <main className="container-custom py-6 my-6 ">
         <Breadcrumb />
         <Outlet />
       </main>
