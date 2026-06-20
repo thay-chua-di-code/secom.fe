@@ -9,6 +9,7 @@ import {
   Settings,
   Menu,
   X,
+  Tags,
 } from "lucide-react";
 
 import "./style.scss";
@@ -21,6 +22,16 @@ const Sidebar = () => {
       title: "Dashboard",
       icon: <LayoutDashboard size={20} />,
       path: "/admin",
+    },
+    // {
+    //   title: "Banner",
+    //   icon: <Wallet size={20} />,
+    //   path: "/admin/finance",
+    // },
+    {
+      title: "Categories",
+      icon: <Tags size={20} />,
+      path: "/admin/categories",
     },
     {
       title: "Users",
@@ -42,6 +53,7 @@ const Sidebar = () => {
       icon: <Wallet size={20} />,
       path: "/admin/finance",
     },
+
     {
       title: "Settings",
       icon: <Settings size={20} />,
