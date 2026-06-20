@@ -1,0 +1,409 @@
+$primary: #0284c7;
+$primary-dark: #0369a1;
+
+$bg: #f8fafc;
+$white: #ffffff;
+
+$text: #0f172a;
+$text-light: #64748b;
+
+$border: #e2e8f0;
+
+.seller {
+  display: flex;
+  min-height: 100vh;
+  background: $bg;
+  width: 100%;
+
+  // ===== SIDEBAR =====
+
+  &__sidebar {
+    width: 280px;
+    background: $primary;
+    color: white;
+    padding: 24px 0;
+    flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+  }
+
+  &__logo {
+    padding: 0 24px 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+
+    h2 {
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    p {
+      font-size: 14px;
+      opacity: 0.8;
+      margin-top: 4px;
+    }
+  }
+
+  nav {
+    padding: 20px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    a {
+      text-decoration: none;
+      color: white;
+      padding: 14px 18px;
+      border-radius: 10px;
+      transition: 0.3s ease;
+
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 500;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.12);
+      }
+
+      &.active {
+        background: white;
+        color: $primary;
+        font-weight: 600;
+      }
+    }
+  }
+
+  // ===== CONTENT =====
+
+  &__content {
+    flex: 1;
+    padding: 30px;
+    overflow-x: auto;
+    overflow-y: auto;
+  }
+}
+
+// =========================
+// PAGE HEADER
+// =========================
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 24px;
+
+  h1 {
+    color: $text;
+    font-size: 32px;
+    font-weight: 700;
+  }
+
+  button {
+    border: none;
+    background: $primary;
+    color: white;
+
+    height: 48px;
+    padding: 0 24px;
+
+    border-radius: 8px;
+    cursor: pointer;
+
+    transition: 0.3s;
+
+    &:hover {
+      background: $primary-dark;
+    }
+  }
+}
+
+// =========================
+// DASHBOARD
+// =========================
+
+.dashboard {
+  &__stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+}
+
+.card {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+
+  h2 {
+    font-size: 32px;
+    color: $primary;
+  }
+
+  p {
+    margin-top: 8px;
+    color: $text-light;
+  }
+}
+
+// =========================
+// TABLE
+// =========================
+
+.table-container {
+  background: white;
+  border-radius: 16px;
+  overflow-x: auto;
+
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+
+  th {
+    background: #f1f5f9;
+    color: $text;
+
+    padding: 18px;
+    text-align: left;
+  }
+
+  td {
+    padding: 18px;
+    border-bottom: 1px solid $border;
+  }
+
+  tr:hover {
+    background: #f8fafc;
+  }
+
+  button {
+    border: none;
+    cursor: pointer;
+    padding: 8px 14px;
+    border-radius: 6px;
+    margin-right: 8px;
+  }
+}
+
+.btn-edit {
+  background: $primary;
+  color: white;
+}
+
+.btn-delete {
+  background: #ef4444;
+  color: white;
+}
+
+// =========================
+// ORDER
+// =========================
+
+.orders {
+  display: grid;
+  gap: 20px;
+}
+
+.order-card {
+  background: white;
+  padding: 20px;
+  border-radius: 16px;
+
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+
+  h3 {
+    margin-bottom: 10px;
+  }
+
+  p {
+    margin-bottom: 6px;
+  }
+
+  span {
+    display: inline-block;
+    padding: 6px 12px;
+
+    border-radius: 20px;
+
+    background: #dcfce7;
+    color: #15803d;
+
+    font-size: 14px;
+  }
+}
+
+// =========================
+// CUSTOMER
+// =========================
+
+.customer-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.customer-card {
+  background: white;
+  padding: 24px;
+
+  border-radius: 16px;
+
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+
+  h3 {
+    margin-bottom: 8px;
+  }
+
+  p {
+    color: $text-light;
+  }
+}
+
+// =========================
+// REVENUE
+// =========================
+
+.revenue-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.revenue-card {
+  background: white;
+  border-radius: 16px;
+
+  padding: 24px;
+
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+
+  h3 {
+    color: $text-light;
+    margin-bottom: 12px;
+  }
+
+  h2 {
+    color: $primary;
+    font-size: 30px;
+  }
+}
+
+// =========================
+// SETTINGS
+// =========================
+
+.settings-form {
+  max-width: 700px;
+
+  background: white;
+
+  padding: 30px;
+  border-radius: 16px;
+
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  input,
+  textarea {
+    width: 100%;
+
+    border: 1px solid $border;
+    border-radius: 10px;
+
+    padding: 14px;
+    outline: none;
+
+    &:focus {
+      border-color: $primary;
+    }
+  }
+
+  button {
+    width: fit-content;
+
+    border: none;
+    background: $primary;
+
+    color: white;
+
+    padding: 12px 24px;
+    border-radius: 8px;
+
+    cursor: pointer;
+  }
+}
+
+// =========================
+// TABLET
+// =========================
+
+@media (max-width: 1024px) {
+  .dashboard__stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .customer-list,
+  .revenue-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .seller__sidebar {
+    width: 220px;
+  }
+}
+
+// =========================
+// MOBILE
+// =========================
+
+@media (max-width: 768px) {
+  .seller {
+    flex-direction: column;
+  }
+
+  .seller__sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+  }
+
+  .seller nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .seller__content {
+    padding: 20px;
+  }
+
+  .dashboard__stats,
+  .customer-list,
+  .revenue-list {
+    grid-template-columns: 1fr;
+  }
+
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+
+    h1 {
+      font-size: 24px;
+    }
+  }
+
+  table {
+    min-width: 700px;
+  }
+}

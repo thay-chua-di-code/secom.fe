@@ -7,7 +7,7 @@ export default function WishlistPage() {
   return (
     <div className="wishlist-page">
       <div className="container">
-        <WishlistHeader total={wishlistData.length} />
+        <WishlistHeader total={mockWishList.length} />
 
         <div className="wishlist-grid">
           {mockWishList.map((item) => (

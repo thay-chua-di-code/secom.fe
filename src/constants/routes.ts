@@ -27,7 +27,14 @@ export const ROUTES = {
   // [SELLER]
   SELLER: {
     REGISTER: "/seller-register",
-    MAIN_PAGE: "/seller-page",
+
+    MAIN_PAGE: "/seller",
+    DASHBOARD: "/seller/dashboard",
+    PRODUCTS: "/seller/products",
+    ORDERS: "/seller/orders",
+    CUSTOMERS: "/seller/customers",
+    REVENUE: "/seller/revenue",
+    SETTINGS: "/seller/settings",
   },
 };
 

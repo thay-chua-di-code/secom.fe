@@ -1,0 +1,108 @@
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
+  &__grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+  }
+}
+
+.dashboard-card {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+
+  &__header {
+    margin-bottom: 20px;
+
+    h3 {
+      font-size: 18px;
+      font-weight: 600;
+    }
+  }
+}
+
+.growth {
+  display: inline-block;
+  margin-top: 8px;
+  color: #22c55e;
+  font-size: 14px;
+}
+
+.revenue-overview {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.revenue-item {
+  flex: 1;
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 20px;
+
+  span {
+    color: #64748b;
+  }
+
+  h2 {
+    margin-top: 10px;
+    color: #0284c7;
+  }
+}
+
+.top-products {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  &__item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+.activities {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.activity {
+  padding: 14px;
+  background: #f8fafc;
+  border-radius: 10px;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+  width: 100%;
+
+  &::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 999px;
+  }
+}
+
+table {
+  min-width: 700px;
+}
+
+@media (max-width: 992px) {
+  .dashboard__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .revenue-overview {
+    flex-direction: column;
+  }
+}
