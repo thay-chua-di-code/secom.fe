@@ -1,6 +1,7 @@
 import { useState } from "react";
 import "./style.scss";
-import StoreInformation from "./Steps/StoreInformation";
+import StoreInformation from "./Step1/StoreInformation";
+import SellerStatus from "./Step2/index";
 import Button from "../../../components/common/Button/Button";
 const steps = ["Store Information", "Approve by Admin"];
 
@@ -36,13 +37,16 @@ export default function SellerRegistration() {
 
       <div className="step-content">
         {currentStep === 0 && <StoreInformation />}
+        {currentStep === 1 && <SellerStatus status={"APPROVED"} />}
       </div>
 
-      <div className="step-actions">
-        <Button className="btn-primary" onClick={nextStep}>
-          {currentStep === steps.length - 1 ? "Submit" : "Next"}
-        </Button>
-      </div>
+      {currentStep <= 0 && (
+        <div className="step-actions">
+          <Button className="btn-primary" onClick={nextStep}>
+            {currentStep === steps.length - 1 ? "Submit" : "Next"}
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,0 +1,156 @@
+.seller-status {
+  width: 100%;
+  max-width: 800px;
+
+  margin: 40px auto;
+  padding: 48px 32px;
+
+  background: #fff;
+  border-radius: 20px;
+
+  border: 1px solid #e5e7eb;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+
+  transition: all 0.3s ease;
+
+  .icon {
+    width: 110px;
+    height: 110px;
+
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 24px;
+
+    svg {
+      stroke-width: 2;
+    }
+  }
+
+  h2 {
+    font-size: 32px;
+    font-weight: 700;
+    color: #111827;
+
+    margin-bottom: 16px;
+  }
+
+  p {
+    max-width: 600px;
+
+    font-size: 15px;
+    line-height: 1.8;
+    color: #6b7280;
+
+    margin-bottom: 32px;
+  }
+
+  .seller-btn {
+    min-width: 220px;
+    height: 48px;
+  }
+
+  // ==========================
+  // Pending
+  // ==========================
+  &.pending {
+    .icon {
+      background: #fffbeb;
+      color: #f59e0b;
+    }
+
+    border-top: 5px solid #f59e0b;
+  }
+
+  // ==========================
+  // Approved
+  // ==========================
+  &.approved {
+    .icon {
+      background: #ecfdf5;
+      color: #16a34a;
+    }
+
+    border-top: 5px solid #16a34a;
+  }
+
+  // ==========================
+  // Rejected
+  // ==========================
+  &.rejected {
+    .icon {
+      background: #fef2f2;
+      color: #dc2626;
+    }
+
+    border-top: 5px solid #dc2626;
+  }
+}
+
+/* Tablet */
+@media (max-width: 768px) {
+  .seller-status {
+    padding: 36px 24px;
+    margin: 24px auto;
+
+    .icon {
+      width: 90px;
+      height: 90px;
+
+      svg {
+        width: 55px;
+        height: 55px;
+      }
+    }
+
+    h2 {
+      font-size: 26px;
+    }
+
+    p {
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .seller-btn {
+      width: 100%;
+      max-width: 320px;
+    }
+  }
+}
+
+/* Mobile */
+@media (max-width: 576px) {
+  .seller-status {
+    padding: 28px 18px;
+
+    .icon {
+      width: 80px;
+      height: 80px;
+
+      svg {
+        width: 48px;
+        height: 48px;
+      }
+    }
+
+    h2 {
+      font-size: 22px;
+    }
+
+    p {
+      font-size: 13px;
+    }
+
+    .seller-btn {
+      width: 100%;
+    }
+  }
+}
