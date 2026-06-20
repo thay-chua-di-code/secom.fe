@@ -63,7 +63,11 @@ export const API_ENDPOINTS = {
     CALCULATE: "/api/checkout/calculate",
   },
 
-  CHATS: {},
+  CHATS: {
+    GET_CHATS: "/chats",
+    GET_CAHT_DETAIL: (id) => `/chats/${id}`,
+    CREATE_CHAT: (id) => `/chats/${id}/message`,
+  },
 
   CART: {
     GET_CG: "/cart",

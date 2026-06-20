@@ -1,5 +1,3 @@
-// src/services/signalrService.js
-
 import * as signalR from "@microsoft/signalr";
 
 class SignalRService {
@@ -9,7 +7,7 @@ class SignalRService {
 
   async startConnection(token) {
     this.connection = new signalR.HubConnectionBuilder()
-      .withUrl(`${import.meta.env.VITE_API_URL}`, {
+      .withUrl("http://localhost:5000/chatHub", {
         accessTokenFactory: () => token,
       })
       .withAutomaticReconnect()
