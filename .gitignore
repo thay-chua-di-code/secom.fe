@@ -99,5 +99,6 @@ test-results/
 # =========================
 .codex/
 .claude/
+.agent/
 **/AGENTS.md
 **/CLAUDE.md

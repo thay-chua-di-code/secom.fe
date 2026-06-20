@@ -6,7 +6,7 @@ import "./style.scss";
 export default function Card({ item }) {
   const { pathname } = useLocation();
   return (
-    <Link to={`/product-detail/${item.id}`} className="wishlist-item">
+    <div className="wishlist-item">
       {pathname === "/wishlist" && (
         <button
           className="remove-btn"
@@ -38,6 +38,6 @@ export default function Card({ item }) {
       </div>
 
       <Button className="add-cart">Add To Cart</Button>
-    </Link>
+    </div>
   );
 }

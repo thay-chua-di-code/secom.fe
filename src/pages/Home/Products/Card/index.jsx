@@ -1,30 +1,66 @@
 import { Heart, Eye, Star } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import "./style.scss";
 
+import {
+  addCartItem,
+  updateCartItemQuantity,
+} from "../../../../redux/slices/cartSlice";
+
 export default function Card({ product }) {
+  const dispatch = useDispatch();
+  const cartItems = useSelector((state) => state.cart.items || []);
+
+  const handleAddToCart = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const existingItem = cartItems.find(
+      (item) =>
+        item.productId === product.id || item.productId === String(product.id),
+    );
+
+    if (existingItem) {
+      dispatch(
+        updateCartItemQuantity({
+          cartItemId: existingItem.cartItemId,
+          quantity: existingItem.quantity + 1,
+        }),
+      );
+      return;
+    }
+
+    dispatch(addCartItem(product));
+  };
+
   return (
-    <Link to={`/product-detail/${product.id}`} className="product-card">
+    <div className="product-card">
       <div className="product-card__image-wrapper">
         {product.isNew && <span className="product-card__badge">NEW</span>}
 
         <div className="product-card__actions">
-          <button>
+          <button onClick={(e) => e.stopPropagation()}>
             <Heart size={18} />
           </button>
 
-          <button>
+          <Link
+            to={`/product-detail/${product.id}`}
+            onClick={(e) => e.stopPropagation()}
+          >
             <Eye size={18} />
-          </button>
+          </Link>
         </div>
 
         <img
-          src={product.images[0]}
+          src={product.images?.[0]}
           alt={product.name}
           className="product-card__image"
         />
 
-        <button className="product-card__cart">Add To Cart</button>
+        <button className="product-card__cart" onClick={handleAddToCart}>
+          Add to cart
+        </button>
       </div>
 
       <div className="product-card__content">
@@ -34,16 +70,13 @@ export default function Card({ product }) {
           <span className="price">${product.price}</span>
 
           <div className="rating">
-            <Star fill="currentColor" size={14} />
-            <Star fill="currentColor" size={14} />
-            <Star fill="currentColor" size={14} />
-            <Star fill="currentColor" size={14} />
-            <Star fill="currentColor" size={14} />
-
-            <span>({product.review})</span>
+            {[...Array(5)].map((_, i) => (
+              <Star key={i} size={14} fill="currentColor" />
+            ))}
+            <span>({product.review || 0})</span>
           </div>
         </div>
       </div>
-    </Link>
+    </div>
   );
 }

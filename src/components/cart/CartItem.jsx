@@ -1,5 +1,7 @@
 import { Package, Trash2 } from "lucide-react";
 import QuantitySelector from "./QuantitySelector";
+import { useDispatch } from "react-redux";
+import { removeCartItem } from "../../redux/slice/cartSlice";
 
 const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -15,6 +17,11 @@ export default function CartItem({
 }) {
   const rowSelectedClass = checked ? "bg-secom-50/30" : "";
 
+  const dispatch = useDispatch();
+
+  const handleRemove = () => {
+    dispatch(removeCartItem(item.cartItemId));
+  };
   return (
     <>
       <div
@@ -25,7 +32,9 @@ export default function CartItem({
           <input
             type="checkbox"
             checked={checked}
-            onChange={(event) => onSelectChange(item.cartItemId, event.target.checked)}
+            onChange={(event) =>
+              onSelectChange(item.cartItemId, event.target.checked)
+            }
             className="h-4 w-4 rounded border-gray-300 text-secom-600 focus:ring-secom-300"
           />
         </div>
@@ -39,7 +48,10 @@ export default function CartItem({
               {item.productName || "Unnamed Product"}
             </p>
             <p className="mt-1 text-sm text-slate-500">
-              Seller: <span className="font-medium text-slate-600">{item.sellerId}</span>
+              Seller:{" "}
+              <span className="font-medium text-slate-600">
+                {item.sellerId}
+              </span>
             </p>
           </div>
         </div>
@@ -63,21 +75,24 @@ export default function CartItem({
         <div className="flex w-24 justify-center">
           <button
             type="button"
-            disabled
-            title="Remove API is not available"
-            className="flex h-9 w-9 items-center justify-center rounded-lg text-gray-400 transition hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50"
+            onClick={handleRemove}
+            className="flex h-9 w-9 items-center justify-center rounded-lg text-gray-400 transition hover:bg-red-50 hover:text-red-600"
           >
             <Trash2 size={16} />
           </button>
         </div>
       </div>
 
-      <div className={`rounded-xl border border-gray-200 bg-white p-4 shadow-sm md:hidden ${checked ? "bg-secom-50/30" : ""}`}>
+      <div
+        className={`rounded-xl border border-gray-200 bg-white p-4 shadow-sm md:hidden ${checked ? "bg-secom-50/30" : ""}`}
+      >
         <div className="flex items-start gap-3">
           <input
             type="checkbox"
             checked={checked}
-            onChange={(event) => onSelectChange(item.cartItemId, event.target.checked)}
+            onChange={(event) =>
+              onSelectChange(item.cartItemId, event.target.checked)
+            }
             className="mt-1 h-4 w-4 rounded border-gray-300 text-secom-600 focus:ring-secom-300"
           />
           <div className="flex h-[72px] w-[72px] shrink-0 items-center justify-center rounded-xl bg-gray-100">
@@ -87,7 +102,9 @@ export default function CartItem({
             <p className="line-clamp-2 text-sm font-semibold text-slate-900">
               {item.productName || "Unnamed Product"}
             </p>
-            <p className="mt-1 text-xs text-slate-500">Seller: {item.sellerId}</p>
+            <p className="mt-1 text-xs text-slate-500">
+              Seller: {item.sellerId}
+            </p>
             <p className="mt-1 text-xs font-medium tabular-nums text-slate-900">
               {currencyFormatter.format(item.unitPrice || 0)}
             </p>

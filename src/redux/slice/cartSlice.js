@@ -1,6 +1,11 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { cartService } from "../../service/cartService";
 
+/**
+ * =========================
+ * ERROR HANDLER
+ * =========================
+ */
 const getErrorMessage = (error, fallbackMessage) => {
   const apiMessage = error.response?.data?.message;
 
@@ -11,28 +16,46 @@ const getErrorMessage = (error, fallbackMessage) => {
   return fallbackMessage;
 };
 
+/**
+ * =========================
+ * UNWRAP RESPONSE (BE SAFE)
+ * BE: { success, message, data }
+ * =========================
+ */
 const unwrapResponseData = (payload) => {
   return payload?.data ?? payload ?? null;
 };
 
-const extractCartItems = (cartData) => {
-  const items =
-    cartData?.items ?? cartData?.cartItems ?? cartData?.cart_items ?? [];
-
-  return Array.isArray(items) ? items : [];
-};
-
+/**
+ * =========================
+ * NORMALIZE CART DATA
+ * =========================
+ */
 const mapCartState = (state, payload) => {
   const cartData = unwrapResponseData(payload);
 
-  state.cart = cartData || null;
-  state.items = cartData?.items || [];
+  state.cart = cartData
+    ? {
+        ...cartData,
+        items: Array.isArray(cartData.items) ? cartData.items : [],
+      }
+    : null;
+
+  // optional derived fields (safe fallback)
+  state.items = Array.isArray(cartData?.items) ? cartData.items : [];
   state.voucherCode = cartData?.voucherCode ?? null;
   state.subtotal = cartData?.subtotal ?? 0;
   state.discountAmount = cartData?.discountAmount ?? 0;
   state.finalTotal = cartData?.finalTotal ?? 0;
 };
 
+/**
+ * =========================
+ * THUNKS
+ * =========================
+ */
+
+// FETCH CART
 export const fetchCart = createAsyncThunk(
   "cart/fetchCart",
   async (_, thunkAPI) => {
@@ -46,11 +69,14 @@ export const fetchCart = createAsyncThunk(
   },
 );
 
+// ADD CART ITEM
 export const addCartItem = createAsyncThunk(
   "cart/addCartItem",
   async (payload, thunkAPI) => {
     try {
-      return await cartService.addCartItem(payload);
+      await cartService.addCartItem(payload);
+      const cart = await cartService.getCart();
+      return cart;
     } catch (error) {
       return thunkAPI.rejectWithValue(
         getErrorMessage(error, "Failed to add item to cart"),
@@ -59,11 +85,13 @@ export const addCartItem = createAsyncThunk(
   },
 );
 
+// UPDATE QUANTITY
 export const updateCartItemQuantity = createAsyncThunk(
   "cart/updateCartItemQuantity",
   async ({ cartItemId, quantity }, thunkAPI) => {
     try {
-      return await cartService.updateCartItemQuantity(cartItemId, quantity);
+      await cartService.updateCartItemQuantity(cartItemId, quantity);
+      return await cartService.getCart();
     } catch (error) {
       return thunkAPI.rejectWithValue(
         getErrorMessage(error, "Failed to update cart item quantity"),
@@ -72,6 +100,7 @@ export const updateCartItemQuantity = createAsyncThunk(
   },
 );
 
+// APPLY VOUCHER
 export const applyCartVoucher = createAsyncThunk(
   "cart/applyCartVoucher",
   async (code, thunkAPI) => {
@@ -91,6 +120,7 @@ export const applyCartVoucher = createAsyncThunk(
   },
 );
 
+// CHECKOUT
 export const calculateCheckoutSummary = createAsyncThunk(
   "cart/calculateCheckoutSummary",
   async (_, thunkAPI) => {
@@ -104,6 +134,25 @@ export const calculateCheckoutSummary = createAsyncThunk(
   },
 );
 
+export const removeCartItem = createAsyncThunk(
+  "cart/removeCartItem",
+  async (cartItemId, thunkAPI) => {
+    try {
+      await cartService.deleteCartItem(cartItemId);
+      return await cartService.getCart();
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        getErrorMessage(error, "Failed to remove item"),
+      );
+    }
+  },
+);
+
+/**
+ * =========================
+ * INITIAL STATE
+ * =========================
+ */
 const initialState = {
   cart: null,
   items: [],
@@ -117,9 +166,15 @@ const initialState = {
   error: null,
 };
 
+/**
+ * =========================
+ * SLICE
+ * =========================
+ */
 const cartSlice = createSlice({
   name: "cart",
   initialState,
+
   reducers: {
     clearCart: (state) => {
       state.cart = null;
@@ -133,15 +188,16 @@ const cartSlice = createSlice({
       state.actionLoading = false;
       state.error = null;
     },
+
     setVoucherCode: (state, action) => {
       state.voucherCode = action.payload;
     },
   },
+
   extraReducers: (builder) => {
     builder
       .addCase(fetchCart.pending, (state) => {
         state.loading = true;
-        state.error = null;
       })
       .addCase(fetchCart.fulfilled, (state, action) => {
         state.loading = false;
@@ -154,7 +210,6 @@ const cartSlice = createSlice({
 
       .addCase(addCartItem.pending, (state) => {
         state.actionLoading = true;
-        state.error = null;
       })
       .addCase(addCartItem.fulfilled, (state, action) => {
         state.actionLoading = false;
@@ -167,7 +222,6 @@ const cartSlice = createSlice({
 
       .addCase(updateCartItemQuantity.pending, (state) => {
         state.actionLoading = true;
-        state.error = null;
       })
       .addCase(updateCartItemQuantity.fulfilled, (state, action) => {
         state.actionLoading = false;
@@ -180,7 +234,6 @@ const cartSlice = createSlice({
 
       .addCase(applyCartVoucher.pending, (state) => {
         state.actionLoading = true;
-        state.error = null;
       })
       .addCase(applyCartVoucher.fulfilled, (state, action) => {
         state.actionLoading = false;
@@ -194,13 +247,24 @@ const cartSlice = createSlice({
 
       .addCase(calculateCheckoutSummary.pending, (state) => {
         state.actionLoading = true;
-        state.error = null;
       })
       .addCase(calculateCheckoutSummary.fulfilled, (state, action) => {
         state.actionLoading = false;
         state.checkoutSummary = unwrapResponseData(action.payload);
       })
       .addCase(calculateCheckoutSummary.rejected, (state, action) => {
+        state.actionLoading = false;
+        state.error = action.payload;
+      })
+
+      .addCase(removeCartItem.pending, (state) => {
+        state.actionLoading = true;
+      })
+      .addCase(removeCartItem.fulfilled, (state, action) => {
+        state.actionLoading = false;
+        mapCartState(state, action.payload);
+      })
+      .addCase(removeCartItem.rejected, (state, action) => {
         state.actionLoading = false;
         state.error = action.payload;
       });

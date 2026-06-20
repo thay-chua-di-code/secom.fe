@@ -1,0 +1,11 @@
+{
+  "cart": {
+    "cartId": "c1a5f9e2-7d32-4b89-a5f2-123456789abc",
+    "voucherCode": "SAVE10",
+    "subtotal": 0,
+    "discountAmount": 585000,
+    "finalTotal": 0,
+    "items": []
+  },
+  "$schema": "./node_modules/json-server/schema.json"
+}
