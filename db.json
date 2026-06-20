@@ -23,5 +23,88 @@
       "endAtUtc": "2026-12-31T00:00:00Z"
     }
   ],
+
+  "notifications": [
+    {
+      "id": "noti-001",
+      "title": "Đơn hàng đã giao thành công",
+      "message": "Đơn hàng #DH0001 của bạn đã được giao thành công. Cảm ơn bạn đã mua sắm tại cửa hàng.",
+      "type": "ORDER",
+      "referenceId": "DH0001",
+      "referenceType": "ORDER",
+      "isRead": false,
+      "createdAtUtc": "2026-06-20T18:40:07.426Z"
+    },
+    {
+      "id": "noti-002",
+      "title": "Thanh toán thành công",
+      "message": "Thanh toán cho đơn hàng #DH0002 đã được xác nhận thành công.",
+      "type": "PAYMENT",
+      "referenceId": "DH0002",
+      "referenceType": "ORDER",
+      "isRead": true,
+      "createdAtUtc": "2026-06-20T10:20:00.000Z"
+    },
+    {
+      "id": "noti-003",
+      "title": "Voucher mới dành cho bạn",
+      "message": "Bạn vừa nhận được voucher SAVE10 giảm 10% cho đơn hàng từ 1.000.000đ.",
+      "type": "VOUCHER",
+      "referenceId": "SAVE10",
+      "referenceType": "VOUCHER",
+      "isRead": false,
+      "createdAtUtc": "2026-06-19T08:15:00.000Z"
+    },
+    {
+      "id": "noti-004",
+      "title": "Cập nhật trạng thái đơn hàng",
+      "message": "Đơn hàng #DH0003 đang được vận chuyển và sẽ giao trong vòng 24 giờ tới.",
+      "type": "ORDER",
+      "referenceId": "DH0003",
+      "referenceType": "ORDER",
+      "isRead": true,
+      "createdAtUtc": "2026-06-18T14:45:00.000Z"
+    },
+    {
+      "id": "noti-005",
+      "title": "Khuyến mãi cuối tuần",
+      "message": "Giảm giá lên đến 50% cho hàng ngàn sản phẩm trong chương trình Weekend Sale.",
+      "type": "PROMOTION",
+      "referenceId": "PROMO-001",
+      "referenceType": "PROMOTION",
+      "isRead": false,
+      "createdAtUtc": "2026-06-17T09:30:00.000Z"
+    },
+    {
+      "id": "noti-006",
+      "title": "Yêu cầu hoàn tiền đã được xử lý",
+      "message": "Yêu cầu hoàn tiền cho đơn hàng #DH0004 đã được chấp thuận. Số tiền sẽ được hoàn trong 3-5 ngày làm việc.",
+      "type": "REFUND",
+      "referenceId": "DH0004",
+      "referenceType": "ORDER",
+      "isRead": true,
+      "createdAtUtc": "2026-06-16T11:10:00.000Z"
+    },
+    {
+      "id": "noti-007",
+      "title": "Đăng nhập từ thiết bị mới",
+      "message": "Tài khoản của bạn vừa được đăng nhập từ một thiết bị mới. Nếu không phải bạn, vui lòng đổi mật khẩu ngay.",
+      "type": "SECURITY",
+      "referenceId": "SEC-001",
+      "referenceType": "ACCOUNT",
+      "isRead": false,
+      "createdAtUtc": "2026-06-15T20:05:00.000Z"
+    },
+    {
+      "id": "noti-008",
+      "title": "Sản phẩm yêu thích giảm giá",
+      "message": "Một trong những sản phẩm trong danh sách yêu thích của bạn hiện đang được giảm giá 20%.",
+      "type": "PRODUCT",
+      "referenceId": "PROD-001",
+      "referenceType": "PRODUCT",
+      "isRead": true,
+      "createdAtUtc": "2026-06-14T16:20:00.000Z"
+    }
+  ],
   "$schema": "./node_modules/json-server/schema.json"
 }

@@ -1,0 +1,47 @@
+.notification-content {
+  padding: 10px;
+  height: 100%;
+
+  &__header {
+    margin-bottom: 24px;
+    flex-shrink: 0;
+
+    h2 {
+      font-size: 24px;
+      font-weight: 600;
+      color: #111827;
+      margin-bottom: 6px;
+    }
+
+    p {
+      color: #6b7280;
+      font-size: 14px;
+    }
+  }
+}
+
+.notification-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  max-height: 650px;
+  overflow-y: auto;
+
+  padding-right: 8px;
+
+  scrollbar-width: thin;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 999px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+  }
+}

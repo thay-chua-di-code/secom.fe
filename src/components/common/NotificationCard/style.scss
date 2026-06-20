@@ -1,0 +1,96 @@
+.notification-card {
+  display: flex;
+  gap: 16px;
+
+  padding: 20px;
+
+  background: #fff;
+
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+
+  transition: all 0.25s ease;
+
+  &:hover {
+    border-color: #0284c7;
+    box-shadow: 0 8px 20px rgba(2, 132, 199, 0.08);
+  }
+
+  &--unread {
+    background: #f0f9ff;
+    border-color: #bae6fd;
+  }
+
+  &__icon {
+    width: 48px;
+    height: 48px;
+
+    border-radius: 50%;
+
+    background: #e0f2fe;
+    color: #0284c7;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+  }
+
+  &__body {
+    flex: 1;
+  }
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 8px;
+
+    h3 {
+      font-size: 17px;
+      font-weight: 600;
+      color: #111827;
+    }
+  }
+
+  p {
+    color: #4b5563;
+    line-height: 1.6;
+    margin-bottom: 10px;
+  }
+
+  .time {
+    font-size: 13px;
+    color: #9ca3af;
+  }
+
+  .badge {
+    background: #0284c7;
+    color: white;
+
+    padding: 4px 10px;
+
+    border-radius: 999px;
+
+    font-size: 12px;
+    font-weight: 500;
+
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 768px) {
+  .notification-card {
+    padding: 16px;
+
+    &__header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .badge {
+      margin-top: 4px;
+    }
+  }
+}

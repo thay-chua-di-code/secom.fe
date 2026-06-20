@@ -1,6 +1,6 @@
 import axiosClient from "../api/axiosClient";
 
-const BASE = "/vouchers";
+const BASE = "http://localhost:3001/vouchers";
 
 export const voucherService = {
   getAll: async () => {

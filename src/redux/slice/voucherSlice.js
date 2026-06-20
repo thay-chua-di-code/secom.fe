@@ -4,7 +4,6 @@ import { voucherService } from "../../service/voucherService";
 const initialState = {
   vouchers: [],
   selectedVoucher: null,
-  appliedVoucher: null,
   loading: false,
   error: null,
 };

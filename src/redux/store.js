@@ -7,6 +7,7 @@ import cartReducer from "./slice/cartSlice";
 import homeReducer from "./slice/homeSlice";
 import notificationReducer from "./slice/notificationSlice";
 import orderReducer from "./slice/orderSlice";
+import voucherReducer from "./slice/voucherSlice";
 // [ADMIN] Import
 import {
   dashboardReducer,
@@ -44,6 +45,7 @@ const rootReducer = combineReducers({
   home: homeReducer,
   order: orderReducer,
   notification: notificationReducer,
+  voucher: voucherReducer,
   // [ADMIN]
   dashboardAdmin: dashboardReducer,
   usersAdmin: userAdminReducer,

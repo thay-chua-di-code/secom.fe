@@ -19,7 +19,6 @@ export const getNotifications = createAsyncThunk(
   async (payload, thunkAPI) => {
     try {
       const response = await notificationService.getNotifications(payload);
-
       return response;
     } catch (e) {
       return thunkAPI.rejectWithValue(e?.message || "Get notifications failed");
@@ -81,13 +80,20 @@ const notificationSlice = createSlice({
 
       .addCase(getNotifications.fulfilled, (state, action) => {
         state.loading = false;
-        const payload = action.payload?.data;
-        state.items = payload?.items || [];
+
+        const payload = action.payload?.data || action.payload;
+
+        state.items = payload?.items || payload || [];
+
         state.pagination = {
           pageNumber: payload?.pageNumber || 1,
           pageSize: payload?.pageSize || 10,
-          totalCount: payload?.totalCount || 0,
-          totalPages: payload?.totalPages || 0,
+          totalCount:
+            payload?.totalCount ||
+            payload?.items?.length ||
+            payload?.length ||
+            0,
+          totalPages: payload?.totalPages || 1,
         };
 
         state.unreadCount = state.items.filter((item) => !item.isRead).length;

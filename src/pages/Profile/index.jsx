@@ -20,6 +20,8 @@ import OrderHistory from "./Order";
 import Button from "../../components/common/Button/Button";
 import "./style.scss";
 import AddressList from "./Address/List";
+import VoucherList from "./Voucher";
+import NotificationList from "./Notification";
 
 const menus = [
   {
@@ -44,7 +46,7 @@ const menus = [
     key: "password",
   },
   {
-    title: "Thông Báo",
+    title: "Notification",
     icon: <Bell size={18} />,
     key: "notification",
   },
@@ -52,11 +54,6 @@ const menus = [
     title: "Voucher",
     icon: <Ticket size={18} />,
     key: "voucher",
-  },
-  {
-    title: "Xu",
-    icon: <Coins size={18} />,
-    key: "coin",
   },
 ];
 
@@ -248,19 +245,11 @@ const ProfilePage = () => {
       case "password":
         return <ChangePassword />;
 
-      case "voucher":
-        return (
-          <div className="content-box">
-            <h2>My Vouchers</h2>
-          </div>
-        );
+      case "notification":
+        return <NotificationList />;
 
-      case "coin":
-        return (
-          <div className="content-box">
-            <h2>My Coins</h2>
-          </div>
-        );
+      case "voucher":
+        return <VoucherList />;
 
       default:
         return null;

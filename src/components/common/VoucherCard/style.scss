@@ -1,0 +1,115 @@
+.voucher-card {
+  display: flex;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.25s ease;
+
+  &:hover {
+    border-color: #0284c7;
+    box-shadow: 0 8px 20px rgba(2, 132, 199, 0.08);
+  }
+
+  &__left {
+    width: 150px;
+    background: #0284c7;
+    color: white;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    .discount {
+      font-size: 34px;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    span {
+      margin-top: 6px;
+      font-size: 13px;
+      letter-spacing: 2px;
+    }
+  }
+
+  &__body {
+    flex: 1;
+    padding: 20px;
+
+    h3 {
+      font-size: 20px;
+      font-weight: 600;
+      color: #111827;
+      margin-bottom: 14px;
+    }
+  }
+
+  &__action {
+    width: 140px;
+    padding: 20px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    button {
+      width: 100%;
+      height: 42px;
+      border: none;
+      border-radius: 8px;
+      background: #0284c7;
+      color: white;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+
+      cursor: pointer;
+      transition: 0.2s;
+
+      &:hover {
+        background: #0369a1;
+      }
+    }
+  }
+}
+
+.voucher-info {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+
+  p {
+    font-size: 14px;
+    color: #6b7280;
+
+    strong {
+      color: #111827;
+      margin-left: 5px;
+      font-weight: 600;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .voucher-card {
+    flex-direction: column;
+
+    &__left {
+      width: 100%;
+      height: 90px;
+    }
+
+    &__action {
+      width: 100%;
+      padding-top: 0;
+    }
+  }
+
+  .voucher-info {
+    grid-template-columns: 1fr;
+  }
+}
