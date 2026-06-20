@@ -84,5 +84,11 @@ export const API_ENDPOINTS = {
       APPROVE: (id) => `/admin/products/${id}/approve`,
       REJECT: (id) => `/admin/products/${id}/reject`,
     },
+    ADMIN_CATEGORIES: {
+      GET: "/admin/categories",
+      POST: "/admin/categories",
+      PUT: (id) => `/admin/categories/${id}`,
+      DELETE: (id) => `/admin/categories/${id}`,
+    },
   },
 };

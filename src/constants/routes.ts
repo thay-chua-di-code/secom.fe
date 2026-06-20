@@ -43,4 +43,5 @@ export const ADMIN_ROUTES = {
   ADMIN_USERS: "users",
   ADMIN_PRODUCTS: "products",
   ADMIN_ORDERS: "orders",
+  ADMIN_CATEGORIES: "categories",
 };

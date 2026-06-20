@@ -45,4 +45,43 @@ export const adminService = {
       throw new Error(e?.response.message);
     }
   },
+
+  // [CATEGORIES]
+  getCategories: async (params) => {
+    const response = await axiosClient.get(
+      API_ENDPOINTS.ADMIN.ADMIN_CATEGORIES.GET,
+      {
+        params,
+      },
+    );
+
+    return response.data;
+  },
+
+  createCategory: async (payload) => {
+    const response = await axiosClient.post(
+      API_ENDPOINTS.ADMIN.ADMIN_CATEGORIES.POST,
+      payload,
+    );
+
+    console.log(response);
+    return response.data;
+  },
+
+  updateCategory: async ({ id, payload }) => {
+    const response = await axiosClient.put(
+      API_ENDPOINTS.ADMIN.ADMIN_CATEGORIES.PUT(id),
+      payload,
+    );
+
+    return response.data;
+  },
+
+  deleteCategory: async (id) => {
+    const response = await axiosClient.delete(
+      API_ENDPOINTS.ADMIN.ADMIN_CATEGORIES.DELETE(id),
+    );
+
+    return response.data;
+  },
 };
