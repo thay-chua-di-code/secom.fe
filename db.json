@@ -7,5 +7,21 @@
     "finalTotal": 0,
     "items": []
   },
+
+  "vouchers": [
+    {
+      "id": "v-001",
+      "code": "SAVE10",
+      "discountType": "PERCENT",
+      "discountValue": 10,
+      "minOrderAmount": 1000000,
+      "maxDiscountAmount": 500000,
+      "usedQuantity": 10,
+      "remainingQuantity": 90,
+      "status": "ACTIVE",
+      "startAtUtc": "2026-01-01T00:00:00Z",
+      "endAtUtc": "2026-12-31T00:00:00Z"
+    }
+  ],
   "$schema": "./node_modules/json-server/schema.json"
 }
