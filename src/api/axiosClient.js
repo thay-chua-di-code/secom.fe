@@ -1,41 +1,35 @@
-// src/services/signalrService.js
+import axios from "axios";
 
-import * as signalR from "@microsoft/signalr";
+const axiosClient = axios.create({
+  baseURL: import.meta.env.VITE_API_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
 
-class SignalRService {
-  constructor() {
-    this.connection = null;
+export const setAuthToken = (token) => {
+  if (token) {
+    axiosClient.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+  } else {
+    delete axiosClient.defaults.headers.common["Authorization"];
   }
+};
 
-  async startConnection(token) {
-    this.connection = new signalR.HubConnectionBuilder()
-      .withUrl(`${import.meta.env.VITE_API_URL}`, {
-        accessTokenFactory: () => token,
-      })
-      .withAutomaticReconnect()
-      .build();
+let logoutHandler = null;
 
-    try {
-      await this.connection.start();
-      console.log("SignalR Connected");
-    } catch (err) {
-      console.error(err);
+export const setLogoutHandler = (fn) => {
+  logoutHandler = fn;
+};
+
+axiosClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      logoutHandler?.();
     }
-  }
 
-  stopConnection() {
-    if (this.connection) {
-      this.connection.stop();
-    }
-  }
+    return Promise.reject(error);
+  },
+);
 
-  onReceiveMessage(callback) {
-    this.connection.on("ReceiveMessage", callback);
-  }
-
-  async sendMessage(receiverId, content) {
-    await this.connection.invoke("SendMessage", receiverId, content);
-  }
-}
-
-export default new SignalRService();
+export default axiosClient;
