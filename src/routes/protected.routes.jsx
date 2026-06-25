@@ -1,7 +1,7 @@
 import ProtectedRoutes from "../guards/ProtectedRoute";
 import MainLayout from "../layouts/MainLayout";
 import Profile from "../pages/Profile";
-import Cart from "../pages/Cart";
+import CartPage from "../pages/Cart/CartPage";
 import Notifications from "../pages/Notifications";
 import RegisterSeller from "../pages/RegisterSeller";
 import { ROUTES } from "../constants/routes";
@@ -24,7 +24,7 @@ export const protectedRoutes = [
         element: <MainLayout />,
         children: [
           { path: ROUTES.PROFILE, element: <Profile /> },
-          { path: ROUTES.CART, element: <Cart /> },
+          { path: ROUTES.CART, element: <CartPage /> },
           { path: ROUTES.NOTIFICATIONS, element: <Notifications /> },
           { path: ROUTES.SELLER.REGISTER, element: <RegisterSeller /> },
           {

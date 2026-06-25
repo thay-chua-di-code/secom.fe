@@ -2,12 +2,30 @@
   "cart": {
     "cartId": "c1a5f9e2-7d32-4b89-a5f2-123456789abc",
     "voucherCode": "SAVE10",
-    "subtotal": 0,
+    "subtotal": 81980000,
     "discountAmount": 585000,
-    "finalTotal": 0,
-    "items": []
+    "finalTotal": 81980000,
+    "items": [
+      {
+        "cartItemId": "ci-1782215182157",
+        "productId": 1,
+        "productName": "MacBook Pro M4",
+        "sellerId": null,
+        "unitPrice": 45990000,
+        "quantity": 1,
+        "subtotal": 45990000
+      },
+      {
+        "cartItemId": "ci-1782215185921",
+        "productId": 2,
+        "productName": "iPhone 17 Pro Max",
+        "sellerId": null,
+        "unitPrice": 35990000,
+        "quantity": 1,
+        "subtotal": 35990000
+      }
+    ]
   },
-
   "vouchers": [
     {
       "id": "v-001",
@@ -23,7 +41,6 @@
       "endAtUtc": "2026-12-31T00:00:00Z"
     }
   ],
-
   "notifications": [
     {
       "id": "noti-001",
@@ -106,5 +123,66 @@
       "createdAtUtc": "2026-06-14T16:20:00.000Z"
     }
   ],
+  "orders": [
+    {
+      "orderId": "order-001",
+      "buyerId": "buyer-001",
+      "status": "PENDING",
+      "subtotal": 2150000,
+      "shippingFee": 30000,
+      "serviceFee": 10000,
+      "discountAmount": 100000,
+      "finalTotal": 2090000,
+      "voucherCode": "SAVE10",
+      "createdAtUtc": "2026-06-23T11:44:58.281Z",
+      "items": [
+        {
+          "orderItemId": "order-item-001",
+          "productId": "prod-001",
+          "sellerId": "seller-001",
+          "productName": "Mechanical Keyboard RK84",
+          "quantity": 1,
+          "unitPrice": 1250000,
+          "subtotal": 1250000,
+          "status": "PENDING"
+        },
+        {
+          "orderItemId": "order-item-002",
+          "productId": "prod-002",
+          "sellerId": "seller-002",
+          "productName": "Gaming Mouse Logitech G304",
+          "quantity": 2,
+          "unitPrice": 450000,
+          "subtotal": 900000,
+          "status": "PENDING"
+        }
+      ]
+    },
+    {
+      "orderId": "order-002",
+      "buyerId": "buyer-001",
+      "status": "DELIVERED",
+      "subtotal": 850000,
+      "shippingFee": 30000,
+      "serviceFee": 10000,
+      "discountAmount": 0,
+      "finalTotal": 890000,
+      "voucherCode": null,
+      "createdAtUtc": "2026-06-20T08:12:10.000Z",
+      "items": [
+        {
+          "orderItemId": "order-item-003",
+          "productId": "prod-003",
+          "sellerId": "seller-003",
+          "productName": "USB-C Hub 7 in 1",
+          "quantity": 1,
+          "unitPrice": 850000,
+          "subtotal": 850000,
+          "status": "DELIVERED"
+        }
+      ]
+    }
+  ],
+
   "$schema": "./node_modules/json-server/schema.json"
 }

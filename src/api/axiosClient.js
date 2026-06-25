@@ -9,14 +9,13 @@ const axiosClient = axios.create({
 
 export const setAuthToken = (token) => {
   if (token) {
-    axiosClient.defaults.headers.common.Authorization = `Bearer ${token}`;
+    axiosClient.defaults.headers.common["Authorization"] = `Bearer ${token}`;
   } else {
-    delete axiosClient.defaults.headers.common.Authorization;
+    delete axiosClient.defaults.headers.common["Authorization"];
   }
 };
 
 let logoutHandler = null;
-let isLoggingOut = false;
 
 export const setLogoutHandler = (fn) => {
   logoutHandler = fn;
@@ -25,20 +24,8 @@ export const setLogoutHandler = (fn) => {
 axiosClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    const status = error.response?.status;
-
-    if (status === 401 && !isLoggingOut) {
-      isLoggingOut = true;
-
-      localStorage.removeItem("token");
-
-      setAuthToken(null);
-
+    if (error.response?.status === 401) {
       logoutHandler?.();
-
-      setTimeout(() => {
-        isLoggingOut = false;
-      }, 1000);
     }
 
     return Promise.reject(error);

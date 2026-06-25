@@ -13,6 +13,9 @@ export default function Cart({ open }) {
   const { isAuthenticated } = useSelector((state) => state.auth);
   const { items, loading, error } = useCart();
 
+  console.log("Items:", items);
+  console.log("Loading:", loading);
+  console.log("Error:", error);
   if (!open) {
     return null;
   }
@@ -117,7 +120,9 @@ export default function Cart({ open }) {
       </div>
 
       <div className="cart-dropdown__footer">
-        <span>{totalQuantity} item{totalQuantity !== 1 ? "s" : ""} in cart</span>
+        <span>
+          {totalQuantity} item{totalQuantity !== 1 ? "s" : ""} in cart
+        </span>
 
         <Link to="/cart" className="view-cart-btn bg-sky-600">
           <ShoppingBag size={18} />

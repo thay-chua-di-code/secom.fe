@@ -1,23 +1,58 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ShoppingCart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import CartEmpty from "../../components/cart/CartEmpty";
-import CartList from "../../components/cart/CartList";
-import CartSkeleton from "../../components/cart/CartSkeleton";
-import CartSummary from "../../components/cart/CartSummary";
 import { useDispatch, useSelector } from "react-redux";
+import CartList from "./List/index";
+import CartSummary from "./CartSummary/index";
+import VoucherList from "./VoucherList/index";
 import { fetchCart } from "../../redux/slice/cartSlice";
+import { fetchVouchers } from "../../redux/slice/voucherSlice";
 import { useCart } from "../../hooks/useCart";
+import toast from "react-hot-toast";
+import "./style.scss";
 
+function CartEmpty() {
+  return (
+    <div className="cart-empty">
+      {" "}
+      <div className="cart-empty__icon">
+        {" "}
+        <ShoppingCart size={64} />{" "}
+      </div>{" "}
+      <h2>Your cart is empty</h2>{" "}
+      <p> Looks like you haven't added any products yet. </p>{" "}
+      <Link to="/" className="cart-empty__button">
+        {" "}
+        Continue Shopping{" "}
+      </Link>{" "}
+    </div>
+  );
+}
+
+function CartSkeleton() {
+  return (
+    <div className="cart-skeleton">
+      {" "}
+      {[1, 2, 3].map((item) => (
+        <div className="cart-skeleton__item" key={item} />
+      ))}{" "}
+    </div>
+  );
+}
 export default function CartPage() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const fetchedRef = useRef(false);
   const headerCheckboxRef = useRef(null);
   const [selectedItemIds, setSelectedItemIds] = useState([]);
-  const [selectionMessage, setSelectionMessage] = useState("");
-  const fetchedRef = useRef(false);
+  const [selectedVoucher, setSelectedVoucher] = useState(null);
 
   const { isAuthenticated } = useSelector((state) => state.auth);
+
+  const { vouchers, loading: voucherLoading } = useSelector(
+    (state) => state.voucher,
+  );
+
   const {
     items,
     loading,
@@ -36,7 +71,9 @@ export default function CartPage() {
   useEffect(() => {
     if (isAuthenticated && !fetchedRef.current) {
       fetchedRef.current = true;
+
       dispatch(fetchCart());
+      dispatch(fetchVouchers());
     }
   }, [dispatch, isAuthenticated]);
 
@@ -55,18 +92,19 @@ export default function CartPage() {
     (total, item) => total + (item.quantity || 0),
     0,
   );
+
   const selectedSubtotal = selectedItems.reduce(
     (total, item) => total + (item.subtotal || 0),
     0,
   );
-  const selectedDiscountAmount = selectedItemIds.length > 0 ? 0 : 0;
-  const selectedFinalTotal = Math.max(
-    0,
-    selectedSubtotal - selectedDiscountAmount,
-  );
+
+  const selectedDiscountAmount = 0;
+
+  const selectedFinalTotal = selectedSubtotal - selectedDiscountAmount;
 
   const allSelected =
     items.length > 0 && selectedItemIds.length === items.length;
+
   const partiallySelected =
     selectedItemIds.length > 0 && selectedItemIds.length < items.length;
 
@@ -77,40 +115,43 @@ export default function CartPage() {
   }, [partiallySelected]);
 
   const handleSelectItem = (cartItemId, checked) => {
-    setSelectionMessage("");
     setSelectedItemIds((prev) => {
       if (checked) {
         return prev.includes(cartItemId) ? prev : [...prev, cartItemId];
       }
+
       return prev.filter((id) => id !== cartItemId);
     });
   };
 
   const handleSelectAll = (checked) => {
-    setSelectionMessage("");
     setSelectedItemIds(checked ? items.map((i) => i.cartItemId) : []);
   };
 
-  const handleApplyVoucher = (code) => {
+  const handleApplyVoucher = () => {
     if (!selectedItemIds.length) {
-      setSelectionMessage(
+      toast.error(
         "Please select at least one item before applying a voucher.",
       );
       return;
     }
-    setSelectionMessage("");
-    applyVoucher(code);
+
+    if (!selectedVoucher) {
+      toast.error("Please select a voucher.");
+      return;
+    }
+
+    applyVoucher(selectedVoucher);
   };
 
   const handleCheckout = async () => {
     if (!selectedItemIds.length) {
-      setSelectionMessage("Please select at least one item before checkout.");
+      toast.error("Please select at least one item before checkout.");
       return;
     }
-    setSelectionMessage("");
 
-    // TODO: Backend checkout currently calculates all cart items.
     const result = await calculateCheckout();
+
     if (result?.meta?.requestStatus === "fulfilled") {
       navigate("/checkout");
     }
@@ -118,93 +159,76 @@ export default function CartPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-page pb-36">
-        <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <main className="cart-page">
+        <div className="cart-page__container">
           <CartSkeleton />
         </div>
       </main>
     );
   }
-  console.log(items.length);
-  if (items.length === 0) {
-    if (error) {
-      return (
-        <main className="min-h-screen bg-page pb-36">
-          <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-            <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
-              {error}
-            </div>
-          </div>
-        </main>
-      );
-    }
+
+  if (!items.length) {
     return (
-      <main className="min-h-screen bg-page pb-36">
-        <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-          <CartEmpty />
+      <main className="cart-page">
+        <div className="cart-page__container">
+          {error ? (
+            <div className="cart-page__error">{error}</div>
+          ) : (
+            <CartEmpty />
+          )}
         </div>
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen bg-page pb-36">
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        <section className="mb-6 rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-          <div className="flex items-center gap-4">
-            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-secom-50 text-secom-600">
-              <ShoppingCart size={24} />
-            </span>
-            <div>
-              <h1 className="text-2xl font-semibold text-slate-900">
-                Shopping Cart
-              </h1>
-              <p className="mt-1 text-sm text-slate-500">
-                Review your selected products before checkout
-              </p>
+    <main className="cart-page">
+      <div className="cart-page__container">
+        {error && <div className="cart-page__error">{error}</div>}
+
+        <div className="cart-page__content">
+          <div>
+            <CartList
+              items={items}
+              disabled={actionLoading}
+              onQuantityChange={updateQuantity}
+              voucherCode={voucherCode}
+              selectedItemIds={selectedItemIds}
+              onSelectItem={handleSelectItem}
+              onSelectAll={handleSelectAll}
+              allSelected={allSelected}
+              partiallySelected={partiallySelected}
+              headerCheckboxRef={headerCheckboxRef}
+            />
+
+            <VoucherList
+              vouchers={vouchers}
+              loading={voucherLoading}
+              selectedVoucher={selectedVoucher}
+              onSelectVoucher={setSelectedVoucher}
+            />
+
+            <div className="voucher-action">
+              <button onClick={handleApplyVoucher} disabled={!selectedVoucher}>
+                Apply Voucher
+              </button>
             </div>
           </div>
-        </section>
 
-        {error ? (
-          <div className="mb-6 rounded-xl border border-red-200 bg-red-50 px-5 py-4 text-sm font-medium text-red-700">
-            {error}
-          </div>
-        ) : null}
-
-        {selectionMessage ? (
-          <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50 px-5 py-4 text-sm font-medium text-amber-700">
-            {selectionMessage}
-          </div>
-        ) : null}
-
-        <CartList
-          items={items}
-          disabled={actionLoading}
-          onQuantityChange={updateQuantity}
-          voucherCode={voucherCode}
-          onApplyVoucher={handleApplyVoucher}
-          selectedItemIds={selectedItemIds}
-          onSelectItem={handleSelectItem}
-          onSelectAll={handleSelectAll}
-          allSelected={allSelected}
-          partiallySelected={partiallySelected}
-          headerCheckboxRef={headerCheckboxRef}
-        />
+          <CartSummary
+            subtotal={selectedSubtotal}
+            discountAmount={selectedDiscountAmount}
+            finalTotal={selectedFinalTotal}
+            itemCount={selectedItemCount}
+            disabled={actionLoading || !selectedItemIds.length}
+            onCheckout={handleCheckout}
+            selectedCount={selectedItemIds.length}
+            allSelected={allSelected}
+            partiallySelected={partiallySelected}
+            onSelectAll={handleSelectAll}
+          />
+        </div>
       </div>
-
-      <CartSummary
-        subtotal={selectedSubtotal}
-        discountAmount={selectedDiscountAmount}
-        finalTotal={selectedFinalTotal}
-        itemCount={selectedItemCount}
-        disabled={actionLoading || !selectedItemIds.length}
-        onCheckout={handleCheckout}
-        selectedCount={selectedItemIds.length}
-        allSelected={allSelected}
-        partiallySelected={partiallySelected}
-        onSelectAll={handleSelectAll}
-      />
     </main>
   );
 }
