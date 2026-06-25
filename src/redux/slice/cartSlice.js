@@ -197,10 +197,12 @@ const cartSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchCart.pending, (state) => {
-        state.loading = true;
+        state.actionLoading = true;
+        state.error = null;
       })
       .addCase(fetchCart.fulfilled, (state, action) => {
-        state.loading = false;
+        state.actionLoading = false;
+        state.error = null;
         mapCartState(state, action.payload);
       })
       .addCase(fetchCart.rejected, (state, action) => {
@@ -210,6 +212,7 @@ const cartSlice = createSlice({
 
       .addCase(addCartItem.pending, (state) => {
         state.actionLoading = true;
+        state.error = null;
       })
       .addCase(addCartItem.fulfilled, (state, action) => {
         state.actionLoading = false;
@@ -222,6 +225,7 @@ const cartSlice = createSlice({
 
       .addCase(updateCartItemQuantity.pending, (state) => {
         state.actionLoading = true;
+        state.error = null;
       })
       .addCase(updateCartItemQuantity.fulfilled, (state, action) => {
         state.actionLoading = false;
@@ -234,6 +238,7 @@ const cartSlice = createSlice({
 
       .addCase(applyCartVoucher.pending, (state) => {
         state.actionLoading = true;
+        state.error = null;
       })
       .addCase(applyCartVoucher.fulfilled, (state, action) => {
         state.actionLoading = false;
@@ -247,6 +252,7 @@ const cartSlice = createSlice({
 
       .addCase(calculateCheckoutSummary.pending, (state) => {
         state.actionLoading = true;
+        state.error = null;
       })
       .addCase(calculateCheckoutSummary.fulfilled, (state, action) => {
         state.actionLoading = false;
@@ -259,6 +265,7 @@ const cartSlice = createSlice({
 
       .addCase(removeCartItem.pending, (state) => {
         state.actionLoading = true;
+        state.error = action.payload;
       })
       .addCase(removeCartItem.fulfilled, (state, action) => {
         state.actionLoading = false;
