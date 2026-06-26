@@ -83,6 +83,12 @@ export const API_ENDPOINTS = {
       LOCK: (id) => `/admin/users/${id}/lock`,
       UNLOCK: (id) => `/admin/users/${id}/unlock`,
     },
+    SELLER: {
+      GET: "/admin/seller-shops/pending",
+      GET_ID: (id) => `/admin/seller-shop/${id}`,
+      APPROVE: (id) => `/admin/seller-shops/${id}/approve`,
+      REJECT: (id) => `/admin/seller-shops/${id}/reject`,
+    },
     PRODUCT: {
       GET: "/admin/products",
       APPROVE: (id) => `/admin/products/${id}/approve`,

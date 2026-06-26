@@ -26,7 +26,6 @@ const getNotificationIcon = (type) => {
 export default function NotificationItem({ notification, showDelete = false }) {
   const dispatch = useDispatch();
 
-  console.log(notification);
   const handleRead = () => {
     if (!notification.isRead) {
       dispatch(markNotificationAsRead(notification.id));

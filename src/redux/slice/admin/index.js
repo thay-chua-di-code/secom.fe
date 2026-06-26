@@ -3,10 +3,12 @@ import userAdminReducer from "./users/userAdminSlice";
 import productAdminReducer from "./products/productAdminSlice";
 import orderAdminReducer from "./orders/ordersAdminSlice";
 import categoryAdminReducer from "./categories/categoriesSlice";
+import sellerAdminReducer from "./seller/slice";
 export {
   dashboardReducer,
   userAdminReducer,
   productAdminReducer,
   orderAdminReducer,
   categoryAdminReducer,
+  sellerAdminReducer,
 };

@@ -17,8 +17,7 @@ export default function Card({ product }) {
     e.stopPropagation();
 
     const existingItem = cartItems.find(
-      (item) =>
-        item.productId === product.id || item.productId === String(product.id),
+      (item) => String(item.productId) === String(product.id),
     );
 
     if (existingItem) {
@@ -28,10 +27,14 @@ export default function Card({ product }) {
           quantity: existingItem.quantity + 1,
         }),
       );
-      return;
+    } else {
+      dispatch(
+        addCartItem({
+          productId: product.id,
+          quantity: 1,
+        }),
+      );
     }
-
-    dispatch(addCartItem(product));
   };
 
   return (

@@ -1,0 +1,179 @@
+.seller-manage {
+  padding: 30px;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+
+    h1 {
+      font-size: 34px;
+      margin-bottom: 8px;
+    }
+
+    p {
+      color: #6b7280;
+    }
+
+    button {
+      background: #0284c7;
+      color: white;
+      border: none;
+      padding: 12px 22px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+  }
+
+  &__toolbar {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 25px;
+
+    input,
+    select {
+      height: 45px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 0 15px;
+    }
+
+    input {
+      flex: 1;
+    }
+  }
+
+  &__table {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th {
+      background: #f8fafc;
+      text-align: left;
+      padding: 18px;
+    }
+
+    td {
+      padding: 18px;
+      border-top: 1px solid #eee;
+    }
+  }
+}
+
+.seller-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+
+  img {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  h4 {
+    margin: 0;
+  }
+
+  span {
+    color: gray;
+    font-size: 14px;
+  }
+}
+
+.status {
+  padding: 6px 14px;
+  border-radius: 30px;
+  font-size: 13px;
+  font-weight: 600;
+
+  &.pending {
+    color: #b45309;
+    background: #fef3c7;
+  }
+
+  &.approved {
+    color: #166534;
+    background: #dcfce7;
+  }
+
+  &.rejected {
+    color: #991b1b;
+    background: #fee2e2;
+  }
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+
+  button {
+    border: none;
+    cursor: pointer;
+    border-radius: 6px;
+    padding: 8px 12px;
+    color: white;
+  }
+
+  .detail {
+    background: #0ea5e9;
+  }
+
+  .approve {
+    background: #16a34a;
+  }
+
+  .reject {
+    background: #dc2626;
+  }
+}
+
+.empty {
+  padding: 50px;
+  text-align: center;
+  color: gray;
+}
+
+@media (max-width: 992px) {
+  .seller-manage {
+    padding: 15px;
+
+    &__header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 15px;
+    }
+
+    &__toolbar {
+      flex-direction: column;
+    }
+
+    &__table {
+      overflow-x: auto;
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .actions {
+    flex-direction: column;
+
+    button {
+      width: 100%;
+    }
+  }
+
+  .seller-info img {
+    width: 45px;
+    height: 45px;
+  }
+}
