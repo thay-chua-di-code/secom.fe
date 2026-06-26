@@ -13,6 +13,11 @@ export const API_ENDPOINTS = {
 
   USER: {
     PROFILE: "/profile",
+    WISH_LIST: {
+      GET: "/wishlist",
+      POST: (id) => `/wishlist/${id}`,
+      DELETE: (id) => `/wishlist/${id}`,
+    },
   },
 
   ADDRESS: {
@@ -43,6 +48,8 @@ export const API_ENDPOINTS = {
 
   SELLER: {
     REGISTER: "/seller/shop/register",
+    PRODUCT: (id) =>
+      id || id === 0 ? `/seller/products/${id}` : "/seller/products",
   },
 
   REVIEW: {},

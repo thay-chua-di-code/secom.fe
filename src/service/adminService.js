@@ -37,10 +37,9 @@ export const adminService = {
   // [SELLER]
   getSeller: async (params) => {
     try {
-      console.log("Hello");
       const result = await axiosClient.get(API_ENDPOINTS.ADMIN.SELLER.GET, {
         params,
-      });     
+      });
     } catch (e) {
       throw new Error(e.message || "Something went wrong when get sellers");
     }

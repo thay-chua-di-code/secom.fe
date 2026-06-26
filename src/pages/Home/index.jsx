@@ -7,11 +7,17 @@ import SectionDivider from "../../components/layouts/SectionDivider/index";
 import { fetchHomepage } from "../../redux/slice/homeSlice";
 import FeatureProducts from "./Products/FeatureProducts";
 import LastestProduct from "./Products/LatestProducts";
+import { categoriesService } from "../../service/categoriesService";
 const Home = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(fetchHomepage());
+    const fetchCategories = async () => {
+      await categoriesService.getCategories(dispatch);
+    };
+
+    fetchCategories();
   }, [dispatch]);
 
   return (

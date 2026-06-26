@@ -33,4 +33,38 @@ export const userService = {
       console.error("Error fetching order purchase:", e?.response?.data);
     }
   },
+  getWishList: async (params) => {
+    try {
+      const result = await axiosClient.get(API_ENDPOINTS.USER.WISH_LIST.GET, {
+        params,
+      });
+
+      console.log("Wishlist API: ", result);
+      return result.data.data;
+    } catch (e) {
+      throw new Error(e.message || "Something went wrong when get wishlist");
+    }
+  },
+  addWishList: async (productId) => {
+    try {
+      const result = await axiosClient.post(
+        API_ENDPOINTS.USER.WISH_LIST.POST(productId),
+      );
+
+      return result.data.data;
+    } catch (e) {
+      throw new Error(e.message || "Something went wrong~");
+    }
+  },
+  deleteWishList: async (productId) => {
+    try {
+      const result = await axiosClient.delete(
+        API_ENDPOINTS.USER.WISH_LIST.DELETE(productId),
+      );
+
+      return result.data.data;
+    } catch (e) {
+      throw new Error(e.message || "Something went wrong~");
+    }
+  },
 };
