@@ -8,6 +8,8 @@ import homeReducer from "./slice/homeSlice";
 import notificationReducer from "./slice/notificationSlice";
 import orderReducer from "./slice/orderSlice";
 import voucherReducer from "./slice/voucherSlice";
+import sellerProductReducer from "./slice/seller/sellerProduct";
+import categoriesReducer from "./slice/categoriesSlice";
 // [ADMIN] Import
 import {
   dashboardReducer,
@@ -44,10 +46,13 @@ const rootReducer = combineReducers({
   // [USER]
   user: userReducer,
   cart: cartReducer,
+  categories: categoriesReducer,
   home: homeReducer,
   order: orderReducer,
   notification: notificationReducer,
   voucher: voucherReducer,
+  // [SELLER]
+  sellerProduct: sellerProductReducer,
   // [ADMIN]
   dashboardAdmin: dashboardReducer,
   usersAdmin: userAdminReducer,

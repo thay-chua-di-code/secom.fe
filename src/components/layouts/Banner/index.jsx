@@ -5,7 +5,8 @@ import "./styles.scss";
 
 export default function Banner() {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const { banners, featuredCategories } = useSelector((state) => state.home);
+  const { banners } = useSelector((state) => state.home);
+  const { categories } = useSelector((state) => state.categories);
   const bannerImages =
     banners?.length > 0
       ? banners
@@ -28,7 +29,7 @@ export default function Banner() {
   return (
     <section className="hero">
       <div className="hero__categories">
-        {featuredCategories.map((item) => (
+        {categories.map((item) => (
           <div key={item.id} className="hero__category">
             {item.name}
           </div>
