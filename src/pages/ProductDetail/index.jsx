@@ -7,6 +7,7 @@ import ProductReview from "./Review";
 import { mockProducts } from "../../utils/temporary";
 import { useParams } from "react-router-dom";
 import { formatCurrencyVN } from "../../utils/fncUtils";
+import SellerShow from "./SellerShow";
 const images = [
   "https://cdn2.cellphones.com.vn/insecure/rs:fill:0:358/q:90/plain/https://cellphones.com.vn/media/catalog/product/l/a/laptop-acer-predator-helios-300_1_.jpg",
   "https://tramanh.vn/wp-content/uploads/2023/09/acer-predator-helios-300-2022-2.jpg",
@@ -23,52 +24,53 @@ export default function ProductDetail() {
   const [quantity, setQuantity] = useState(2);
 
   return (
-    <div className="product-detail">
-      <div className="product-detail__gallery">
-        <div className="thumbnail-list">
-          {productDetail.images.map((img, index) => (
-            <div
-              key={index}
-              className={`thumbnail ${selectedImage === img ? "active" : ""}`}
-              onClick={() => setSelectedImage(img)}
-            >
-              <img src={img} alt="" />
-            </div>
-          ))}
-        </div>
+    <>
+      <div className="product-detail">
+        <div className="product-detail__gallery">
+          <div className="thumbnail-list">
+            {productDetail.images.map((img, index) => (
+              <div
+                key={index}
+                className={`thumbnail ${selectedImage === img ? "active" : ""}`}
+                onClick={() => setSelectedImage(img)}
+              >
+                <img src={img} alt="" />
+              </div>
+            ))}
+          </div>
 
-        <div className="main-image">
-          <img src={selectedImage} alt="" />
-        </div>
-      </div>
-
-      <div className="product-detail__info">
-        <h1>{productDetail.name}</h1>
-
-        <div className="rating">
-          <div className="stars">★★★★☆</div>
-          <span>(150 Reviews)</span>
-          <div className="divider"></div>
-          <span className="stock">In Stock</span>
-        </div>
-
-        <div className="price">{formatCurrencyVN(productDetail.price)}</div>
-
-        <p className="description">
-          PlayStation 5 Controller Skin High quality vinyl with air channel
-          adhesive for easy bubble free install & mess free removal.
-        </p>
-
-        <div className="option-group">
-          <span>Colours:</span>
-
-          <div className="colors">
-            <button className="color blue active"></button>
-            <button className="color red"></button>
+          <div className="main-image">
+            <img src={selectedImage} alt="" />
           </div>
         </div>
 
-        {/* <div className="option-group">
+        <div className="product-detail__info">
+          <h1>{productDetail.name}</h1>
+
+          <div className="rating">
+            <div className="stars">★★★★☆</div>
+            <span>(150 Reviews)</span>
+            <div className="divider"></div>
+            <span className="stock">In Stock</span>
+          </div>
+
+          <div className="price">{formatCurrencyVN(productDetail.price)}</div>
+
+          <p className="description">
+            PlayStation 5 Controller Skin High quality vinyl with air channel
+            adhesive for easy bubble free install & mess free removal.
+          </p>
+
+          <div className="option-group">
+            <span>Colours:</span>
+
+            <div className="colors">
+              <button className="color blue active"></button>
+              <button className="color red"></button>
+            </div>
+          </div>
+
+          {/* <div className="option-group">
           <span>Size:</span>
 
           <div className="sizes">
@@ -80,51 +82,53 @@ export default function ProductDetail() {
           </div>
         </div> */}
 
-        <div className="purchase">
-          <div className="quantity">
-            <Button
-              onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}
-            >
-              -
-            </Button>
+          <div className="purchase">
+            <div className="quantity">
+              <Button
+                onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}
+              >
+                -
+              </Button>
 
-            <span>{quantity}</span>
+              <span>{quantity}</span>
 
-            <Button onClick={() => setQuantity((prev) => prev + 1)}>+</Button>
+              <Button onClick={() => setQuantity((prev) => prev + 1)}>+</Button>
+            </div>
+
+            <button className="buy-btn">Buy Now</button>
+
+            <button className="wishlist">♡</button>
           </div>
 
-          <button className="buy-btn">Buy Now</button>
+          <div className="delivery-box">
+            <div className="delivery-item">
+              <div className="icon">
+                <img src={shipIcon} alt="...." />
+              </div>
 
-          <button className="wishlist">♡</button>
-        </div>
-
-        <div className="delivery-box">
-          <div className="delivery-item">
-            <div className="icon">
-              <img src={shipIcon} alt="...." />
+              <div>
+                <h4>Free Delivery</h4>
+                <p>Enter your postal code for Delivery Availability</p>
+              </div>
             </div>
 
-            <div>
-              <h4>Free Delivery</h4>
-              <p>Enter your postal code for Delivery Availability</p>
-            </div>
-          </div>
+            <div className="delivery-item">
+              <div className="icon">
+                <img src={returnIcon} alt="...." />
+              </div>
 
-          <div className="delivery-item">
-            <div className="icon">
-              <img src={returnIcon} alt="...." />
-            </div>
-
-            <div>
-              <h4>Return Delivery</h4>
-              <p>Free 30 Days Delivery Returns. Details</p>
+              <div>
+                <h4>Return Delivery</h4>
+                <p>Free 30 Days Delivery Returns. Details</p>
+              </div>
             </div>
           </div>
         </div>
       </div>
       <div className="product-detail-feature">
+        <SellerShow shop={productDetail.shop} />
         <ProductReview />
       </div>
-    </div>
+    </>
   );
 }

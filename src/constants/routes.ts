@@ -27,7 +27,6 @@ export const ROUTES = {
   // [SELLER]
   SELLER: {
     REGISTER: "/seller-register",
-
     MAIN_PAGE: "/seller",
     DASHBOARD: "/seller/dashboard",
     PRODUCTS: "/seller/products",
@@ -35,6 +34,7 @@ export const ROUTES = {
     CUSTOMERS: "/seller/customers",
     REVENUE: "/seller/revenue",
     SETTINGS: "/seller/settings",
+    DETAIL: `/seller/detail/:id`,
   },
 };
 

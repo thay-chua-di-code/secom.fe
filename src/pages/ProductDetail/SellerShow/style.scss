@@ -1,0 +1,195 @@
+.seller-card {
+  width: 100%;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 18px;
+  padding: 30px;
+  margin: 30px 0;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 50px;
+}
+
+.seller-top {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.seller-info {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+
+  h3 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-size: 24px;
+    font-weight: 700;
+    color: #111827;
+  }
+
+  span {
+    color: #6b7280;
+    font-size: 15px;
+  }
+}
+
+.seller-avatar {
+  width: 95px;
+  height: 95px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 4px solid #0ea5e9;
+  padding: 4px;
+  background: white;
+  transition: 0.3s;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+}
+
+.seller-actions {
+  display: flex;
+  gap: 16px;
+
+  button {
+    height: 46px;
+    padding: 0 26px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    transition: 0.25s;
+  }
+
+  a {
+    height: 46px;
+    padding: 0 26px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    transition: 0.25s;
+  }
+
+  .chat-btn {
+    background: #0284c7;
+    color: white;
+    border: none;
+
+    &:hover {
+      background: #0369a1;
+      transform: translateY(-2px);
+    }
+  }
+
+  .shop-btn {
+    background: white;
+    border: 2px solid #0284c7;
+    color: #0284c7;
+
+    &:hover {
+      background: #eff6ff;
+      transform: translateY(-2px);
+    }
+  }
+}
+
+.seller-bottom {
+  flex: 1;
+
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+
+  border-left: 1px solid #e5e7eb;
+  padding-left: 40px;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  padding: 18px;
+  border-radius: 14px;
+  background: #f8fafc;
+  transition: 0.25s;
+
+  &:hover {
+    background: #eff6ff;
+  }
+
+  svg {
+    color: #0284c7;
+    width: 22px;
+    height: 22px;
+  }
+
+  span {
+    display: block;
+    font-size: 14px;
+    color: #6b7280;
+  }
+
+  strong {
+    display: block;
+    margin-top: 4px;
+    font-size: 18px;
+    color: #0f172a;
+  }
+}
+
+@media (max-width: 992px) {
+  .seller-card {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .seller-bottom {
+    border-left: none;
+    border-top: 1px solid #e5e7eb;
+    padding-left: 0;
+    padding-top: 30px;
+  }
+}
+
+@media (max-width: 768px) {
+  .seller-info {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .seller-actions {
+    flex-direction: column;
+
+    button {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+
+  .seller-bottom {
+    grid-template-columns: 1fr;
+  }
+
+  .seller-avatar {
+    width: 85px;
+    height: 85px;
+  }
+
+  .seller-info h3 {
+    justify-content: center;
+    font-size: 22px;
+  }
+}

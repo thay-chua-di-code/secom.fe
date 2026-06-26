@@ -5,6 +5,7 @@ import Home from "../pages/Home";
 import AuthPage from "../pages/Auth";
 import ProductDetail from "../pages/ProductDetail";
 import ProductsPage from "../pages/Products";
+import SellerDetail from "../pages/SellerDetail";
 
 export const publicRoutes = [
   {
@@ -45,6 +46,10 @@ export const publicRoutes = [
       {
         path: ROUTES.PRODUCT.PRODUCTS,
         element: <ProductsPage />,
+      },
+      {
+        path: ROUTES.SELLER.DETAIL,
+        element: <SellerDetail />,
       },
     ],
   },

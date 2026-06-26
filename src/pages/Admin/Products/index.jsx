@@ -42,10 +42,6 @@ const Products = () => {
           <h1>Product Management</h1>
           <p>Manage products on Secom platform</p>
         </div>
-
-        <Button className="add-btn">
-          + Add Product
-        </Button>
       </div>
 
       <div className="admin-products__filter">
@@ -90,21 +86,15 @@ const Products = () => {
             {products.length > 0 ? (
               products.map((product) => (
                 <tr key={product.id}>
-                  <td>
-                    #{product.id.slice(0, 8)}
-                  </td>
+                  <td>#{product.id.slice(0, 8)}</td>
 
                   <td>{product.name}</td>
 
                   <td>
-                    {product.sellerName ??
-                      product.seller?.fullName ??
-                      "-"}
+                    {product.sellerName ?? product.seller?.fullName ?? "-"}
                   </td>
 
-                  <td>
-                    ₫{formatCurrencyVN(product.price)}
-                  </td>
+                  <td>₫{formatCurrencyVN(product.price)}</td>
 
                   <td>
                     <span
@@ -116,26 +106,18 @@ const Products = () => {
 
                   <td>
                     <div className="action-buttons">
-                      <Button className="view-btn">
-                        View
-                      </Button>
+                      <Button className="view-btn">View</Button>
 
-                      <Button className="approve-btn">
-                        Approve
-                      </Button>
+                      <Button className="approve-btn">Approve</Button>
 
-                      <Button className="reject-btn">
-                        Reject
-                      </Button>
+                      <Button className="reject-btn">Reject</Button>
                     </div>
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan={6}>
-                  No products found
-                </td>
+                <td colSpan={6}>No products found</td>
               </tr>
             )}
           </tbody>
