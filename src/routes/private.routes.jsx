@@ -6,6 +6,7 @@ import Products from "../pages/Admin/Products/index";
 import Orders from "../pages/Admin/Orders/index";
 import { ADMIN_ROUTES } from "../constants/routes";
 import Categories from "../pages/Admin/Categories";
+import SellerManage from "../pages/Admin/Seller";
 
 export const privateRoutes = [
   {
@@ -31,6 +32,10 @@ export const privateRoutes = [
       {
         path: ADMIN_ROUTES.ADMIN_CATEGORIES,
         element: <Categories />,
+      },
+      {
+        path: ADMIN_ROUTES.ADMIN_SELLER,
+        element: <SellerManage />,
       },
     ],
   },

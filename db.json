@@ -2,9 +2,9 @@
   "cart": {
     "cartId": "c1a5f9e2-7d32-4b89-a5f2-123456789abc",
     "voucherCode": "SAVE10",
-    "subtotal": 81980000,
+    "subtotal": 127970000,
     "discountAmount": 585000,
-    "finalTotal": 81980000,
+    "finalTotal": 127970000,
     "items": [
       {
         "cartItemId": "ci-1782215182157",
@@ -12,8 +12,8 @@
         "productName": "MacBook Pro M4",
         "sellerId": null,
         "unitPrice": 45990000,
-        "quantity": 1,
-        "subtotal": 45990000
+        "quantity": 2,
+        "subtotal": 91980000
       },
       {
         "cartItemId": "ci-1782215185921",
@@ -156,7 +156,8 @@
           "subtotal": 900000,
           "status": "PENDING"
         }
-      ]
+      ],
+      "id": "zKmahRGt70Y"
     },
     {
       "orderId": "order-002",
@@ -180,9 +181,9 @@
           "subtotal": 850000,
           "status": "DELIVERED"
         }
-      ]
+      ],
+      "id": "jN3Y8j5LPyA"
     }
   ],
-
   "$schema": "./node_modules/json-server/schema.json"
 }

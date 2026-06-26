@@ -28,6 +28,18 @@ $success: #22c55e;
       border-radius: 20px;
       font-size: 12px;
     }
+
+    a {
+      padding: 20px 30px;
+      background-color: #0780c2;
+      color: #fff;
+      border-radius: 10px;
+
+      &:hover {
+        cursor: pointer;
+        background-color: #0369a1;
+      }
+    }
   }
 
   &__table {

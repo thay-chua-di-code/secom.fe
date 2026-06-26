@@ -1,32 +1,5 @@
 import axiosClient from "../api/axiosClient";
-
-export const orderService = {
-  createOrder: async (payload) => {
-    try {
-      const response = await axiosClient.post("/orders", payload);
-      return response.data;
-    } catch (error) {
-      throw new Error(error?.response?.data?.message || "Create order failed");
-    }
-  },
-
-  getOrders: async () => {
-    try {
-      const response = await axiosClient.get("/orders");
-      return response.data;
-    } catch (error) {
-      throw new Error(error?.response?.data?.message || "Get orders failed");
-    }
-  },
-
-  getOrderDetail: async (orderId) => {
-    try {
-      const response = await axiosClient.get(`/orders/${orderId}`);
-      return response.data;
-    } catch (error) {
-      throw new Error(
-        error?.response?.data?.message || "Get order detail failed",
-      );
-    }
-  },
+import { API_ENDPOINTS } from "../api/endPoint";
+export const productService = {
+  
 };

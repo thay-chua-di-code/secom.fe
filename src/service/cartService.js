@@ -1,63 +1,33 @@
 import axiosClient from "../api/axiosClient";
-
+import { API_ENDPOINTS } from "../api/endPoint";
 const BASE_URL = "http://localhost:3001/cart";
 
 export const cartService = {
   getCart: async () => {
     try {
-      const response = await axiosClient.get(BASE_URL);
+      const response = await axiosClient.get(API_ENDPOINTS.CART.GET_CG);
+      console.log("Cart ressponse: ", response);
       return response.data;
     } catch (error) {
       throw error;
     }
   },
 
-  addCartItem: async (product) => {
-    const res = await axiosClient.get(BASE_URL);
-    const cart = res.data;
+  addCartItem: async ({ productId, quantity = 1 }) => {
+    try {
+      const res = await axiosClient.post(API_ENDPOINTS.CART.ADD_ITEM, {
+        productId,
+        quantity,
+      });
 
-    const existing = cart.items.find((i) => i.productId === product.id);
-
-    let items;
-
-    if (existing) {
-      items = cart.items.map((i) =>
-        i.productId === product.id
-          ? {
-              ...i,
-              quantity: i.quantity + 1,
-              subtotal: (i.quantity + 1) * i.unitPrice,
-            }
-          : i,
-      );
-    } else {
-      items = [
-        ...cart.items,
-        {
-          cartItemId: `ci-${Date.now()}`,
-          productId: product.id,
-          productName: product.name,
-          sellerId: product.sellerId || null,
-          unitPrice: product.price,
-          quantity: 1,
-          subtotal: product.price,
-        },
-      ];
+      console.log('Response cart: ', res)
+      return res.data.data;
+    } catch (e) {
+      throw e;
     }
-
-    const updatedCart = {
-      ...cart,
-      items,
-      subtotal: items.reduce((s, i) => s + i.subtotal, 0),
-      finalTotal: items.reduce((s, i) => s + i.subtotal, 0),
-    };
-
-    const result = await axiosClient.put(BASE_URL, updatedCart);
-    return result.data;
   },
 
   updateCartItemQuantity: async (cartItemId, quantity) => {
-    console.log("Service call~!");
     const res = await axiosClient.get(BASE_URL);
     const cart = res.data;
 

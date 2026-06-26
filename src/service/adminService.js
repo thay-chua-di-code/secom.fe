@@ -33,6 +33,18 @@ export const adminService = {
       throw new Error(e?.response?.data);
     }
   },
+
+  // [SELLER]
+  getSeller: async (params) => {
+    try {
+      console.log("Hello");
+      const result = await axiosClient.get(API_ENDPOINTS.ADMIN.SELLER.GET, {
+        params,
+      });     
+    } catch (e) {
+      throw new Error(e.message || "Something went wrong when get sellers");
+    }
+  },
   // [PRODUCT]
   getProducts: async (params) => {
     try {
@@ -40,6 +52,7 @@ export const adminService = {
         params,
       });
 
+      console.log("Res", result);
       return result.data;
     } catch (e) {
       throw new Error(e?.response.message);

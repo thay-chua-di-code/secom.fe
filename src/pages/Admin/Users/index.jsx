@@ -4,7 +4,7 @@ import { fetchAdminUsers } from "../../../redux/slice/admin/users/userThunk";
 import UserToolbar from "./components/UserToolbar";
 import UserTable from "./components/UserTable";
 import Pagination from "./components/Pagination";
-
+import { Link } from "react-router-dom";
 import "./style.scss";
 
 export default function UsersPage() {
@@ -30,6 +30,8 @@ export default function UsersPage() {
       <div className="users-page__header">
         <h1>User Management</h1>
         <span className="badge">Admin</span>
+
+        <Link to={"/admin/seller"}>Manage Seller</Link>
       </div>
 
       {/* TOOLBAR */}

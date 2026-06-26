@@ -13,9 +13,7 @@ export default function Cart({ open }) {
   const { isAuthenticated } = useSelector((state) => state.auth);
   const { items, loading, error } = useCart();
 
-  console.log("Items:", items);
-  console.log("Loading:", loading);
-  console.log("Error:", error);
+  console.log(items);
   if (!open) {
     return null;
   }
