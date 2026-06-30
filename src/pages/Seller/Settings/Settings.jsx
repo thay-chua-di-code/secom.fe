@@ -1,6 +1,9 @@
+import BankingSeller from "./Banking";
+import "./style.scss";
+
 const Settings = () => {
   return (
-    <div>
+    <div className="setting-container">
       <h1>Store Settings</h1>
 
       <form className="settings-form">
@@ -10,6 +13,8 @@ const Settings = () => {
 
         <button>Save Changes</button>
       </form>
+
+      <BankingSeller />
     </div>
   );
 };

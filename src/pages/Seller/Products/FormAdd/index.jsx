@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
-import { createSellerProduct } from "../../../../redux/slice/seller/thunk";
+import { createSellerProduct } from "../../../../redux/slice/seller/product/thunk";
 import { categoriesService } from "../../../../service/categoriesService";
 import "./style.scss";
 const AddProductModal = ({ open, onClose }) => {

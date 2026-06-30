@@ -1,0 +1,56 @@
+$primary: #0284c7;
+$primary-dark: #0369a1;
+
+$bg: #f8fafc;
+$white: #ffffff;
+
+$text: #0f172a;
+$text-light: #64748b;
+
+$border: #e2e8f0;
+
+.setting-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  .settings-form {
+    max-width: 700px;
+    background: white;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    input,
+    textarea {
+      width: 100%;
+
+      border: 1px solid $border;
+      border-radius: 10px;
+
+      padding: 14px;
+      outline: none;
+
+      &:focus {
+        border-color: $primary;
+      }
+    }
+
+    button {
+      width: fit-content;
+
+      border: none;
+      background: $primary;
+
+      color: white;
+
+      padding: 12px 24px;
+      border-radius: 8px;
+
+      cursor: pointer;
+    }
+  }
+}

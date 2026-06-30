@@ -8,8 +8,9 @@ import homeReducer from "./slice/homeSlice";
 import notificationReducer from "./slice/notificationSlice";
 import orderReducer from "./slice/orderSlice";
 import voucherReducer from "./slice/voucherSlice";
-import sellerProductReducer from "./slice/seller/sellerProduct";
 import categoriesReducer from "./slice/categoriesSlice";
+// [SELLER] import
+import { sellerBankingReducer, sellerProductReducer } from "./slice/seller";
 // [ADMIN] Import
 import {
   dashboardReducer,
@@ -55,6 +56,7 @@ const rootReducer = combineReducers({
   voucher: voucherReducer,
   // [SELLER]
   sellerProduct: sellerProductReducer,
+  sellerBanking: sellerBankingReducer,
   // [ADMIN]
   dashboardAdmin: dashboardReducer,
   usersAdmin: userAdminReducer,
