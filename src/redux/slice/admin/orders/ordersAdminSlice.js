@@ -15,7 +15,7 @@ const initialState = {
 };
 
 const adminOrderSlice = createSlice({
-  name: "adminOrder",
+  name: "ordersAdmin",
   initialState,
   reducers: {
     clearOrderDetail(state) {
@@ -35,14 +35,12 @@ const adminOrderSlice = createSlice({
 
       .addCase(fetchOrders.fulfilled, (state, action) => {
         state.loading = false;
-
-        state.orders = action.payload.data.items;
-
+        state.orders = action.payload.items;
         state.pagination = {
-          pageNumber: action.payload.data.pageNumber,
-          pageSize: action.payload.data.pageSize,
-          totalCount: action.payload.data.totalCount,
-          totalPages: action.payload.data.totalPages,
+          pageNumber: action.payload.pageNumber,
+          pageSize: action.payload.pageSize,
+          totalCount: action.payload.totalCount,
+          totalPages: action.payload.totalPages,
         };
       })
 

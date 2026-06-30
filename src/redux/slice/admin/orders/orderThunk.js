@@ -5,9 +5,7 @@ export const fetchOrders = createAsyncThunk(
   async (params, thunkAPI) => {
     try {
       const response = await adminService.getOrdersByAdmin(params);
-
-      console.log("Thunk: ", response);
-      return response.data;
+      return response;
     } catch (err) {
       return thunkAPI.rejectWithValue(
         err.response?.data?.message || "Cannot fetch orders",

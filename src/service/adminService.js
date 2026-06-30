@@ -114,4 +114,42 @@ export const adminService = {
   getOrderDetail(id) {
     return axiosClient.get(`/admin/orders/${id}`);
   },
+
+  // [VOUCHER]
+  async getVouchers(params) {
+    try {
+      const res = await axiosClient.get(API_ENDPOINTS.ADMIN.VOUCHER.GP, {
+        params,
+      });
+
+      console.log('res: ', res)
+      return res;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  async createVoucher(data) {
+    try {
+      const res = await axiosClient.post(API_ENDPOINTS.ADMIN.VOUCHER.GP, data);
+
+      console.log('Res create Serivce: ', res)
+      return res;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  async updateVoucher(id, data) {
+    try {
+      const res = await axiosClient.put(
+        API_ENDPOINTS.ADMIN.VOUCHER.PUT(id),
+        data,
+      );
+
+      return res;
+    } catch (error) {
+      throw error;
+    }
+  },
 };

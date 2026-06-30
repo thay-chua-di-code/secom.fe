@@ -111,5 +111,9 @@ export const API_ENDPOINTS = {
       GET: "/admin/orders",
       DETAIL: (id) => `/admin/orders/${id}`,
     },
+    VOUCHER: {
+      GP: "/admin/vouchers",
+      PUT: (id) => `/admin/vouchers/${id}`,
+    },
   },
 };

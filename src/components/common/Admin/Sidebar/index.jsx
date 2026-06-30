@@ -10,6 +10,7 @@ import {
   Menu,
   X,
   Tags,
+  Ticket,
 } from "lucide-react";
 
 import "./style.scss";
@@ -47,6 +48,11 @@ const Sidebar = () => {
       title: "Orders",
       icon: <ShoppingCart size={20} />,
       path: "/admin/orders",
+    },
+    {
+      title: "Vouchers",
+      icon: <Ticket size={20} />,
+      path: "/admin/vouchers",
     },
     {
       title: "Finance",
