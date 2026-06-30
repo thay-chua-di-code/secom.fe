@@ -59,12 +59,6 @@ const Sidebar = () => {
       icon: <Wallet size={20} />,
       path: "/admin/finance",
     },
-
-    {
-      title: "Settings",
-      icon: <Settings size={20} />,
-      path: "/admin/settings",
-    },
   ];
 
   return (

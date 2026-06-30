@@ -19,6 +19,7 @@ import {
   categoryAdminReducer,
   sellerAdminReducer,
   voucherAdminReducer,
+  financeAdminReducer,
 } from "./slice/admin";
 const createNoopStorage = () => {
   return {
@@ -62,6 +63,7 @@ const rootReducer = combineReducers({
   categoriesAdmin: categoryAdminReducer,
   sellersAdmin: sellerAdminReducer,
   vouchersAdmin: voucherAdminReducer,
+  financeAdmin: financeAdminReducer,
 });
 
 const persistConfig = {

@@ -1,0 +1,337 @@
+.finance-page {
+  padding: 30px;
+  background: #f6f9fc;
+  min-height: 100vh;
+
+  .finance-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+
+    h2 {
+      color: #0369a1;
+      font-size: 32px;
+      font-weight: 700;
+    }
+
+    p {
+      color: #64748b;
+      margin-top: 8px;
+    }
+
+    button {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      border: none;
+
+      padding: 12px 20px;
+
+      background: #0369a1;
+      color: white;
+
+      border-radius: 10px;
+
+      cursor: pointer;
+
+      transition: 0.25s;
+
+      &:hover {
+        background: #075985;
+      }
+    }
+  }
+
+  .finance-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 22px;
+  }
+
+  .finance-card {
+    background: white;
+
+    border-radius: 18px;
+
+    padding: 25px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 20px;
+
+    transition: 0.3s;
+
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.08);
+
+    &:hover {
+      transform: translateY(-6px);
+    }
+
+    .icon {
+      width: 65px;
+      height: 65px;
+
+      border-radius: 16px;
+
+      background: #0369a1;
+
+      color: white;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      svg {
+        width: 30px;
+        height: 30px;
+      }
+    }
+
+    .content {
+      flex: 1;
+
+      span {
+        color: gray;
+        font-size: 14px;
+      }
+
+      h3 {
+        margin-top: 10px;
+        font-size: 26px;
+        color: #0f172a;
+      }
+    }
+  }
+
+  .loading {
+    display: flex;
+    justify-content: center;
+    padding: 100px;
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 768px) {
+  .finance-page {
+    padding: 20px;
+
+    .finance-header {
+      flex-direction: column;
+
+      align-items: flex-start;
+
+      gap: 20px;
+
+      button {
+        width: 100%;
+
+        justify-content: center;
+      }
+    }
+
+    .finance-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+/* ===========================
+   Withdrawal Section
+=========================== */
+
+.withdraw-section {
+  margin-top: 35px;
+  border-radius: 18px;
+  padding: 24px;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+  background-color: transparent !important;
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+
+    h3 {
+      font-size: 22px;
+      font-weight: 700;
+      color: #0369a1;
+    }
+  }
+
+  .table-wrapper {
+    overflow-x: auto;
+    overflow-y: auto;
+    max-height: 450px;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+
+    &::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #94a3b8;
+      border-radius: 20px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+  }
+
+  table {
+    width: 100%;
+    min-width: 900px;
+    border-collapse: collapse;
+
+    thead {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      //   background: #0369a1;
+
+      th {
+        color: dark;
+        font-weight: 600;
+        padding: 16px;
+        text-align: left;
+        font-size: 14px;
+      }
+    }
+
+    tbody {
+      tr {
+        transition: 0.25s;
+        border-bottom: 1px solid #f1f5f9;
+
+        &:hover {
+          background: #f0f9ff;
+        }
+
+        td {
+          padding: 15px 16px;
+          color: #334155;
+          font-size: 14px;
+          white-space: nowrap;
+          vertical-align: middle;
+        }
+      }
+    }
+  }
+
+  /* Status */
+
+  .pending,
+  .approved,
+  .rejected {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 90px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .pending {
+    background: #fef3c7;
+    color: #b45309;
+  }
+
+  .approved {
+    background: #dcfce7;
+    color: #15803d;
+  }
+
+  .rejected {
+    background: #fee2e2;
+    color: #dc2626;
+  }
+
+  /* Buttons */
+
+  td:last-child {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .approve,
+  .reject {
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    color: white;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease;
+  }
+
+  .approve {
+    background: #0284c7;
+
+    &:hover {
+      background: #0369a1;
+      transform: translateY(-1px);
+    }
+  }
+
+  .reject {
+    background: #ef4444;
+
+    &:hover {
+      background: #dc2626;
+      transform: translateY(-1px);
+    }
+  }
+}
+
+/* ===========================
+   Responsive
+=========================== */
+
+@media (max-width: 992px) {
+  .withdraw-section {
+    padding: 18px;
+
+    .section-header h3 {
+      font-size: 20px;
+    }
+
+    table {
+      min-width: 850px;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .withdraw-section {
+    margin-top: 25px;
+    padding: 16px;
+
+    table {
+      min-width: 780px;
+
+      th,
+      td {
+        padding: 12px;
+        font-size: 13px;
+      }
+    }
+
+    .approve,
+    .reject {
+      padding: 7px 12px;
+      font-size: 12px;
+    }
+  }
+}

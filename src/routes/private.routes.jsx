@@ -8,6 +8,7 @@ import { ADMIN_ROUTES } from "../constants/routes";
 import Categories from "../pages/Admin/Categories";
 import SellerManage from "../pages/Admin/Seller";
 import VoucherAdmin from "../pages/Admin/Vouchers";
+import FinanceAdmin from "../pages/Admin/Finance";
 
 export const privateRoutes = [
   {
@@ -33,6 +34,10 @@ export const privateRoutes = [
       {
         path: ADMIN_ROUTES.ADMIN_VOUCHER,
         element: <VoucherAdmin />,
+      },
+      {
+        path: ADMIN_ROUTES.ADMIN_FINANCE,
+        element: <FinanceAdmin />,
       },
       {
         path: ADMIN_ROUTES.ADMIN_CATEGORIES,
