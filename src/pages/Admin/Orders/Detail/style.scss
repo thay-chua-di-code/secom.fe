@@ -1,0 +1,158 @@
+.order-detail-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  z-index: 999;
+  padding: 20px;
+}
+
+.order-detail-modal {
+  width: 900px;
+  max-width: 100%;
+
+  background: white;
+
+  border-radius: 16px;
+
+  overflow: hidden;
+
+  .modal-header {
+    background: #0369a1;
+
+    color: white;
+
+    padding: 20px 28px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    button {
+      border: none;
+      background: none;
+      color: white;
+      cursor: pointer;
+    }
+  }
+
+  .modal-body {
+    padding: 30px;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 25px;
+  }
+
+  .section {
+    border: 1px solid #e2e8f0;
+
+    border-radius: 12px;
+
+    padding: 20px;
+
+    h3 {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      color: #0369a1;
+
+      margin-bottom: 20px;
+    }
+  }
+
+  .grid {
+    display: grid;
+
+    grid-template-columns: repeat(2, 1fr);
+
+    gap: 20px;
+
+    label {
+      color: #64748b;
+
+      font-size: 14px;
+
+      display: block;
+
+      margin-bottom: 6px;
+    }
+
+    p {
+      font-weight: 600;
+
+      word-break: break-all;
+    }
+  }
+
+  .status {
+    display: inline-block;
+
+    background: #dbeafe;
+
+    color: #0369a1;
+
+    padding: 6px 14px;
+
+    border-radius: 999px;
+
+    font-weight: 600;
+  }
+
+  .payment-list {
+    display: flex;
+    flex-direction: column;
+
+    gap: 16px;
+
+    div {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      svg {
+        margin-right: 8px;
+      }
+
+      span {
+        flex: 1;
+
+        margin-left: 10px;
+      }
+    }
+
+    .discount {
+      color: #ef4444;
+    }
+
+    .total {
+      border-top: 1px solid #e2e8f0;
+
+      padding-top: 18px;
+
+      font-size: 20px;
+
+      color: #0369a1;
+
+      font-weight: bold;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .order-detail-modal {
+    .modal-body {
+      padding: 20px;
+    }
+
+    .grid {
+      grid-template-columns: 1fr;
+    }
+  }
+}

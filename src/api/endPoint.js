@@ -95,6 +95,9 @@ export const API_ENDPOINTS = {
       GET_ID: (id) => `/admin/seller-shop/${id}`,
       APPROVE: (id) => `/admin/seller-shops/${id}/approve`,
       REJECT: (id) => `/admin/seller-shops/${id}/reject`,
+      BANK: {
+        
+      }
     },
     PRODUCT: {
       GET: "/admin/products",
@@ -106,6 +109,19 @@ export const API_ENDPOINTS = {
       POST: "/admin/categories",
       PUT: (id) => `/admin/categories/${id}`,
       DELETE: (id) => `/admin/categories/${id}`,
+    },
+    ORDERS: {
+      GET: "/admin/orders",
+      DETAIL: (id) => `/admin/orders/${id}`,
+    },
+    VOUCHER: {
+      GP: "/admin/vouchers",
+      PUT: (id) => `/admin/vouchers/${id}`,
+    },
+    FINANCE: {
+      SUMMARY: "/admin/finance/money-flow",
+      APR: (id) => `/admin/finance/${id}/approve`,
+      REJ: (id) => `/admin/finance/${id}/reject`,
     },
   },
 };

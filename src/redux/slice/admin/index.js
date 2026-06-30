@@ -4,6 +4,8 @@ import productAdminReducer from "./products/productAdminSlice";
 import orderAdminReducer from "./orders/ordersAdminSlice";
 import categoryAdminReducer from "./categories/categoriesSlice";
 import sellerAdminReducer from "./seller/slice";
+import voucherAdminReducer from "./vouchers/voucherSlice";
+import financeAdminReducer from "./finance/financeSlice";
 export {
   dashboardReducer,
   userAdminReducer,
@@ -11,4 +13,6 @@ export {
   orderAdminReducer,
   categoryAdminReducer,
   sellerAdminReducer,
+  voucherAdminReducer,
+  financeAdminReducer,
 };

@@ -1,0 +1,226 @@
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, .45);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    z-index: 999;
+    padding: 20px;
+}
+
+.voucher-modal {
+
+    width: 700px;
+    max-width: 100%;
+
+    background: white;
+
+    border-radius: 16px;
+
+    animation: popup .25s;
+
+    .modal-header{
+
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+
+        padding:22px 25px;
+
+        border-bottom:1px solid #eee;
+
+        h3{
+
+            color:#0369A1;
+            font-size:24px;
+
+        }
+
+        .close-btn{
+
+            width:40px;
+            height:40px;
+
+            border:none;
+            background:#f1f5f9;
+
+            border-radius:8px;
+
+            cursor:pointer;
+
+            transition:.25s;
+
+            &:hover{
+
+                background:#0369A1;
+                color:white;
+
+            }
+
+        }
+
+    }
+
+    form{
+
+        padding:25px;
+
+    }
+
+    .row{
+
+        display:grid;
+
+        grid-template-columns:1fr 1fr;
+
+        gap:20px;
+
+    }
+
+    .form-group{
+
+        margin-bottom:20px;
+
+        label{
+
+            display:block;
+
+            margin-bottom:8px;
+
+            font-weight:600;
+
+            color:#334155;
+
+        }
+
+        input,
+        select{
+
+            width:100%;
+
+            height:48px;
+
+            border:1px solid #CBD5E1;
+
+            border-radius:10px;
+
+            padding:0 15px;
+
+            transition:.25s;
+
+            &:focus{
+
+                border-color:#0369A1;
+
+                outline:none;
+
+                box-shadow:0 0 0 4px rgba(3,105,161,.15);
+
+            }
+
+        }
+
+    }
+
+    .modal-footer{
+
+        margin-top:30px;
+
+        display:flex;
+        justify-content:flex-end;
+        gap:15px;
+
+        .cancel-btn{
+
+            padding:12px 25px;
+
+            border:none;
+
+            background:#E2E8F0;
+
+            border-radius:10px;
+
+            cursor:pointer;
+
+        }
+
+        .save-btn{
+
+            padding:12px 30px;
+
+            border:none;
+
+            background:#0369A1;
+
+            color:white;
+
+            border-radius:10px;
+
+            cursor:pointer;
+
+            transition:.25s;
+
+            &:hover{
+
+                background:#075985;
+
+            }
+
+        }
+
+    }
+
+}
+
+@keyframes popup{
+
+    from{
+
+        opacity:0;
+        transform:scale(.9);
+
+    }
+
+    to{
+
+        opacity:1;
+        transform:scale(1);
+
+    }
+
+}
+
+@media(max-width:768px){
+
+    .voucher-modal{
+
+        .row{
+
+            grid-template-columns:1fr;
+
+        }
+
+        form{
+
+            padding:20px;
+
+        }
+
+        .modal-footer{
+
+            flex-direction:column;
+
+            button{
+
+                width:100%;
+
+            }
+
+        }
+
+    }
+
+}

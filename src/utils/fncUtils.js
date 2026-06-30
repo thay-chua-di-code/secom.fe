@@ -4,3 +4,5 @@ export const formatCurrencyVN = (value) => {
 
   return Number(value).toLocaleString("vi-VN");
 };
+
+export const formatDate = (date) => new Date(date).toLocaleDateString("vi-VN");

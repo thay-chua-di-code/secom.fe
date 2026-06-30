@@ -10,6 +10,7 @@ import {
   Menu,
   X,
   Tags,
+  Ticket,
 } from "lucide-react";
 
 import "./style.scss";
@@ -49,15 +50,14 @@ const Sidebar = () => {
       path: "/admin/orders",
     },
     {
+      title: "Vouchers",
+      icon: <Ticket size={20} />,
+      path: "/admin/vouchers",
+    },
+    {
       title: "Finance",
       icon: <Wallet size={20} />,
       path: "/admin/finance",
-    },
-
-    {
-      title: "Settings",
-      icon: <Settings size={20} />,
-      path: "/admin/settings",
     },
   ];
 

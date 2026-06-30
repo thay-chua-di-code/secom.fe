@@ -45,4 +45,6 @@ export const ADMIN_ROUTES = {
   ADMIN_ORDERS: "orders",
   ADMIN_CATEGORIES: "categories",
   ADMIN_SELLER: "seller",
+  ADMIN_VOUCHER: "vouchers",
+  ADMIN_FINANCE: "finance",
 };

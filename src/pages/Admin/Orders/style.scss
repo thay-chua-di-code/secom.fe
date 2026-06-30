@@ -1,0 +1,188 @@
+.admin-orders {
+  padding: 30px;
+  background: #f5f9fc;
+  min-height: 100vh;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+
+  h2 {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    color: #0369a1;
+    font-size: 28px;
+  }
+
+  p {
+    color: gray;
+    margin-top: 6px;
+  }
+}
+
+.refresh-btn {
+  background: #0284c7;
+  color: white;
+  border: none;
+  padding: 10px 22px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: white;
+  border-radius: 10px;
+  padding: 0 15px;
+  width: 320px;
+  border: 1px solid #ddd;
+
+  input {
+    width: 100%;
+    height: 45px;
+    border: none;
+    outline: none;
+  }
+}
+
+.table-wrapper {
+  overflow-x: auto;
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.06);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead {
+  background: #0369a1;
+  color: white;
+}
+
+th {
+  padding: 16px;
+  text-align: left;
+}
+
+td {
+  padding: 18px 16px;
+  border-bottom: 1px solid #eee;
+}
+
+tbody tr:hover {
+  background: #f0f9ff;
+}
+
+.buyer {
+  display: flex;
+  flex-direction: column;
+
+  span {
+    color: gray;
+    font-size: 13px;
+  }
+}
+
+.money {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #0369a1;
+  font-weight: 700;
+}
+
+.date {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.status {
+  padding: 6px 14px;
+  border-radius: 20px;
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.status.pending {
+  background: #f59e0b;
+}
+
+.status.paid {
+  background: #10b981;
+}
+
+.status.shipping {
+  background: #0ea5e9;
+}
+
+.status.completed {
+  background: #16a34a;
+}
+
+.status.cancelled {
+  background: #ef4444;
+}
+
+.view-btn {
+  width: 38px;
+  height: 38px;
+  border: none;
+  border-radius: 10px;
+  background: #e0f2fe;
+  color: #0284c7;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.view-btn:hover {
+  background: #0284c7;
+  color: white;
+}
+
+.pagination {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .admin-orders {
+    padding: 15px;
+  }
+
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  .toolbar {
+    flex-direction: column;
+  }
+
+  .search-box {
+    width: 100%;
+  }
+
+  table {
+    min-width: 900px;
+  }
+}
