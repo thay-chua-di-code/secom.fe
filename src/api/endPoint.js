@@ -107,5 +107,9 @@ export const API_ENDPOINTS = {
       PUT: (id) => `/admin/categories/${id}`,
       DELETE: (id) => `/admin/categories/${id}`,
     },
+    ORDERS: {
+      GET: "/admin/orders",
+      DETAIL: (id) => `/admin/orders/${id}`,
+    },
   },
 };

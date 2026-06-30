@@ -1,19 +1,75 @@
 import { createSlice } from "@reduxjs/toolkit";
-
+import { fetchOrders, fetchOrderDetail } from "./orderThunk";
 const initialState = {
-  users: [],
+  orders: [],
+  orderDetail: null,
+  pagination: {
+    pageNumber: 1,
+    pageSize: 10,
+    totalCount: 0,
+    totalPages: 0,
+  },
   loading: false,
+  detailLoading: false,
   error: null,
 };
 
-const orderAdminSlice = createSlice({
-  name: "adminOrders",
+const adminOrderSlice = createSlice({
+  name: "adminOrder",
   initialState,
-  reducers: {},
+  reducers: {
+    clearOrderDetail(state) {
+      state.orderDetail = null;
+    },
+  },
 
   extraReducers: (builder) => {
-    // thêm sau
+    builder
+
+      // ================= Orders =================
+
+      .addCase(fetchOrders.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+
+      .addCase(fetchOrders.fulfilled, (state, action) => {
+        state.loading = false;
+
+        state.orders = action.payload.data.items;
+
+        state.pagination = {
+          pageNumber: action.payload.data.pageNumber,
+          pageSize: action.payload.data.pageSize,
+          totalCount: action.payload.data.totalCount,
+          totalPages: action.payload.data.totalPages,
+        };
+      })
+
+      .addCase(fetchOrders.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // ================= Detail =================
+
+      .addCase(fetchOrderDetail.pending, (state) => {
+        state.detailLoading = true;
+        state.error = null;
+      })
+
+      .addCase(fetchOrderDetail.fulfilled, (state, action) => {
+        state.detailLoading = false;
+        state.orderDetail = action.payload.data;
+      })
+
+      .addCase(fetchOrderDetail.rejected, (state, action) => {
+        state.detailLoading = false;
+        state.error = action.payload;
+      });
   },
 });
 
-export default orderAdminSlice.reducer;
+export const { clearOrderDetail } = adminOrderSlice.actions;
+
+export default adminOrderSlice.reducer;

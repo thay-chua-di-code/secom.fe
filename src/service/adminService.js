@@ -50,8 +50,6 @@ export const adminService = {
       const result = await axiosClient.get(API_ENDPOINTS.ADMIN.PRODUCT.GET, {
         params,
       });
-
-      console.log("Res", result);
       return result.data;
     } catch (e) {
       throw new Error(e?.response.message);
@@ -95,5 +93,25 @@ export const adminService = {
     );
 
     return response.data;
+  },
+
+  // [ORDERS]
+  getOrdersByAdmin: async (params) => {
+    try {
+      const res = await axiosClient.get(API_ENDPOINTS.ADMIN.ORDERS.GET, {
+        params,
+      });
+
+      console.log("Res:", res);
+      return res.data.data;
+    } catch (e) {
+      throw new Error(
+        e.response?.data?.message || e.message || "Something went wrong",
+      );
+    }
+  },
+
+  getOrderDetail(id) {
+    return axiosClient.get(`/admin/orders/${id}`);
   },
 };
