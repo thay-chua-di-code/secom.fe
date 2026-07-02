@@ -19,6 +19,7 @@ export const adminService = {
   banUser: async (id) => {
     try {
       const result = await axiosClient.patch(API_ENDPOINTS.ADMIN.USER.LOCK(id));
+      console.log(result);
       return result;
     } catch (e) {
       throw new Error(e?.response?.data);

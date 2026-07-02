@@ -13,4 +13,19 @@ export const dicoveryService = {
       });
     }
   },
+
+  getProductByCategory: async (categoryId, params) => {
+    try {
+      const result = await axiosClient.get(
+        `/categories/${categoryId}/products`,
+        { params },
+      );
+
+      console.log("Result product by cate:", result);
+
+      return result?.data;
+    } catch (e) {
+      console.log(e?.response?.data || e?.message);
+    }
+  },
 };

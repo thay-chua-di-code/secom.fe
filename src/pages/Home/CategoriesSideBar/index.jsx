@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import Title from "../../../components/common/Title";
+import { categoriesService } from "../../../service/categoriesService";
+
 import "./style.scss";
+import { useNavigate } from "react-router-dom";
 
 export default function CategorySidebar() {
   const { featuredCategories, loading, error } = useSelector(
@@ -9,6 +12,11 @@ export default function CategorySidebar() {
   );
 
   const [activeCategory, setActiveCategory] = useState(null);
+  const navigate = useNavigate();
+
+  const handleSelectCategory = (categoryId) => {
+    navigate(`/products?category=${categoryId}`);
+  };
 
   return (
     <section className="category-section">
@@ -50,6 +58,21 @@ export default function CategorySidebar() {
               </button>
             );
           })}
+        {categories.map((category) => (
+          <button
+            key={category.id}
+            className={`category-card ${
+              activeCategory === category.id ? "active" : ""
+            }`}
+            onClick={() => handleSelectCategory(category.id)}
+          >
+            <div className="category-card__avatar">
+              {category.name.charAt(0).toUpperCase()}
+            </div>
+
+            <span>{category.name}</span>
+          </button>
+        ))}
       </div>
     </section>
   );

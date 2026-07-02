@@ -2,11 +2,16 @@ import { useEffect, useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { useSelector } from "react-redux";
 import "./styles.scss";
+import { useNavigate } from "react-router-dom";
 
 export default function Banner() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const { banners } = useSelector((state) => state.home);
   const { categories } = useSelector((state) => state.categories);
+  const navigate = useNavigate();
+  const handleSelectedCategory = (categoryId) => {
+    navigate(`/products?category=${categoryId}`);
+  };
   const bannerImages =
     banners?.length > 0
       ? banners
@@ -30,7 +35,11 @@ export default function Banner() {
     <section className="hero">
       <div className="hero__categories">
         {categories.map((item) => (
-          <div key={item.id} className="hero__category">
+          <div
+            key={item.id}
+            className="hero__category"
+            onClick={() => handleSelectedCategory(item.id)}
+          >
             {item.name}
           </div>
         ))}

@@ -24,7 +24,7 @@ export const sellerService = {
   getProducts: async (pageNumber = 1, pageSize = 10) => {
     try {
       console.log("Call me service");
-      const result = await axiosClient.get(API_ENDPOINTS.SELLER.PRODUCT, {
+      const result = await axiosClient.get(`/seller/products`, {
         params: {
           pageNumber,
           pageSize,
@@ -53,7 +53,8 @@ export const sellerService = {
   createProduct: async (data) => {
     try {
       console.log("Call me");
-      const result = await axiosClient.post(API_ENDPOINTS.SELLER.PRODUCT, data);
+      console.log(data);
+      const result = await axiosClient.post(`/seller/products`, data);
 
       console.log("Service: ", result);
       return result.data.data;
@@ -111,6 +112,36 @@ export const sellerService = {
       return result.data.data;
     } catch (e) {
       throw new Error(e?.response?.data?.message || "Update inventory failed");
+    }
+  },
+
+  // [Banking]
+  getSellerBankAccounts: async () => {
+    try {
+      const res = await axiosClient.get(API_ENDPOINTS.SELLER.BANK.GP);
+
+      return res.data.data;
+    } catch (e) {
+      throw new Error(e?.response?.data?.message || e.message);
+    }
+  },
+
+  createSellerBankAccount: async (data) => {
+    try {
+      const res = await axiosClient.post(API_ENDPOINTS.SELLER.BANK.GP, data);
+      return res.data.data;
+    } catch (e) {
+      throw new Error(e?.response?.data?.message || e.message);
+    }
+  },
+
+  deleteSellerBankAccount: async (id) => {
+    try {
+      await axiosClient.delete(API_ENDPOINTS.SELLER.BANK.DELETE(id));
+
+      return id;
+    } catch (e) {
+      throw new Error(e?.response?.data?.message || e.message);
     }
   },
 };

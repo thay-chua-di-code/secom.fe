@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchSellerProducts } from "../../../redux/slice/seller/thunk";
+import { fetchSellerProducts } from "../../../redux/slice/seller/product/thunk";
 import Button from "../../../components/common/Button/Button";
 import AddProductModal from "./FormAdd";
 const Products = () => {

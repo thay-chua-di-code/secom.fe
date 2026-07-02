@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { sellerService } from "../../../service/sellerService";
+import { sellerService } from "../../../../service/sellerService";
 
 // ================= GET ALL =================
 
