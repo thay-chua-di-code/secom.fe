@@ -4,11 +4,13 @@ import { API_ENDPOINTS } from "../api/endPoint";
 export const dicoveryService = {
   getHomePg: async () => {
     try {
-      const result = await axiosClient.get(API_ENDPOINTS.DICOVERY.HOME_PG);
+      const result = await axiosClient.get(API_ENDPOINTS.DISCOVERY.HOMEPAGE);
 
-      return result?.data;
+      return result;
     } catch (e) {
-      console.log(e?.response?.data);
+      throw new Error(e?.response?.data?.message || "Get homepage failed", {
+        cause: e,
+      });
     }
   },
 };

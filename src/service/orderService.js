@@ -2,12 +2,14 @@ import axiosClient from "../api/axiosClient";
 import { API_ENDPOINTS } from "../api/endPoint";
 
 export const orderService = {
- createOrder: async (payload) => {
+  createOrder: async (payload) => {
     try {
       const response = await axiosClient.post("/orders", payload);
       return response.data;
     } catch (error) {
-      throw new Error(error?.response?.data?.message || "Create order failed");
+      throw new Error(error?.response?.data?.message || "Create order failed", {
+        cause: error,
+      });
     }
   },
 
@@ -16,7 +18,20 @@ export const orderService = {
       const response = await axiosClient.get("/orders");
       return response.data;
     } catch (error) {
-      throw new Error(error?.response?.data?.message || "Get orders failed");
+      throw new Error(error?.response?.data?.message || "Get orders failed", {
+        cause: error,
+      });
+    }
+  },
+
+  getMyOrders: async () => {
+    try {
+      const response = await axiosClient.get(API_ENDPOINTS.ORDER.ORDER_PURCHASE);
+      return response.data;
+    } catch (error) {
+      throw new Error(error?.response?.data?.message || "Get orders failed", {
+        cause: error,
+      });
     }
   },
 
@@ -27,8 +42,8 @@ export const orderService = {
     } catch (error) {
       throw new Error(
         error?.response?.data?.message || "Get order detail failed",
+        { cause: error },
       );
     }
   },
 };
-

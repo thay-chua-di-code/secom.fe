@@ -30,7 +30,10 @@ export const API_ENDPOINTS = {
 
   ORDER: {
     ORDER_PURCHASE: "/orders/purchased",
+    ORDER_PURCHASE_PAGED: "/orders/purchased/paged",
     ORDER_DETAIL: (id) => `/orders/${id}`,
+    CREATE: "/orders",
+    DELETE: (id) => `/orders/${id}`,
   },
 
   CATEGORY: {
@@ -39,6 +42,10 @@ export const API_ENDPOINTS = {
 
   DICOVERY: {
     HOME_PG: "/discovery/homepage",
+  },
+
+  DISCOVERY: {
+    HOMEPAGE: "/discovery/homepage",
   },
 
   PRODUCT: {
@@ -54,17 +61,16 @@ export const API_ENDPOINTS = {
 
   REVIEW: {},
 
-  PAYMENT: {},
-
-  ORDER: {},
+  PAYMENT: {
+    TRANSACTIONS: "/payments/transactions",
+    ORDER_TRANSACTION: (orderId) => `/payments/orders/${orderId}/transaction`,
+  },
 
   NOTIFICATION: {
     GET: "/notifications",
     MARK_READ: (id) => `notifications/${id}/read`,
     DELETE: (id) => `/notifications/${id}`,
   },
-
-  DISCOVERY: {},
 
   CHECKOUT: {
     CALCULATE: "/api/checkout/calculate",

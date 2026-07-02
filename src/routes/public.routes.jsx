@@ -1,11 +1,11 @@
 import MainLayout from "../layouts/MainLayout";
-import AuthLayout from "../layouts/AuthLayout";
 import { ROUTES } from "../constants/routes";
 import Home from "../pages/Home";
 import AuthPage from "../pages/Auth";
 import ProductDetail from "../pages/ProductDetail";
 import ProductsPage from "../pages/Products";
 import SellerDetail from "../pages/SellerDetail";
+import PaymentReturn from "../pages/PaymentReturn/PaymentReturn";
 
 export const publicRoutes = [
   {
@@ -46,6 +46,10 @@ export const publicRoutes = [
       {
         path: ROUTES.PRODUCT.PRODUCTS,
         element: <ProductsPage />,
+      },
+      {
+        path: "/payment-return",
+        element: <PaymentReturn />,
       },
       {
         path: ROUTES.SELLER.DETAIL,

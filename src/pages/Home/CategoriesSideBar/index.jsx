@@ -1,22 +1,15 @@
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useState } from "react";
+import { useSelector } from "react-redux";
 import Title from "../../../components/common/Title";
-import { categoriesService } from "../../../service/categoriesService";
 import "./style.scss";
 
 export default function CategorySidebar() {
-  const dispatch = useDispatch();
-  const { categories } = useSelector((state) => state.categories);
+  const { featuredCategories, loading, error } = useSelector(
+    (state) => state.home,
+  );
 
   const [activeCategory, setActiveCategory] = useState(null);
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      await categoriesService.getCategories(dispatch);
-    };
-
-    fetchCategories();
-  }, [dispatch]);
   return (
     <section className="category-section">
       <Title title="Categories" />
@@ -24,21 +17,39 @@ export default function CategorySidebar() {
       <h2 className="category-section__heading">Browse By Category</h2>
 
       <div className="category-section__list">
-        {categories.map((category) => (
-          <button
-            key={category.id}
-            className={`category-card ${
-              activeCategory === category.id ? "active" : ""
-            }`}
-            onClick={() => setActiveCategory(category.id)}
-          >
-            <div className="category-card__avatar">
-              {category.name.charAt(0).toUpperCase()}
-            </div>
+        {loading && <p>Loading categories...</p>}
 
-            <span>{category.name}</span>
-          </button>
-        ))}
+        {error && <p>{error}</p>}
+
+        {!loading && !error && featuredCategories.length === 0 && (
+          <p>No categories found</p>
+        )}
+
+        {!loading &&
+          !error &&
+          featuredCategories.map((category) => {
+            const categoryName =
+              category.name ||
+              category.categoryName ||
+              category.title ||
+              "Category";
+
+            return (
+              <button
+                key={category.id}
+                className={`category-card ${
+                  activeCategory === category.id ? "active" : ""
+                }`}
+                onClick={() => setActiveCategory(category.id)}
+              >
+                <div className="category-card__avatar">
+                  {categoryName.charAt(0).toUpperCase()}
+                </div>
+
+                <span>{categoryName}</span>
+              </button>
+            );
+          })}
       </div>
     </section>
   );

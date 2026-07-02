@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ShoppingCart } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import CartList from "./List/index";
 import CartSummary from "./CartSummary/index";
@@ -8,6 +8,8 @@ import VoucherList from "./VoucherList/index";
 import { fetchCart } from "../../redux/slice/cartSlice";
 import { fetchVouchers } from "../../redux/slice/voucherSlice";
 import { useCart } from "../../hooks/useCart";
+import { paymentApi } from "../../api/paymentApi";
+import { orderApi } from "../../api/orderApi";
 import toast from "react-hot-toast";
 import "./style.scss";
 
@@ -40,12 +42,20 @@ function CartSkeleton() {
   );
 }
 export default function CartPage() {
-  const navigate = useNavigate();
   const dispatch = useDispatch();
   const fetchedRef = useRef(false);
   const headerCheckboxRef = useRef(null);
   const [selectedItemIds, setSelectedItemIds] = useState([]);
   const [selectedVoucher, setSelectedVoucher] = useState(null);
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [checkoutError, setCheckoutError] = useState("");
+  const [cardInfo, setCardInfo] = useState({
+    cardName: "JOHN DOE",
+    cardNumber: "4242424242424242",
+    expirationMonth: "12",
+    expirationYear: "2030",
+    securityCode: "123",
+  });
 
   const { isAuthenticated } = useSelector((state) => state.auth);
 
@@ -59,7 +69,6 @@ export default function CartPage() {
     actionLoading,
     error,
     voucherCode,
-    calculateCheckout,
     updateQuantity,
     applyVoucher,
   } = useCart();
@@ -76,12 +85,6 @@ export default function CartPage() {
       dispatch(fetchVouchers());
     }
   }, [dispatch, isAuthenticated]);
-
-  useEffect(() => {
-    setSelectedItemIds((prev) =>
-      prev.filter((id) => items.some((item) => item.cartItemId === id)),
-    );
-  }, [items]);
 
   const selectedItems = useMemo(
     () => items.filter((item) => selectedItemIds.includes(item.cartItemId)),
@@ -103,10 +106,10 @@ export default function CartPage() {
   const selectedFinalTotal = selectedSubtotal - selectedDiscountAmount;
 
   const allSelected =
-    items.length > 0 && selectedItemIds.length === items.length;
+    items.length > 0 && selectedItems.length === items.length;
 
   const partiallySelected =
-    selectedItemIds.length > 0 && selectedItemIds.length < items.length;
+    selectedItems.length > 0 && selectedItems.length < items.length;
 
   useEffect(() => {
     if (headerCheckboxRef.current) {
@@ -144,16 +147,194 @@ export default function CartPage() {
     applyVoucher(selectedVoucher);
   };
 
+  const getCreatedOrder = (response) => {
+    return response?.data?.order || response?.order;
+  };
+
+  const getCreatedOrderId = (createdOrder) => {
+    return createdOrder?.orderId;
+  };
+
+  const getCreatedOrderAmount = (createdOrder) => {
+    return createdOrder?.finalTotal;
+  };
+
+  const getCreateOrderErrorMessage = (error) => {
+    return (
+      error?.response?.data?.message ||
+      error?.response?.data?.Message ||
+      error?.message ||
+      "Không thể tạo đơn hàng. Vui lòng thử lại."
+    );
+  };
+
+  const getApiErrorMessage = (error) => {
+    return (
+      error?.response?.data?.message ||
+      error?.response?.data?.error ||
+      error?.response?.data?.errors?.[0] ||
+      error?.message ||
+      "Không thể tạo giao dịch thanh toán. Vui lòng thử lại."
+    );
+  };
+
+  const handleCardInfoChange = (field, value) => {
+    setCardInfo((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const loadOmiseScript = () => {
+    return new Promise((resolve, reject) => {
+      if (window.Omise) {
+        resolve(window.Omise);
+        return;
+      }
+
+      const existingScript = document.querySelector(
+        'script[src="https://cdn.omise.co/omise.js"]',
+      );
+
+      if (existingScript) {
+        existingScript.addEventListener("load", () => resolve(window.Omise));
+        existingScript.addEventListener("error", () => {
+          reject(new Error("Cannot load Omise.js"));
+        });
+        return;
+      }
+
+      const script = document.createElement("script");
+      script.src = "https://cdn.omise.co/omise.js";
+      script.async = true;
+      script.onload = () => resolve(window.Omise);
+      script.onerror = () => reject(new Error("Cannot load Omise.js"));
+      document.body.appendChild(script);
+    });
+  };
+
+  const createOmiseToken = async () => {
+    const publicKey = import.meta.env.VITE_OMISE_PUBLIC_KEY;
+
+    if (!publicKey) {
+      throw new Error("Missing VITE_OMISE_PUBLIC_KEY");
+    }
+
+    const Omise = await loadOmiseScript();
+
+    Omise.setPublicKey(publicKey);
+
+    const cardPayload = {
+      name: cardInfo.cardName.trim(),
+      number: cardInfo.cardNumber.trim(),
+      expiration_month: cardInfo.expirationMonth.trim(),
+      expiration_year: cardInfo.expirationYear.trim(),
+      security_code: cardInfo.securityCode.trim(),
+    };
+
+    return new Promise((resolve, reject) => {
+      Omise.createToken(
+        "card",
+        cardPayload,
+        (statusCode, response) => {
+          if (statusCode === 200 && response?.id) {
+            resolve(response);
+            return;
+          }
+
+          reject(
+            new Error(
+              response?.message ||
+                response?.object ||
+                "Không thể tạo token thanh toán.",
+            ),
+          );
+        },
+      );
+    });
+  };
+
   const handleCheckout = async () => {
     if (!selectedItemIds.length) {
       toast.error("Please select at least one item before checkout.");
       return;
     }
 
-    const result = await calculateCheckout();
+    let createdOrder;
+    setCheckoutError("");
 
-    if (result?.meta?.requestStatus === "fulfilled") {
-      navigate("/checkout");
+    try {
+      setCheckoutLoading(true);
+
+      const createOrderResponse = await orderApi.createOrder({
+        cartItemIds: selectedItemIds,
+        voucherCode: selectedVoucher || voucherCode || null,
+      });
+
+      console.log("Create order response:", createOrderResponse);
+
+      createdOrder = getCreatedOrder(createOrderResponse);
+    } catch (orderError) {
+      toast.error(getCreateOrderErrorMessage(orderError));
+      setCheckoutLoading(false);
+      return;
+    }
+
+    try {
+      const orderId = getCreatedOrderId(createdOrder);
+      const amount = getCreatedOrderAmount(createdOrder);
+
+      console.log("Created order:", createdOrder);
+
+      if (!orderId) {
+        throw new Error("Missing orderId from create order response");
+      }
+
+      if (!amount || amount <= 0) {
+        throw new Error("Missing finalTotal from create order response");
+      }
+
+      const token = await createOmiseToken();
+
+      console.log("Omise token:", token);
+
+      const paymentRequest = {
+        orderId,
+        amount,
+        currency: "thb",
+        returnUri: `${window.location.origin}/payment-return`,
+        tokenId: token.id,
+      };
+
+      console.log("Payment request:", paymentRequest);
+
+      const paymentResponse = await paymentApi.createPaymentTransaction(
+        paymentRequest,
+      );
+
+      console.log("Payment response:", paymentResponse);
+
+      const paymentUrl =
+        paymentResponse?.data?.paymentUrl || paymentResponse?.paymentUrl;
+
+      if (!paymentUrl) {
+        toast.success("Thanh toán thành công.");
+        return;
+      }
+
+      localStorage.setItem("lastOrderId", orderId);
+      window.location.href = paymentUrl;
+    } catch (paymentError) {
+      console.error("Payment error:", paymentError);
+      console.error("Payment error response:", paymentError?.response);
+      console.error("Payment error data:", paymentError?.response?.data);
+
+      const message = getApiErrorMessage(paymentError);
+
+      setCheckoutError(message);
+      toast.error(message);
+    } finally {
+      setCheckoutLoading(false);
     }
   };
 
@@ -185,6 +366,9 @@ export default function CartPage() {
     <main className="cart-page">
       <div className="cart-page__container">
         {error && <div className="cart-page__error">{error}</div>}
+        {checkoutError && (
+          <div className="cart-page__error">{checkoutError}</div>
+        )}
 
         <div className="cart-page__content">
           <div>
@@ -220,9 +404,12 @@ export default function CartPage() {
             discountAmount={selectedDiscountAmount}
             finalTotal={selectedFinalTotal}
             itemCount={selectedItemCount}
-            disabled={actionLoading || !selectedItemIds.length}
+            disabled={actionLoading || checkoutLoading || !selectedItemIds.length}
+            checkoutLoading={checkoutLoading}
             onCheckout={handleCheckout}
-            selectedCount={selectedItemIds.length}
+            selectedCount={selectedItems.length}
+            cardInfo={cardInfo}
+            onCardInfoChange={handleCardInfoChange}
             allSelected={allSelected}
             partiallySelected={partiallySelected}
             onSelectAll={handleSelectAll}

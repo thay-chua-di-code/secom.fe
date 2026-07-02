@@ -16,6 +16,7 @@ export const useCart = () => {
   const cartState = useSelector((state) => state.cart);
 
   const {
+    cart,
     items,
     loading,
     error,
@@ -36,6 +37,7 @@ export const useCart = () => {
 
   return {
     // State
+    cart,
     items,
     loading,
     error,

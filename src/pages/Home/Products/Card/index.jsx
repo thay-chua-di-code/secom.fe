@@ -1,6 +1,7 @@
 import { Heart, Eye, Star } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import placeholderImage from "../../../../assets/icons/logo.jpg";
 import "./style.scss";
 
 import {
@@ -12,6 +13,8 @@ export default function Card({ product }) {
   const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.cart.items || []);
   const navigate = useNavigate();
+  const productImage =
+    product.primaryImageUrl || product.images?.[0] || placeholderImage;
   const handleAddToCart = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -56,11 +59,11 @@ export default function Card({ product }) {
         </div>
 
         <img
-          src={product.images?.[0]}
+          src={productImage}
           alt={product.name}
           className="product-card__image"
           onClick={() => {
-            navigate = `/product-detail/${product.id}`;
+            navigate(`/product-detail/${product.id}`);
           }}
         />
 
