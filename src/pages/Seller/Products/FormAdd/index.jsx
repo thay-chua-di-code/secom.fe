@@ -5,8 +5,7 @@ import { categoriesService } from "../../../../service/categoriesService";
 import "./style.scss";
 const AddProductModal = ({ open, onClose }) => {
   const dispatch = useDispatch();
-  const { categories, loading } = useSelector((state) => state.categories);
-  console.log(categories);
+  const { categories } = useSelector((state) => state.categories);
   const [form, setForm] = useState({
     name: "",
     description: "",
@@ -48,17 +47,6 @@ const AddProductModal = ({ open, onClose }) => {
   }, [dispatch, open, categories.length]);
 
   if (!open) return null;
-
-  if (loading) {
-    return (
-      <div className="modal-overlay">
-        <div className="product-modal loading-modal">
-          <div className="spinner"></div>
-          <p>Loading categories...</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="modal-overlay">
