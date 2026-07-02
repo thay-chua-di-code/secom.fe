@@ -1,3 +1,4 @@
 import sellerBankingReducer from "./banking/bankingSlice";
 import sellerProductReducer from "./product/sellerProduct";
-export { sellerProductReducer, sellerBankingReducer };
+import sellerDashBoardReducer from "./dashboard/dashboardSlice";
+export { sellerProductReducer, sellerBankingReducer, sellerDashBoardReducer };
