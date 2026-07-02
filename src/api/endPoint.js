@@ -50,6 +50,10 @@ export const API_ENDPOINTS = {
     REGISTER: "/seller/shop/register",
     PRODUCT: (id) =>
       id || id === 0 ? `/seller/products/${id}` : "/seller/products",
+    BANK: {
+      GP: "/seller/bank-accounts",
+      DELETE: (id) => `/seller/bank-accounts/${id}`,
+    },
   },
 
   REVIEW: {},
@@ -95,9 +99,7 @@ export const API_ENDPOINTS = {
       GET_ID: (id) => `/admin/seller-shop/${id}`,
       APPROVE: (id) => `/admin/seller-shops/${id}/approve`,
       REJECT: (id) => `/admin/seller-shops/${id}/reject`,
-      BANK: {
-        
-      }
+      BANK: {},
     },
     PRODUCT: {
       GET: "/admin/products",

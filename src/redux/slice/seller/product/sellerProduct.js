@@ -11,15 +11,10 @@ import {
 
 const initialState = {
   products: [],
-
   productDetail: null,
-
   loading: false,
-
   actionLoading: false,
-
   error: null,
-
   pagination: {
     pageNumber: 1,
     pageSize: 10,
