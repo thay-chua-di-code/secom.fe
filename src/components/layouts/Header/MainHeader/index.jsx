@@ -1,28 +1,26 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Search, ShoppingCart, Menu, UserRound } from "lucide-react";
-
 import logo from "../../../../assets/icons/logo.jpg";
-
 import UserDropdown from "../../../common/UserDropDown";
 import Button from "../../../common/Button/Button";
 import Input from "../../../common/Input";
 import Cart from "../../../common/Cart";
 
 import { fetchCart } from "../../../../redux/slice/cartSlice";
+import SearchDropdown from "../../../common/SearchDropDown";
 
 export default function MainHeader() {
   const dispatch = useDispatch();
-
+  const [openSearch, setOpenSearch] = useState(false);
   const [openUser, setOpenUser] = useState(false);
   const [openCart, setOpenCart] = useState(false);
   const [keyword, setKeyword] = useState("");
-
   const { isAuthenticated, user } = useSelector((state) => state.auth);
   const userInfo = useSelector((state) => state.user?.userInfo);
   const { items = [] } = useSelector((state) => state.cart);
-
+  const { categories } = useSelector((state) => state.categories);
   const cartCount = items.reduce(
     (total, item) => total + (item.quantity || 0),
     0,
@@ -70,6 +68,19 @@ export default function MainHeader() {
     });
   };
 
+  const searchRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (searchRef.current && !searchRef.current.contains(e.target)) {
+        setOpenSearch(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
   return (
     <header className="sticky top-0 z-40 border-b border-gray-200 bg-white shadow-sm">
       <div className="container-custom flex h-16 items-center justify-between gap-3 md:h-20">
@@ -101,16 +112,25 @@ export default function MainHeader() {
 
         {/* Search desktop */}
         <div className="hidden flex-1 px-4 lg:block">
-          <div className="mx-auto max-w-2xl">
+          <div ref={searchRef} className="relative mx-auto max-w-2xl">
             <Input
               type="text"
               placeholder="Search products..."
               value={keyword}
+              onFocus={() => setOpenSearch(true)}
               onChange={(e) => setKeyword(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSearch()}
               icon={Search}
               clearable
               className="header-search"
+            />
+
+            <SearchDropdown
+              open={openSearch}
+              keyword={keyword}
+              categories={categories}
+              products={[]}
+              onClose={() => setOpenSearch(false)}
             />
           </div>
         </div>

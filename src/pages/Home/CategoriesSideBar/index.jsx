@@ -1,15 +1,13 @@
-import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Title from "../../../components/common/Title";
-
 import "./style.scss";
+import { categoriesService } from "../../../service/categoriesService";
 
 export default function CategorySidebar() {
-  const { featuredCategories = [], loading, error } = useSelector(
-    (state) => state.home
-  );
-
+  const dispatch = useDispatch();
+  const { categories } = useSelector((state) => state.categories);
   const [activeCategory, setActiveCategory] = useState(null);
   const navigate = useNavigate();
 
@@ -18,6 +16,9 @@ export default function CategorySidebar() {
     navigate(`/products?category=${categoryId}`);
   };
 
+  useEffect(() => {
+    categoriesService.getCategories(dispatch);
+  }, []);
   return (
     <section className="category-section">
       <Title title="Categories" />
@@ -25,39 +26,29 @@ export default function CategorySidebar() {
       <h2 className="category-section__heading">Browse By Category</h2>
 
       <div className="category-section__list">
-        {loading && <p>Loading categories...</p>}
+        {categories.map((category) => {
+          const categoryName =
+            category.name ||
+            category.categoryName ||
+            category.title ||
+            "Category";
 
-        {error && <p>{error}</p>}
+          return (
+            <button
+              key={category.id}
+              className={`category-card ${
+                activeCategory === category.id ? "active" : ""
+              }`}
+              onClick={() => handleSelectCategory(category.id)}
+            >
+              <div className="category-card__avatar">
+                {categoryName.charAt(0).toUpperCase()}
+              </div>
 
-        {!loading && !error && featuredCategories.length === 0 && (
-          <p>No categories found</p>
-        )}
-
-        {!loading &&
-          !error &&
-          featuredCategories.map((category) => {
-            const categoryName =
-              category.name ||
-              category.categoryName ||
-              category.title ||
-              "Category";
-
-            return (
-              <button
-                key={category.id}
-                className={`category-card ${
-                  activeCategory === category.id ? "active" : ""
-                }`}
-                onClick={() => handleSelectCategory(category.id)}
-              >
-                <div className="category-card__avatar">
-                  {categoryName.charAt(0).toUpperCase()}
-                </div>
-
-                <span>{categoryName}</span>
-              </button>
-            );
-          })}
+              <span>{categoryName}</span>
+            </button>
+          );
+        })}
       </div>
     </section>
   );
