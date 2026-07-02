@@ -14,16 +14,31 @@ const initialState = {
   error: null,
 };
 
+const getOrderItems = (payload) => {
+  if (Array.isArray(payload)) return payload;
+  if (Array.isArray(payload?.items)) return payload.items;
+  if (Array.isArray(payload?.data)) return payload.data;
+  if (Array.isArray(payload?.data?.items)) return payload.data.items;
+  return [];
+};
+
+const getPagination = (payload) => ({
+  pageNumber: payload?.pageNumber || payload?.data?.pageNumber || 1,
+  pageSize: payload?.pageSize || payload?.data?.pageSize || 10,
+  totalCount:
+    payload?.totalCount || payload?.data?.totalCount || getOrderItems(payload).length,
+  totalPages: payload?.totalPages || payload?.data?.totalPages || 1,
+});
+
 export const fetchMyOrdersThunk = createAsyncThunk(
   "order/fetchMyOrders",
   async (_, thunkAPI) => {
     try {
       const res = await orderService.getMyOrders();
-      console.log("Result of order: ", res);
-      return res.data.data;
+      return res.data ?? res.Data ?? res;
     } catch (err) {
       return thunkAPI.rejectWithValue(
-        err.response?.data?.message || "Get orders failed",
+        err.message || "Get orders failed",
       );
     }
   },
@@ -61,13 +76,8 @@ const orderSlice = createSlice({
       })
       .addCase(fetchMyOrdersThunk.fulfilled, (state, action) => {
         state.loading = false;
-        state.orders = action.payload.data;
-        state.pagination = {
-          pageNumber: action.payload.pageNumber,
-          pageSize: action.payload.pageSize,
-          totalCount: action.payload.totalCount,
-          totalPages: action.payload.totalPages,
-        };
+        state.orders = getOrderItems(action.payload);
+        state.pagination = getPagination(action.payload);
       })
       .addCase(fetchMyOrdersThunk.rejected, (state, action) => {
         state.loading = false;
