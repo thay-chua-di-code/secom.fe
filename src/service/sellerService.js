@@ -24,7 +24,7 @@ export const sellerService = {
   getProducts: async (pageNumber = 1, pageSize = 10) => {
     try {
       console.log("Call me service");
-      const result = await axiosClient.get(API_ENDPOINTS.SELLER.PRODUCT, {
+      const result = await axiosClient.get(`/seller/products`, {
         params: {
           pageNumber,
           pageSize,
@@ -53,7 +53,8 @@ export const sellerService = {
   createProduct: async (data) => {
     try {
       console.log("Call me");
-      const result = await axiosClient.post(API_ENDPOINTS.SELLER.PRODUCT, data);
+      console.log(data);
+      const result = await axiosClient.post(`/seller/products`, data);
 
       console.log("Service: ", result);
       return result.data.data;

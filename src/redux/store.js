@@ -9,6 +9,7 @@ import notificationReducer from "./slice/notificationSlice";
 import orderReducer from "./slice/orderSlice";
 import voucherReducer from "./slice/voucherSlice";
 import categoriesReducer from "./slice/categoriesSlice";
+import productReducer from "./slice/productSlice";
 // [SELLER] import
 import { sellerBankingReducer, sellerProductReducer } from "./slice/seller";
 // [ADMIN] Import
@@ -54,6 +55,7 @@ const rootReducer = combineReducers({
   order: orderReducer,
   notification: notificationReducer,
   voucher: voucherReducer,
+  products: productReducer,
   // [SELLER]
   sellerProduct: sellerProductReducer,
   sellerBanking: sellerBankingReducer,

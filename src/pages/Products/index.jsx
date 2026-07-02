@@ -1,10 +1,24 @@
 import Filter from "./Filter";
 import Card from "../../components/common/Card/index";
 import { mockProducts } from "../../utils/temporary";
-
 import "./style.scss";
-
+import { useDispatch, useSelector } from "react-redux";
+import { useSearchParams } from "react-router-dom";
+import { fetchProductsByCategory } from "../../redux/slice/productSlice";
+import { useEffect } from "react";
 export default function ProductsPage() {
+  const dispatch = useDispatch();
+  const [searchParams] = useSearchParams();
+  const categoryId = searchParams.get("category");
+  const { products, loading } = useSelector((state) => state.products);
+
+  console.log("Prodcuts page:", products);
+  useEffect(() => {
+    if (categoryId) {
+      dispatch(fetchProductsByCategory(categoryId));
+    }
+  }, [categoryId, dispatch]);
+
   return (
     <div className="products-page">
       <div className="container">

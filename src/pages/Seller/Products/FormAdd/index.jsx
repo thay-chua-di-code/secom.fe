@@ -6,7 +6,7 @@ import "./style.scss";
 const AddProductModal = ({ open, onClose }) => {
   const dispatch = useDispatch();
   const { categories, loading } = useSelector((state) => state.categories);
-
+  console.log(categories);
   const [form, setForm] = useState({
     name: "",
     description: "",
@@ -28,7 +28,7 @@ const AddProductModal = ({ open, onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    e.stopPropagation();
     const result = await dispatch(
       createSellerProduct({
         ...form,
@@ -117,7 +117,7 @@ const AddProductModal = ({ open, onClose }) => {
                 <option value="">-- Select Category --</option>
 
                 {categories.map((category) => (
-                  <option key={category.categoryId} value={category.categoryId}>
+                  <option key={category.id} value={category.id}>
                     {category.name}
                   </option>
                 ))}
