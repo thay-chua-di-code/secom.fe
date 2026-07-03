@@ -5,6 +5,7 @@ import Filter from "./Filter";
 import Card from "../../components/common/Card/index";
 import { mockProducts } from "../../utils/temporary";
 import { fetchProductsByCategory } from "../../redux/slice/productSlice";
+import { Search } from "lucide-react";
 import "./style.scss";
 
 export default function ProductsPage() {
@@ -22,14 +23,17 @@ export default function ProductsPage() {
   const [categoryFilter, setCategoryFilter] = useState("");
   const effectiveCategoryFilter = categoryId || categoryFilter;
 
-  useEffect(() => {
-    if (categoryId) {
-      dispatch(fetchProductsByCategory(categoryId));
-    }
-  }, [categoryId, dispatch]);
+  // useEffect(() => {
+  //   if (categoryId) {
+  //     dispatch(fetchProductsByCategory(categoryId));
+  //   }
+  // }, [categoryId, dispatch]);
 
-  const sourceProducts = categoryId && products.length ? products : mockProducts;
-
+  const sourceProducts = effectiveCategoryFilter ? products : mockProducts;
+  const handleCategoryChange = (id) => {
+    setCategoryFilter(id);
+    dispatch(fetchProductsByCategory(id));
+  };
   const filteredProducts = useMemo(() => {
     return (sourceProducts ?? []).filter((product) => {
       const productName = product.name || product.title || "";
@@ -59,7 +63,7 @@ export default function ProductsPage() {
           <aside className="products-sidebar">
             <Filter
               categoryFilter={categoryFilter}
-              onCategoryChange={setCategoryFilter}
+              onCategoryChange={handleCategoryChange}
               minPrice={minPrice}
               maxPrice={maxPrice}
               onMinPriceChange={setMinPrice}
@@ -73,14 +77,18 @@ export default function ProductsPage() {
               <span>{filteredProducts.length} products</span>
             </div>
 
-            <input
-              data-testid="product-search-input"
-              className="product-search-input"
-              type="search"
-              placeholder="Search products..."
-              value={keyword}
-              onChange={(event) => setKeyword(event.target.value)}
-            />
+            <div className="products-search">
+              <Search size={20} className="search-icon" />
+
+              <input
+                data-testid="product-search-input"
+                className="product-search-input"
+                type="search"
+                placeholder="Search products..."
+                value={keyword}
+                onChange={(event) => setKeyword(event.target.value)}
+              />
+            </div>
 
             {filteredProducts.length === 0 ? (
               <div data-testid="product-empty-state" className="products-empty">

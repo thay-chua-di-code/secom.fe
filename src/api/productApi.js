@@ -4,8 +4,7 @@ import { API_ENDPOINTS } from "./endPoint";
 export const productApi = {
   async getProductDetail(productId) {
     const res = await axiosClient.get(API_ENDPOINTS.PRODUCT.DETAIL(productId));
-    console.log("Detail product: ", res);
-    return res;
+    return res.data.data;
   },
 };
 

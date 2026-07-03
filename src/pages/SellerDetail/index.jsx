@@ -11,15 +11,17 @@ import {
 import { useParams } from "react-router-dom";
 import { mockSellerReviews } from "../../utils/temporary";
 import "./style.scss";
+import { useSelector } from "react-redux";
+import { formatCurrencyVN } from "../../utils/fncUtils";
 
 export default function SellerDetail() {
   const { id } = useParams();
+  const productDetail = useSelector((state) => state.products.productDetail);
+  console.log(productDetail);
+  const seller = productDetail?.data?.seller;
+  console.log(seller);
 
-  const sellerDetail = mockSellerReviews.find(
-    (item) => item.sellerId === Number(id),
-  );
-
-  if (!sellerDetail) {
+  if (!seller) {
     return (
       <div className="seller-not-found">
         <h2>Seller not found.</h2>
@@ -27,6 +29,49 @@ export default function SellerDetail() {
     );
   }
 
+  const sellerProducts = [
+    {
+      id: 1,
+      name: "iPhone 15 Pro Max",
+      price: 25500000,
+      image:
+        "https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=500",
+    },
+    {
+      id: 2,
+      name: "MacBook Pro M4",
+      price: 45990000,
+      image:
+        "https://images.unsplash.com/photo-1517336714739-489689fd1ca8?w=500",
+    },
+    {
+      id: 3,
+      name: "AirPods Pro",
+      price: 6900000,
+      image:
+        "https://images.unsplash.com/photo-1606220588913-b3aacb4d2f37?w=500",
+    },
+    {
+      id: 4,
+      name: "iPad Pro M4",
+      price: 26990000,
+      image: "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=500",
+    },
+    {
+      id: 5,
+      name: "Apple Watch Ultra",
+      price: 18990000,
+      image:
+        "https://images.unsplash.com/photo-1579586337278-3f436f25d4d6?w=500",
+    },
+    {
+      id: 6,
+      name: "Samsung S26 Ultra",
+      price: 31990000,
+      image:
+        "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=500",
+    },
+  ];
   return (
     <div className="seller-detail">
       {/* Banner */}
@@ -34,35 +79,35 @@ export default function SellerDetail() {
       <section
         className="seller-banner"
         style={{
-          backgroundImage: `url(${sellerDetail.banner})`,
+          background: "linear-gradient(135deg,#0ea5e9,#2563eb)",
         }}
       >
         <div className="overlay"></div>
 
         <div className="seller-info">
           <img
-            src={sellerDetail.avatar}
-            alt={sellerDetail.name}
+            src={seller.avatarUrl || "https://placehold.co/120x120?text=Seller"}
+            alt={seller.fullName}
             className="avatar"
           />
 
           <div className="content">
             <h2>
-              {sellerDetail.name}
+              {seller.fullName}
               <BadgeCheck size={22} />
             </h2>
 
-            <p>{sellerDetail.description}</p>
+            <p>Trusted seller on Secom Marketplace.</p>
 
             <div className="meta">
               <span>
-                <Calendar size={16} />
-                Joined {sellerDetail.joinDate}
+                <MapPin size={16} />
+                {productDetail?.data?.location}
               </span>
 
               <span>
-                <MapPin size={16} />
-                {sellerDetail.location}
+                <Package size={16} />
+                Product Seller
               </span>
             </div>
 
@@ -76,7 +121,7 @@ export default function SellerDetail() {
 
       {/* Stats */}
 
-      <section className="seller-stats">
+      {/* <section className="seller-stats">
         <div className="item">
           <Package />
           <strong>{sellerDetail.totalProducts}</strong>
@@ -100,11 +145,11 @@ export default function SellerDetail() {
           <strong>{sellerDetail.rating}</strong>
           <span>Rating</span>
         </div>
-      </section>
+      </section> */}
 
       {/* About */}
 
-      <section className="seller-body">
+      {/* <section className="seller-body">
         <div className="seller-about card">
           <h3>About Shop</h3>
 
@@ -132,11 +177,11 @@ export default function SellerDetail() {
             <strong>{sellerDetail.following}</strong>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Reviews */}
 
-      <section className="seller-review">
+      {/* <section className="seller-review">
         <div className="review-header">
           <h3>Customer Reviews</h3>
 
@@ -164,6 +209,30 @@ export default function SellerDetail() {
             </div>
           </div>
         ))}
+      </section> */}
+
+      <section className="seller-products">
+        <div className="title">
+          <h3>Products from this shop</h3>
+
+          <span>{sellerProducts.length} Products</span>
+        </div>
+
+        <div className="product-grid">
+          {sellerProducts.map((item) => (
+            <div className="product-card" key={item.id}>
+              <img src={item.image} alt={item.name} />
+
+              <div className="body">
+                <h4>{item.name}</h4>
+
+                <p>{formatCurrencyVN(item.price)} ₫</p>
+
+                <button>View Product</button>
+              </div>
+            </div>
+          ))}
+        </div>
       </section>
     </div>
   );

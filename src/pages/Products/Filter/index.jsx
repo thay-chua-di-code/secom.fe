@@ -1,5 +1,5 @@
 import "./style.scss";
-
+import { useSelector } from "react-redux";
 const categories = ["Laptop", "Keyboard", "Mouse", "Headphone"];
 
 export default function Filter({
@@ -10,22 +10,23 @@ export default function Filter({
   onMinPriceChange,
   onMaxPriceChange,
 }) {
+  const { categories } = useSelector((state) => state.categories);
+  console.log(categories);
   return (
     <div className="filter">
       <h3>Categories</h3>
 
       <ul data-testid="category-filter">
         {categories.map((category) => (
-          <li key={category}>
+          <li key={category.id}>
             <label>
               <input
                 type="radio"
-                name="category"
-                value={category}
-                checked={categoryFilter === category}
-                onChange={(event) => onCategoryChange(event.target.value)}
+                value={category.id}
+                checked={categoryFilter === category.id}
+                onChange={(e) => onCategoryChange(e.target.value)}
               />
-              {category}
+              {category.name}
             </label>
           </li>
         ))}

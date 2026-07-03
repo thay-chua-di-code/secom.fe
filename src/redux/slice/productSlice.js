@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { dicoveryService } from "../../service/dicoveryService";
+import productApi from "../../api/productApi";
 
 const initialState = {
   products: [],
@@ -24,6 +25,20 @@ const initialState = {
   loading: false,
   error: null,
 };
+
+export const fetchProductDetailThunk = createAsyncThunk(
+  "product/fetchProductDetail",
+  async (productId, thunkAPI) => {
+    try {
+      const response = await productApi.getProductDetail(productId);
+      return response;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data || "Failed to fetch product detail",
+      );
+    }
+  },
+);
 
 export const fetchProductsByCategory = createAsyncThunk(
   "product/fetchProductsByCategory",
@@ -95,7 +110,9 @@ const productSlice = createSlice({
 
   extraReducers: (builder) => {
     builder
+      // =========================
       // Fetch products by category
+      // =========================
       .addCase(fetchProductsByCategory.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -109,7 +126,25 @@ const productSlice = createSlice({
         state.error = action.payload;
       })
 
-      // Search products
+      // =========================
+      // Product Detail
+      // =========================
+      .addCase(fetchProductDetailThunk.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchProductDetailThunk.fulfilled, (state, action) => {
+        state.loading = false;
+        state.productDetail = action.payload;
+      })
+      .addCase(fetchProductDetailThunk.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // =========================
+      // Search Products
+      // =========================
       .addCase(searchProductsThunk.pending, (state) => {
         state.loading = true;
         state.error = null;

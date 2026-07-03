@@ -15,6 +15,7 @@ import {
   addWishlistThunk,
   deleteWishlistThunk,
 } from "../../redux/slice/userSlice";
+import { fetchProductDetailThunk } from "../../redux/slice/productSlice";
 import productApi from "../../api/productApi";
 
 const getApiErrorMessage = (error) =>
@@ -72,6 +73,7 @@ export default function ProductDetail() {
         setError("");
 
         const response = await productApi.getProductDetail(id);
+        await dispatch(fetchProductDetailThunk(id));
         const product = unwrapProductDetail(response);
 
         if (!ignore) {
