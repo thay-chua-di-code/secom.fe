@@ -21,6 +21,10 @@ const VoucherAdmin = () => {
     (state) => state.vouchersAdmin,
   );
 
+  const voucherItems = Array.isArray(vouchers)
+    ? vouchers
+    : vouchers?.items || [];
+
   const [keyword, setKeyword] = useState("");
   const [openAddModal, setOpenAddModal] = useState(false);
   useEffect(() => {
@@ -80,14 +84,14 @@ const VoucherAdmin = () => {
                   Loading...
                 </td>
               </tr>
-            ) : vouchers.length === 0 ? (
+            ) : voucherItems.length === 0 ? (
               <tr>
                 <td colSpan={8} className="empty">
                   No voucher found.
                 </td>
               </tr>
             ) : (
-              vouchers.map((voucher) => (
+              voucherItems.map((voucher) => (
                 <tr key={voucher.id}>
                   <td>
                     <div className="voucher-code">

@@ -1,86 +1,239 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import toast from "react-hot-toast";
 import shipIcon from "../../assets/icons/icon-ship.png";
 import returnIcon from "../../assets/icons/icon-return.png";
 import Button from "../../components/common/Button/Button";
 import "./style.scss";
 import ProductReview from "./Review";
-import { mockProducts } from "../../utils/temporary";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { formatCurrencyVN } from "../../utils/fncUtils";
 import SellerShow from "./SellerShow";
-const images = [
-  "https://cdn2.cellphones.com.vn/insecure/rs:fill:0:358/q:90/plain/https://cellphones.com.vn/media/catalog/product/l/a/laptop-acer-predator-helios-300_1_.jpg",
-  "https://tramanh.vn/wp-content/uploads/2023/09/acer-predator-helios-300-2022-2.jpg",
-  "https://product.hstatic.net/1000331874/product/acer_predator_helios_300_c__4c0a76c20c89418e9125ad4916a7acde.jpg",
-  "https://cdn2.fptshop.com.vn/unsafe/512x0/filters:format(webp):quality(75)/2021_9_27_637683516027568465_acer-predator-helios-gaming-ph315-54-den-4.jpg",
-];
+import { addCartItem } from "../../redux/slice/cartSlice";
+import {
+  addWishlistThunk,
+  deleteWishlistThunk,
+} from "../../redux/slice/userSlice";
+import productApi from "../../api/productApi";
+
+const getApiErrorMessage = (error) =>
+  error?.response?.data?.message ||
+  error?.response?.data?.error ||
+  error?.message ||
+  "Something went wrong. Please try again.";
+
+const unwrapProductDetail = (response) =>
+  response?.data?.data ?? response?.data ?? response;
 
 export default function ProductDetail() {
   const { id } = useParams();
-  const productDetail = mockProducts.find(
-    (product) => product.id.toString() === id,
-  );
-  const [selectedImage, setSelectedImage] = useState(productDetail.images[0]);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  const wishlist = useSelector((state) => {
+    const items = state.user.wishlist?.items ?? state.user.wishlist;
+
+    return Array.isArray(items) ? items : [];
+  });
+  const [productDetail, setProductDetail] = useState(null);
+  const [selectedImage, setSelectedImage] = useState("");
   const [quantity, setQuantity] = useState(2);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [wishlistLoading, setWishlistLoading] = useState(false);
+  const productId = productDetail?.id;
+  const images = useMemo(() => productDetail?.images ?? [], [productDetail]);
+  const isWishlisted = useMemo(
+    () =>
+      !!productId &&
+      (wishlist ?? []).some(
+        (wishlistItem) =>
+          String(wishlistItem.productId) === String(productId) ||
+          String(wishlistItem.id) === String(productId) ||
+          String(wishlistItem.product?.id) === String(productId),
+      ),
+    [productId, wishlist],
+  );
+
+  useEffect(() => {
+    let ignore = false;
+
+    async function fetchProductDetail() {
+      if (!id) {
+        setProductDetail(null);
+        setError("Product not found.");
+        setLoading(false);
+        return;
+      }
+
+      try {
+        setLoading(true);
+        setError("");
+
+        const response = await productApi.getProductDetail(id);
+        const product = unwrapProductDetail(response);
+
+        if (!ignore) {
+          setProductDetail(product || null);
+        }
+      } catch (fetchError) {
+        if (!ignore) {
+          setProductDetail(null);
+          setError(getApiErrorMessage(fetchError));
+        }
+      } finally {
+        if (!ignore) {
+          setLoading(false);
+        }
+      }
+    }
+
+    fetchProductDetail();
+
+    return () => {
+      ignore = true;
+    };
+  }, [id]);
+
+  useEffect(() => {
+    queueMicrotask(() => setSelectedImage(images[0] || ""));
+  }, [images]);
+
+  const requireLogin = () => {
+    if (isAuthenticated) {
+      return true;
+    }
+
+    toast.error("Please login to use wishlist");
+    navigate("/login");
+    return false;
+  };
+
+  const handleAddToCart = () => {
+    if (!productId) {
+      toast.error("Product not found");
+      return;
+    }
+
+    if (!isAuthenticated) {
+      navigate("/login");
+      return;
+    }
+
+    dispatch(addCartItem({ productId, quantity }));
+  };
+
+  const handleToggleWishlist = async () => {
+    if (!productId) {
+      toast.error("Product not found");
+      return;
+    }
+
+    if (!requireLogin() || wishlistLoading) {
+      return;
+    }
+
+    try {
+      setWishlistLoading(true);
+
+      if (isWishlisted) {
+        await dispatch(deleteWishlistThunk(productId)).unwrap();
+        toast.success("Removed from wishlist");
+      } else {
+        await dispatch(addWishlistThunk(productId)).unwrap();
+        toast.success("Added to wishlist");
+      }
+    } catch (wishlistError) {
+      toast.error(getApiErrorMessage(wishlistError));
+    } finally {
+      setWishlistLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="product-detail" data-testid="product-detail">
+        <div className="product-detail__info">
+          <h1>Loading product...</h1>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="product-detail" data-testid="product-detail">
+        <div className="product-detail__info">
+          <h1>Load product failed</h1>
+          <p>{error}</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!productDetail) {
+    return (
+      <div className="product-detail" data-testid="product-detail">
+        <div className="product-detail__info">
+          <h1>Product not found</h1>
+          <p>The product you are looking for does not exist or is unavailable.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
-      <div className="product-detail">
+      <div className="product-detail" data-testid="product-detail">
         <div className="product-detail__gallery">
           <div className="thumbnail-list">
-            {productDetail.images.map((img, index) => (
+            {images.map((img, index) => (
               <div
-                key={index}
+                key={`${img}-${index}`}
                 className={`thumbnail ${selectedImage === img ? "active" : ""}`}
                 onClick={() => setSelectedImage(img)}
               >
-                <img src={img} alt="" />
+                <img src={img} alt={productDetail.name || "Product"} />
               </div>
             ))}
           </div>
 
-          <div className="main-image">
-            <img src={selectedImage} alt="" />
+          <div className="main-image" data-testid="product-detail-image">
+            {selectedImage ? (
+              <img src={selectedImage} alt={productDetail.name || "Product"} />
+            ) : (
+              <span>No image available</span>
+            )}
           </div>
         </div>
 
         <div className="product-detail__info">
-          <h1>{productDetail.name}</h1>
+          <h1 data-testid="product-detail-name">{productDetail.name}</h1>
 
           <div className="rating">
             <div className="stars">★★★★☆</div>
-            <span>(150 Reviews)</span>
+            <span>{productDetail.category?.name || "Uncategorized"}</span>
             <div className="divider"></div>
-            <span className="stock">In Stock</span>
+            <span className="stock">{productDetail.condition || "Available"}</span>
           </div>
 
-          <div className="price">{formatCurrencyVN(productDetail.price)}</div>
+          <div className="price" data-testid="product-detail-price">
+            {formatCurrencyVN(productDetail?.price ?? 0)}
+          </div>
 
-          <p className="description">
-            PlayStation 5 Controller Skin High quality vinyl with air channel
-            adhesive for easy bubble free install & mess free removal.
+          <p className="description" data-testid="product-detail-description">
+            {productDetail.description || "No description available."}
           </p>
 
           <div className="option-group">
-            <span>Colours:</span>
-
-            <div className="colors">
-              <button className="color blue active"></button>
-              <button className="color red"></button>
-            </div>
+            <span>Location:</span>
+            <strong>{productDetail.location || "Not specified"}</strong>
           </div>
 
-          {/* <div className="option-group">
-          <span>Size:</span>
-
-          <div className="sizes">
-            <button>XS</button>
-            <button>S</button>
-            <button className="active">M</button>
-            <button>L</button>
-            <button>XL</button>
+          <div className="option-group">
+            <span>Seller:</span>
+            <strong>{productDetail.seller?.fullName || "Unknown seller"}</strong>
           </div>
-        </div> */}
 
           <div className="purchase">
             <div className="quantity">
@@ -95,15 +248,25 @@ export default function ProductDetail() {
               <Button onClick={() => setQuantity((prev) => prev + 1)}>+</Button>
             </div>
 
-            <button className="buy-btn">Buy Now</button>
+            <button data-testid="buy-now-btn" className="buy-btn">Buy Now</button>
 
-            <button className="wishlist">♡</button>
+            <button data-testid="add-to-cart-btn" className="buy-btn" onClick={handleAddToCart}>Add to Cart</button>
+
+            <button
+              data-testid="wishlist-btn"
+              className={`wishlist ${isWishlisted ? "active" : ""}`}
+              onClick={handleToggleWishlist}
+              disabled={wishlistLoading}
+              aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+            >
+              {isWishlisted ? "♥" : "♡"}
+            </button>
           </div>
 
           <div className="delivery-box">
             <div className="delivery-item">
               <div className="icon">
-                <img src={shipIcon} alt="...." />
+                <img src={shipIcon} alt="Free delivery" />
               </div>
 
               <div>
@@ -114,7 +277,7 @@ export default function ProductDetail() {
 
             <div className="delivery-item">
               <div className="icon">
-                <img src={returnIcon} alt="...." />
+                <img src={returnIcon} alt="Return delivery" />
               </div>
 
               <div>
@@ -126,7 +289,7 @@ export default function ProductDetail() {
         </div>
       </div>
       <div className="product-detail-feature">
-        <SellerShow shop={productDetail.shop} />
+        <SellerShow seller={productDetail.seller} />
         <ProductReview />
       </div>
     </>

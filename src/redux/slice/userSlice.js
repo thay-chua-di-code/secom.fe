@@ -9,6 +9,21 @@ const initialState = {
   error: null,
 };
 
+const getApiErrorMessage = (error) =>
+  error?.response?.data?.message ||
+  error?.response?.data?.error ||
+  error?.message ||
+  "Cannot update wishlist. Please try again.";
+
+const normalizeWishlistItems = (payload) => {
+  const items =
+    payload?.data?.items ??
+    payload?.items ??
+    payload;
+
+  return Array.isArray(items) ? items : [];
+};
+
 export const getMyInfoThunk = createAsyncThunk(
   "user/getMyInfo",
 
@@ -34,9 +49,7 @@ export const getWishlistThunk = createAsyncThunk(
 
       return response;
     } catch (error) {
-      return thunkAPI.rejectWithValue(
-        error.response?.data?.message || "Get wishlist failed",
-      );
+      return thunkAPI.rejectWithValue(getApiErrorMessage(error));
     }
   },
 );
@@ -48,9 +61,7 @@ export const addWishlistThunk = createAsyncThunk(
       await userService.addWishList(productId);
       return productId;
     } catch (error) {
-      return thunkAPI.rejectWithValue(
-        error.response?.data?.message || error.message,
-      );
+      return thunkAPI.rejectWithValue(getApiErrorMessage(error));
     }
   },
 );
@@ -62,9 +73,7 @@ export const deleteWishlistThunk = createAsyncThunk(
       await userService.deleteWishList(productId);
       return productId;
     } catch (error) {
-      return thunkAPI.rejectWithValue(
-        error.response?.data?.message || error.message,
-      );
+      return thunkAPI.rejectWithValue(getApiErrorMessage(error));
     }
   },
 );
@@ -81,13 +90,13 @@ const userSlice = createSlice({
     },
 
     getAddress: (state, action) => {
-      state.addresses = action.payload;
+      state.addresses = Array.isArray(action.payload) ? action.payload : [];
     },
     setAddresses: (state, action) => {
       state.addresses.push(action.payload);
     },
     updateDefaultAddress: (state, action) => {
-      const updatedAddresses = state.addresses.map((address) => {
+      const updatedAddresses = (state.addresses ?? []).map((address) => {
         if (address.id === action.payload) {
           return { ...address, isDefault: true };
         } else {
@@ -97,7 +106,7 @@ const userSlice = createSlice({
       state.addresses = updatedAddresses;
     },
     updateAddress: (state, action) => {
-      const updatedAddresses = state.addresses.map((address) => {
+      const updatedAddresses = (state.addresses ?? []).map((address) => {
         if (address.id === action.payload.id) {
           return { ...address, ...action.payload };
         } else {
@@ -107,7 +116,7 @@ const userSlice = createSlice({
       state.addresses = updatedAddresses;
     },
     deleteAddress: (state, action) => {
-      state.addresses = state.addresses.filter(
+      state.addresses = (state.addresses ?? []).filter(
         (address) => address.id !== action.payload,
       );
     },
@@ -139,7 +148,7 @@ const userSlice = createSlice({
 
       .addCase(getWishlistThunk.fulfilled, (state, action) => {
         state.loading = false;
-        state.wishlist = action.payload.items || action.payload;
+        state.wishlist = normalizeWishlistItems(action.payload);
       })
 
       .addCase(getWishlistThunk.rejected, (state, action) => {
@@ -158,7 +167,9 @@ const userSlice = createSlice({
 
         const productId = action.payload;
 
-        const existed = state.wishlist.some(
+        const wishlist = normalizeWishlistItems(state.wishlist);
+
+        const existed = wishlist.some(
           (item) =>
             item.productId === productId ||
             item.id === productId ||
@@ -166,10 +177,12 @@ const userSlice = createSlice({
         );
 
         if (!existed) {
-          state.wishlist.push({
+          wishlist.push({
             productId,
           });
         }
+
+        state.wishlist = wishlist;
       })
 
       .addCase(addWishlistThunk.rejected, (state, action) => {
@@ -188,7 +201,7 @@ const userSlice = createSlice({
 
         const productId = action.payload;
 
-        state.wishlist = state.wishlist.filter(
+        state.wishlist = normalizeWishlistItems(state.wishlist).filter(
           (item) =>
             item.productId !== productId &&
             item.id !== productId &&

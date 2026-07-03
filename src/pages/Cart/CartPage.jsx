@@ -148,7 +148,7 @@ export default function CartPage() {
   };
 
   const getCreatedOrder = (response) => {
-    return response?.data?.order || response?.order;
+    return response?.data?.data?.order || response?.data?.order || response?.order;
   };
 
   const getCreatedOrderId = (createdOrder) => {
@@ -301,7 +301,7 @@ export default function CartPage() {
       const paymentRequest = {
         orderId,
         amount,
-        currency: "thb",
+        currency: "vnd",
         returnUri: `${window.location.origin}/payment-return`,
         tokenId: token.id,
       };
@@ -315,7 +315,9 @@ export default function CartPage() {
       console.log("Payment response:", paymentResponse);
 
       const paymentUrl =
-        paymentResponse?.data?.paymentUrl || paymentResponse?.paymentUrl;
+        paymentResponse?.data?.data?.paymentUrl ||
+        paymentResponse?.data?.paymentUrl ||
+        paymentResponse?.paymentUrl;
 
       if (!paymentUrl) {
         toast.success("Thanh toán thành công.");
@@ -323,7 +325,7 @@ export default function CartPage() {
       }
 
       localStorage.setItem("lastOrderId", orderId);
-      window.location.href = paymentUrl;
+      window.location.assign(paymentUrl);
     } catch (paymentError) {
       console.error("Payment error:", paymentError);
       console.error("Payment error response:", paymentError?.response);

@@ -1,4 +1,6 @@
+import { useMemo, useState } from "react";
 import { Heart, Eye, Star } from "lucide-react";
+import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import placeholderImage from "../../../../assets/icons/logo.jpg";
@@ -8,18 +10,55 @@ import {
   addCartItem,
   updateCartItemQuantity,
 } from "../../../../redux/slices/cartSlice";
+import {
+  addWishlistThunk,
+  deleteWishlistThunk,
+} from "../../../../redux/slice/userSlice";
+
+const getApiErrorMessage = (error) =>
+  error?.response?.data?.message ||
+  error?.response?.data?.error ||
+  error?.message ||
+  "Cannot update wishlist. Please try again.";
 
 export default function Card({ product }) {
   const dispatch = useDispatch();
-  const cartItems = useSelector((state) => state.cart.items || []);
+  const cartItems = useSelector((state) => {
+    const items = state.cart.items;
+
+    return Array.isArray(items) ? items : [];
+  });
+  const wishlist = useSelector((state) => {
+    const items = state.user.wishlist?.items ?? state.user.wishlist;
+
+    return Array.isArray(items) ? items : [];
+  });
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const navigate = useNavigate();
+  const [wishlistLoading, setWishlistLoading] = useState(false);
   const productImage =
     product.primaryImageUrl || product.images?.[0] || placeholderImage;
+  const isWishlisted = useMemo(
+    () =>
+      (wishlist ?? []).some(
+        (wishlistItem) =>
+          String(wishlistItem.productId) === String(product.id) ||
+          String(wishlistItem.id) === String(product.id) ||
+          String(wishlistItem.product?.id) === String(product.id),
+      ),
+    [product.id, wishlist],
+  );
+
   const handleAddToCart = (e) => {
     e.preventDefault();
     e.stopPropagation();
 
-    const existingItem = cartItems.find(
+    if (!isAuthenticated) {
+      navigate("/login");
+      return;
+    }
+
+    const existingItem = (cartItems ?? []).find(
       (item) => String(item.productId) === String(product.id),
     );
 
@@ -40,14 +79,51 @@ export default function Card({ product }) {
     }
   };
 
+  const handleToggleWishlist = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!isAuthenticated) {
+      toast.error("Please login to use wishlist");
+      navigate("/login");
+      return;
+    }
+
+    if (wishlistLoading) {
+      return;
+    }
+
+    try {
+      setWishlistLoading(true);
+
+      if (isWishlisted) {
+        await dispatch(deleteWishlistThunk(product.id)).unwrap();
+        toast.success("Removed from wishlist");
+      } else {
+        await dispatch(addWishlistThunk(product.id)).unwrap();
+        toast.success("Added to wishlist");
+      }
+    } catch (error) {
+      toast.error(getApiErrorMessage(error));
+    } finally {
+      setWishlistLoading(false);
+    }
+  };
+
   return (
-    <div className="product-card">
+    <div className="product-card" data-testid="product-card">
       <div className="product-card__image-wrapper">
         {product.isNew && <span className="product-card__badge">NEW</span>}
 
         <div className="product-card__actions">
-          <button onClick={(e) => e.stopPropagation()}>
-            <Heart size={18} />
+          <button
+            data-testid="wishlist-btn"
+            onClick={handleToggleWishlist}
+            disabled={wishlistLoading}
+            className={isWishlisted ? "active" : ""}
+            aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+          >
+            <Heart size={18} fill={isWishlisted ? "currentColor" : "none"} />
           </button>
 
           <Link
@@ -67,7 +143,7 @@ export default function Card({ product }) {
           }}
         />
 
-        <button className="product-card__cart" onClick={handleAddToCart}>
+        <button data-testid="add-to-cart-btn" className="product-card__cart" onClick={handleAddToCart}>
           Add to cart
         </button>
       </div>

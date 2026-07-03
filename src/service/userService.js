@@ -1,6 +1,7 @@
 import axiosClient from "../api/axiosClient";
 import { API_ENDPOINTS } from "../api/endPoint";
 import { updateUserInfo, getOrderHistory } from "../redux/slice/userSlice";
+import wishlistApi from "../api/wishlistApi";
 export const userService = {
   getMyInfo: async () => {
     try {
@@ -42,29 +43,19 @@ export const userService = {
       console.log("Wishlist API: ", result);
       return result.data.data;
     } catch (e) {
-      throw new Error(e.message || "Something went wrong when get wishlist");
+      throw new Error(e.message || "Something went wrong when get wishlist", {
+        cause: e,
+      });
     }
   },
   addWishList: async (productId) => {
-    try {
-      const result = await axiosClient.post(
-        API_ENDPOINTS.USER.WISH_LIST.POST(productId),
-      );
+    const result = await wishlistApi.addToWishlist(productId);
 
-      return result.data.data;
-    } catch (e) {
-      throw new Error(e.message || "Something went wrong~");
-    }
+    return result.data.data;
   },
   deleteWishList: async (productId) => {
-    try {
-      const result = await axiosClient.delete(
-        API_ENDPOINTS.USER.WISH_LIST.DELETE(productId),
-      );
+    const result = await wishlistApi.removeFromWishlist(productId);
 
-      return result.data.data;
-    } catch (e) {
-      throw new Error(e.message || "Something went wrong~");
-    }
+    return result.data.data;
   },
 };

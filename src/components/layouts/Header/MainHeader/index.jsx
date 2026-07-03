@@ -114,6 +114,7 @@ export default function MainHeader() {
         <div className="hidden flex-1 px-4 lg:block">
           <div ref={searchRef} className="relative mx-auto max-w-2xl">
             <Input
+              data-testid="product-search-input"
               type="text"
               placeholder="Search products..."
               value={keyword}
@@ -160,6 +161,7 @@ export default function MainHeader() {
 
               <div className="relative" onClick={handleCartToggle}>
                 <Button variant="ghost" className="relative text-black">
+                  <span data-testid="cart-link" className="sr-only">Cart</span>
                   <ShoppingCart size={26} />
 
                   {cartCount > 0 && (
@@ -179,6 +181,7 @@ export default function MainHeader() {
       {/* Mobile search */}
       <div className="container-custom pb-4 lg:hidden">
         <Input
+          data-testid="product-search-input"
           type="text"
           placeholder="Search products..."
           value={keyword}

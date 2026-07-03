@@ -9,20 +9,29 @@ import {
 import Button from "../../../components/common/Button/Button";
 import "./style.scss";
 import { Link } from "react-router-dom";
+import placeholderAvatar from "../../../assets/icons/logo.jpg";
 
-export default function SellerShow({ shop }) {
-  console.log("Seller Shop: ", shop);
+export default function SellerShow({ seller, shop }) {
+  const sellerInfo = seller || shop || {};
+  const sellerId = sellerInfo.sellerId || sellerInfo.id;
+  const sellerName = sellerInfo.fullName || sellerInfo.name || "Unknown seller";
+  const avatarUrl = sellerInfo.avatarUrl || sellerInfo.avatar || placeholderAvatar;
+  const rating = sellerInfo.rating ?? "N/A";
+  const totalProducts = sellerInfo.totalProducts ?? "N/A";
+  const followers = sellerInfo.followers ?? 0;
+  const joined = sellerInfo.joined ?? "N/A";
+
   return (
     <div className="seller-card">
       <div className="seller-top">
         <div className="seller-info">
-          <img className="seller-avatar" src={shop.avatar} alt={shop.name} />
+          <img className="seller-avatar" src={avatarUrl} alt={sellerName} />
 
           <div>
             <h3>
-              {shop.name}
+              {sellerName}
 
-              {shop.verified && (
+              {sellerInfo.verified && (
                 <BadgeCheck size={18} color="#0284c7" fill="#0284c7" />
               )}
             </h3>
@@ -37,7 +46,7 @@ export default function SellerShow({ shop }) {
             Chat
           </Button>
 
-          <Link to={`/seller/detail/${shop.id}`} className="shop-btn">
+          <Link to={sellerId ? `/seller/detail/${sellerId}` : "#"} className="shop-btn">
             <Store size={18} />
             View Shop
           </Link>
@@ -48,25 +57,25 @@ export default function SellerShow({ shop }) {
         <div className="item">
           <Star size={18} />
           <span>Rating</span>
-          <strong>{shop.rating}</strong>
+          <strong>{rating}</strong>
         </div>
 
         <div className="item">
           <Package size={18} />
           <span>Products</span>
-          <strong>{shop.totalProducts}</strong>
+          <strong>{totalProducts}</strong>
         </div>
 
         <div className="item">
           <Users size={18} />
           <span>Followers</span>
-          <strong>{shop.followers.toLocaleString()}</strong>
+          <strong>{Number(followers || 0).toLocaleString()}</strong>
         </div>
 
         <div className="item">
           <Store size={18} />
           <span>Joined</span>
-          <strong>{shop.joined}</strong>
+          <strong>{joined}</strong>
         </div>
       </div>
     </div>

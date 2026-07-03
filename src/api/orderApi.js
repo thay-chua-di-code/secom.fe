@@ -1,16 +1,20 @@
 import axiosClient from "./axiosClient";
+import { API_ENDPOINTS } from "./endPoint";
 
-export const unwrapApiData = (res) => res?.data ?? res;
+export const unwrapApiData = (res) => {
+  const payload = res?.data ?? res;
+  return payload?.data ?? payload;
+};
 
 export const orderApi = {
-  getCheckoutCalculate: () => axiosClient.get("/checkout/calculate"),
+  getCheckoutCalculate: () => axiosClient.get(API_ENDPOINTS.CHECKOUT.CALCULATE),
 
-  createOrder: (payload) => axiosClient.post("/orders", payload),
+  createOrder: (payload) => axiosClient.post(API_ENDPOINTS.ORDER.CREATE, payload),
 
-  getPurchasedOrders: () => axiosClient.get("/orders/purchased"),
+  getPurchasedOrders: () => axiosClient.get(API_ENDPOINTS.ORDER.ORDER_PURCHASE),
 
   getPurchasedOrdersPaged: ({ status, page = 1, pageSize = 20 } = {}) => {
-    return axiosClient.get("/orders/purchased/paged", {
+    return axiosClient.get(API_ENDPOINTS.ORDER.ORDER_PURCHASE_PAGED, {
       params: {
         ...(status && status !== "all" ? { status } : {}),
         page,
@@ -19,7 +23,7 @@ export const orderApi = {
     });
   },
 
-  getOrderDetail: (orderId) => axiosClient.get(`/orders/${orderId}`),
+  getOrderDetail: (orderId) => axiosClient.get(API_ENDPOINTS.ORDER.ORDER_DETAIL(orderId)),
 
-  cancelOrder: (orderId) => axiosClient.delete(`/orders/${orderId}`),
+  cancelOrder: (orderId) => axiosClient.delete(API_ENDPOINTS.ORDER.DELETE(orderId)),
 };

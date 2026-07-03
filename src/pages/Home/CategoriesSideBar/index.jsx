@@ -7,7 +7,11 @@ import { categoriesService } from "../../../service/categoriesService";
 
 export default function CategorySidebar() {
   const dispatch = useDispatch();
-  const { categories } = useSelector((state) => state.categories);
+  const categories = useSelector((state) => {
+    const items = state.categories.categories?.items ?? state.categories.categories;
+
+    return Array.isArray(items) ? items : [];
+  });
   const [activeCategory, setActiveCategory] = useState(null);
   const navigate = useNavigate();
 
@@ -35,6 +39,7 @@ export default function CategorySidebar() {
 
           return (
             <button
+              data-testid="category-filter"
               key={category.id}
               className={`category-card ${
                 activeCategory === category.id ? "active" : ""

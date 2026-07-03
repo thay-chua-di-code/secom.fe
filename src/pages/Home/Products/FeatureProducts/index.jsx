@@ -6,9 +6,12 @@ import "./style.scss";
 import { Link } from "react-router-dom";
 
 export default function FeatureProducts() {
-  const { featuredProducts, loading, error } = useSelector(
-    (state) => state.home,
-  );
+  const { loading, error } = useSelector((state) => state.home);
+  const featuredProducts = useSelector((state) => {
+    const items = state.home.featuredProducts?.items ?? state.home.featuredProducts;
+
+    return Array.isArray(items) ? items : [];
+  });
 
   if (loading) {
     return (

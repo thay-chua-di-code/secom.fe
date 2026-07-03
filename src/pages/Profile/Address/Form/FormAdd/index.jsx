@@ -62,7 +62,7 @@ export default function AddressModal({ open, onClose }) {
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="address-form">
+        <form onSubmit={handleSubmit} className="address-form" data-testid="address-form">
           <div className="grid gap-6 md:grid-cols-2">
             <div className="form-group">
               <label>Receiver Name</label>
@@ -70,6 +70,8 @@ export default function AddressModal({ open, onClose }) {
               <input
                 type="text"
                 name="receiverName"
+                required
+                data-testid="address-receiver-input"
                 value={formData.receiverName}
                 onChange={handleChange}
                 placeholder="Enter receiver name"
@@ -82,6 +84,8 @@ export default function AddressModal({ open, onClose }) {
               <input
                 type="text"
                 name="phoneNumber"
+                required
+                data-testid="address-phone-input"
                 value={formData.phoneNumber}
                 onChange={handleChange}
                 placeholder="Enter phone number"
@@ -96,6 +100,8 @@ export default function AddressModal({ open, onClose }) {
               <input
                 type="text"
                 name="province"
+                required
+                data-testid="address-province-input"
                 value={formData.province}
                 onChange={handleChange}
                 placeholder="Province"
@@ -108,6 +114,8 @@ export default function AddressModal({ open, onClose }) {
               <input
                 type="text"
                 name="district"
+                required
+                data-testid="address-district-input"
                 value={formData.district}
                 onChange={handleChange}
                 placeholder="District"
@@ -120,6 +128,8 @@ export default function AddressModal({ open, onClose }) {
               <input
                 type="text"
                 name="ward"
+                required
+                data-testid="address-ward-input"
                 value={formData.ward}
                 onChange={handleChange}
                 placeholder="Ward"
@@ -133,6 +143,8 @@ export default function AddressModal({ open, onClose }) {
             <textarea
               rows={4}
               name="detailAddress"
+              required
+              data-testid="address-detail-input"
               value={formData.detailAddress}
               onChange={handleChange}
               placeholder="Street name, apartment, building..."
@@ -152,7 +164,7 @@ export default function AddressModal({ open, onClose }) {
           </div>
 
           <div className="address-modal__footer">
-            <Button type="submit" className="address-btn address-btn--save">
+            <Button type="submit" data-testid="address-save-btn" className="address-btn address-btn--save">
               Save Address
             </Button>
           </div>

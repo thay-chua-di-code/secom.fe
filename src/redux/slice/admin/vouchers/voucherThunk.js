@@ -1,43 +1,49 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { adminService } from "../../../../service/adminService";
+import voucherApi from "../../../../api/voucherApi";
 
-// GET
+const getApiErrorMessage = (error) =>
+  error?.response?.data?.message ||
+  error?.response?.data?.error ||
+  error?.message ||
+  "Something went wrong";
+
+const unwrapApiData = (response) => response?.data?.data ?? response?.data ?? response;
+
 export const fetchAdminVouchers = createAsyncThunk(
   "adminVoucher/fetchAdminVouchers",
-  async (params, { rejectWithValue }) => {
+  async (params = {}, { rejectWithValue }) => {
     try {
-      const res = await adminService.getVouchers(params);
+      const response = await voucherApi.getAdminVouchers(params);
 
-      return res.data;
+      return unwrapApiData(response);
     } catch (error) {
-      return rejectWithValue(error.response?.data || error.message);
+      return rejectWithValue(getApiErrorMessage(error));
     }
   },
 );
 
-// POST
 export const createAdminVoucher = createAsyncThunk(
   "adminVoucher/createAdminVoucher",
   async (payload, { rejectWithValue }) => {
     try {
-      const res = await adminService.createVoucher(payload);
-      return res.data;
+      const response = await voucherApi.createVoucher(payload);
+
+      return unwrapApiData(response);
     } catch (error) {
-      return rejectWithValue(error.response?.data || error.message);
+      return rejectWithValue(getApiErrorMessage(error));
     }
   },
 );
 
-// PUT
 export const updateAdminVoucher = createAsyncThunk(
   "adminVoucher/updateAdminVoucher",
-  async ({ id, data }, { rejectWithValue }) => {
+  async ({ voucherId, payload }, { rejectWithValue }) => {
     try {
-      const res = await adminService.updateVoucher(id, data);
+      const response = await voucherApi.updateVoucher(voucherId, payload);
 
-      return res.data;
+      return unwrapApiData(response);
     } catch (error) {
-      return rejectWithValue(error.response?.data || error.message);
+      return rejectWithValue(getApiErrorMessage(error));
     }
   },
 );

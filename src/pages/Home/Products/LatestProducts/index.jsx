@@ -5,7 +5,12 @@ import { PackageSearch } from "lucide-react";
 import "./style.scss";
 import { Link } from "react-router-dom";
 const LastestProduct = () => {
-  const { latestProducts, loading, error } = useSelector((state) => state.home);
+  const { loading, error } = useSelector((state) => state.home);
+  const latestProducts = useSelector((state) => {
+    const items = state.home.latestProducts?.items ?? state.home.latestProducts;
+
+    return Array.isArray(items) ? items : [];
+  });
 
   if (loading) {
     return (

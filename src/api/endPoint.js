@@ -77,7 +77,7 @@ export const API_ENDPOINTS = {
   },
 
   CHECKOUT: {
-    CALCULATE: "/api/checkout/calculate",
+    CALCULATE: "/checkout/calculate",
   },
 
   CHATS: {

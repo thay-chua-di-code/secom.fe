@@ -20,11 +20,12 @@ const UserNotLogin = () => {
   );
 };
 export default function UserDropdown({ open }) {
-  if (!open) return null;
-
   const userInfo = useSelector((state) => state.user.userInfo);
   const auth = useSelector((state) => state.auth);
   const dispatch = useDispatch();
+
+  if (!open) return null;
+
   const handleLogout = async () => {
     await authService.logout(auth.refreshToken, dispatch);
   };
@@ -67,7 +68,7 @@ export default function UserDropdown({ open }) {
               My Orders
             </Link>
 
-            <Link to="/wish-list" className="dropdown-item">
+            <Link to="/wish-list" data-testid="wishlist-link" className="dropdown-item">
               <Heart size={20} />
               Wishlist
             </Link>

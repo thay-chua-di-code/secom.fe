@@ -103,7 +103,7 @@ const loadOmiseScript = () => {
   });
 };
 
-const createOmiseToken = async () => {
+const createOmiseToken = async (cardInfo) => {
   const publicKey = import.meta.env.VITE_OMISE_PUBLIC_KEY;
 
   if (!publicKey) {
@@ -117,11 +117,11 @@ const createOmiseToken = async () => {
     Omise.createToken(
       "card",
       {
-        name: defaultCardInfo.cardName,
-        number: defaultCardInfo.cardNumber,
-        expiration_month: defaultCardInfo.expirationMonth,
-        expiration_year: defaultCardInfo.expirationYear,
-        security_code: defaultCardInfo.securityCode,
+        name: cardInfo.cardName.trim(),
+        number: cardInfo.cardNumber.trim(),
+        expiration_month: cardInfo.expirationMonth.trim(),
+        expiration_year: cardInfo.expirationYear.trim(),
+        security_code: cardInfo.securityCode.trim(),
       },
       (statusCode, response) => {
         if (statusCode === 200 && response?.id) {
@@ -220,6 +220,14 @@ export default function OrderHistory() {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [selectedPayment, setSelectedPayment] = useState(null);
   const [detailLoading, setDetailLoading] = useState(false);
+  const [cardInfo, setCardInfo] = useState(defaultCardInfo);
+
+  const handleCardInfoChange = (field, value) => {
+    setCardInfo((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
 
   const loadOrders = useCallback(async ({ page = 1, status = activeStatus } = {}) => {
     try {
@@ -289,7 +297,7 @@ export default function OrderHistory() {
 
     try {
       setActionLoading(orderId);
-      const token = await createOmiseToken();
+      const token = await createOmiseToken(cardInfo);
       const paymentRequest = {
         orderId,
         amount,
@@ -358,6 +366,52 @@ export default function OrderHistory() {
             {statusLabels[status]}
           </button>
         ))}
+      </div>
+
+      <div className="order-card-form">
+        <h3>Card Information</h3>
+        <div className="order-card-form__grid">
+          <label>
+            Card Name
+            <input
+              type="text"
+              value={cardInfo.cardName}
+              onChange={(event) => handleCardInfoChange("cardName", event.target.value)}
+            />
+          </label>
+          <label>
+            Card Number
+            <input
+              type="text"
+              value={cardInfo.cardNumber}
+              onChange={(event) => handleCardInfoChange("cardNumber", event.target.value)}
+            />
+          </label>
+          <label>
+            Month
+            <input
+              type="text"
+              value={cardInfo.expirationMonth}
+              onChange={(event) => handleCardInfoChange("expirationMonth", event.target.value)}
+            />
+          </label>
+          <label>
+            Year
+            <input
+              type="text"
+              value={cardInfo.expirationYear}
+              onChange={(event) => handleCardInfoChange("expirationYear", event.target.value)}
+            />
+          </label>
+          <label>
+            CVV
+            <input
+              type="password"
+              value={cardInfo.securityCode}
+              onChange={(event) => handleCardInfoChange("securityCode", event.target.value)}
+            />
+          </label>
+        </div>
       </div>
 
       {error && <div className="payment-error">{error}</div>}

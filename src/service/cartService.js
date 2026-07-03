@@ -3,104 +3,42 @@ import { API_ENDPOINTS } from "../api/endPoint";
 
 export const cartService = {
   getCart: async () => {
-    try {
-      const response = await axiosClient.get(API_ENDPOINTS.CART.GET_CG);
-      console.log("Cart ressponse: ", response);
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
+    const response = await axiosClient.get(API_ENDPOINTS.CART.GET_CG);
+    return response.data;
   },
 
   addCartItem: async ({ productId, quantity = 1 }) => {
-    try {
-      const res = await axiosClient.post(API_ENDPOINTS.CART.ADD_ITEM, {
-        productId,
-        quantity,
-      });
+    const response = await axiosClient.post(API_ENDPOINTS.CART.ADD_ITEM, {
+      productId,
+      quantity,
+    });
 
-      console.log('Response cart: ', res)
-      return res.data.data;
-    } catch (e) {
-      throw e;
-    }
+    return response.data;
   },
 
   updateCartItemQuantity: async (cartItemId, quantity) => {
-    const res = await axiosClient.get(BASE_URL);
-    const cart = res.data;
+    const response = await axiosClient.put(API_ENDPOINTS.CART.UPDATE_ITEM(cartItemId), {
+      quantity,
+    });
 
-    const items = cart.items.map((i) =>
-      i.cartItemId === cartItemId
-        ? {
-            ...i,
-            quantity,
-            subtotal: i.unitPrice * quantity,
-          }
-        : i,
-    );
-
-    const updatedCart = {
-      ...cart,
-      items,
-      subtotal: items.reduce((s, i) => s + i.subtotal, 0),
-      finalTotal: items.reduce((s, i) => s + i.subtotal, 0),
-    };
-
-    const result = await axiosClient.put(BASE_URL, updatedCart);
-    return result.data;
+    return response.data;
   },
 
   applyVoucher: async (code) => {
-    try {
-      // Fake API tạm thời
-      return {
-        success: true,
-        voucherCode: code,
-      };
-    } catch (error) {
-      throw error;
-    }
+    const response = await axiosClient.post(API_ENDPOINTS.CART.APPLY_VOUCHER, {
+      code,
+    });
+
+    return response.data;
   },
 
   deleteCartItem: async (cartItemId) => {
-    const res = await axiosClient.get(BASE_URL);
-    const cart = res.data;
-
-    const updatedItems = cart.items.filter(
-      (item) => item.cartItemId !== cartItemId,
-    );
-
-    const updatedCart = {
-      ...cart,
-      items: updatedItems,
-      subtotal: updatedItems.reduce((s, i) => s + i.subtotal, 0),
-      finalTotal: updatedItems.reduce((s, i) => s + i.subtotal, 0),
-    };
-
-    const result = await axiosClient.put(BASE_URL, updatedCart);
-    return result.data;
+    const response = await axiosClient.delete(API_ENDPOINTS.CART.UPDATE_ITEM(cartItemId));
+    return response.data;
   },
 
   calculateCheckout: async () => {
-    try {
-      const response = await axiosClient.get(BASE_URL);
-
-      const cart = response.data;
-      const items = cart.items || [];
-
-      const subtotal = items.reduce(
-        (sum, item) => sum + item.unitPrice * item.quantity,
-        0,
-      );
-
-      return {
-        subtotal,
-        shippingFee: 30000,
-        total: subtotal + 30000,
-      };
-    } catch (error) {
-      throw error;
-    }
+    const response = await axiosClient.get(API_ENDPOINTS.CHECKOUT.CALCULATE);
+    return response.data;
   },
 };

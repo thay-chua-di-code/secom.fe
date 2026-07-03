@@ -6,7 +6,6 @@ import { addressService } from "../../../../service/addressService";
 import Button from "../../../../components/common/Button/Button";
 import "./style.scss";
 import AddAddressModal from "../Form/FormAdd";
-import UpdateAddresForm from "../Form/FormUpdate";
 import UpdateAddressForm from "../Form/FormUpdate";
 export default function AddressList() {
   const dispatch = useDispatch();
@@ -25,9 +24,10 @@ export default function AddressList() {
   }, [dispatch]);
 
   return (
-    <div className="address-list">
+    <div className="address-list" data-testid="profile-address-section">
       <div className="address-list__header flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <Button
+          data-testid="add-address-btn"
           className="address-list__add-btn"
           onClick={() => setOpenAddModal(true)}
         >
@@ -41,6 +41,7 @@ export default function AddressList() {
           <p>You don't have any saved addresses yet.</p>
 
           <Button
+            data-testid="add-address-btn"
             className="address-list__add-btn"
             onClick={() => setOpenAddModal(true)}
           >
