@@ -12,40 +12,45 @@ import FinanceAdmin from "../pages/Admin/Finance";
 
 export const privateRoutes = [
   {
+    elemnt: <PrivateRoute />,
     path: "/admin",
-    element: <AdminLayout />,
     children: [
       {
-        index: true,
-        element: <Dashboard />,
-      },
-      {
-        path: ADMIN_ROUTES.ADMIN_USERS,
-        element: <Users />,
-      },
-      {
-        path: ADMIN_ROUTES.ADMIN_PRODUCTS,
-        element: <Products />,
-      },
-      {
-        path: ADMIN_ROUTES.ADMIN_ORDERS,
-        element: <Orders />,
-      },
-      {
-        path: ADMIN_ROUTES.ADMIN_VOUCHER,
-        element: <VoucherAdmin />,
-      },
-      {
-        path: ADMIN_ROUTES.ADMIN_FINANCE,
-        element: <FinanceAdmin />,
-      },
-      {
-        path: ADMIN_ROUTES.ADMIN_CATEGORIES,
-        element: <Categories />,
-      },
-      {
-        path: ADMIN_ROUTES.ADMIN_SELLER,
-        element: <SellerManage />,
+        element: <AdminLayout />,
+        children: [
+          {
+            index: true,
+            element: <Dashboard />,
+          },
+          {
+            path: ADMIN_ROUTES.ADMIN_USERS,
+            element: <Users />,
+          },
+          {
+            path: ADMIN_ROUTES.ADMIN_PRODUCTS,
+            element: <Products />,
+          },
+          {
+            path: ADMIN_ROUTES.ADMIN_ORDERS,
+            element: <Orders />,
+          },
+          {
+            path: ADMIN_ROUTES.ADMIN_VOUCHER,
+            element: <VoucherAdmin />,
+          },
+          {
+            path: ADMIN_ROUTES.ADMIN_FINANCE,
+            element: <FinanceAdmin />,
+          },
+          {
+            path: ADMIN_ROUTES.ADMIN_CATEGORIES,
+            element: <Categories />,
+          },
+          {
+            path: ADMIN_ROUTES.ADMIN_SELLER,
+            element: <SellerManage />,
+          },
+        ],
       },
     ],
   },

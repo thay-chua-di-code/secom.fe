@@ -3,5 +3,6 @@ export const isLoggedIn = (user) => {
 };
 
 export const isAdmin = (role) => {
-  return role.toLowerCase() === "admin";
+  console.log(role)
+  return role.toLowerCase() === "admin" ? true : false;
 };
