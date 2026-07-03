@@ -9,6 +9,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { formatCurrencyVN } from "../../utils/fncUtils";
 import SellerShow from "./SellerShow";
+import RelatedProducts from "./RelatedProduct";
 import { addCartItem } from "../../redux/slice/cartSlice";
 import {
   addWishlistThunk,
@@ -176,7 +177,9 @@ export default function ProductDetail() {
       <div className="product-detail" data-testid="product-detail">
         <div className="product-detail__info">
           <h1>Product not found</h1>
-          <p>The product you are looking for does not exist or is unavailable.</p>
+          <p>
+            The product you are looking for does not exist or is unavailable.
+          </p>
         </div>
       </div>
     );
@@ -214,7 +217,9 @@ export default function ProductDetail() {
             <div className="stars">★★★★☆</div>
             <span>{productDetail.category?.name || "Uncategorized"}</span>
             <div className="divider"></div>
-            <span className="stock">{productDetail.condition || "Available"}</span>
+            <span className="stock">
+              {productDetail.condition || "Available"}
+            </span>
           </div>
 
           <div className="price" data-testid="product-detail-price">
@@ -232,7 +237,9 @@ export default function ProductDetail() {
 
           <div className="option-group">
             <span>Seller:</span>
-            <strong>{productDetail.seller?.fullName || "Unknown seller"}</strong>
+            <strong>
+              {productDetail.seller?.fullName || "Unknown seller"}
+            </strong>
           </div>
 
           <div className="purchase">
@@ -248,16 +255,26 @@ export default function ProductDetail() {
               <Button onClick={() => setQuantity((prev) => prev + 1)}>+</Button>
             </div>
 
-            <button data-testid="buy-now-btn" className="buy-btn">Buy Now</button>
+            <button data-testid="buy-now-btn" className="buy-btn">
+              Buy Now
+            </button>
 
-            <button data-testid="add-to-cart-btn" className="buy-btn" onClick={handleAddToCart}>Add to Cart</button>
+            <button
+              data-testid="add-to-cart-btn"
+              className="buy-btn"
+              onClick={handleAddToCart}
+            >
+              Add to Cart
+            </button>
 
             <button
               data-testid="wishlist-btn"
               className={`wishlist ${isWishlisted ? "active" : ""}`}
               onClick={handleToggleWishlist}
               disabled={wishlistLoading}
-              aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+              aria-label={
+                isWishlisted ? "Remove from wishlist" : "Add to wishlist"
+              }
             >
               {isWishlisted ? "♥" : "♡"}
             </button>
@@ -290,8 +307,9 @@ export default function ProductDetail() {
       </div>
       <div className="product-detail-feature">
         <SellerShow seller={productDetail.seller} />
-        <ProductReview />
+        <ProductReview productId={productDetail.id} />
       </div>
+      <RelatedProducts products={productDetail.relatedProducts} />
     </>
   );
 }

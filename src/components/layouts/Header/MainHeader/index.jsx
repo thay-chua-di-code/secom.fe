@@ -10,6 +10,7 @@ import Cart from "../../../common/Cart";
 
 import { fetchCart } from "../../../../redux/slice/cartSlice";
 import SearchDropdown from "../../../common/SearchDropDown";
+import { searchProductsThunk } from "../../../../redux/slice/productSlice";
 
 export default function MainHeader() {
   const dispatch = useDispatch();
@@ -26,12 +27,20 @@ export default function MainHeader() {
     0,
   );
 
-  const handleSearch = () => {
-    const trimmedKeyword = keyword.trim();
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    console.log("input:", value);
+    setKeyword(value);
 
-    if (!trimmedKeyword) return;
+    if (!value.trim()) return;
 
-    console.log(trimmedKeyword);
+    dispatch(
+      searchProductsThunk({
+        keyword: value,
+        page: 1,
+        pageSize: 8,
+      }),
+    );
   };
 
   const handleCartToggle = () => {
@@ -119,8 +128,7 @@ export default function MainHeader() {
               placeholder="Search products..."
               value={keyword}
               onFocus={() => setOpenSearch(true)}
-              onChange={(e) => setKeyword(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+              onChange={handleInputChange}
               icon={Search}
               clearable
               className="header-search"
@@ -161,7 +169,9 @@ export default function MainHeader() {
 
               <div className="relative" onClick={handleCartToggle}>
                 <Button variant="ghost" className="relative text-black">
-                  <span data-testid="cart-link" className="sr-only">Cart</span>
+                  <span data-testid="cart-link" className="sr-only">
+                    Cart
+                  </span>
                   <ShoppingCart size={26} />
 
                   {cartCount > 0 && (
@@ -185,8 +195,8 @@ export default function MainHeader() {
           type="text"
           placeholder="Search products..."
           value={keyword}
-          onChange={(e) => setKeyword(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+          onFocus={() => setOpenSearch(true)}
+          onChange={handleInputChange}
           icon={Search}
           clearable
           className="header-search"

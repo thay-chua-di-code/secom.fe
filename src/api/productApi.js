@@ -2,8 +2,10 @@ import axiosClient from "./axiosClient";
 import { API_ENDPOINTS } from "./endPoint";
 
 export const productApi = {
-  getProductDetail(productId) {
-    return axiosClient.get(API_ENDPOINTS.PRODUCT.DETAIL(productId));
+  async getProductDetail(productId) {
+    const res = await axiosClient.get(API_ENDPOINTS.PRODUCT.DETAIL(productId));
+    console.log("Detail product: ", res);
+    return res;
   },
 };
 

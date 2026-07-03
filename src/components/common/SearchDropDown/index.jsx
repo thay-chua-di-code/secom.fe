@@ -1,20 +1,22 @@
 import { Link } from "react-router-dom";
-import { Flame, Folder } from "lucide-react";
-
+import { Flame, Folder, MapPin } from "lucide-react";
+import { useSelector } from "react-redux";
+import { formatCurrencyVN } from "../../../utils/fncUtils";
 import "./style.scss";
 
 export default function SearchDropdown({
   open,
   categories = [],
   keyword,
-  products = [],
   onClose,
 }) {
+  const { productSearch } = useSelector((state) => state.products);
+  console.log("productSearch: ", productSearch);
   if (!open) return null;
 
   return (
     <div className="search-dropdown">
-      {!keyword && (
+      {!keyword.trim() && (
         <>
           <div className="dropdown-section">
             <h4>
@@ -43,7 +45,7 @@ export default function SearchDropdown({
 
             <div className="trending-list">
               <button>Macbook M4</button>
-              <button>Iphone 17</button>
+              <button>iPhone 17</button>
               <button>RTX 5090</button>
               <button>Gaming Laptop</button>
             </div>
@@ -51,29 +53,42 @@ export default function SearchDropdown({
         </>
       )}
 
-      {!!keyword && (
+      {!!keyword.trim() && (
         <div className="dropdown-section">
-          <h4>Products</h4>
+          <h4>Result</h4>
 
-          {products.length ? (
-            products.map((item) => (
-              <Link
-                key={item.id}
-                to={`/products/${item.id}`}
-                onClick={onClose}
-                className="product-item"
-              >
-                <img src={item.thumbnail} alt="" />
+          {productSearch?.length ? (
+            <div className="search-products">
+              {productSearch?.map((item) => (
+                <Link
+                  key={item.id}
+                  to={`/product-detail/${item.id}`}
+                  className="product-item"
+                  onClick={onClose}
+                >
+                  <img
+                    src={
+                      item.primaryImageUrl ||
+                      "https://placehold.co/80x80?text=No+Image"
+                    }
+                    alt={item.name}
+                  />
 
-                <div>
-                  <h5>{item.name}</h5>
+                  <div className="product-info">
+                    <h5>{item.name}</h5>
 
-                  <span>${item.price}</span>
-                </div>
-              </Link>
-            ))
+                    <p>
+                      <MapPin size={14} />
+                      {item.location}
+                    </p>
+
+                    <span>{formatCurrencyVN(item.price)} ₫</span>
+                  </div>
+                </Link>
+              ))}
+            </div>
           ) : (
-            <div className="empty">Không tìm thấy sản phẩm</div>
+            <div className="empty">No suitable products found.</div>
           )}
         </div>
       )}

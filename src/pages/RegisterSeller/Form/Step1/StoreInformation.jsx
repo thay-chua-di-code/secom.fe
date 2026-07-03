@@ -5,7 +5,7 @@ import { sellerService } from "../../../../service/sellerService";
 import "./style.scss";
 import Button from "../../../../components/common/Button/Button";
 
-export default function StoreInformation() {
+export default function StoreInformation({ onRegisterSuccess }) {
   const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -74,11 +74,15 @@ export default function StoreInformation() {
         verificationImage: verificationImageUrl,
       };
 
-      await sellerService.becomeSeller(payload);
+      const result = await sellerService.becomeSeller(payload);
 
-      toast.success("Seller application submitted successfully!", {
-        id: "seller-register",
-      });
+      if (result.data.success === 200) {
+        toast.success("Seller application submitted successfully!", {
+          id: "seller-register",
+        });
+
+        onRegisterSuccess(result.data.status);
+      }
 
       setFormData({
         shopName: "",

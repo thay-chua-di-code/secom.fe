@@ -20,12 +20,15 @@ export const dicoveryService = {
         `/categories/${categoryId}/products`,
         { params },
       );
-
-      console.log("Result product by cate:", result);
-
       return result?.data;
     } catch (e) {
       console.log(e?.response?.data || e?.message);
     }
+  },
+
+  getProductByKeyWord: async (params) => {
+    const res = axiosClient.get("/products/search", { params });
+    console.log(res)
+    return res;
   },
 };

@@ -1,8 +1,9 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { dicoveryService } from "../../service/dicoveryService";
+
 const initialState = {
   products: [],
-
+  productSearch: [],
   productDetail: null,
 
   pagination: {
@@ -42,9 +43,34 @@ export const fetchProductsByCategory = createAsyncThunk(
   },
 );
 
+export const searchProductsThunk = createAsyncThunk(
+  "product/searchProducts",
+  async (params, thunkAPI) => {
+    try {
+      const response = await dicoveryService.getProductByKeyWord(params);
+      const data = response.data.data;
+
+      return {
+        items: data.items,
+        pagination: {
+          page: data.pageNumber,
+          limit: data.pageSize,
+          totalPages: data.totalPages,
+          totalItems: data.totalCount,
+        },
+      };
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Failed to search products",
+      );
+    }
+  },
+);
+
 const productSlice = createSlice({
   name: "products",
   initialState,
+
   reducers: {
     setFilters(state, action) {
       state.filters = {
@@ -63,23 +89,37 @@ const productSlice = createSlice({
 
     clearProducts(state) {
       state.products = [];
-      state.productsCategory = [];
+      state.productSearch = [];
     },
   },
 
   extraReducers: (builder) => {
     builder
+      // Fetch products by category
       .addCase(fetchProductsByCategory.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-
       .addCase(fetchProductsByCategory.fulfilled, (state, action) => {
         state.loading = false;
         state.products = action.payload;
       })
-
       .addCase(fetchProductsByCategory.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // Search products
+      .addCase(searchProductsThunk.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(searchProductsThunk.fulfilled, (state, action) => {
+        state.loading = false;
+        state.productSearch = action.payload.items;
+        state.pagination = action.payload.pagination;
+      })
+      .addCase(searchProductsThunk.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

@@ -30,7 +30,8 @@ export default function Card({ item }) {
   const [wishlistLoading, setWishlistLoading] = useState(false);
   const productId = item.id || item.productId;
   const productName = item.name || item.title || item.productName;
-  const productImages = item.images || [item.imageUrl || item.primaryImageUrl].filter(Boolean);
+  const productImages =
+    item.images || [item.imageUrl || item.primaryImageUrl].filter(Boolean);
   const isWishlisted = useMemo(
     () =>
       pathname === "/wish-list" ||
@@ -125,7 +126,9 @@ export default function Card({ item }) {
         <h3>{productName}</h3>
 
         <div className="price">
-          <span className="new-price">{(item.price || 0).toLocaleString()}đ</span>
+          <span className="new-price">
+            {(item.price || 0).toLocaleString()}đ
+          </span>
 
           <span className="old-price">
             {item.oldPrice ? item.oldPrice.toLocaleString() : ""}đ
@@ -136,7 +139,11 @@ export default function Card({ item }) {
       </div>
 
       <div className="card-actions">
-        <Button data-testid="add-to-cart-btn" className="add-cart" onClick={handleAddCart}>
+        <Button
+          data-testid="add-to-cart-btn"
+          className="add-cart"
+          onClick={handleAddCart}
+        >
           Add To Cart
         </Button>
         <Button
@@ -147,7 +154,11 @@ export default function Card({ item }) {
         >
           {isWishlisted ? "Remove from Wishlist" : "Add to Wishlist"}
         </Button>
-        <Link data-testid="buy-now-btn" to={`/product-detail/${productId}`} className="buy-now-btn">
+        <Link
+          data-testid="buy-now-btn"
+          to={`/product-detail/${productId}`}
+          className="buy-now-btn"
+        >
           Buy Now
         </Link>
       </div>

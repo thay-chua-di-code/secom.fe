@@ -15,7 +15,8 @@ export default function SellerShow({ seller, shop }) {
   const sellerInfo = seller || shop || {};
   const sellerId = sellerInfo.sellerId || sellerInfo.id;
   const sellerName = sellerInfo.fullName || sellerInfo.name || "Unknown seller";
-  const avatarUrl = sellerInfo.avatarUrl || sellerInfo.avatar || placeholderAvatar;
+  const avatarUrl =
+    sellerInfo.avatarUrl || sellerInfo.avatar || placeholderAvatar;
   const rating = sellerInfo.rating ?? "N/A";
   const totalProducts = sellerInfo.totalProducts ?? "N/A";
   const followers = sellerInfo.followers ?? 0;
@@ -46,7 +47,10 @@ export default function SellerShow({ seller, shop }) {
             Chat
           </Button>
 
-          <Link to={sellerId ? `/seller/detail/${sellerId}` : "#"} className="shop-btn">
+          <Link
+            to={sellerId ? `/seller/detail/${sellerId}` : "#"}
+            className="shop-btn"
+          >
             <Store size={18} />
             View Shop
           </Link>

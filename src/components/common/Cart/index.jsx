@@ -12,8 +12,6 @@ const currencyFormatter = new Intl.NumberFormat("en-US", {
 export default function Cart({ open }) {
   const { isAuthenticated } = useSelector((state) => state.auth);
   const { items, loading, error } = useCart();
-
-  console.log(items);
   if (!open) {
     return null;
   }

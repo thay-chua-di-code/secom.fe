@@ -50,7 +50,6 @@ export const userService = {
   },
   addWishList: async (productId) => {
     const result = await wishlistApi.addToWishlist(productId);
-
     return result.data.data;
   },
   deleteWishList: async (productId) => {

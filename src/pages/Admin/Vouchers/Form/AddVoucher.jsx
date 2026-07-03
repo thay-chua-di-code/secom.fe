@@ -4,16 +4,20 @@ import Button from "../../../../components/common/Button/Button";
 import { createAdminVoucher } from "../../../../redux/slice/admin/vouchers/voucherThunk";
 import { useDispatch } from "react-redux";
 import toast from "react-hot-toast";
+
+const initialForm = {
+  code: "",
+  discountType: "percentage",
+  discountValue: "",
+  minOrderAmount: "",
+  expiresAtUtc: "",
+  usageLimit: "",
+};
+
 const AddVoucher = ({ open, onClose }) => {
   const dispatch = useDispatch();
-  const [formData, setFormData] = useState({
-    code: "",
-    discountType: "Percentage",
-    discountValue: "",
-    minOrderAmount: "",
-    expiresAtUtc: "",
-    usageLimit: "",
-  });
+
+  const [formData, setFormData] = useState(initialForm);
 
   if (!open) return null;
 
@@ -31,32 +35,33 @@ const AddVoucher = ({ open, onClose }) => {
 
     try {
       const payload = {
-        ...formData,
+        code: formData.code.trim(),
+        discountType: formData.discountType,
         discountValue: Number(formData.discountValue),
         minOrderAmount: Number(formData.minOrderAmount),
         usageLimit: Number(formData.usageLimit),
-
         expiresAtUtc: new Date(formData.expiresAtUtc).toISOString(),
       };
 
+      console.log("Payload:", payload);
+
       const res = await dispatch(createAdminVoucher(payload)).unwrap();
 
-      if (res.success) {
-        setFormData({
-          code: "",
-          discountType: "Percentage",
-          discountValue: "",
-          minOrderAmount: "",
-          expiresAtUtc: "",
-          usageLimit: "",
-        });
+      console.log("Response:", res);
 
-        toast.success("Add voucher success");
-      }
+      toast.success("Add voucher successfully");
+
+      setFormData(initialForm);
 
       onClose();
     } catch (error) {
-      toast.error("Add voucher failed");
+      console.error("Create voucher error:", error);
+
+      toast.error(
+        error?.message ||
+          error?.response?.data?.message ||
+          "Add voucher failed",
+      );
     }
   };
 
@@ -93,9 +98,8 @@ const AddVoucher = ({ open, onClose }) => {
               value={formData.discountType}
               onChange={handleChange}
             >
-              <option value="Percentage">Percentage</option>
-
-              <option value="Fixed">Fixed Amount</option>
+              <option value="percentage">Percentage</option>
+              <option value="fixed">Fixed Amount</option>
             </select>
           </div>
 
@@ -106,6 +110,7 @@ const AddVoucher = ({ open, onClose }) => {
               <input
                 type="number"
                 name="discountValue"
+                min="1"
                 value={formData.discountValue}
                 onChange={handleChange}
                 required
@@ -118,6 +123,7 @@ const AddVoucher = ({ open, onClose }) => {
               <input
                 type="number"
                 name="minOrderAmount"
+                min="0"
                 value={formData.minOrderAmount}
                 onChange={handleChange}
                 required
@@ -132,6 +138,7 @@ const AddVoucher = ({ open, onClose }) => {
               <input
                 type="number"
                 name="usageLimit"
+                min="1"
                 value={formData.usageLimit}
                 onChange={handleChange}
                 required

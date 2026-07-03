@@ -16,10 +16,7 @@ const getApiErrorMessage = (error) =>
   "Cannot update wishlist. Please try again.";
 
 const normalizeWishlistItems = (payload) => {
-  const items =
-    payload?.data?.items ??
-    payload?.items ??
-    payload;
+  const items = payload?.data?.items ?? payload?.items ?? payload;
 
   return Array.isArray(items) ? items : [];
 };

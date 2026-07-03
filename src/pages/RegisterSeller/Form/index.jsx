@@ -7,7 +7,7 @@ const steps = ["Store Information", "Approve by Admin"];
 
 export default function SellerRegistration() {
   const [currentStep, setCurrentStep] = useState(0);
-
+  const [sellerStatus, setSellerStatus] = useState(null);
   const nextStep = () => {
     if (currentStep < steps.length - 1) {
       setCurrentStep((prev) => prev + 1);
@@ -36,8 +36,11 @@ export default function SellerRegistration() {
       </div>
 
       <div className="step-content">
-        {currentStep === 0 && <StoreInformation />}
-        {currentStep === 1 && <SellerStatus status={"APPROVED"} />}
+        {sellerStatus === null && (
+          <StoreInformation onRegisterSuccess={setSellerStatus} />
+        )}
+
+        {sellerStatus === 0 && <SellerStatus status={0} />}
       </div>
 
       {currentStep <= 0 && (
