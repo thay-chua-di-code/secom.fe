@@ -19,13 +19,13 @@ export default function SellerDetail() {
   const productDetail = useSelector((state) => state.products.productDetail);
   const seller = productDetail?.data?.seller;
 
-  if (!seller) {
-    return (
-      <div className="seller-not-found">
-        <h2>Seller not found.</h2>
-      </div>
-    );
-  }
+  // if (!seller) {
+  //   return (
+  //     <div className="seller-not-found">
+  //       <h2>Seller not found.</h2>
+  //     </div>
+  //   );
+  // }
 
   const sellerProducts = [
     {
@@ -84,14 +84,18 @@ export default function SellerDetail() {
 
         <div className="seller-info">
           <img
-            src={seller.avatarUrl || "https://placehold.co/120x120?text=Seller"}
-            alt={seller.fullName}
+            src={
+              seller?.avatarUrl ||
+              "https://i.redd.it/homelander-the-boys-show-vs-vecna-st-v0-kfm3629trbbg1.jpg?width=1200&format=pjpg&auto=webp&s=52d04d9b395f0205c5fb4cdbf7a2063db9c8d9c3"
+            }
+            alt={"this is my image"}
             className="avatar"
           />
 
           <div className="content">
             <h2>
-              {seller.fullName}
+              {/* {seller.fullName} */}
+              Seller Shop
               <BadgeCheck size={22} />
             </h2>
 

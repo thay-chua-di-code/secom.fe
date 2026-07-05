@@ -1,7 +1,6 @@
+import { useParams } from "react-router-dom";
 import "./style.scss";
 import { useSelector } from "react-redux";
-const categories = ["Laptop", "Keyboard", "Mouse", "Headphone"];
-
 export default function Filter({
   categoryFilter,
   onCategoryChange,
@@ -11,7 +10,11 @@ export default function Filter({
   onMaxPriceChange,
 }) {
   const { categories } = useSelector((state) => state.categories);
-  console.log(categories);
+  const products = useSelector(
+    (state) => state.products.products?.items ?? state.products.products,
+  );
+  const selectedCategory = categoryFilter;
+
   return (
     <div className="filter">
       <h3>Categories</h3>
@@ -22,9 +25,10 @@ export default function Filter({
             <label>
               <input
                 type="radio"
+                name="category"
                 value={category.id}
                 checked={categoryFilter === category.id}
-                onChange={(e) => onCategoryChange(e.target.value)}
+                onChange={() => onCategoryChange(category.id)}
               />
               {category.name}
             </label>
@@ -35,9 +39,8 @@ export default function Filter({
             <input
               type="radio"
               name="category"
-              value=""
               checked={!categoryFilter}
-              onChange={() => onCategoryChange("")}
+              onChange={() => onCategoryChange(null)}
             />
             All
           </label>

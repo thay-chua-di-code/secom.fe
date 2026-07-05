@@ -5,6 +5,7 @@ import NotificationDropdown from "../../../../pages/Notifications/Popup";
 
 export default function TopHeader({ onOpenLogin, onOpenRegister }) {
   const { isAuthenticated, role } = useSelector((state) => state.auth);
+  console.log(role)
 
   return (
     <div className="border-b border-white/10 bg-black text-white">

@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { FaTrash } from "react-icons/fa";
+import { FaTrash, FaHeart, FaRegHeart, FaEye } from "react-icons/fa";
 import toast from "react-hot-toast";
 import Button from "../Button/Button";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -10,7 +10,7 @@ import {
   deleteWishlistThunk,
 } from "../../../redux/slice/userSlice";
 import "./style.scss";
-
+import { formatCurrencyVN } from "../../../utils/fncUtils";
 const getApiErrorMessage = (error) =>
   error?.response?.data?.message ||
   error?.response?.data?.error ||
@@ -65,6 +65,7 @@ export default function Card({ item }) {
 
   const handleToggleWishlist = async (event) => {
     event.preventDefault();
+    event.stopPropagation();
 
     if (!requireLogin() || wishlistLoading) {
       return;
@@ -89,7 +90,7 @@ export default function Card({ item }) {
 
   const handleRemoveWishlist = async (event) => {
     event.preventDefault();
-
+    event.stopPropagation();
     if (wishlistLoading) {
       return;
     }
@@ -105,62 +106,79 @@ export default function Card({ item }) {
     }
   };
 
-  return (
-    <div className="wishlist-item" data-testid="product-card">
-      {pathname === "/wish-list" && (
-        <button
-          data-testid="remove-wishlist-btn"
-          className="remove-btn"
-          onClick={handleRemoveWishlist}
-          disabled={wishlistLoading}
-        >
-          <FaTrash />
-        </button>
-      )}
+  const handleBuyNow = async (e) => {
+    e.preventDefault();
 
-      <Link to={`/product-detail/${productId}`} className="image-box">
-        <img src={productImages[0]} alt={productName} />
-      </Link>
+    if (!isAuthenticated) {
+      navigate("/login");
+      return;
+    }
+
+    try {
+      await dispatch(
+        addCartItem({
+          productId,
+          quantity: 1,
+        }),
+      ).unwrap();
+
+      navigate("/cart", {
+        state: {
+          autoSelectProductId: productId,
+        },
+      });
+    } catch (err) {
+      toast.error("Cannot buy product");
+    }
+  };
+  return (
+    <div className="wishlist-item">
+      <div className="image-box">
+        <Link to={`/product-detail/${productId}`}>
+          <img src={productImages[0]} alt={productName} />
+        </Link>
+
+        <div className="image-actions">
+          <button
+            className={`favorite-btn ${isWishlisted ? "active" : ""}`}
+            onClick={handleToggleWishlist}
+            disabled={wishlistLoading}
+          >
+            {isWishlisted ? <FaHeart /> : <FaRegHeart />}
+          </button>
+
+          <Link to={`/product-detail/${productId}`} className="view-btn">
+            <FaEye />
+          </Link>
+        </div>
+      </div>
 
       <div className="product-info">
         <h3>{productName}</h3>
 
         <div className="price">
-          <span className="new-price">
-            {(item.price || 0).toLocaleString()}đ
-          </span>
+          <span className="new-price">{formatCurrencyVN(item.price)}</span>
 
-          <span className="old-price">
-            {item.oldPrice ? item.oldPrice.toLocaleString() : ""}đ
-          </span>
+          {item.oldPrice && (
+            <span className="old-price">{formatCurrencyVN(item.oldPrice)}</span>
+          )}
         </div>
 
-        <div className="stock">{item.stock ? "In Stock" : "Out Of Stock"}</div>
+        <span className={`stock ${item.stock ? "available" : "out"}`}>
+          {item.stock ? "In Stock" : "Out Of Stock"}
+        </span>
       </div>
 
       <div className="card-actions">
-        <Button
-          data-testid="add-to-cart-btn"
-          className="add-cart"
-          onClick={handleAddCart}
-        >
+        <Button className="add-cart" onClick={handleAddCart}>
           Add To Cart
         </Button>
-        <Button
-          data-testid="wishlist-btn"
-          className={`wishlist-btn ${isWishlisted ? "active" : ""}`}
-          onClick={handleToggleWishlist}
-          disabled={wishlistLoading}
-        >
-          {isWishlisted ? "Remove from Wishlist" : "Add to Wishlist"}
-        </Button>
-        <Link
-          data-testid="buy-now-btn"
-          to={`/product-detail/${productId}`}
-          className="buy-now-btn"
-        >
-          Buy Now
-        </Link>
+
+        <div className="bottom-actions">
+          <Button className="buy-now-btn" onClick={handleBuyNow}>
+            Buy Now
+          </Button>
+        </div>
       </div>
     </div>
   );

@@ -10,7 +10,9 @@ import { fetchVouchers } from "../../redux/slice/voucherSlice";
 import { useCart } from "../../hooks/useCart";
 import { paymentApi } from "../../api/paymentApi";
 import { orderApi } from "../../api/orderApi";
+import { useLocation } from "react-router-dom";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 import "./style.scss";
 
 function CartEmpty() {
@@ -43,7 +45,9 @@ function CartSkeleton() {
 }
 export default function CartPage() {
   const dispatch = useDispatch();
+  const location = useLocation();
   const fetchedRef = useRef(false);
+  const navigate = useNavigate();
   const headerCheckboxRef = useRef(null);
   const [selectedItemIds, setSelectedItemIds] = useState([]);
   const [selectedVoucher, setSelectedVoucher] = useState(null);
@@ -105,8 +109,7 @@ export default function CartPage() {
 
   const selectedFinalTotal = selectedSubtotal - selectedDiscountAmount;
 
-  const allSelected =
-    items.length > 0 && selectedItems.length === items.length;
+  const allSelected = items.length > 0 && selectedItems.length === items.length;
 
   const partiallySelected =
     selectedItems.length > 0 && selectedItems.length < items.length;
@@ -116,6 +119,27 @@ export default function CartPage() {
       headerCheckboxRef.current.indeterminate = partiallySelected;
     }
   }, [partiallySelected]);
+
+  useEffect(() => {
+    if (!items.length) return;
+
+    const productId = location.state?.autoSelectProductId;
+
+    if (!productId) return;
+
+    const cartItem = items.find(
+      (item) => String(item.productId) === String(productId),
+    );
+
+    if (cartItem) {
+      setSelectedItemIds([cartItem.cartItemId]);
+    }
+
+    navigate(location.pathname, {
+      replace: true,
+      state: {},
+    });
+  }, [items, location.state, navigate]);
 
   const handleSelectItem = (cartItemId, checked) => {
     setSelectedItemIds((prev) => {
@@ -133,9 +157,7 @@ export default function CartPage() {
 
   const handleApplyVoucher = () => {
     if (!selectedItemIds.length) {
-      toast.error(
-        "Please select at least one item before applying a voucher.",
-      );
+      toast.error("Please select at least one item before applying a voucher.");
       return;
     }
 
@@ -148,7 +170,9 @@ export default function CartPage() {
   };
 
   const getCreatedOrder = (response) => {
-    return response?.data?.data?.order || response?.data?.order || response?.order;
+    return (
+      response?.data?.data?.order || response?.data?.order || response?.order
+    );
   };
 
   const getCreatedOrderId = (createdOrder) => {
@@ -233,24 +257,20 @@ export default function CartPage() {
     };
 
     return new Promise((resolve, reject) => {
-      Omise.createToken(
-        "card",
-        cardPayload,
-        (statusCode, response) => {
-          if (statusCode === 200 && response?.id) {
-            resolve(response);
-            return;
-          }
+      Omise.createToken("card", cardPayload, (statusCode, response) => {
+        if (statusCode === 200 && response?.id) {
+          resolve(response);
+          return;
+        }
 
-          reject(
-            new Error(
-              response?.message ||
-                response?.object ||
-                "Không thể tạo token thanh toán.",
-            ),
-          );
-        },
-      );
+        reject(
+          new Error(
+            response?.message ||
+              response?.object ||
+              "Không thể tạo token thanh toán.",
+          ),
+        );
+      });
     });
   };
 
@@ -308,9 +328,8 @@ export default function CartPage() {
 
       console.log("Payment request:", paymentRequest);
 
-      const paymentResponse = await paymentApi.createPaymentTransaction(
-        paymentRequest,
-      );
+      const paymentResponse =
+        await paymentApi.createPaymentTransaction(paymentRequest);
 
       console.log("Payment response:", paymentResponse);
 
@@ -406,7 +425,9 @@ export default function CartPage() {
             discountAmount={selectedDiscountAmount}
             finalTotal={selectedFinalTotal}
             itemCount={selectedItemCount}
-            disabled={actionLoading || checkoutLoading || !selectedItemIds.length}
+            disabled={
+              actionLoading || checkoutLoading || !selectedItemIds.length
+            }
             checkoutLoading={checkoutLoading}
             onCheckout={handleCheckout}
             selectedCount={selectedItems.length}

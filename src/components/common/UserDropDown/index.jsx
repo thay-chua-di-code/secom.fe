@@ -68,7 +68,11 @@ export default function UserDropdown({ open }) {
               My Orders
             </Link>
 
-            <Link to="/wish-list" data-testid="wishlist-link" className="dropdown-item">
+            <Link
+              to="/wish-list"
+              data-testid="wishlist-link"
+              className="dropdown-item"
+            >
               <Heart size={20} />
               Wishlist
             </Link>
@@ -76,6 +80,12 @@ export default function UserDropdown({ open }) {
               <Link to="/admin" className="dropdown-item">
                 <Package size={20} />
                 Admin Dashboard
+              </Link>
+            )}
+            {auth.role === "Seller" && (
+              <Link to="/seller" className="dropdown-item">
+                <Package size={20} />
+                Seller Dashboard
               </Link>
             )}
           </div>

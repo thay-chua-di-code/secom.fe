@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import "./style.scss";
 import { fetchOrders } from "../../../redux/slice/admin/orders/orderThunk";
-import { formatCurrencyVN, formatDate } from "../../../utils/fncUtils";
+import { formatCurrencyVN } from "../../../utils/fncUtils";
 import { Eye, Search, ShoppingCart, Calendar, DollarSign } from "lucide-react";
 import OrderDetailModal from "./Detail";
 

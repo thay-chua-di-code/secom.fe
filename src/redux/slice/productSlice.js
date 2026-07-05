@@ -5,6 +5,7 @@ import productApi from "../../api/productApi";
 const initialState = {
   products: [],
   productSearch: [],
+  productFilter: [],
   productDetail: null,
 
   pagination: {
@@ -106,6 +107,19 @@ const productSlice = createSlice({
       state.products = [];
       state.productSearch = [];
     },
+
+    getProduct(state, action) {
+      const data = action.payload || {};
+
+      const products = [
+        ...(data.featuredProducts || []),
+        ...(data.latestProducts || []),
+      ];
+
+      state.products = Array.from(
+        new Map(products.map((item) => [item.id, item])).values(),
+      );
+    },
   },
 
   extraReducers: (builder) => {
@@ -119,7 +133,7 @@ const productSlice = createSlice({
       })
       .addCase(fetchProductsByCategory.fulfilled, (state, action) => {
         state.loading = false;
-        state.products = action.payload;
+        state.productFilter = action.payload;
       })
       .addCase(fetchProductsByCategory.rejected, (state, action) => {
         state.loading = false;
@@ -161,7 +175,7 @@ const productSlice = createSlice({
   },
 });
 
-export const { setFilters, resetFilters, clearProductDetail, clearProducts } =
+export const { setFilters, resetFilters, clearProductDetail, clearProducts, getProduct } =
   productSlice.actions;
 
 export default productSlice.reducer;

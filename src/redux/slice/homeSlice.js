@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { dicoveryService } from "../../service/dicoveryService";
+import { getProduct } from "./productSlice";
 
 const getHomepageData = (response) =>
   response.data?.data ?? response.data?.Data;
@@ -33,7 +34,7 @@ export const fetchHomepage = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const response = await dicoveryService.getHomePg();
-      console.log(response);
+      thunkAPI.dispatch(getProduct(response.data.data));
       return getHomepageData(response);
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message || "Something went wrong");

@@ -3,59 +3,62 @@ import { useDispatch, useSelector } from "react-redux";
 import { useSearchParams } from "react-router-dom";
 import Filter from "./Filter";
 import Card from "../../components/common/Card/index";
-import { mockProducts } from "../../utils/temporary";
 import { fetchProductsByCategory } from "../../redux/slice/productSlice";
 import { Search } from "lucide-react";
 import "./style.scss";
 
 export default function ProductsPage() {
   const dispatch = useDispatch();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const categoryId = searchParams.get("category");
-  const products = useSelector((state) => {
-    const items = state.products.products?.items ?? state.products.products;
-
-    return Array.isArray(items) ? items : [];
-  });
+  const { products, productFilter } = useSelector((state) => ({
+    products: Array.isArray(state.products.products?.items)
+      ? state.products.products.items
+      : (state.products.products ?? []),
+    productFilter: Array.isArray(state.products.productFilter?.items)
+      ? state.products.productFilter.items
+      : (state.products.productFilter ?? []),
+  }));
   const [keyword, setKeyword] = useState("");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState("");
+
+  const categoryFilter = searchParams.get("category");
   const effectiveCategoryFilter = categoryId || categoryFilter;
 
-  // useEffect(() => {
-  //   if (categoryId) {
-  //     dispatch(fetchProductsByCategory(categoryId));
-  //   }
-  // }, [categoryId, dispatch]);
+  useEffect(() => {
+    if (categoryFilter) {
+      dispatch(fetchProductsByCategory(categoryFilter));
+    }
+  }, [categoryFilter, dispatch]);
 
-  const sourceProducts = effectiveCategoryFilter ? products : mockProducts;
+  const activeCategory = categoryFilter || categoryId;
+  const sourceProducts = activeCategory ? productFilter : products;
+
   const handleCategoryChange = (id) => {
-    setCategoryFilter(id);
-    dispatch(fetchProductsByCategory(id));
+    if (id) {
+      setSearchParams({ category: id });
+    } else {
+      setSearchParams({});
+    }
   };
+
   const filteredProducts = useMemo(() => {
-    return (sourceProducts ?? []).filter((product) => {
-      const productName = product.name || product.title || "";
+    return sourceProducts.filter((product) => {
+      const productName = product.name || "";
       const productPrice = Number(product.price || 0);
-      const productCategory = String(
-        product.categoryId || product.categoryName || product.category || "",
-      ).toLowerCase();
 
       const matchesKeyword = productName
         .toLowerCase()
         .includes(keyword.trim().toLowerCase());
+
       const matchesMin = minPrice === "" || productPrice >= Number(minPrice);
+
       const matchesMax = maxPrice === "" || productPrice <= Number(maxPrice);
-      const matchesCategory =
-        !effectiveCategoryFilter ||
-        productCategory === String(effectiveCategoryFilter).toLowerCase() ||
-        String(product.id) === String(effectiveCategoryFilter);
 
-      return matchesKeyword && matchesMin && matchesMax && matchesCategory;
+      return matchesKeyword && matchesMin && matchesMax;
     });
-  }, [effectiveCategoryFilter, keyword, maxPrice, minPrice, sourceProducts]);
-
+  }, [sourceProducts, keyword, minPrice, maxPrice]);
   return (
     <div className="products-page">
       <div className="container">

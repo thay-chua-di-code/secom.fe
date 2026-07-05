@@ -110,6 +110,46 @@ export default function Card({ product }) {
     }
   };
 
+  const handleBuyNow = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!isAuthenticated) {
+      navigate("/login");
+      return;
+    }
+
+    try {
+      const existingItem = (cartItems ?? []).find(
+        (item) => String(item.productId) === String(product.id),
+      );
+
+      if (existingItem) {
+        await dispatch(
+          updateCartItemQuantity({
+            cartItemId: existingItem.cartItemId,
+            quantity: existingItem.quantity + 1,
+          }),
+        ).unwrap();
+      } else {
+        await dispatch(
+          addCartItem({
+            productId: product.id,
+            quantity: 1,
+          }),
+        ).unwrap();
+      }
+
+      navigate("/cart", {
+        state: {
+          autoSelectProductId: product.id,
+        },
+      });
+    } catch (err) {
+      toast.error("Cannot buy product");
+    }
+  };
+
   return (
     <div className="product-card" data-testid="product-card">
       <div className="product-card__image-wrapper">
@@ -121,7 +161,9 @@ export default function Card({ product }) {
             onClick={handleToggleWishlist}
             disabled={wishlistLoading}
             className={isWishlisted ? "active" : ""}
-            aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+            aria-label={
+              isWishlisted ? "Remove from wishlist" : "Add to wishlist"
+            }
           >
             <Heart size={18} fill={isWishlisted ? "currentColor" : "none"} />
           </button>
@@ -143,9 +185,19 @@ export default function Card({ product }) {
           }}
         />
 
-        <button data-testid="add-to-cart-btn" className="product-card__cart" onClick={handleAddToCart}>
-          Add to cart
-        </button>
+        <div className="product-card__buttons">
+          <button
+            data-testid="add-to-cart-btn"
+            className="product-card__cart"
+            onClick={handleAddToCart}
+          >
+            Add To Cart
+          </button>
+
+          <button className="product-card__buy" onClick={handleBuyNow}>
+            Buy Now
+          </button>
+        </div>
       </div>
 
       <div className="product-card__content">
