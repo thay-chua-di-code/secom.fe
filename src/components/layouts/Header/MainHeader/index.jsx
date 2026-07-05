@@ -22,6 +22,8 @@ export default function MainHeader() {
   const userInfo = useSelector((state) => state.user?.userInfo);
   const { items = [] } = useSelector((state) => state.cart);
   const { categories } = useSelector((state) => state.categories);
+  const closeTimer = useRef(null);
+  const cartTimer = useRef(null);
   const cartCount = items.reduce(
     (total, item) => total + (item.quantity || 0),
     0,
@@ -44,18 +46,21 @@ export default function MainHeader() {
   };
 
   const searchRef = useRef(null);
+
   const handleUserEnter = () => {
+    clearTimeout(closeTimer.current);
     setOpenUser(true);
-    setOpenCart(false);
   };
 
   const handleUserLeave = () => {
-    setOpenUser(false);
+    closeTimer.current = setTimeout(() => {
+      setOpenUser(false);
+    }, 20);
   };
 
   const handleCartEnter = () => {
+    clearTimeout(cartTimer.current);
     setOpenCart(true);
-    setOpenUser(false);
 
     if (isAuthenticated) {
       dispatch(fetchCart());
@@ -63,8 +68,12 @@ export default function MainHeader() {
   };
 
   const handleCartLeave = () => {
-    setOpenCart(false);
+    cartTimer.current = setTimeout(() => {
+      setOpenCart(false);
+    }, 20);
   };
+
+
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (searchRef.current && !searchRef.current.contains(e.target)) {

@@ -10,7 +10,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { formatCurrencyVN } from "../../utils/fncUtils";
 import SellerShow from "./SellerShow";
 import RelatedProducts from "./RelatedProduct";
-import { addCartItem } from "../../redux/slice/cartSlice";
+import {
+  addCartItem,
+  updateCartItemQuantity,
+} from "../../redux/slice/cartSlice";
 import {
   addWishlistThunk,
   deleteWishlistThunk,
@@ -34,7 +37,11 @@ export default function ProductDetail() {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const wishlist = useSelector((state) => {
     const items = state.user.wishlist?.items ?? state.user.wishlist;
+    return Array.isArray(items) ? items : [];
+  });
 
+  const cartItems = useSelector((state) => {
+    const items = state.cart.items;
     return Array.isArray(items) ? items : [];
   });
   const { productDetail, loading } = useSelector((state) => state.products);
@@ -57,47 +64,6 @@ export default function ProductDetail() {
       ),
     [productId, wishlist],
   );
-
-  // useEffect(() => {
-  // let ignore = false;
-
-  // async function fetchProductDetail() {
-  //   if (!id) {
-  //     setProductDetail(null);
-  //     setError("Product not found.");
-  //     setLoading(false);
-  //     return;
-  //   }
-
-  //   try {
-  //     setLoading(true);
-  //     setError("");
-
-  //     const response = await productApi.getProductDetail(id);
-  //     await dispatch(fetchProductDetailThunk(id));
-  //     const product = unwrapProductDetail(response);
-
-  //     if (!ignore) {
-  //       setProductDetail(product || null);
-  //     }
-  //   } catch (fetchError) {
-  //     if (!ignore) {
-  //       setProductDetail(null);
-  //       setError(getApiErrorMessage(fetchError));
-  //     }
-  //   } finally {
-  //     if (!ignore) {
-  //       setLoading(false);
-  //     }
-  //   }
-  // }
-
-  // fetchProductDetail();
-
-  // return () => {
-  //   ignore = true;
-  // };
-  // }, [id]);
 
   useEffect(() => {
     if (id) {
@@ -131,6 +97,48 @@ export default function ProductDetail() {
     }
 
     dispatch(addCartItem({ productId, quantity }));
+  };
+
+  const handleBuyNow = async () => {
+    if (!productId) {
+      toast.error("Product not found");
+      return;
+    }
+
+    if (!isAuthenticated) {
+      navigate("/login");
+      return;
+    }
+
+    try {
+      const existingItem = (cartItems ?? []).find(
+        (item) => String(item.productId) === String(productId),
+      );
+
+      if (existingItem) {
+        await dispatch(
+          updateCartItemQuantity({
+            cartItemId: existingItem.cartItemId,
+            quantity: existingItem.quantity + quantity,
+          }),
+        ).unwrap();
+      } else {
+        await dispatch(
+          addCartItem({
+            productId,
+            quantity,
+          }),
+        ).unwrap();
+      }
+
+      navigate("/cart", {
+        state: {
+          autoSelectProductId: productId,
+        },
+      });
+    } catch (err) {
+      toast.error("Cannot buy product");
+    }
   };
 
   const handleToggleWishlist = async () => {
@@ -264,7 +272,11 @@ export default function ProductDetail() {
               <Button onClick={() => setQuantity((prev) => prev + 1)}>+</Button>
             </div>
 
-            <button data-testid="buy-now-btn" className="buy-btn">
+            <button
+              data-testid="buy-now-btn"
+              className="buy-btn"
+              onClick={handleBuyNow}
+            >
               Buy Now
             </button>
 

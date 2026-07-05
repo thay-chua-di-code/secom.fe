@@ -1,6 +1,6 @@
 .cart-dropdown {
   position: absolute;
-  top: 52px;
+  top: calc(100% + 8px);
   right: 0;
   width: 420px;
   overflow: hidden;
@@ -167,4 +167,13 @@
     opacity: 1;
     transform: translateY(0) scale(1);
   }
+}
+
+.cart-dropdown::after {
+  content: "";
+  position: absolute;
+  top: -16px;
+  left: 0;
+  right: 0;
+  height: 16px;
 }
