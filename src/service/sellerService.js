@@ -150,4 +150,15 @@ export const sellerService = {
     const response = await axiosClient.get("/seller/wallet");
     return response.data;
   },
+
+  // [VOUCHERS]
+  createVoucher: async (data) => {
+    try {
+      const res = await axiosClient.post("/seller/vouchers", data);
+      console.log(res)
+      return res.data;
+    } catch (e) {
+      throw new Error(e.message);
+    }
+  },
 };

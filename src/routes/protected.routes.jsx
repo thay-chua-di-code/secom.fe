@@ -15,6 +15,7 @@ import Orders from "../pages/Seller/Orders/Orders";
 import Customers from "../pages/Seller/Customers/Customers";
 import Revenue from "../pages/Seller/Revenue/Revenue";
 import Settings from "../pages/Seller/Settings/Settings";
+import Vouchers from "../pages/Seller/Voucher/Voucher";
 
 export const protectedRoutes = [
   {
@@ -43,9 +44,9 @@ export const protectedRoutes = [
                 path: "products",
                 element: <Products />,
               },
-               {
+              {
                 path: "vouchers",
-                element: <Products />,
+                element: <Vouchers />,
               },
               {
                 path: "orders",
