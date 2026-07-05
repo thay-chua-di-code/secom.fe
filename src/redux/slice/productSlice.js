@@ -7,7 +7,6 @@ const initialState = {
   productSearch: [],
   productFilter: [],
   productDetail: null,
-
   pagination: {
     page: 1,
     limit: 12,

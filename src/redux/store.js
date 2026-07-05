@@ -10,6 +10,7 @@ import orderReducer from "./slice/orderSlice";
 import voucherReducer from "./slice/voucherSlice";
 import categoriesReducer from "./slice/categoriesSlice";
 import productReducer from "./slice/productSlice";
+import chatReducer from "./slice/chatSlice";
 // [SELLER] import
 import { sellerBankingReducer, sellerProductReducer } from "./slice/seller";
 // [ADMIN] Import
@@ -56,6 +57,7 @@ const rootReducer = combineReducers({
   notification: notificationReducer,
   voucher: voucherReducer,
   products: productReducer,
+  chat: chatReducer,
   // [SELLER]
   sellerProduct: sellerProductReducer,
   sellerBanking: sellerBankingReducer,

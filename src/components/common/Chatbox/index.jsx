@@ -1,7 +1,12 @@
 import { MessageCircle } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ChatSidebar from "./ChatSidebar";
 import ChatContent from "./ChatContent";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  getChatsThunk,
+  getChatDetailThunk,
+} from "../../../redux/slice/chatSlice";
 
 import "./style.scss";
 
@@ -49,11 +54,29 @@ const messages = [
 
 const ChatBox = () => {
   const [open, setOpen] = useState(false);
-
   const [selectedConversation, setSelectedConversation] = useState(
     conversations[0],
   );
+  const dispatch = useDispatch();
+  const { chats, currentChat, loading } = useSelector((state) => state.chat);
 
+  const handleSelectConversation = (conversation) => {
+    dispatch(getChatDetailThunk(conversation.id));
+  };
+  useEffect(() => {
+    dispatch(
+      getChatsThunk({
+        pageNumber: 1,
+        pageSize: 20,
+      }),
+    );
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (chats.length > 0 && !currentChat) {
+      dispatch(getChatDetailThunk(chats[0].id));
+    }
+  }, [dispatch, chats, currentChat]);
   return (
     <>
       {/* FLOAT BUTTON */}

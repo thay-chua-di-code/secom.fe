@@ -136,8 +136,9 @@ export const removeCartItem = createAsyncThunk(
   "cart/removeCartItem",
   async (cartItemId, thunkAPI) => {
     try {
-      await cartService.deleteCartItem(cartItemId);
-      return await cartService.getCart();
+      const res = await cartService.deleteCartItem(cartItemId);
+      console.log("res cart: ", res);
+      return res;
     } catch (error) {
       return thunkAPI.rejectWithValue(
         getErrorMessage(error, "Failed to remove item"),

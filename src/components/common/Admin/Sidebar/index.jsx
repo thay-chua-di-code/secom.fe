@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import {
   LayoutDashboard,
   Users,
@@ -80,10 +80,10 @@ const Sidebar = () => {
           <X size={22} />
         </button>
 
-        <div className="sidebar__logo">
+        <Link to={"/"} className="sidebar__logo">
           <h2>SECOM</h2>
           <span>Admin Panel</span>
-        </div>
+        </Link>
 
         <nav className="sidebar__menu">
           {menus.map((item) => (

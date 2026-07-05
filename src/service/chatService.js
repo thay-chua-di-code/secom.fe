@@ -1,16 +1,21 @@
-import axiosClient from "../../api/axiosClient";
+import axiosClient from "../api/axiosClient";
 
 export const chatService = {
-  getChats: (params) =>
-    axiosClient.get("/api/chats", {
+  getChats(params) {
+    return axiosClient.get("/chats", {
       params,
-    }),
+    });
+  },
 
-  getChatById: (chatId) => axiosClient.get(`/api/chats/${chatId}`),
+  getChatById(chatId) {
+    return axiosClient.get(`/chats/${chatId}`);
+  },
 
-  sendMessage: (chatId, data) =>
-    axiosClient.post(`/api/chats/${chatId}/messages`, data),
+  sendMessage(chatId, data) {
+    return axiosClient.post(`/chats/${chatId}/messages`, data);
+  },
 
-  markAsRead: (chatId) =>
-    axiosClient.patch(`/api/chats/${chatId}/messages/read`),
+  markAsRead(chatId) {
+    return axiosClient.patch(`/chats/${chatId}/messages/read`);
+  },
 };
