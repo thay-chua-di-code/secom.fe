@@ -43,6 +43,10 @@ export const protectedRoutes = [
                 path: "products",
                 element: <Products />,
               },
+               {
+                path: "vouchers",
+                element: <Products />,
+              },
               {
                 path: "orders",
                 element: <Orders />,
