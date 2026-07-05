@@ -43,42 +43,28 @@ export default function MainHeader() {
     );
   };
 
-  const handleCartToggle = () => {
-    setOpenCart((prev) => {
-      const nextOpen = !prev;
-
-      if (nextOpen) {
-        setOpenUser(false);
-
-        if (isAuthenticated) {
-          dispatch(fetchCart());
-        }
-      } else {
-        setOpenUser(false);
-      }
-
-      return nextOpen;
-    });
-  };
-
-  const handleUserToggle = () => {
-    setOpenUser((prev) => {
-      const nextOpen = !prev;
-
-      if (nextOpen) {
-        setOpenCart(false);
-
-        if (isAuthenticated) {
-          dispatch(fetchCart());
-        }
-      }
-
-      return nextOpen;
-    });
-  };
-
   const searchRef = useRef(null);
+  const handleUserEnter = () => {
+    setOpenUser(true);
+    setOpenCart(false);
+  };
 
+  const handleUserLeave = () => {
+    setOpenUser(false);
+  };
+
+  const handleCartEnter = () => {
+    setOpenCart(true);
+    setOpenUser(false);
+
+    if (isAuthenticated) {
+      dispatch(fetchCart());
+    }
+  };
+
+  const handleCartLeave = () => {
+    setOpenCart(false);
+  };
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (searchRef.current && !searchRef.current.contains(e.target)) {
@@ -148,7 +134,11 @@ export default function MainHeader() {
         <div className="social-wrapper flex shrink-0 items-center gap-2 md:gap-4">
           {isAuthenticated && (
             <>
-              <div className="relative" onClick={handleUserToggle}>
+              <div
+                className="relative"
+                onMouseEnter={handleUserEnter}
+                onMouseLeave={handleUserLeave}
+              >
                 <Button
                   variant="ghost"
                   className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-full border border-gray-200 p-0 shadow-sm transition-all hover:border-sky-500 hover:shadow-md"
@@ -167,7 +157,11 @@ export default function MainHeader() {
                 <UserDropdown user={user} open={openUser} />
               </div>
 
-              <div className="relative" onClick={handleCartToggle}>
+              <div
+                className="relative"
+                onMouseEnter={handleCartEnter}
+                onMouseLeave={handleCartLeave}
+              >
                 <Button variant="ghost" className="relative text-black">
                   <span data-testid="cart-link" className="sr-only">
                     Cart
