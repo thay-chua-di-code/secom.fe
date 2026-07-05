@@ -2,14 +2,11 @@ import axiosClient from "../api/axiosClient";
 import { API_ENDPOINTS } from "../api/endPoint";
 
 // Temporary
-const BASE = "http://localhost:3001/notifications";
+// const BASE = "http://localhost:3001/notifications";
 export const notificationService = {
-  getNotifications: async (payload) => {
-    // const result = await axiosClient.get(
-    //   API_ENDPOINTS.NOTIFICATION.GET,
-    //   payload,
-    // );
-    const result = await axiosClient.get(BASE);
+  getNotifications: async () => {
+    const result = await axiosClient.get(API_ENDPOINTS.NOTIFICATION.GET);
+    console.log(result);
     return result.data;
   },
 

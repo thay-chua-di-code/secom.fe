@@ -1,6 +1,12 @@
 import axiosClient from "../api/axiosClient";
 import { API_ENDPOINTS } from "../api/endPoint";
-import { updateUserInfo, getOrderHistory } from "../redux/slice/userSlice";
+import {
+  updateUserInfo,
+  getOrderHistory,
+  getFolloweShop,
+  setLoading,
+  setError,
+} from "../redux/slice/userSlice";
 import wishlistApi from "../api/wishlistApi";
 export const userService = {
   getMyInfo: async () => {
@@ -34,6 +40,8 @@ export const userService = {
       console.error("Error fetching order purchase:", e?.response?.data);
     }
   },
+
+  // [WISH LIST]
   getWishList: async (params) => {
     try {
       const result = await axiosClient.get(API_ENDPOINTS.USER.WISH_LIST.GET, {
@@ -57,4 +65,28 @@ export const userService = {
 
     return result.data.data;
   },
+
+  // [FOLLOWED SHOP]
+  getFollowedShop:
+    ({ pageNumber = 1, pageSize = 10 } = {}) =>
+    async (dispatch) => {
+      try {
+        dispatch(setLoading(true));
+
+        const res = await axiosClient.get("/followed", {
+          params: {
+            pageNumber,
+            pageSize,
+          },
+        });
+
+        if (res.data.success) {
+          dispatch(getFolloweShop(res.data.data));
+        }
+      } catch (e) {
+        dispatch(setError("Get followed shop failed."));
+      } finally {
+        dispatch(setLoading(false));
+      }
+    },
 };

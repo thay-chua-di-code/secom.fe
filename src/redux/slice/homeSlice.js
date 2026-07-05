@@ -1,7 +1,8 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { dicoveryService } from "../../service/dicoveryService";
 
-const getHomepageData = (response) => response.data?.data ?? response.data?.Data;
+const getHomepageData = (response) =>
+  response.data?.data ?? response.data?.Data;
 
 const mapProduct = (product) => ({
   ...product,
@@ -32,11 +33,10 @@ export const fetchHomepage = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const response = await dicoveryService.getHomePg();
+      console.log(response);
       return getHomepageData(response);
     } catch (error) {
-      return thunkAPI.rejectWithValue(
-        error.message || "Something went wrong",
-      );
+      return thunkAPI.rejectWithValue(error.message || "Something went wrong");
     }
   },
 );

@@ -6,6 +6,7 @@ export const dicoveryService = {
     try {
       const result = await axiosClient.get(API_ENDPOINTS.DISCOVERY.HOMEPAGE);
 
+
       return result;
     } catch (e) {
       throw new Error(e?.response?.data?.message || "Get homepage failed", {
@@ -28,7 +29,7 @@ export const dicoveryService = {
 
   getProductByKeyWord: async (params) => {
     const res = axiosClient.get("/products/search", { params });
-    console.log(res)
+    console.log(res);
     return res;
   },
 };

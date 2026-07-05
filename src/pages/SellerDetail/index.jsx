@@ -17,9 +17,7 @@ import { formatCurrencyVN } from "../../utils/fncUtils";
 export default function SellerDetail() {
   const { id } = useParams();
   const productDetail = useSelector((state) => state.products.productDetail);
-  console.log(productDetail);
   const seller = productDetail?.data?.seller;
-  console.log(seller);
 
   if (!seller) {
     return (

@@ -1,0 +1,77 @@
+.followed-shop {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+
+  h2 {
+    margin-bottom: 24px;
+    font-size: 28px;
+    font-weight: 600;
+  }
+
+  .shop-list {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 20px;
+  }
+
+  .shop-card {
+    width: 100%;
+    min-height: 110px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+
+    padding: 18px 20px;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    background: #fff;
+    transition: all 0.25s ease;
+
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    }
+
+    img {
+      width: 72px;
+      height: 72px;
+      flex-shrink: 0;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1px solid #eee;
+    }
+
+    .shop-info {
+      flex: 1;
+      min-width: 0;
+
+      h3 {
+        margin: 0 0 8px;
+        font-size: 18px;
+        font-weight: 600;
+        color: #222;
+
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      p {
+        margin: 4px 0;
+        color: #666;
+        font-size: 14px;
+      }
+    }
+  }
+
+  .pagination {
+    margin-top: 24px;
+    display: flex;
+    justify-content: center;
+    font-size: 15px;
+    font-weight: 500;
+  }
+}

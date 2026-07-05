@@ -37,10 +37,11 @@ export default function ProductDetail() {
 
     return Array.isArray(items) ? items : [];
   });
-  const [productDetail, setProductDetail] = useState(null);
+  const { productDetail, loading } = useSelector((state) => state.products);
+  // const [productDetail, setProductDetail] = useState(null);
   const [selectedImage, setSelectedImage] = useState("");
   const [quantity, setQuantity] = useState(2);
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [wishlistLoading, setWishlistLoading] = useState(false);
   const productId = productDetail?.id;
@@ -57,46 +58,52 @@ export default function ProductDetail() {
     [productId, wishlist],
   );
 
+  // useEffect(() => {
+  // let ignore = false;
+
+  // async function fetchProductDetail() {
+  //   if (!id) {
+  //     setProductDetail(null);
+  //     setError("Product not found.");
+  //     setLoading(false);
+  //     return;
+  //   }
+
+  //   try {
+  //     setLoading(true);
+  //     setError("");
+
+  //     const response = await productApi.getProductDetail(id);
+  //     await dispatch(fetchProductDetailThunk(id));
+  //     const product = unwrapProductDetail(response);
+
+  //     if (!ignore) {
+  //       setProductDetail(product || null);
+  //     }
+  //   } catch (fetchError) {
+  //     if (!ignore) {
+  //       setProductDetail(null);
+  //       setError(getApiErrorMessage(fetchError));
+  //     }
+  //   } finally {
+  //     if (!ignore) {
+  //       setLoading(false);
+  //     }
+  //   }
+  // }
+
+  // fetchProductDetail();
+
+  // return () => {
+  //   ignore = true;
+  // };
+  // }, [id]);
+
   useEffect(() => {
-    let ignore = false;
-
-    async function fetchProductDetail() {
-      if (!id) {
-        setProductDetail(null);
-        setError("Product not found.");
-        setLoading(false);
-        return;
-      }
-
-      try {
-        setLoading(true);
-        setError("");
-
-        const response = await productApi.getProductDetail(id);
-        await dispatch(fetchProductDetailThunk(id));
-        const product = unwrapProductDetail(response);
-
-        if (!ignore) {
-          setProductDetail(product || null);
-        }
-      } catch (fetchError) {
-        if (!ignore) {
-          setProductDetail(null);
-          setError(getApiErrorMessage(fetchError));
-        }
-      } finally {
-        if (!ignore) {
-          setLoading(false);
-        }
-      }
+    if (id) {
+      dispatch(fetchProductDetailThunk(id));
     }
-
-    fetchProductDetail();
-
-    return () => {
-      ignore = true;
-    };
-  }, [id]);
+  }, [id, dispatch]);
 
   useEffect(() => {
     queueMicrotask(() => setSelectedImage(images[0] || ""));

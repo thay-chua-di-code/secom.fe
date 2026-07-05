@@ -8,6 +8,7 @@ import {
   Settings,
   Ticket,
   User,
+  UserRoundCheck,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -22,6 +23,7 @@ import "./style.scss";
 import AddressList from "./Address/List";
 import VoucherList from "./Voucher";
 import NotificationList from "./Notification";
+import Follow from "./Follows";
 
 const menus = [
   {
@@ -54,6 +56,11 @@ const menus = [
     title: "Voucher",
     icon: <Ticket size={18} />,
     key: "voucher",
+  },
+  {
+    title: "Follows",
+    icon: <UserRoundCheck size={18} />,
+    key: "follows",
   },
 ];
 
@@ -250,6 +257,9 @@ const ProfilePage = () => {
 
       case "voucher":
         return <VoucherList />;
+
+      case "follows":
+        return <Follow />;
 
       default:
         return null;

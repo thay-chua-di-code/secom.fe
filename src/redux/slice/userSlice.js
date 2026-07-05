@@ -3,6 +3,13 @@ import { userService } from "../../service/userService";
 
 const initialState = {
   userInfo: {},
+  shopFollowed: [],
+  pagination: {
+    pageNumber: 1,
+    pageSize: 10,
+    totalCount: 0,
+    totalPages: 0,
+  },
   addresses: [],
   wishlist: [],
   loading: false,
@@ -117,6 +124,21 @@ const userSlice = createSlice({
         (address) => address.id !== action.payload,
       );
     },
+    setLoading: (state, action) => {
+      state.loading = action.payload;
+    },
+    setError: (state, action) => {
+      state.error = action.payload;
+    },
+    getFolloweShop: (state, action) => {
+      state.shopFollowed = action.payload.items || [];
+      state.pagination = {
+        pageNumber: action.payload.pageNumber,
+        pageSize: action.payload.pageSize,
+        totalCount: action.payload.totalCount,
+        totalPages: action.payload.totalPages,
+      };
+    },
   },
 
   extraReducers: (builder) => {
@@ -128,7 +150,6 @@ const userSlice = createSlice({
 
       .addCase(getMyInfoThunk.fulfilled, (state, action) => {
         state.loading = false;
-
         state.userInfo = action.payload;
       })
 
@@ -222,6 +243,9 @@ export const {
   updateDefaultAddress,
   updateAddress,
   deleteAddress,
+  getFolloweShop,
+  setLoading,
+  setError,
 } = userSlice.actions;
 
 export default userSlice.reducer;

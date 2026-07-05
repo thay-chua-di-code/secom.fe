@@ -8,7 +8,8 @@ import { Link } from "react-router-dom";
 export default function FeatureProducts() {
   const { loading, error } = useSelector((state) => state.home);
   const featuredProducts = useSelector((state) => {
-    const items = state.home.featuredProducts?.items ?? state.home.featuredProducts;
+    const items =
+      state.home.featuredProducts?.items ?? state.home.featuredProducts;
 
     return Array.isArray(items) ? items : [];
   });
@@ -79,7 +80,7 @@ export default function FeatureProducts() {
       </div>
 
       <div className="featured-products__footer">
-        <Link to={'/products'}>View All Products</Link>
+        <Link to={"/products"}>View All Products</Link>
       </div>
     </section>
   );

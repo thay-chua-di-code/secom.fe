@@ -18,7 +18,7 @@ export const getNotifications = createAsyncThunk(
   "notification/getNotifications",
   async (payload, thunkAPI) => {
     try {
-      const response = await notificationService.getNotifications(payload);
+      const response = await notificationService.getNotifications();
       return response;
     } catch (e) {
       return thunkAPI.rejectWithValue(e?.message || "Get notifications failed");
