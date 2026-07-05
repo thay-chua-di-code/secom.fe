@@ -144,4 +144,10 @@ export const sellerService = {
       throw new Error(e?.response?.data?.message || e.message);
     }
   },
+
+  // [WALLET]
+  getWalletSeller: async () => {
+    const response = await axiosClient.get("/seller/wallet");
+    return response.data;
+  },
 };

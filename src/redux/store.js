@@ -12,7 +12,11 @@ import categoriesReducer from "./slice/categoriesSlice";
 import productReducer from "./slice/productSlice";
 import chatReducer from "./slice/chatSlice";
 // [SELLER] import
-import { sellerBankingReducer, sellerProductReducer } from "./slice/seller";
+import {
+  sellerBankingReducer,
+  sellerProductReducer,
+  sellerWalletReducer,
+} from "./slice/seller";
 // [ADMIN] Import
 import {
   dashboardReducer,
@@ -61,6 +65,7 @@ const rootReducer = combineReducers({
   // [SELLER]
   sellerProduct: sellerProductReducer,
   sellerBanking: sellerBankingReducer,
+  sellerWallet: sellerWalletReducer,
   // [ADMIN]
   dashboardAdmin: dashboardReducer,
   usersAdmin: userAdminReducer,

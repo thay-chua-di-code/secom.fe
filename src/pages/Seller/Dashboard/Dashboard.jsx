@@ -1,5 +1,17 @@
 import "./style.scss";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { getSellerWalletThunk } from "../../../redux/slice/seller/wallet/thunk";
+import { formatCurrencyVN } from "../../../utils/fncUtils";
 const Dashboard = () => {
+  const dispatch = useDispatch();
+
+  const { wallet, loading } = useSelector((state) => state.sellerWallet);
+
+  useEffect(() => {
+    dispatch(getSellerWalletThunk());
+  }, [dispatch]);
+
   const stats = [
     {
       title: "Products",
@@ -65,7 +77,40 @@ const Dashboard = () => {
   return (
     <div className="dashboard">
       <div className="page-header">
-        <h1>Seller Dashboard</h1>
+        <div>
+          <h1>Seller Dashboard</h1>
+          <p>Welcome back 👋</p>
+        </div>
+
+        <div className="wallet-summary">
+          <div className="wallet-item">
+            <span>Available</span>
+
+            <strong>
+              {loading
+                ? "..."
+                : formatCurrencyVN(wallet?.availableBalance ?? 0)}
+            </strong>
+          </div>
+
+          <div className="wallet-item">
+            <span>Pending</span>
+
+            <strong>
+              {loading ? "..." : formatCurrencyVN(wallet?.pendingBalance ?? 0)}
+            </strong>
+          </div>
+
+          <div className="wallet-item">
+            <span>Withdrawn</span>
+
+            <strong>
+              {loading
+                ? "..."
+                : formatCurrencyVN(wallet?.withdrawnBalance ?? 0)}
+            </strong>
+          </div>
+        </div>
       </div>
 
       {/* Stats */}
