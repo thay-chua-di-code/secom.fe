@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import CartList from "./List/index";
 import CartSummary from "./CartSummary/index";
 import VoucherList from "./VoucherList/index";
-import { fetchCart } from "../../redux/slice/cartSlice";
+import { fetchCart, calculateCheckoutSummary } from "../../redux/slice/cartSlice";
 import { fetchVouchers } from "../../redux/slice/voucherSlice";
 import { useCart } from "../../hooks/useCart";
 import { paymentApi } from "../../api/paymentApi";
@@ -53,19 +53,13 @@ export default function CartPage() {
   const [selectedVoucher, setSelectedVoucher] = useState(null);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [checkoutError, setCheckoutError] = useState("");
-  const [cardInfo, setCardInfo] = useState({
-    cardName: "JOHN DOE",
-    cardNumber: "4242424242424242",
-    expirationMonth: "12",
-    expirationYear: "2030",
-    securityCode: "123",
-  });
-
   const { isAuthenticated } = useSelector((state) => state.auth);
 
-  const { vouchers, loading: voucherLoading } = useSelector(
-    (state) => state.voucher,
-  );
+  const {
+    vouchers,
+    loading: voucherLoading,
+    error: voucherError,
+  } = useSelector((state) => state.voucher);
 
   const {
     items,
@@ -73,6 +67,10 @@ export default function CartPage() {
     actionLoading,
     error,
     voucherCode,
+    subtotal,
+    discountAmount,
+    finalTotal,
+    checkoutSummary,
     updateQuantity,
     applyVoucher,
   } = useCart();
@@ -86,7 +84,8 @@ export default function CartPage() {
       fetchedRef.current = true;
 
       dispatch(fetchCart());
-      dispatch(fetchVouchers());
+      dispatch(calculateCheckoutSummary());
+      dispatch(fetchVouchers({ page: 1, pageSize: 20, status: "active" }));
     }
   }, [dispatch, isAuthenticated]);
 
@@ -105,9 +104,14 @@ export default function CartPage() {
     0,
   );
 
-  const selectedDiscountAmount = 0;
-
-  const selectedFinalTotal = selectedSubtotal - selectedDiscountAmount;
+  const backendSubtotal = checkoutSummary?.subtotal ?? subtotal;
+  const backendDiscountAmount = checkoutSummary?.discountAmount ?? discountAmount;
+  const backendFinalTotal = checkoutSummary?.finalTotal ?? finalTotal;
+  const summarySubtotal = voucherCode || checkoutSummary ? backendSubtotal : selectedSubtotal;
+  const summaryDiscountAmount = voucherCode || checkoutSummary ? backendDiscountAmount : 0;
+  const summaryFinalTotal = voucherCode || checkoutSummary
+    ? backendFinalTotal
+    : selectedSubtotal;
 
   const allSelected = items.length > 0 && selectedItems.length === items.length;
 
@@ -132,14 +136,14 @@ export default function CartPage() {
     );
 
     if (cartItem) {
-      setSelectedItemIds([cartItem.cartItemId]);
+      queueMicrotask(() => setSelectedItemIds([cartItem.cartItemId]));
     }
 
     navigate(location.pathname, {
       replace: true,
       state: {},
     });
-  }, [items, location.state, navigate]);
+  }, [items, location.pathname, location.state, navigate]);
 
   const handleSelectItem = (cartItemId, checked) => {
     setSelectedItemIds((prev) => {
@@ -155,18 +159,24 @@ export default function CartPage() {
     setSelectedItemIds(checked ? items.map((i) => i.cartItemId) : []);
   };
 
-  const handleApplyVoucher = () => {
-    if (!selectedItemIds.length) {
-      toast.error("Please select at least one item before applying a voucher.");
-      return;
-    }
-
+  const handleApplyVoucher = async () => {
     if (!selectedVoucher) {
       toast.error("Please select a voucher.");
       return;
     }
 
-    applyVoucher(selectedVoucher);
+    try {
+      await applyVoucher(selectedVoucher).unwrap();
+      toast.success("Voucher applied successfully.");
+    } catch (applyError) {
+      toast.error(
+        applyError?.response?.data?.message ||
+          applyError?.response?.data?.error ||
+          applyError?.message ||
+          applyError ||
+          "Cannot apply voucher. Please try again.",
+      );
+    }
   };
 
   const getCreatedOrder = (response) => {
@@ -200,78 +210,6 @@ export default function CartPage() {
       error?.message ||
       "Không thể tạo giao dịch thanh toán. Vui lòng thử lại."
     );
-  };
-
-  const handleCardInfoChange = (field, value) => {
-    setCardInfo((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
-
-  const loadOmiseScript = () => {
-    return new Promise((resolve, reject) => {
-      if (window.Omise) {
-        resolve(window.Omise);
-        return;
-      }
-
-      const existingScript = document.querySelector(
-        'script[src="https://cdn.omise.co/omise.js"]',
-      );
-
-      if (existingScript) {
-        existingScript.addEventListener("load", () => resolve(window.Omise));
-        existingScript.addEventListener("error", () => {
-          reject(new Error("Cannot load Omise.js"));
-        });
-        return;
-      }
-
-      const script = document.createElement("script");
-      script.src = "https://cdn.omise.co/omise.js";
-      script.async = true;
-      script.onload = () => resolve(window.Omise);
-      script.onerror = () => reject(new Error("Cannot load Omise.js"));
-      document.body.appendChild(script);
-    });
-  };
-
-  const createOmiseToken = async () => {
-    const publicKey = import.meta.env.VITE_OMISE_PUBLIC_KEY;
-
-    if (!publicKey) {
-      throw new Error("Missing VITE_OMISE_PUBLIC_KEY");
-    }
-
-    const Omise = await loadOmiseScript();
-
-    Omise.setPublicKey(publicKey);
-
-    const cardPayload = {
-      name: cardInfo.cardName.trim(),
-      number: cardInfo.cardNumber.trim(),
-      expiration_month: cardInfo.expirationMonth.trim(),
-      expiration_year: cardInfo.expirationYear.trim(),
-      security_code: cardInfo.securityCode.trim(),
-    };
-
-    return new Promise((resolve, reject) => {
-      Omise.createToken("card", cardPayload, (statusCode, response) => {
-        if (statusCode === 200 && response?.id) {
-          resolve(response);
-          return;
-        }
-
-        reject(
-          new Error(
-            response?.message ||
-              response?.object ||
-              "Không thể tạo token thanh toán.",
-          ),
-        );
-      });
-    });
   };
 
   const handleCheckout = async () => {
@@ -314,19 +252,31 @@ export default function CartPage() {
         throw new Error("Missing finalTotal from create order response");
       }
 
-      const token = await createOmiseToken();
-
-      console.log("Omise token:", token);
-
       const paymentRequest = {
         orderId,
         amount,
         currency: "vnd",
         returnUri: `${window.location.origin}/payment-return`,
-        tokenId: token.id,
+        cancelUri: `${window.location.origin}/payment-cancel`,
       };
 
-      console.log("Payment request:", paymentRequest);
+      if (!paymentRequest.orderId) {
+        throw new Error("Missing orderId");
+      }
+
+      if (!paymentRequest.amount || paymentRequest.amount <= 0) {
+        throw new Error("Missing amount");
+      }
+
+      if (!paymentRequest.returnUri) {
+        throw new Error("Missing returnUri");
+      }
+
+      if (!paymentRequest.cancelUri) {
+        throw new Error("Missing cancelUri");
+      }
+
+      console.log("PayOS payment request:", paymentRequest);
 
       const paymentResponse =
         await paymentApi.createPaymentTransaction(paymentRequest);
@@ -336,11 +286,13 @@ export default function CartPage() {
       const paymentUrl =
         paymentResponse?.data?.data?.paymentUrl ||
         paymentResponse?.data?.paymentUrl ||
-        paymentResponse?.paymentUrl;
+        paymentResponse?.paymentUrl ||
+        paymentResponse?.data?.data?.checkoutUrl ||
+        paymentResponse?.data?.checkoutUrl ||
+        paymentResponse?.checkoutUrl;
 
       if (!paymentUrl) {
-        toast.success("Thanh toán thành công.");
-        return;
+        throw new Error("Missing paymentUrl from PayOS response");
       }
 
       localStorage.setItem("lastOrderId", orderId);
@@ -390,6 +342,7 @@ export default function CartPage() {
         {checkoutError && (
           <div className="cart-page__error">{checkoutError}</div>
         )}
+        {voucherError && <div className="cart-page__error">{voucherError}</div>}
 
         <div className="cart-page__content">
           <div>
@@ -414,16 +367,19 @@ export default function CartPage() {
             />
 
             <div className="voucher-action">
-              <button onClick={handleApplyVoucher} disabled={!selectedVoucher}>
-                Apply Voucher
+              <button
+                onClick={handleApplyVoucher}
+                disabled={!selectedVoucher || actionLoading}
+              >
+                {actionLoading ? "Applying..." : "Apply Voucher"}
               </button>
             </div>
           </div>
 
           <CartSummary
-            subtotal={selectedSubtotal}
-            discountAmount={selectedDiscountAmount}
-            finalTotal={selectedFinalTotal}
+            subtotal={summarySubtotal}
+            discountAmount={summaryDiscountAmount}
+            finalTotal={summaryFinalTotal}
             itemCount={selectedItemCount}
             disabled={
               actionLoading || checkoutLoading || !selectedItemIds.length
@@ -431,8 +387,6 @@ export default function CartPage() {
             checkoutLoading={checkoutLoading}
             onCheckout={handleCheckout}
             selectedCount={selectedItems.length}
-            cardInfo={cardInfo}
-            onCardInfoChange={handleCardInfoChange}
             allSelected={allSelected}
             partiallySelected={partiallySelected}
             onSelectAll={handleSelectAll}

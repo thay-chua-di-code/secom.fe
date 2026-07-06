@@ -7,7 +7,10 @@ import { cartService } from "../../service/cartService";
  * =========================
  */
 const getErrorMessage = (error, fallbackMessage) => {
-  const apiMessage = error.response?.data?.message;
+  const apiMessage =
+    error?.response?.data?.message ||
+    error?.response?.data?.error ||
+    error?.message;
 
   if (typeof apiMessage === "string" && apiMessage.trim()) {
     return apiMessage;
@@ -103,16 +106,10 @@ export const applyCartVoucher = createAsyncThunk(
   "cart/applyCartVoucher",
   async (code, thunkAPI) => {
     try {
-      const summaryResponse = await cartService.applyVoucher(code);
-      const cartResponse = await cartService.getCart();
-
-      return {
-        summary: unwrapResponseData(summaryResponse),
-        cart: cartResponse,
-      };
+      return await cartService.applyVoucher(code);
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        getErrorMessage(error, "Failed to apply voucher"),
+        getErrorMessage(error, "Cannot apply voucher. Please try again."),
       );
     }
   },
@@ -240,9 +237,18 @@ const cartSlice = createSlice({
         state.error = null;
       })
       .addCase(applyCartVoucher.fulfilled, (state, action) => {
+        const summary = unwrapResponseData(action.payload);
+
         state.actionLoading = false;
-        state.checkoutSummary = action.payload?.summary || null;
-        mapCartState(state, action.payload?.cart);
+        state.checkoutSummary = summary;
+        state.voucherCode = summary?.voucherCode ?? state.voucherCode;
+        state.subtotal = summary?.subtotal ?? state.subtotal;
+        state.discountAmount = summary?.discountAmount ?? 0;
+        state.finalTotal = summary?.finalTotal ?? state.finalTotal;
+
+        if (Array.isArray(summary?.items)) {
+          state.items = summary.items;
+        }
       })
       .addCase(applyCartVoucher.rejected, (state, action) => {
         state.actionLoading = false;
@@ -254,8 +260,18 @@ const cartSlice = createSlice({
         state.error = null;
       })
       .addCase(calculateCheckoutSummary.fulfilled, (state, action) => {
+        const summary = unwrapResponseData(action.payload);
+
         state.actionLoading = false;
-        state.checkoutSummary = unwrapResponseData(action.payload);
+        state.checkoutSummary = summary;
+        state.voucherCode = summary?.voucherCode ?? state.voucherCode;
+        state.subtotal = summary?.subtotal ?? state.subtotal;
+        state.discountAmount = summary?.discountAmount ?? 0;
+        state.finalTotal = summary?.finalTotal ?? state.finalTotal;
+
+        if (Array.isArray(summary?.items)) {
+          state.items = summary.items;
+        }
       })
       .addCase(calculateCheckoutSummary.rejected, (state, action) => {
         state.actionLoading = false;
@@ -264,7 +280,7 @@ const cartSlice = createSlice({
 
       .addCase(removeCartItem.pending, (state) => {
         state.actionLoading = true;
-        state.error = action.payload;
+        state.error = null;
       })
       .addCase(removeCartItem.fulfilled, (state, action) => {
         state.actionLoading = false;

@@ -25,7 +25,7 @@ export const cartService = {
   },
 
   applyVoucher: async (code) => {
-    const response = await axiosClient.post(API_ENDPOINTS.CART.APPLY_VOUCHER, {
+    const response = await axiosClient.put(API_ENDPOINTS.CART.APPLY_VOUCHER, {
       code,
     });
 

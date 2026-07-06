@@ -71,6 +71,10 @@ export const API_ENDPOINTS = {
     ORDER_TRANSACTION: (orderId) => `/payments/orders/${orderId}/transaction`,
   },
 
+  VOUCHER: {
+    PUBLIC: "/vouchers",
+  },
+
   NOTIFICATION: {
     GET: "/notifications",
     MARK_READ: (id) => `notifications/${id}/read`,

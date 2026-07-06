@@ -6,6 +6,7 @@ import ProductDetail from "../pages/ProductDetail";
 import ProductsPage from "../pages/Products";
 import SellerDetail from "../pages/SellerDetail";
 import PaymentReturn from "../pages/PaymentReturn/PaymentReturn";
+import PaymentCancel from "../pages/PaymentCancel/PaymentCancel";
 
 export const publicRoutes = [
   {
@@ -50,6 +51,10 @@ export const publicRoutes = [
       {
         path: "/payment-return",
         element: <PaymentReturn />,
+      },
+      {
+        path: "/payment-cancel",
+        element: <PaymentCancel />,
       },
       {
         path: ROUTES.SELLER.DETAIL,
