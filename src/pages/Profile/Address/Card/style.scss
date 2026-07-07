@@ -49,9 +49,9 @@
   &__not-default {
     padding: 0.35rem 0.75rem;
     border-radius: 999px;
-    border: 1px solid #2563eb;
+    border: 1px solid #db4444;
     background: #eff6ff;
-    color: #2563eb;
+    color: #fff;
     font-size: 0.75rem;
     font-weight: 600;
     white-space: nowrap;
@@ -59,7 +59,7 @@
     transition: all 0.2s ease;
 
     &:hover {
-      background: #2563eb;
+      background: #af2424;
       color: #fff;
       transform: translateY(-1px);
     }
@@ -81,7 +81,7 @@
     svg {
       flex-shrink: 0;
       margin-top: 2px;
-      color: #2563eb;
+      color: #b32424;
     }
   }
 

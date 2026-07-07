@@ -55,7 +55,7 @@
       transition: all 0.25s ease;
 
       &:focus-within {
-        border-color: #0284c7;
+        border-color: #ec2a2a;
         box-shadow:
           0 0 0 4px rgba(2, 132, 199, 0.1);
       }
@@ -105,7 +105,7 @@
     height: 52px;
     border: none;
     border-radius: 14px;
-    background: #0284c7;
+    background: #e23e3e;
     color: white;
     font-size: 15px;
     font-weight: 600;
@@ -114,7 +114,7 @@
     margin-top: 8px;
 
     &:hover {
-      background: #0369a1;
+      background: #971c1c;
     }
 
     &:disabled {

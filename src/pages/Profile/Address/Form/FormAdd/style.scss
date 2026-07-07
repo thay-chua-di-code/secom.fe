@@ -128,7 +128,7 @@
     &:focus {
       outline: none;
 
-      border-color: #0284c7;
+      border-color: #db4444;
 
       box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.15);
     }
@@ -159,7 +159,7 @@
     width: 18px;
     height: 18px;
 
-    accent-color: #0284c7;
+    accent-color: #db4444;
   }
 
   label {
@@ -194,12 +194,12 @@
   }
 
   &--save {
-    background: #0284c7 !important;
+    background: #db4444 !important;
     border: none !important;
     color: white !important;
 
     &:hover {
-      background: #0369a1 !important;
+      background: #811a1a !important;
       transform: translateY(-1px);
     }
   }

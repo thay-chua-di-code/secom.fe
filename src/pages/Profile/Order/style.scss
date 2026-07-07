@@ -46,7 +46,7 @@
       transition: 0.3s;
 
       &:hover {
-        border-color: #0ea5e9;
+        border-color: #db4444;
         color: #0ea5e9;
       }
     }
@@ -78,7 +78,7 @@
       }
 
       &.active {
-        background: #0ea5e9;
+        background: #db4444;
         color: white;
       }
     }
@@ -125,7 +125,7 @@
         }
 
         svg {
-          color: #0ea5e9;
+          color: #db4444;
         }
       }
 
@@ -227,11 +227,11 @@
         }
 
         .primary-btn {
-          background: #0ea5e9;
+          background: #db4444;
           color: white;
 
           &:hover {
-            background: #0284c7;
+            background: #771919;
           }
         }
 
@@ -240,18 +240,18 @@
           background: white;
 
           &:hover {
-            border-color: #0ea5e9;
-            color: #0ea5e9;
+            border-color: #db4444;
+            color: #fff;
           }
         }
 
         .detail-btn {
           padding: 0 28px;
 
-          border: 2px solid #1d9bf0;
+          border: 2px solid #fff;
 
-          background: #ffffff;
-          color: #1d9bf0;
+          background: #db4444;
+          color: #fff;
 
           cursor: pointer;
           transition: all 0.25s ease;

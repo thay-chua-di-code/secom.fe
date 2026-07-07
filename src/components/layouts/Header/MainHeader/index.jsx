@@ -73,7 +73,6 @@ export default function MainHeader() {
     }, 20);
   };
 
-
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (searchRef.current && !searchRef.current.contains(e.target)) {
@@ -150,7 +149,7 @@ export default function MainHeader() {
               >
                 <Button
                   variant="ghost"
-                  className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-full border border-gray-200 p-0 shadow-sm transition-all hover:border-sky-500 hover:shadow-md"
+                  className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-full border border-gray-200 p-0 shadow-sm transition-all hover:border-red-500 hover:shadow-md"
                 >
                   {userInfo?.avatarUrl ? (
                     <img
@@ -178,7 +177,7 @@ export default function MainHeader() {
                   <ShoppingCart size={26} />
 
                   {cartCount > 0 && (
-                    <span className="absolute -right-2 -top-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-sky-600 px-1 text-xs font-bold text-white">
+                    <span className="absolute -right-2 -top-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-600 px-1 text-xs font-bold text-white">
                       {cartCount}
                     </span>
                   )}

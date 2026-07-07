@@ -76,7 +76,7 @@
         }
 
         &.active {
-          background: #0ea5e9;
+          background: #db4444;
           color: white;
         }
       }
@@ -138,7 +138,7 @@
             transition: 0.3s;
 
             &:focus {
-              border-color: #0ea5e9;
+              border-color: #db4444;
               outline: none;
             }
           }
@@ -157,7 +157,7 @@
         }
 
         .save-btn {
-          background: #0ea5e9;
+          background: #db4444;
           color: white;
           padding: 12px 28px;
           border-radius: 10px;
@@ -165,7 +165,7 @@
           transition: 0.3s;
 
           &:hover {
-            background: #0284c7;
+            background: #db4444;
           }
         }
       }
@@ -202,8 +202,8 @@
           transition: 0.3s;
 
           &:hover {
-            border-color: #0ea5e9;
-            color: #0ea5e9;
+            border-color: #db4444;
+            color: #db4444;
           }
         }
 

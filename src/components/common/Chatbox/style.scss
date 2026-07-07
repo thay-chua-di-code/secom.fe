@@ -1,4 +1,4 @@
-$primary: #0369a1;
+$primary: #bb3e3e;
 $primary-light: #e0f2fe;
 $white: #fff;
 $text: #0f172a;
@@ -355,7 +355,7 @@ $bg: #f8fafc;
 }
 
 .chat-ai-header {
-  background: linear-gradient(135deg, #2563eb, #4f46e5);
+  background: linear-gradient(135deg, #bd5b5b, #db4444);
   color: white;
 
   .shop-info p {
@@ -368,7 +368,7 @@ $bg: #f8fafc;
   height: 48px;
   border-radius: 50%;
   background: white;
-  color: #2563eb;
+  color: #db4444;
 
   display: flex;
   justify-content: center;
@@ -385,7 +385,7 @@ $bg: #f8fafc;
     height: 72px;
     border-radius: 50%;
     background: #eff6ff;
-    color: #2563eb;
+    color: #db4444;
 
     display: flex;
     align-items: center;

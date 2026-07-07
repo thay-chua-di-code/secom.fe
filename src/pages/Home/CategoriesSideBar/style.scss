@@ -75,7 +75,7 @@
     font-size: 26px;
     font-weight: 700;
 
-    color: #0284c7;
+    color: #db4444;
 
     transition: 0.25s;
   }
@@ -89,7 +89,7 @@
   &:hover {
     transform: translateY(-6px);
 
-    border-color: #0284c7;
+    border-color: #db4444;
 
     box-shadow: 0 12px 30px rgba(2, 132, 199, 0.15);
 
@@ -98,14 +98,13 @@
     }
 
     span {
-      color: #0284c7;
+      color: #db4444;
     }
   }
 
   &.active {
-    background: #0284c7;
-    border-color: #0284c7;
-
+    background: #db4444;
+    border-color: #db4444;
     box-shadow: 0 12px 30px rgba(2, 132, 199, 0.25);
 
     span {
