@@ -12,7 +12,6 @@ export const getChatsThunk = createAsyncThunk(
   async (params, thunkAPI) => {
     try {
       const res = await chatService.getChats(params);
-      console.log(res);
       return res.data.data;
     } catch (err) {
       return thunkAPI.rejectWithValue(getApiError(err));

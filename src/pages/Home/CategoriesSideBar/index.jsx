@@ -1,33 +1,55 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import Title from "../../../components/common/Title";
-import "./style.scss";
 import { categoriesService } from "../../../service/categoriesService";
+import { aiService } from "../../../service/aiService";
+import "./style.scss";
+import Card from "../../../components/common/Card/index";
 
-export default function CategorySidebar() {
+export default function CategorySideBar() {
   const dispatch = useDispatch();
+  const [activeCategory, setActiveCategory] = useState(null);
+  const [products, setProducts] = useState([]);
+  const resultRef = useRef(null);
+  const [loading, setLoading] = useState(false);
+
   const categories = useSelector((state) => {
-    const items = state.categories.categories?.items ?? state.categories.categories;
+    const items =
+      state.categories.categories?.items ?? state.categories.categories;
 
     return Array.isArray(items) ? items : [];
   });
-  const [activeCategory, setActiveCategory] = useState(null);
-  const navigate = useNavigate();
-
-  const handleSelectCategory = (categoryId) => {
-    setActiveCategory(categoryId);
-    navigate(`/products?category=${categoryId}`);
-  };
 
   useEffect(() => {
     categoriesService.getCategories(dispatch);
-  }, []);
+  }, [dispatch]);
+
+  const handleSelectCategory = async (categoryId) => {
+    setActiveCategory(categoryId);
+    setLoading(true);
+
+    try {
+      const res = await aiService.recommendByCategories(categoryId);
+      setProducts(res.data.items || []);
+      setTimeout(() => {
+        resultRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }, 100);
+    } catch (err) {
+      console.error(err);
+      setProducts([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <section className="category-section">
       <Title title="Categories" />
 
-      <h2 className="category-section__heading">Browse By Category</h2>
+      <h2 className="category-section__heading">AI Recommend</h2>
 
       <div className="category-section__list">
         {categories.map((category) => {
@@ -39,7 +61,6 @@ export default function CategorySidebar() {
 
           return (
             <button
-              data-testid="category-filter"
               key={category.id}
               className={`category-card ${
                 activeCategory === category.id ? "active" : ""
@@ -55,6 +76,28 @@ export default function CategorySidebar() {
           );
         })}
       </div>
+
+      {activeCategory && (
+        <div className="category-section__result" ref={resultRef}>
+          <div className="category-section__header">
+            <h2>🤖 AI Recommended Products</h2>
+
+            <p>Products recommended specifically for your selected category.</p>
+          </div>
+
+          {loading ? (
+            <div className="loading">AI is finding the best products...</div>
+          ) : products.length > 0 ? (
+            <div className="category-section__products">
+              {products.map((item) => (
+                <Card key={item.productId} item={item} />
+              ))}
+            </div>
+          ) : (
+            <div className="empty">No recommended products found.</div>
+          )}
+        </div>
+      )}
     </section>
   );
 }
