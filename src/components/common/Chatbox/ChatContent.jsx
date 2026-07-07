@@ -1,31 +1,94 @@
 import ChatInput from "./ChatInput";
 import ChatMessage from "./ChatMessage";
-
-const ChatContent = ({ selectedConversation, messages }) => {
+import { Bot } from "lucide-react";
+import { useEffect, useRef } from "react";
+const ChatContent = ({
+  selectedConversation,
+  currentChat,
+  loading,
+  onSendAI,
+  onSendSeller,
+}) => {
+  const isAI = selectedConversation?.type === "ai";
+  const aiObject = {
+    text: currentChat?.text,
+    sender: "ai",
+    time: "Now",
+  };
+  const messagesEndRef = useRef(null);
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "end",
+    });
+  }, [currentChat]);
   return (
     <div className="chat-content">
       {/* HEADER */}
-      <div className="chat-content__header">
+      <div className={`chat-content__header ${isAI ? "chat-ai-header" : ""}`}>
         <div className="shop-info">
-          <img src={selectedConversation.avatar} alt="" />
+          {isAI ? (
+            <div className="ai-avatar">
+              <Bot size={22} />
+            </div>
+          ) : (
+            <img src={selectedConversation.avatar} alt="" />
+          )}
 
           <div>
             <h4>{selectedConversation.name}</h4>
 
-            <p>Đang hoạt động</p>
+            <p>{isAI ? "AI Assistant • Always ready to help" : "Is active"}</p>
           </div>
         </div>
       </div>
 
       {/* BODY */}
       <div className="chat-content__body">
-        {messages.map((msg) => (
+        {isAI && (
+          <div className="ai-welcome">
+            <div className="ai-welcome__icon">
+              <Bot size={40} />
+            </div>
+
+            <h2>Hi 👋</h2>
+
+            <p>
+              I'm <strong>Secom AI</strong>.
+              <br />I can help you about:
+            </p>
+
+            <div className="quick-actions">
+              <button>📦 Order</button>
+              <button>🛍️ Product</button>
+              <button>🚚 Shipping</button>
+              <button>🎁 Voucher</button>
+            </div>
+
+            <ChatMessage message={aiObject} />
+          </div>
+        )}
+
+        {currentChat?.map((msg) => (
           <ChatMessage key={msg.id} message={msg} />
         ))}
+
+        {loading && (
+          <div className="typing">
+            <span />
+            <span />
+            <span />
+          </div>
+        )}
+        <div ref={messagesEndRef} />
       </div>
 
       {/* FOOTER */}
-      <ChatInput />
+      <ChatInput
+        isAi={isAI}
+        onSend={isAI ? onSendAI : onSendSeller}
+        disabled={loading}
+      />
     </div>
   );
 };

@@ -132,52 +132,50 @@ export default function Card({ item }) {
     }
   };
   return (
-    <div className="wishlist-item">
-      <div className="image-box">
-        <Link to={`/product-detail/${productId}`}>
+    <div className="custom-product-card">
+      <div className="image-container">
+        <Link className="image-link" to={`/product-detail/${productId}`}>
           <img src={productImages[0]} alt={productName} />
         </Link>
 
-        <div className="image-actions">
+        <div className="floating-actions">
           <button
-            className={`favorite-btn ${isWishlisted ? "active" : ""}`}
+            className={`action-btn ${isWishlisted ? "active" : ""}`}
             onClick={handleToggleWishlist}
             disabled={wishlistLoading}
           >
             {isWishlisted ? <FaHeart /> : <FaRegHeart />}
           </button>
 
-          <Link to={`/product-detail/${productId}`} className="view-btn">
+          <Link
+            className="action-btn"
+            to={`/product-detail/${productId}`}
+            onClick={(e) => e.stopPropagation()}
+          >
             <FaEye />
           </Link>
         </div>
+
+        <button className="quick-buy-btn" onClick={handleBuyNow}>
+          Buy Now
+        </button>
       </div>
 
-      <div className="product-info">
-        <h3>{productName}</h3>
+      <div className="info-container">
+        <h3 className="product-title">{productName}</h3>
 
-        <div className="price">
-          <span className="new-price">{formatCurrencyVN(item.price)}</span>
+        <div className="price-container">
+          <span className="current-price">{formatCurrencyVN(item.price)}</span>
 
           {item.oldPrice && (
             <span className="old-price">{formatCurrencyVN(item.oldPrice)}</span>
           )}
         </div>
 
-        <span className={`stock ${item.stock ? "available" : "out"}`}>
-          {item.stock ? "In Stock" : "Out Of Stock"}
-        </span>
-      </div>
+        <div className="rating-container">
+          <div className="stars">★★★★★</div>
 
-      <div className="card-actions">
-        <Button className="add-cart" onClick={handleAddCart}>
-          Add To Cart
-        </Button>
-
-        <div className="bottom-actions">
-          <Button className="buy-now-btn" onClick={handleBuyNow}>
-            Buy Now
-          </Button>
+          <span className="review-count">(65)</span>
         </div>
       </div>
     </div>

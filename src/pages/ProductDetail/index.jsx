@@ -20,6 +20,7 @@ import {
 } from "../../redux/slice/userSlice";
 import { fetchProductDetailThunk } from "../../redux/slice/productSlice";
 import productApi from "../../api/productApi";
+import ProductSuggestion from "./AiSuggest/ProductSuggestion";
 
 const getApiErrorMessage = (error) =>
   error?.response?.data?.message ||
@@ -263,6 +264,7 @@ export default function ProductDetail() {
             <div className="quantity">
               <Button
                 onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}
+                className="decrease-btn"
               >
                 -
               </Button>
@@ -330,6 +332,7 @@ export default function ProductDetail() {
         <SellerShow seller={productDetail.seller} />
         <ProductReview productId={productDetail.id} />
       </div>
+      <ProductSuggestion productId={id} />
       <RelatedProducts products={productDetail.relatedProducts} />
     </>
   );

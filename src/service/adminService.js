@@ -38,11 +38,50 @@ export const adminService = {
   // [SELLER]
   getSeller: async (params) => {
     try {
-      const result = await axiosClient.get(API_ENDPOINTS.ADMIN.SELLER.GET, {
+      const result = await axiosClient.get("/admin/seller-shops/pending", {
         params,
       });
+
+      return result.data.data;
     } catch (e) {
       throw new Error(e.message || "Something went wrong when get sellers");
+    }
+  },
+
+  getSellerDetail: async (id) => {
+    try {
+      const result = await axiosClient.get(`/admin/seller-shops/${id}`);
+
+      return result.data.data;
+    } catch (e) {
+      throw new Error(e?.response.message || e.message);
+    }
+  },
+  approveSeller: async (id) => {
+    try {
+      const result = await axiosClient.post(
+        `/admin/seller-shops/${id}/approve`,
+      );
+      console.log(result);
+      return result.data.data;
+    } catch (e) {
+      throw new Error(e?.response.message || e.message);
+    }
+  },
+  rejectSeller: async (id, reason) => {
+    try {
+      const result = await axiosClient.post(
+        `/admin/seller-shops/${id}/reject`,
+        {
+          reason,
+        },
+      );
+
+      return result.data.data;
+    } catch (e) {
+      throw new Error(
+        e?.response?.data?.message || e.message || "Reject seller failed",
+      );
     }
   },
   // [PRODUCT]

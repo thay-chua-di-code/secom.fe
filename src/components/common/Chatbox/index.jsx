@@ -7,62 +7,61 @@ import {
   getChatsThunk,
   getChatDetailThunk,
 } from "../../../redux/slice/chatSlice";
-
+import { aiService } from "../../../service/aiService";
 import "./style.scss";
 
-const conversations = [
-  {
-    id: 1,
-    name: "Titanus Store",
-    avatar: "https://i.pravatar.cc/150?img=1",
-    lastMessage: "Xin chào bạn 👋",
-    time: "10:30",
-    unread: 2,
-  },
-  {
-    id: 2,
-    name: "Secom Official",
-    avatar: "https://i.pravatar.cc/150?img=2",
-    lastMessage: "Đơn hàng đang được xử lý",
-    time: "09:12",
-    unread: 0,
-  },
-  {
-    id: 3,
-    name: "MemoryZone",
-    avatar: "https://i.pravatar.cc/150?img=3",
-    lastMessage: "Sản phẩm còn hàng nhé",
-    time: "Hôm qua",
-    unread: 5,
-  },
-];
-
-const messages = [
-  {
-    id: 1,
-    sender: "shop",
-    text: "Xin chào 👋 Shop có thể hỗ trợ gì cho bạn?",
-    time: "10:30",
-  },
-  {
-    id: 2,
-    sender: "user",
-    text: "Mình muốn hỏi về sản phẩm.",
-    time: "10:31",
-  },
-];
-
 const ChatBox = () => {
+  const { chats, currentChat, loading } = useSelector((state) => state.chat);
+
+  const conversations = [
+    {
+      id: "ai",
+      type: "ai",
+      name: "Secom AI",
+      sender: "ai",
+      avatar: "https://api.dicebear.com/7.x/bottts/svg?seed=SecomAI",
+      text: "Hi 👋 I'm Secom AI. How can I help you today?",
+      unread: 0,
+    },
+
+    ...(Array.isArray(chats)
+      ? chats.filter(Boolean).map((chat, index) => ({
+          ...chat,
+          id: chat.id ?? `chat-${index}`,
+
+          type: "seller",
+        }))
+      : []),
+  ];
+
   const [open, setOpen] = useState(false);
   const [selectedConversation, setSelectedConversation] = useState(
     conversations[0],
   );
   const dispatch = useDispatch();
-  const { chats, currentChat, loading } = useSelector((state) => state.chat);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiMessages, setAiMessages] = useState([
+    {
+      id: "welcome",
+      sender: "ai",
+      text: "Hi 👋 I'm Secom AI. How can I help you today?",
+      time: "Now",
+    },
+  ]);
 
   const handleSelectConversation = (conversation) => {
-    dispatch(getChatDetailThunk(conversation.id));
+    setSelectedConversation(conversation);
+
+    if (conversation.type !== "ai") {
+      dispatch(getChatDetailThunk(conversation.id));
+    }
   };
+
+  const messages =
+    selectedConversation?.type === "ai"
+      ? aiMessages
+      : (currentChat?.messages ?? []);
+
   useEffect(() => {
     dispatch(
       getChatsThunk({
@@ -72,11 +71,57 @@ const ChatBox = () => {
     );
   }, [dispatch]);
 
-  useEffect(() => {
-    if (chats.length > 0 && !currentChat) {
-      dispatch(getChatDetailThunk(chats[0].id));
+  // Handle send message to AI
+  const handleSendAI = async (text) => {
+    if (!text.trim()) return;
+
+    const userMessage = {
+      id: Date.now(),
+      sender: "user",
+      text,
+      time: new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+    };
+
+    setAiMessages((prev) => [...prev, userMessage]);
+
+    setAiLoading(true);
+
+    try {
+      const res = await aiService.chatAi(text);
+
+      const aiMessage = {
+        id: Date.now() + 1,
+        sender: "ai",
+        text: res.reply,
+        time: new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+      };
+
+      setAiMessages((prev) => [...prev, aiMessage]);
+    } catch (err) {
+      setAiMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now() + 2,
+          sender: "ai",
+          text: err.message,
+          time: "Now",
+        },
+      ]);
+    } finally {
+      setAiLoading(false);
     }
-  }, [dispatch, chats, currentChat]);
+  };
+
+  // Handle send message to AI
+  const handleSendSeller = () => {
+    alert("hello");
+  };
   return (
     <>
       {/* FLOAT BUTTON */}
@@ -94,14 +139,17 @@ const ChatBox = () => {
         <ChatSidebar
           conversations={conversations}
           selectedConversation={selectedConversation}
-          setSelectedConversation={setSelectedConversation}
+          onSelectConversation={handleSelectConversation}
           setOpen={setOpen}
         />
 
         {/* CONTENT */}
         <ChatContent
           selectedConversation={selectedConversation}
-          messages={messages}
+          currentChat={messages}
+          loading={selectedConversation.type === "ai" ? aiLoading : loading}
+          onSendAI={handleSendAI}
+          onSendSeller={handleSendSeller}
         />
       </div>
     </>
