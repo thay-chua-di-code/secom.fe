@@ -207,39 +207,144 @@ table {
 // ORDER
 // =========================
 
+
 .orders {
-  display: grid;
-  gap: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
 .order-card {
-  background: white;
-  padding: 20px;
-  border-radius: 16px;
+  background: #fff;
+  border-radius: 18px;
+  padding: 24px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+  transition: 0.25s;
 
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-
-  h3 {
-    margin-bottom: 10px;
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 40px rgba(15, 23, 42, 0.12);
   }
 
-  p {
-    margin-bottom: 6px;
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 22px;
+
+    h3 {
+      margin-top: 6px;
+      font-size: 20px;
+      font-weight: 700;
+      color: #111827;
+    }
   }
 
-  span {
-    display: inline-block;
-    padding: 6px 12px;
+  &__label {
+    font-size: 13px;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
 
-    border-radius: 20px;
+  &__status {
+    padding: 8px 18px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
 
-    background: #dcfce7;
-    color: #15803d;
+    &--pending {
+      background: #fef3c7;
+      color: #b45309;
+    }
 
-    font-size: 14px;
+    &--processing {
+      background: #dbeafe;
+      color: #1d4ed8;
+    }
+
+    &--shipping {
+      background: #e0f2fe;
+      color: #0284c7;
+    }
+
+    &--completed {
+      background: #dcfce7;
+      color: #15803d;
+    }
+
+    &--cancelled {
+      background: #fee2e2;
+      color: #dc2626;
+    }
+  }
+
+  &__info {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    padding: 18px 0;
+    border-top: 1px solid #f1f5f9;
+    border-bottom: 1px solid #f1f5f9;
+
+    div {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    span {
+      font-size: 13px;
+      color: #94a3b8;
+    }
+
+    strong {
+      font-size: 16px;
+      color: #111827;
+    }
+  }
+
+  &__products {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
   }
 }
 
+.product-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  img {
+    width: 72px;
+    height: 72px;
+    border-radius: 12px;
+    object-fit: cover;
+    border: 1px solid #e5e7eb;
+  }
+
+  &__content {
+    flex: 1;
+
+    h4 {
+      margin-bottom: 6px;
+      font-size: 15px;
+      color: #111827;
+    }
+
+    span {
+      color: #64748b;
+      font-size: 14px;
+    }
+  }
+
+  strong {
+    font-size: 16px;
+    color: #0f172a;
+  }
+}
 // =========================
 // CUSTOMER
 // =========================
@@ -295,8 +400,6 @@ table {
     font-size: 30px;
   }
 }
-
-
 
 // =========================
 // TABLET

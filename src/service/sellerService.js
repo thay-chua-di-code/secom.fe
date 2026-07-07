@@ -46,7 +46,6 @@ export const sellerService = {
   },
 
   // [PRODUCT]
-
   getProducts: async (pageNumber = 1, pageSize = 10) => {
     try {
       console.log("Call me service");
@@ -180,11 +179,24 @@ export const sellerService = {
   // [VOUCHERS]
   createVoucher: async (data) => {
     try {
+      console.log(data)
       const res = await axiosClient.post("/seller/vouchers", data);
-      console.log(res);
+      console.log('Service: ',res);
       return res.data;
     } catch (e) {
       throw new Error(e.message);
     }
   },
+
+  // [ORDERS]
+  getOrdersSeller: async(params) => {
+    try {
+      const res = await axiosClient.get('/seller/orders', params);
+
+
+      return res.data
+    } catch (e) {
+      throw new Error()
+    }
+  }
 };

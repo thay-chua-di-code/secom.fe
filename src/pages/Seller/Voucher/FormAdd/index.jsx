@@ -11,7 +11,7 @@ const AddVoucherModal = ({ open, onClose }) => {
     code: "",
     name: "",
     description: "",
-    discountType: "PERCENT",
+    discountType: "percentage",
     discountValue: "",
     minOrderAmount: "",
     maxDiscountAmount: "",
@@ -32,14 +32,18 @@ const AddVoucherModal = ({ open, onClose }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    await sellerService.createVoucher({
+    const res = await sellerService.createVoucher({
       ...form,
       sellerId: userInfo.userId,
       discountValue: Number(form.discountValue),
       minOrderAmount: Number(form.minOrderAmount),
       maxDiscountAmount: Number(form.maxDiscountAmount),
       quantity: Number(form.quantity),
+      startAtUtc: new Date(form.startAtUtc).toISOString(),
+      endAtUtc: new Date(form.endAtUtc).toISOString(),
     });
+
+    console.log('Compoennt: ', res)
 
     onClose();
   };
@@ -100,8 +104,8 @@ const AddVoucherModal = ({ open, onClose }) => {
                 value={form.discountType}
                 onChange={handleChange}
               >
-                <option value="PERCENT">Percent (%)</option>
-                <option value="FIXED">Fixed Amount</option>
+                <option value="percentage">Percent (%)</option>
+                <option value="fixed">Fixed Amount</option>
               </select>
             </div>
 

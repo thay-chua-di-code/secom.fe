@@ -16,6 +16,7 @@ import {
   sellerBankingReducer,
   sellerProductReducer,
   sellerWalletReducer,
+  sellerOrderReducer
 } from "./slice/seller";
 import sellerStatusReducer from "./slice/sellerStatusSlice";
 // [ADMIN] Import
@@ -68,6 +69,7 @@ const rootReducer = combineReducers({
   sellerBanking: sellerBankingReducer,
   sellerWallet: sellerWalletReducer,
   sellerStatus: sellerStatusReducer,
+  sellerOrder: sellerOrderReducer,
   // [ADMIN]
   dashboardAdmin: dashboardReducer,
   usersAdmin: userAdminReducer,
