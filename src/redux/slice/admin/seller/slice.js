@@ -88,22 +88,27 @@ const sellerAdminSlice = createSlice({
       // ===============================
       .addCase(approveSeller.pending, (state) => {
         state.actionLoading = true;
-        state.error = null;
       })
 
       .addCase(approveSeller.fulfilled, (state, action) => {
         state.actionLoading = false;
 
-        const seller = state.sellers.find(
-          (seller) => seller.id === action.payload,
-        );
+        const sellerId = action.payload;
+
+        // Update list
+        const seller = state.sellers.find((x) => x.id === sellerId);
 
         if (seller) {
-          seller.status = "APPROVED";
+          seller.status = 1;
+          seller.statusText = "Approved";
+          seller.approvedAtUtc = new Date().toISOString();
         }
 
-        if (state.sellerDetail && state.sellerDetail.id === action.payload) {
-          state.sellerDetail.status = "APPROVED";
+        // Update detail nếu đang mở modal
+        if (state.sellerDetail && state.sellerDetail.id === sellerId) {
+          state.sellerDetail.status = 1;
+          state.sellerDetail.statusText = "Approved";
+          state.sellerDetail.approvedAtUtc = new Date().toISOString();
         }
       })
 
@@ -117,27 +122,27 @@ const sellerAdminSlice = createSlice({
       // ===============================
       .addCase(rejectSeller.pending, (state) => {
         state.actionLoading = true;
-        state.error = null;
       })
 
       .addCase(rejectSeller.fulfilled, (state, action) => {
         state.actionLoading = false;
 
-        const seller = state.sellers.find(
-          (seller) => seller.id === action.payload.sellerId,
-        );
+        const { sellerId, reason } = action.payload;
+
+        const seller = state.sellers.find((x) => x.id === sellerId);
 
         if (seller) {
-          seller.status = "REJECTED";
-          seller.rejectReason = action.payload.reason;
+          seller.status = 2;
+          seller.statusText = "Rejected";
+          seller.rejectionReason = reason;
+          seller.rejectedAtUtc = new Date().toISOString();
         }
 
-        if (
-          state.sellerDetail &&
-          state.sellerDetail.id === action.payload.sellerId
-        ) {
-          state.sellerDetail.status = "REJECTED";
-          state.sellerDetail.rejectReason = action.payload.reason;
+        if (state.sellerDetail && state.sellerDetail.id === sellerId) {
+          state.sellerDetail.status = 2;
+          state.sellerDetail.statusText = "Rejected";
+          state.sellerDetail.rejectionReason = reason;
+          state.sellerDetail.rejectedAtUtc = new Date().toISOString();
         }
       })
 

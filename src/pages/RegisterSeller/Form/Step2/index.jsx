@@ -1,7 +1,7 @@
 import { BadgeCheck, CircleX, Clock3 } from "lucide-react";
 import { Link } from "react-router-dom";
 import Button from "../../../../components/common/Button/Button";
-import './style.scss'
+import "./style.scss";
 export default function SellerStatus({ status, rejectReason }) {
   const renderContent = () => {
     switch (status) {
@@ -50,7 +50,9 @@ export default function SellerStatus({ status, rejectReason }) {
       <p>{content.description}</p>
 
       {status === "APPROVED" && (
-        <Link className="seller-btn">Go To Seller Center</Link>
+        <Link to="/seller" className="seller-btn">
+          Go To Seller Center
+        </Link>
       )}
 
       {status === "REJECTED" && (

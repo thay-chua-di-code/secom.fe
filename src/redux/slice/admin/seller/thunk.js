@@ -2,15 +2,15 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { adminService } from "../../../../service/adminService";
 export const fetchAdminSellers = createAsyncThunk(
   "adminSeller/fetchAll",
-  async ({ pageNumber, pageSize }, { rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
     try {
-      console.log("Call me");
-      const data = await adminService.getSeller(
-        (pageNumber = 1),
-        (pageSize = 10),
-      );
+      const data = await adminService.getSeller({
+        page: 1,
+        pageSize: 10,
+      });
 
-      console.log("Data im received: ", data);
+      console.log(data);
+
       return data;
     } catch (err) {
       return rejectWithValue(err.message);

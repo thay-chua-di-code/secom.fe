@@ -92,11 +92,11 @@
 
 .status {
   padding: 6px 14px;
-  border-radius: 30px;
+  border-radius: 999px;
   font-size: 13px;
   font-weight: 600;
 
-  &.pending {
+  &.pendingapproval {
     color: #b45309;
     background: #fef3c7;
   }

@@ -47,4 +47,18 @@ export const aiService = {
       throw new Error(e?.response?.data?.message || e.message);
     }
   },
+
+  productPricePredict: async (params) => {
+    // CategoriHint, ProductNameHint, BrandHint, OriginalPrice, Currency
+    try {
+      const res = await axiosClient.get("/ai/product-price-predict", {
+        params: params,
+      });
+
+      return res.data;
+    } catch (e) {
+      console.log(e.response?.data);
+      throw new Error(e?.response?.data?.message || e.message);
+    }
+  },
 };

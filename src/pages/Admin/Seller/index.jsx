@@ -1,24 +1,21 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAdminSellers } from "../../../redux/slice/admin/seller/thunk";
 
 import "./style.scss";
+import SellerDetailModal from "./Detail";
 
 const SellerManage = () => {
   const dispatch = useDispatch();
-
   const { sellers, loading, pageNumber, pageSize, totalPages } = useSelector(
     (state) => state.sellersAdmin,
   );
+  const [openDetail, setOpenDetail] = useState(false);
+  const [sellerId, setSellerId] = useState(null);
 
   useEffect(() => {
-    dispatch(
-      fetchAdminSellers({
-        pageNumber,
-        pageSize,
-      }),
-    );
-  }, [dispatch, pageNumber, pageSize]);
+    dispatch(fetchAdminSellers());
+  }, [dispatch]);
 
   return (
     <div className="seller-manage">
@@ -27,9 +24,9 @@ const SellerManage = () => {
           <h1>Seller Management</h1>
           <p>Manage seller registrations and approvals.</p>
         </div>
-
         <button>
-          Pending {sellers.filter((x) => x.status === "PENDING").length}
+          Pending{" "}
+          {sellers?.filter((x) => x.statusText === "PendingApproval").length}
         </button>
       </div>
 
@@ -63,32 +60,49 @@ const SellerManage = () => {
                   <td>
                     <div className="seller-info">
                       <img
-                        src={seller.avatar || "https://i.pravatar.cc/100"}
-                        alt=""
+                        src={
+                          seller.verificationImageUrl ||
+                          "https://i.pravatar.cc/100"
+                        }
+                        alt={seller.shopName}
                       />
 
                       <div>
                         <h4>{seller.shopName}</h4>
-                        <span>{seller.ownerName}</span>
+                        <span>{seller.userFullName}</span>
                       </div>
                     </div>
                   </td>
 
-                  <td>{seller.email}</td>
+                  <td>{seller.userEmail}</td>
 
                   <td>
-                    <span className={`status ${seller.status.toLowerCase()}`}>
-                      {seller.status}
+                    <span
+                      className={`status ${seller.statusText.toLowerCase()}`}
+                    >
+                      {seller.statusText}
                     </span>
                   </td>
 
-                  <td>{seller.createdAt}</td>
+                  <td>
+                    {new Date(seller.submittedAtUtc).toLocaleDateString(
+                      "vi-VN",
+                    )}
+                  </td>
 
                   <td>
                     <div className="actions">
-                      <button className="detail">Detail</button>
+                      <button
+                        className="detail"
+                        onClick={() => {
+                          setSellerId(seller.id);
+                          setOpenDetail(true);
+                        }}
+                      >
+                        Detail
+                      </button>
 
-                      {seller.status === "PENDING" && (
+                      {seller.statusText === "PendingApproval" && (
                         <>
                           <button className="approve">Approve</button>
 
@@ -106,6 +120,12 @@ const SellerManage = () => {
           <div className="empty">No seller applications.</div>
         )}
       </div>
+
+      <SellerDetailModal
+        open={openDetail}
+        sellerId={sellerId}
+        onClose={() => setOpenDetail(false)}
+      />
     </div>
   );
 };
