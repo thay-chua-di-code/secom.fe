@@ -10,7 +10,7 @@ import "./style.scss";
 
 export default function Footer() {
   return (
-    <footer className="footer">
+    <footer className="footer" style={{ background: "black" }}>
       <div className="container-custom">
         <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-5">
           {/* Exclusive */}
