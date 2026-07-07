@@ -5,7 +5,7 @@ import { sellerService } from "../../../../service/sellerService";
 import "./style.scss";
 import Button from "../../../../components/common/Button/Button";
 
-export default function StoreInformation({ onRegisterSuccess }) {
+export default function StoreInformation() {
   const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -80,8 +80,6 @@ export default function StoreInformation({ onRegisterSuccess }) {
         toast.success("Seller application submitted successfully!", {
           id: "seller-register",
         });
-
-        onRegisterSuccess(result.data.status);
       }
 
       setFormData({

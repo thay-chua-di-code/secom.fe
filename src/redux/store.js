@@ -17,6 +17,7 @@ import {
   sellerProductReducer,
   sellerWalletReducer,
 } from "./slice/seller";
+import sellerStatusReducer from "./slice/sellerStatusSlice";
 // [ADMIN] Import
 import {
   dashboardReducer,
@@ -66,6 +67,7 @@ const rootReducer = combineReducers({
   sellerProduct: sellerProductReducer,
   sellerBanking: sellerBankingReducer,
   sellerWallet: sellerWalletReducer,
+  sellerStatus: sellerStatusReducer,
   // [ADMIN]
   dashboardAdmin: dashboardReducer,
   usersAdmin: userAdminReducer,
@@ -84,6 +86,7 @@ const persistConfig = {
     "auth",
     "user",
     "categories",
+    "sellerStatus",
     "home",
     "order",
     "notification",

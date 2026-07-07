@@ -1,7 +1,12 @@
 import axiosClient from "../api/axiosClient";
 import { API_ENDPOINTS } from "../api/endPoint";
+import {
+  setError,
+  setLoading,
+  setStatus,
+} from "../redux/slice/sellerStatusSlice";
 export const sellerService = {
-  becomeSeller: async (payload) => {
+  becomeSeller: async (payload, dispatch) => {
     try {
       const result = await axiosClient.post(
         API_ENDPOINTS.SELLER.REGISTER,
@@ -16,6 +21,27 @@ export const sellerService = {
         e?.response?.data?.message ||
           "Something went wrong when registering seller",
       );
+    }
+  },
+
+  sellerShopStatus: async (dispatch) => {
+    try {
+      setLoading(true);
+      const res = await axiosClient.get("/seller/shop/status");
+      console.log(res)
+      if (res.data.success === true) {
+        dispatch(
+          setStatus({
+            status: res.data.data.status,
+            statusText: res.data.data.statusText,
+            sellerId: res.data.data.userId,
+            rejectReason: res.data.data?.rejectReason,
+          }),
+        );
+      }
+    } catch (e) {
+      dispatch(setError(e?.response?.data?.message || e.message));
+      throw new Error(e?.response?.data?.message || e.message);
     }
   },
 
@@ -155,7 +181,7 @@ export const sellerService = {
   createVoucher: async (data) => {
     try {
       const res = await axiosClient.post("/seller/vouchers", data);
-      console.log(res)
+      console.log(res);
       return res.data;
     } catch (e) {
       throw new Error(e.message);

@@ -54,7 +54,7 @@ export default function StoreInformation() {
 
       setLoading(true);
 
-      toast.loading("Uploading image...", {
+      toast.loading("Waiting for minutes...", {
         id: "seller-register",
       });
 
