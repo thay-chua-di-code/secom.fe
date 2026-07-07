@@ -28,7 +28,7 @@ export const sellerService = {
     try {
       setLoading(true);
       const res = await axiosClient.get("/seller/shop/status");
-      console.log(res)
+      console.log(res);
       if (res.data.success === true) {
         dispatch(
           setStatus({
@@ -179,9 +179,9 @@ export const sellerService = {
   // [VOUCHERS]
   createVoucher: async (data) => {
     try {
-      console.log(data)
+      console.log(data);
       const res = await axiosClient.post("/seller/vouchers", data);
-      console.log('Service: ',res);
+      console.log("Service: ", res);
       return res.data;
     } catch (e) {
       throw new Error(e.message);
@@ -189,14 +189,26 @@ export const sellerService = {
   },
 
   // [ORDERS]
-  getOrdersSeller: async(params) => {
+  getOrdersSeller: async (params) => {
     try {
-      const res = await axiosClient.get('/seller/orders', params);
+      const res = await axiosClient.get("/seller/orders", params);
 
-
-      return res.data
+      return res.data;
     } catch (e) {
-      throw new Error()
+      throw new Error(e?.response?.data?.message || e.message);
     }
-  }
+  },
+
+  confirmOrder: async (orderId) => {
+    try {
+      const res = await axiosClient.put(
+        `/seller/orders/${orderId}/confirm-packing`,
+      );
+
+      console.log(res);
+      return res.data;
+    } catch (e) {
+      throw new Error(e?.response?.data?.message || e.message);
+    }
+  },
 };

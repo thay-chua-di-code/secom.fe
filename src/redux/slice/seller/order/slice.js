@@ -13,11 +13,32 @@ export const getSellerOrdersThunk = createAsyncThunk(
   },
 );
 
+export const confirmOrderThunk = createAsyncThunk(
+  "sellerOrder/confirm",
+  async (orderId, thunkAPI) => {
+    try {
+      const res = await sellerService.confirmOrder(orderId);
+      return {
+        orderId,
+        ...res,
+      };
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || error.message,
+      );
+    }
+  },
+);
+
 const initialState = {
   orders: [],
   loading: false,
   error: "",
   loaded: false,
+  confirmLoading: false,
+  confirmSuccess: false,
+  confirmMessage: "",
+  confirmError: "",
 };
 
 const sellerOrderSlice = createSlice({
@@ -33,10 +54,18 @@ const sellerOrderSlice = createSlice({
     resetSellerOrderCache(state) {
       state.loaded = false;
     },
+    resetConfirmState(state) {
+      state.confirmLoading = false;
+      state.confirmSuccess = false;
+      state.confirmMessage = "";
+      state.confirmError = "";
+    },
   },
 
   extraReducers: (builder) => {
     builder
+
+      // ===== Get Orders =====
 
       .addCase(getSellerOrdersThunk.pending, (state) => {
         state.loading = true;
@@ -52,11 +81,37 @@ const sellerOrderSlice = createSlice({
       .addCase(getSellerOrdersThunk.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+
+      // ===== Confirm Order =====
+      .addCase(confirmOrderThunk.pending, (state) => {
+        state.confirmLoading = true;
+        state.confirmSuccess = false;
+        state.confirmError = "";
+        state.confirmMessage = "";
+      })
+
+      .addCase(confirmOrderThunk.fulfilled, (state, action) => {
+        state.confirmLoading = false;
+        state.confirmSuccess = action.payload.success;
+        state.confirmMessage = action.payload.message;
+
+        const order = state.orders.find((x) => x.id === action.payload.orderId);
+
+        if (order) {
+          order.status = "Confirmed";
+        }
+      })
+
+      .addCase(confirmOrderThunk.rejected, (state, action) => {
+        state.confirmLoading = false;
+        state.confirmSuccess = false;
+        state.confirmError = action.payload;
       });
   },
 });
 
-export const { clearSellerOrders, resetSellerOrderCache } =
+export const { clearSellerOrders, resetSellerOrderCache, resetConfirmState } =
   sellerOrderSlice.actions;
 
 export default sellerOrderSlice.reducer;

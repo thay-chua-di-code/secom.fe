@@ -1,10 +1,47 @@
 import "./style.scss";
 import { X } from "lucide-react";
 import { formatCurrencyVN, formatDate } from "../../../../utils/fncUtils";
+import toast from "react-hot-toast";
+import {
+  confirmOrderThunk,
+  resetConfirmState,
+} from "../../../../redux/slice/seller/order/slice";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
 
 const OrderDetail = ({ open, onClose, order }) => {
   if (!open || !order) return null;
+  const dispatch = useDispatch();
 
+  const { confirmLoading, confirmSuccess, confirmMessage, confirmError } =
+    useSelector((state) => state.sellerOrder);
+
+  const handleConfirm = async () => {
+    const result = await dispatch(confirmOrderThunk(order.orderId));
+
+    if (confirmOrderThunk.fulfilled.match(result)) {
+      toast.success(result.payload.message);
+      onClose();
+    } else {
+      toast.error(result.payload || "Confirm order failed.");
+    }
+  };
+
+  useEffect(() => {
+    if (confirmSuccess) {
+      toast.success(confirmMessage);
+      dispatch(resetConfirmState());
+      onClose();
+    }
+  }, [confirmSuccess, confirmMessage, dispatch, onClose]);
+
+  useEffect(() => {
+    if (confirmError) {
+      toast.error(confirmError);
+      dispatch(resetConfirmState());
+      onClose();
+    }
+  }, [confirmError, dispatch]);
   return (
     <div className="order-detail-overlay" onClick={onClose}>
       <div className="order-detail-modal" onClick={(e) => e.stopPropagation()}>
@@ -82,8 +119,13 @@ const OrderDetail = ({ open, onClose, order }) => {
           </div>
 
           <div className="actions">
-
-            <button className="confirm-btn">Confirm Order</button>
+            <button
+              className="confirm-btn"
+              onClick={handleConfirm}
+              disabled={confirmLoading}
+            >
+              {confirmLoading ? "Confirming..." : "Confirm Order"}
+            </button>
           </div>
         </div>
       </div>
