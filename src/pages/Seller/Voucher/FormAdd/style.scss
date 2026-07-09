@@ -1,5 +1,5 @@
-$primary: #0369a1;
-$primaryHover: #075985;
+$primary: #f74545;
+$primaryHover: #ad1313;
 $border: #cbd5e1;
 $bg: #f8fafc;
 
@@ -30,7 +30,6 @@ $bg: #f8fafc;
   background: $primary;
   color: white;
   padding: 18px 24px;
-
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -38,6 +37,7 @@ $bg: #f8fafc;
   h2 {
     margin: 0;
     font-size: 22px;
+    color: #fff;
   }
 
   .close-btn {

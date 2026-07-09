@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import CartList from "./List/index";
 import CartSummary from "./CartSummary/index";
 import VoucherList from "./VoucherList/index";
+import { ArrowRight, ShoppingBag } from "lucide-react";
 import {
   fetchCart,
   calculateCheckoutSummary,
@@ -18,22 +19,28 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { TicketPercent } from "lucide-react";
 import "./style.scss";
-
+import "../../components/cart/CartEmpty.scss";
 function CartEmpty() {
   return (
-    <div className="cart-empty">
-      {" "}
-      <div className="cart-empty__icon">
-        {" "}
-        <ShoppingCart size={64} />{" "}
-      </div>{" "}
-      <h2>Your cart is empty</h2>{" "}
-      <p> Looks like you haven't added any products yet. </p>{" "}
-      <Link to="/" className="cart-empty__button">
-        {" "}
-        Continue Shopping{" "}
-      </Link>{" "}
-    </div>
+    <section className="cart-empty">
+      <div className="cart-empty__card">
+        <div className="cart-empty__icon">
+          <ShoppingBag size={70} strokeWidth={1.8} />
+        </div>
+
+        <h2 className="cart-empty__title">Your cart is empty</h2>
+
+        <p className="cart-empty__description">
+          Looks like you haven't added any products yet. Discover thousands of
+          amazing products and start shopping today.
+        </p>
+
+        <Link to="/" className="cart-empty__button">
+          <span>Continue Shopping</span>
+          <ArrowRight size={18} />
+        </Link>
+      </div>
+    </section>
   );
 }
 
