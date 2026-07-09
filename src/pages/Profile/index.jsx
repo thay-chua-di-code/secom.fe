@@ -267,45 +267,155 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className="profile-page min-h-screen py-8 mt-4">
+    <div className="profile-page">
       <div className="container-custom">
-        <div className="profile-wrapper">
-          <div className="sidebar">
-            <div className="sidebar-user">
-              <img
-                src={userInfo?.avatarUrl || defaultAvatar}
-                alt="avatar"
-                className="user-avatar"
-              />
+        <div className="profile-layout">
+          {/* Sidebar */}
+          <aside className="profile-sidebar">
+            <div className="profile-sidebar__card">
+              <div className="profile-sidebar__cover" />
 
-              <div>
-                <h3>{userInfo?.fullName}</h3>
+              <div className="profile-sidebar__user">
+                <div className="avatar-wrapper">
+                  <img
+                    src={userInfo?.avatarUrl || defaultAvatar}
+                    alt="avatar"
+                    className="user-avatar"
+                  />
+                </div>
 
-                <span>
-                  <Settings size={14} />
+                <h3>{userInfo?.fullName || "User"}</h3>
+
+                <p>{userInfo?.email}</p>
+
+                <button
+                  className="edit-profile-btn"
+                  onClick={() => setActiveMenu("profile")}
+                >
+                  <Settings size={16} />
                   Edit Profile
-                </span>
+                </button>
+              </div>
+
+              <div className="profile-sidebar__divider" />
+
+              <div className="profile-sidebar__menu">
+                {menus.map((item) => (
+                  <button
+                    key={item.key}
+                    onClick={() => setActiveMenu(item.key)}
+                    className={`menu-item ${
+                      activeMenu === item.key ? "active" : ""
+                    }`}
+                  >
+                    <span className="menu-icon">{item.icon}</span>
+
+                    <span>{item.title}</span>
+                  </button>
+                ))}
               </div>
             </div>
+          </aside>
 
-            <div className="sidebar-menu">
-              {menus.map((item) => (
-                <button
-                  key={item.key}
-                  className={`menu-item ${
-                    activeMenu === item.key ? "active" : ""
-                  }`}
-                  onClick={() => setActiveMenu(item.key)}
-                >
-                  {item.icon}
+          {/* Main */}
+          <main className="profile-main">
+            {activeMenu === "profile" ? (
+              <div className="profile-card">
+                <div className="profile-card__header">
+                  <div>
+                    <span className="profile-tag">Personal Information</span>
 
-                  <span>{item.title}</span>
-                </button>
-              ))}
-            </div>
-          </div>
+                    <h2>My Profile</h2>
 
-          <div className="main-content">{renderContent()}</div>
+                    <p>
+                      Update your personal information and manage your account
+                      settings.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="profile-card__body">
+                  <div className="profile-form">
+                    <div className="profile-form__left">
+                      <div className="form-group">
+                        <label>Full Name</label>
+
+                        <input
+                          type="text"
+                          name="fullName"
+                          placeholder="Enter your full name"
+                          value={editProfile.fullName}
+                          onChange={handleChange}
+                        />
+                      </div>
+
+                      <div className="form-group">
+                        <label>Email</label>
+
+                        <input
+                          type="text"
+                          disabled
+                          value={userInfo?.email || ""}
+                        />
+                      </div>
+
+                      <div className="form-group">
+                        <label>Phone Number</label>
+
+                        <input
+                          type="text"
+                          name="phoneNumber"
+                          placeholder="Enter your phone number"
+                          value={editProfile.phoneNumber}
+                          onChange={handleChange}
+                        />
+                      </div>
+
+                      <Button
+                        className="save-btn"
+                        disabled={loading}
+                        onClick={handleSaveProfile}
+                      >
+                        {loading ? "Saving..." : "Save Changes"}
+                      </Button>
+                    </div>
+
+                    <div className="profile-form__right">
+                      <div className="avatar-preview">
+                        <img src={previewAvatar} alt="avatar" />
+                      </div>
+
+                      <label className="upload-btn">
+                        Change Avatar
+                        <input
+                          hidden
+                          type="file"
+                          accept="image/*"
+                          onChange={handleUploadAvatar}
+                        />
+                      </label>
+
+                      <small>
+                        JPG, PNG, JPEG
+                        <br />
+                        Maximum size 1MB
+                      </small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="profile-content-card">
+                <div className="profile-content-card__header">
+                  <h2>{menus.find((x) => x.key === activeMenu)?.title}</h2>
+                </div>
+
+                <div className="profile-content-card__body">
+                  {renderContent()}
+                </div>
+              </div>
+            )}
+          </main>
         </div>
       </div>
     </div>

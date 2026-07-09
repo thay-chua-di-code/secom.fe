@@ -1,123 +1,348 @@
 .seller-step {
   width: 100%;
-  max-width: 1200px;
-  padding: 40px;
+  max-width: 1180px;
+  margin: 0 auto;
+
+  background: #fff;
+  border-radius: 28px;
+
+  padding: 45px;
+
+  border: 1px solid #edf2f7;
+
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.08);
+
+  @media (max-width: 768px) {
+    padding: 24px;
+    border-radius: 20px;
+  }
 }
+
+/* =======================================
+            Progress
+======================================= */
 
 .step-progress {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 50px;
+  align-items: flex-start;
+
   position: relative;
+
+  margin-bottom: 50px;
 
   &::before {
     content: "";
+
     position: absolute;
-    top: 18px;
-    left: 10%;
-    width: 80%;
-    height: 2px;
-    background: #e5e7eb;
+
+    top: 22px;
+    left: 12%;
+    right: 12%;
+
+    height: 4px;
+
+    background: #eceff3;
+
+    border-radius: 999px;
   }
 }
 
 .step-item {
   flex: 1;
+
+  position: relative;
+  z-index: 2;
+
   display: flex;
   flex-direction: column;
   align-items: center;
-  position: relative;
-  z-index: 2;
-  span {
-    margin-top: 10px;
-    font-size: 14px;
-    color: #94a3b8;
-  }
+
+  text-align: center;
 
   .circle {
-    width: 36px;
-    height: 36px;
+    width: 46px;
+    height: 46px;
+
     border-radius: 50%;
-    background: #e5e7eb;
+
+    background: #f1f5f9;
+
+    border: 2px solid #dbe3ec;
+
     display: flex;
     justify-content: center;
     align-items: center;
-    font-weight: 600;
+
+    font-size: 16px;
+    font-weight: 700;
+
+    color: #64748b;
+
+    transition: 0.3s;
+  }
+
+  span {
+    margin-top: 14px;
+
+    max-width: 150px;
+
+    font-size: 15px;
+
+    font-weight: 500;
+
+    color: #94a3b8;
+
+    line-height: 1.5;
+
+    transition: 0.3s;
   }
 
   &.active {
     .circle {
-      background: #db4444;
+      background: linear-gradient(135deg, #ef4444, #db4444);
+
       color: white;
+
+      border-color: transparent;
+
+      box-shadow: 0 12px 25px rgba(219, 68, 68, 0.3);
+
+      transform: scale(1.08);
     }
 
     span {
-      color: #0f172a;
-      font-weight: 600;
+      color: #111827;
+
+      font-weight: 700;
     }
   }
 }
 
+/* =======================================
+          Content
+======================================= */
+
 .step-content {
-  min-height: 350px;
-  padding: 40px 0;
-  border-top: 1px solid #e5e7eb;
-  border-bottom: 1px solid #e5e7eb;
+  border-top: 1px solid #edf2f7;
+
+  padding-top: 40px;
+
+  min-height: 420px;
 }
 
+/* =======================================
+            Form
+======================================= */
+
 .seller-form {
-  max-width: 700px;
+  max-width: 760px;
+
   margin: auto;
 }
 
 .form-row {
   display: grid;
+
   grid-template-columns: 180px 1fr;
+
   align-items: center;
+
+  gap: 22px;
+
   margin-bottom: 24px;
 
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+
+    gap: 10px;
+  }
+
   label {
-    font-weight: 500 span {
+    font-size: 15px;
+
+    font-weight: 600;
+
+    color: #374151;
+
+    span {
       color: #ef4444;
     }
   }
 
-  input {
+  input,
+  textarea,
+  select {
     width: 100%;
-    height: 44px;
-    border: 1px solid #d1d5db;
-    border-radius: 6px;
-    padding: 0 14px;
+
+    min-height: 54px;
+
+    border: 1px solid #dbe3ec;
+
+    border-radius: 14px;
+
+    background: #fafafa;
+
+    padding: 0 18px;
+
+    transition: 0.25s;
+
+    font-size: 15px;
+
+    &:hover {
+      border-color: #db4444;
+    }
 
     &:focus {
       outline: none;
-      border-color: #ac3838;
+
+      background: white;
+
+      border-color: #db4444;
+
+      box-shadow: 0 0 0 4px rgba(219, 68, 68, 0.08);
     }
+  }
+
+  textarea {
+    min-height: 120px;
+
+    padding-top: 16px;
+
+    resize: vertical;
   }
 }
 
+/* =======================================
+          Add Button
+======================================= */
+
 .add-btn {
-  width: fit-content;
-  padding: 10px 18px;
-  border: 1px solid #d1d5db;
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 10px;
+
+  margin-top: 6px;
+
+  padding: 12px 20px;
+
+  border-radius: 14px;
+
+  border: 1px solid #db4444;
+
   background: white;
-  border-radius: 6px;
+
+  color: #db4444;
+
+  font-weight: 600;
+
+  transition: 0.25s;
+
   cursor: pointer;
+
+  &:hover {
+    background: #db4444;
+
+    color: white;
+
+    transform: translateY(-2px);
+  }
 }
+
+/* =======================================
+          Actions
+======================================= */
 
 .step-actions {
   display: flex;
-  justify-content: flex-end;
-  gap: 12px;
 
-  margin-top: 30px;
+  justify-content: flex-end;
+
+  gap: 16px;
+
+  margin-top: 40px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
 }
 
 .btn-primary {
-  background: #db4444;
-  color: white;
+  min-width: 180px;
+
+  height: 52px;
+
   border: none;
-  padding: 12px 24px;
-  border-radius: 6px;
+
+  border-radius: 14px;
+
+  background: linear-gradient(135deg, #ef4444, #db4444);
+
+  color: white;
+
+  font-size: 15px;
+
+  font-weight: 700;
+
   cursor: pointer;
+
+  transition: 0.25s;
+
+  box-shadow: 0 15px 30px rgba(219, 68, 68, 0.25);
+
+  &:hover {
+    transform: translateY(-2px);
+
+    box-shadow: 0 20px 36px rgba(219, 68, 68, 0.35);
+  }
+}
+
+/* =======================================
+            Responsive
+======================================= */
+
+@media (max-width: 992px) {
+  .step-progress {
+    gap: 25px;
+  }
+
+  .step-progress::before {
+    left: 15%;
+
+    right: 15%;
+  }
+}
+
+@media (max-width: 576px) {
+  .step-progress {
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    gap: 24px;
+  }
+
+  .step-progress::before {
+    display: none;
+  }
+
+  .step-item {
+    flex-direction: row;
+
+    gap: 16px;
+
+    align-items: center;
+
+    text-align: left;
+
+    span {
+      margin-top: 0;
+
+      max-width: none;
+    }
+  }
 }

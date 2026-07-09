@@ -1,66 +1,149 @@
 .voucher-list {
-  margin-top: 24px;
-  margin-bottom: 24px;
+  margin: 28px 0;
+
+  padding: 28px;
+
   background: #fff;
-  border-radius: 16px;
-  padding: 24px;
-  border: 1px solid #e5e7eb;
+
+  border-radius: 24px;
+
+  border: 1px solid #ffe4e6;
+
+  box-shadow: 0 12px 30px rgba(239, 68, 68, 0.08);
 
   &__header {
-    margin-bottom: 20px;
+    margin-bottom: 24px;
 
     h3 {
-      font-size: 20px;
+      font-size: 22px;
       font-weight: 700;
+      color: #1e293b;
     }
+  }
+
+  &__empty {
+    padding: 40px 0;
+    text-align: center;
+    color: #94a3b8;
+    font-size: 15px;
   }
 
   &__grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    gap: 18px;
   }
 }
 
 .voucher-card {
-  border: none;
-  cursor: pointer;
-  background: linear-gradient(135deg, #0369a1, #0284c7);
-  color: white;
-  padding: 18px;
-  border-radius: 14px;
-  text-align: left;
+  position: relative;
+
   display: flex;
   flex-direction: column;
+
   gap: 10px;
-  transition: 0.25s;
+
+  padding: 22px;
+
+  border: none;
+  border-radius: 20px;
+
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+
+  color: white;
+
+  cursor: pointer;
+
+  overflow: hidden;
+
+  transition: all 0.3s ease;
+
+  box-shadow: 0 12px 25px rgba(239, 68, 68, 0.18);
+
+  // hiệu ứng coupon
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    width: 26px;
+    height: 26px;
+    background: #fafafa;
+    border-radius: 50%;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  &::before {
+    left: -13px;
+  }
+
+  &::after {
+    right: -13px;
+  }
 
   &:hover {
-    transform: translateY(-4px);
+    transform: translateY(-5px);
+    box-shadow: 0 18px 35px rgba(239, 68, 68, 0.28);
   }
 
   &--active {
-    outline: 3px solid #7dd3fc;
+    transform: scale(1.02);
+
+    outline: 3px solid #fca5a5;
+
+    box-shadow: 0 0 0 6px rgba(239, 68, 68, 0.12);
   }
 
   &__code {
+    display: inline-flex;
+    width: fit-content;
+
+    padding: 6px 14px;
+
+    border-radius: 999px;
+
+    background: rgba(255, 255, 255, 0.18);
+
+    backdrop-filter: blur(8px);
+
     font-size: 18px;
     font-weight: 700;
+    letter-spacing: 1px;
+  }
+
+  &__discount {
+    font-size: 24px;
+    font-weight: 800;
+    color: #fff;
   }
 
   &__description {
     font-size: 14px;
-    opacity: 0.9;
-  }
-
-  &__discount {
-    font-size: 13px;
-    font-weight: 600;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.9);
   }
 }
 
 @media (max-width: 768px) {
   .voucher-list {
-    padding: 16px;
+    padding: 18px;
+
+    border-radius: 18px;
+
+    &__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .voucher-card {
+    padding: 18px;
+
+    &__discount {
+      font-size: 20px;
+    }
+
+    &__code {
+      font-size: 16px;
+    }
   }
 }

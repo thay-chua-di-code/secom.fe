@@ -87,11 +87,11 @@ const ChangePassword = () => {
 
   return (
     <div className="change-password">
-      <div className="change-password__header">
+      {/* <div className="change-password__header">
         <h2>Change Password</h2>
 
         <p>Keep your account secure by updating your password</p>
-      </div>
+      </div> */}
 
       <div className="change-password__form">
         {/* CURRENT PASSWORD */}

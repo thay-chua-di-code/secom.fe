@@ -5,7 +5,10 @@ import { useDispatch, useSelector } from "react-redux";
 import CartList from "./List/index";
 import CartSummary from "./CartSummary/index";
 import VoucherList from "./VoucherList/index";
-import { fetchCart, calculateCheckoutSummary } from "../../redux/slice/cartSlice";
+import {
+  fetchCart,
+  calculateCheckoutSummary,
+} from "../../redux/slice/cartSlice";
 import { fetchVouchers } from "../../redux/slice/voucherSlice";
 import { useCart } from "../../hooks/useCart";
 import { paymentApi } from "../../api/paymentApi";
@@ -13,6 +16,7 @@ import { orderApi } from "../../api/orderApi";
 import { useLocation } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { TicketPercent } from "lucide-react";
 import "./style.scss";
 
 function CartEmpty() {
@@ -105,13 +109,15 @@ export default function CartPage() {
   );
 
   const backendSubtotal = checkoutSummary?.subtotal ?? subtotal;
-  const backendDiscountAmount = checkoutSummary?.discountAmount ?? discountAmount;
+  const backendDiscountAmount =
+    checkoutSummary?.discountAmount ?? discountAmount;
   const backendFinalTotal = checkoutSummary?.finalTotal ?? finalTotal;
-  const summarySubtotal = voucherCode || checkoutSummary ? backendSubtotal : selectedSubtotal;
-  const summaryDiscountAmount = voucherCode || checkoutSummary ? backendDiscountAmount : 0;
-  const summaryFinalTotal = voucherCode || checkoutSummary
-    ? backendFinalTotal
-    : selectedSubtotal;
+  const summarySubtotal =
+    voucherCode || checkoutSummary ? backendSubtotal : selectedSubtotal;
+  const summaryDiscountAmount =
+    voucherCode || checkoutSummary ? backendDiscountAmount : 0;
+  const summaryFinalTotal =
+    voucherCode || checkoutSummary ? backendFinalTotal : selectedSubtotal;
 
   const allSelected = items.length > 0 && selectedItems.length === items.length;
 
@@ -371,6 +377,7 @@ export default function CartPage() {
                 onClick={handleApplyVoucher}
                 disabled={!selectedVoucher || actionLoading}
               >
+                <TicketPercent size={18} />
                 {actionLoading ? "Applying..." : "Apply Voucher"}
               </button>
             </div>

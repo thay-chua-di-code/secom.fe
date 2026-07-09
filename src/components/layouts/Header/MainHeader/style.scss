@@ -1,12 +1,270 @@
-.social-wrapper {
-  button {
-    background: transparent !important;
-    border: none;
-    cursor: pointer;
+.main-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(18px);
+  border-bottom: 1px solid #ececec;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+
+  .container-custom {
+    max-width: 1400px;
+    margin: 0 auto;
+    overflow: visible;
+  }
+
+  &__wrapper {
     display: flex;
     align-items: center;
-    gap: 4px;
-    font-size: 14px;
-    color: #fff;
+    justify-content: space-between;
+    gap: 24px;
+    height: 82px;
+    overflow: visible;
   }
+
+  &__menu {
+    display: none;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  /* =========================
+      LOGO
+  ========================== */
+
+  &__logo {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    text-decoration: none;
+    color: inherit;
+    flex-shrink: 0;
+    transition: 0.3s;
+
+    &:hover {
+      transform: translateY(-2px);
+    }
+  }
+
+  &__logo-image {
+    width: 56px;
+    height: 56px;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  &__logo-content {
+    h1 {
+      margin: 0;
+      font-size: 30px;
+      font-weight: 800;
+      background: linear-gradient(90deg, #111, #db4444);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    span {
+      font-size: 13px;
+      color: #777;
+    }
+  }
+
+  /* =========================
+      SEARCH
+  ========================== */
+
+  &__search {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+  }
+
+  &__search-box {
+    position: relative;
+    width: 100%;
+    max-width: 720px;
+  }
+
+  .header-search {
+    input {
+      height: 52px;
+
+      border-radius: 999px;
+
+      background: #f8f9fb;
+
+      border: 2px solid transparent;
+
+      transition: 0.3s;
+
+      &:focus {
+        background: white;
+
+        border-color: #db4444;
+
+        box-shadow: 0 0 0 5px rgba(219, 68, 68, 0.12);
+      }
+    }
+  }
+
+  /* =========================
+      ACTIONS
+  ========================== */
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-shrink: 0;
+  }
+
+  &__user,
+  &__cart {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__avatar,
+  &__cart-btn {
+    width: 50px;
+    height: 50px;
+
+    min-width: 50px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: white;
+
+    border: 1px solid #ececec;
+
+    transition: all 0.25s ease;
+
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.06);
+
+    cursor: pointer;
+
+    &:hover {
+      background: #db4444;
+
+      border-color: #db4444;
+
+      color: white;
+
+      transform: translateY(-2px);
+
+      box-shadow: 0 12px 25px rgba(219, 68, 68, 0.25);
+    }
+
+    img {
+      width: 100%;
+
+      height: 100%;
+
+      border-radius: 50%;
+
+      object-fit: cover;
+    }
+
+    svg {
+      transition: 0.25s;
+    }
+  }
+
+  &__cart-badge {
+    position: absolute;
+
+    top: -4px;
+
+    right: -2px;
+
+    min-width: 20px;
+
+    height: 20px;
+
+    padding: 0 5px;
+
+    border-radius: 999px;
+
+    background: #db4444;
+
+    color: white;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border: 2px solid white;
+  }
+
+  /* =========================
+      MOBILE
+  ========================== */
+
+  &__mobile-search {
+    display: none;
+    padding-bottom: 18px;
+  }
+
+  @media (max-width: 992px) {
+    &__menu {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    &__search {
+      display: none;
+    }
+
+    &__mobile-search {
+      display: block;
+    }
+
+    &__logo-content span {
+      display: none;
+    }
+
+    &__wrapper {
+      height: 72px;
+    }
+  }
+
+  @media (max-width: 576px) {
+    &__logo-content {
+      display: none;
+    }
+
+    &__actions {
+      gap: 10px;
+    }
+  }
+}
+
+
+.user-dropdown {
+  z-index: 9999;
+}
+
+.cart {
+  z-index: 9999;
 }

@@ -35,6 +35,28 @@ const RegisterSeller = () => {
 
             <Button className="btn-outline">Learn More</Button>
           </div>
+
+          <div className="seller-banner__features">
+            <div className="feature-item">
+              <span>✓</span>
+              <p>Fast Seller Approval</p>
+            </div>
+
+            <div className="feature-item">
+              <span>✓</span>
+              <p>Secure Payment</p>
+            </div>
+
+            <div className="feature-item">
+              <span>✓</span>
+              <p>Reach Thousands of Customers</p>
+            </div>
+
+            <div className="feature-item">
+              <span>✓</span>
+              <p>24/7 Seller Support</p>
+            </div>
+          </div>
         </div>
 
         <div className="seller-banner__image">

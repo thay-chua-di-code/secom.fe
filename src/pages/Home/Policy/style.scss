@@ -1,71 +1,194 @@
 .policy-container {
+  position: relative;
   width: 100%;
-  padding: 80px 0;
+  padding: 90px 0;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+
+    background:
+      radial-gradient(
+        circle at top left,
+        rgba(219, 68, 68, 0.06),
+        transparent 35%
+      ),
+      radial-gradient(
+        circle at bottom right,
+        rgba(219, 68, 68, 0.05),
+        transparent 40%
+      );
+    pointer-events: none;
+  }
 
   .policy-main-content {
+    position: relative;
+    z-index: 2;
+
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 48px;
-    max-width: 950px;
-    margin: 0 auto;
+    gap: 28px;
+
+    max-width: 1200px;
+    margin: auto;
   }
 
   .policy-card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    position: relative;
+
+    padding: 42px 28px;
+
+    background: rgba(255, 255, 255, 0.95);
+
+    border: 1px solid #f1f1f1;
+    border-radius: 28px;
+
     text-align: center;
 
+    overflow: hidden;
+
+    transition: all 0.35s ease;
+
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+
+    &::before {
+      content: "";
+
+      position: absolute;
+      inset: 0;
+
+      background: linear-gradient(
+        135deg,
+        rgba(219, 68, 68, 0.08),
+        transparent 65%
+      );
+
+      opacity: 0;
+
+      transition: 0.35s;
+    }
+
+    &:hover {
+      transform: translateY(-10px);
+
+      border-color: rgba(219, 68, 68, 0.25);
+
+      box-shadow: 0 22px 45px rgba(15, 23, 42, 0.12);
+
+      &::before {
+        opacity: 1;
+      }
+
+      img {
+        transform: scale(1.08) rotate(-5deg);
+      }
+
+      h3 {
+        color: #db4444;
+      }
+    }
+
     img {
-      width: 80px;
-      height: 80px;
-      object-fit: contain;
+      position: relative;
+      z-index: 2;
+
+      width: 84px;
+      height: 84px;
+
       margin-bottom: 24px;
+
+      padding: 16px;
+
+      border-radius: 50%;
+
+      background: linear-gradient(135deg, #fff, #fafafa);
+
+      box-shadow: 0 12px 24px rgba(219, 68, 68, 0.18);
+
+      transition: 0.35s;
     }
 
     .policy-card-text {
+      position: relative;
+      z-index: 2;
+
       h3 {
-        font-size: 20px;
-        font-weight: 700;
-        color: #000;
-        margin-bottom: 10px;
-        text-transform: uppercase;
+        margin-bottom: 14px;
+
+        font-size: 19px;
+        font-weight: 800;
+
+        color: #111827;
+
+        letter-spacing: 0.5px;
+
+        transition: 0.3s;
       }
+
       p {
-        font-size: 14px;
-        color: #666;
-        line-height: 1.6;
+        margin: 0;
+
+        color: #64748b;
+
+        font-size: 15px;
+
+        line-height: 1.7;
       }
     }
   }
 }
 
+/* ===========================
+        TABLET
+=========================== */
+
 @media (max-width: 992px) {
   .policy-container {
-    padding: 60px 0;
+    padding: 70px 0;
 
     .policy-main-content {
-      gap: 32px;
+      grid-template-columns: repeat(2, 1fr);
     }
 
     .policy-card {
+      padding: 34px 22px;
+
+      img {
+        width: 76px;
+        height: 76px;
+      }
+
       .policy-card-text {
         h3 {
-          font-size: 18px;
+          font-size: 17px;
+        }
+
+        p {
+          font-size: 14px;
         }
       }
     }
   }
 }
 
+/* ===========================
+        MOBILE
+=========================== */
+
 @media (max-width: 768px) {
   .policy-container {
+    padding: 60px 0;
+
     .policy-main-content {
       grid-template-columns: 1fr;
-
-      gap: 40px;
+      gap: 22px;
     }
+
     .policy-card {
+      padding: 30px 24px;
+
       img {
         width: 72px;
         height: 72px;
@@ -77,7 +200,7 @@
         }
 
         p {
-          font-size: 13px;
+          font-size: 14px;
         }
       }
     }

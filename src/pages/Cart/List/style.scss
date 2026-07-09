@@ -1,81 +1,123 @@
 .cart-list {
-  background: white;
-
-  border-radius: 20px;
+  background: #fff;
+  border-radius: 24px;
   overflow: hidden;
-
-  border: 1px solid #e5e7eb;
+  border: 1px solid #ffe4e6;
+  box-shadow: 0 10px 35px rgba(239, 68, 68, 0.08);
 
   &__header {
-    padding: 18px 24px;
+    display: flex;
+    align-items: center;
+    padding: 20px 24px;
 
-    background: #0369a1;
-    color: white;
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: #fff;
+    font-size: 16px;
+    font-weight: 700;
 
-    font-weight: 600;
+    label {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      user-select: none;
+    }
 
     input {
-      margin-right: 10px;
+      width: 18px;
+      height: 18px;
+      accent-color: white;
     }
+  }
+
+  &__body {
+    padding: 18px;
+    background: #fafafa;
   }
 }
 
 .cart-item {
   display: flex;
   align-items: center;
+  gap: 18px;
 
-  gap: 16px;
+  background: #fff;
 
-  padding: 20px 24px;
+  border-radius: 20px;
+  padding: 22px;
 
-  border-bottom: 1px solid #f1f5f9;
+  margin-bottom: 18px;
+
+  border: 1px solid #f5f5f5;
+
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+    border-color: #fecaca;
+    box-shadow: 0 12px 30px rgba(239, 68, 68, 0.12);
+  }
 
   &:last-child {
-    border-bottom: none;
+    margin-bottom: 0;
   }
 
   input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
-    accent-color: #0369a1;
+    width: 20px;
+    height: 20px;
+    accent-color: #ef4444;
+    cursor: pointer;
   }
 
   &__content {
     flex: 1;
 
     h3 {
-      font-size: 16px;
-      font-weight: 600;
-      margin-bottom: 8px;
-      color: #0f172a;
+      margin: 0 0 10px;
+      font-size: 18px;
+      font-weight: 700;
+      color: #1e293b;
+      line-height: 1.4;
     }
 
     span {
-      color: #64748b;
-      font-size: 14px;
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 999px;
+
+      background: #fef2f2;
+      color: #ef4444;
+
+      font-size: 13px;
+      font-weight: 600;
     }
   }
 
   &__price {
-    margin-top: 10px;
+    margin-top: 16px;
 
-    font-size: 18px;
-    font-weight: 700;
+    font-size: 24px;
+    font-weight: 800;
 
-    color: #0369a1;
+    color: #dc2626;
+    letter-spacing: 0.5px;
   }
+
   &__actions {
     display: flex;
     align-items: center;
-    gap: 10px;
+    flex-wrap: wrap;
+    gap: 12px;
 
-    margin-top: 16px;
+    margin-top: 20px;
 
     button {
       border: none;
+      outline: none;
       cursor: pointer;
-      transition: all 0.25s ease;
-      font-weight: 600;
+      transition: 0.25s;
+
+      font-weight: 700;
     }
 
     button:hover {
@@ -87,51 +129,92 @@
     }
 
     button:disabled {
-      opacity: 0.6;
+      opacity: 0.5;
       cursor: not-allowed;
     }
 
     button[data-testid="quantity-decrease-btn"],
     button[data-testid="quantity-increase-btn"] {
-      width: 36px;
-      height: 36px;
+      width: 42px;
+      height: 42px;
 
-      border-radius: 10px;
+      border-radius: 14px;
 
-      background: #f1f5f9;
-      color: #0f172a;
+      background: #fff1f2;
+      color: #ef4444;
 
-      font-size: 18px;
+      font-size: 22px;
+      font-weight: 700;
+
+      border: 1px solid #fecdd3;
 
       &:hover {
-        background: #0369a1;
+        background: #ef4444;
         color: white;
+        border-color: #ef4444;
+        box-shadow: 0 8px 18px rgba(239, 68, 68, 0.25);
       }
     }
 
     button[data-testid="remove-cart-item-btn"] {
-      padding: 0 18px;
-      height: 36px;
+      height: 42px;
+      padding: 0 22px;
 
-      border-radius: 10px;
+      border-radius: 14px;
 
-      background: #ef4444;
+      background: linear-gradient(135deg, #ef4444, #dc2626);
       color: white;
 
+      font-size: 14px;
+
       &:hover {
-        background: #dc2626;
+        box-shadow: 0 10px 24px rgba(239, 68, 68, 0.3);
       }
     }
   }
 }
 
 @media (max-width: 768px) {
+  .cart-list {
+    border-radius: 18px;
+
+    &__header {
+      padding: 16px;
+      font-size: 15px;
+    }
+
+    &__body {
+      padding: 14px;
+    }
+  }
+
   .cart-item {
-    padding: 16px;
+    padding: 18px;
+    gap: 14px;
 
     &__content {
       h3 {
-        font-size: 15px;
+        font-size: 16px;
+      }
+    }
+
+    &__price {
+      font-size: 20px;
+    }
+
+    &__actions {
+      gap: 10px;
+
+      button[data-testid="quantity-decrease-btn"],
+      button[data-testid="quantity-increase-btn"] {
+        width: 38px;
+        height: 38px;
+        font-size: 18px;
+      }
+
+      button[data-testid="remove-cart-item-btn"] {
+        height: 38px;
+        padding: 0 16px;
       }
     }
   }
