@@ -1,13 +1,15 @@
-$primary: #0284c7;
-$primary-dark: #0369a1;
+$primary: #dc2626;
+$primary-dark: #b91c1c;
+$primary-light: #ef4444;
+$primary-soft: #fef2f2;
 
-$bg: #f8fafc;
+$bg: #fafafa;
 $white: #ffffff;
 
-$text: #0f172a;
-$text-light: #64748b;
+$text: #111827;
+$text-light: #6b7280;
 
-$border: #e2e8f0;
+$border: #e5e7eb;
 
 .seller {
   display: flex;
@@ -206,7 +208,6 @@ table {
 // =========================
 // ORDER
 // =========================
-
 
 .orders {
   display: flex;
