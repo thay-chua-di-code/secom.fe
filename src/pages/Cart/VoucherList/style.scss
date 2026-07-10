@@ -147,3 +147,82 @@
     }
   }
 }
+.voucher-action {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin: 24px 0 32px;
+
+  button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    min-width: 220px;
+    height: 52px;
+    padding: 0 28px;
+
+    border: none;
+    outline: none;
+    border-radius: 14px;
+
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: #fff;
+
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+
+    cursor: pointer;
+
+    transition: all 0.25s ease;
+
+    box-shadow:
+      0 8px 22px rgba(239, 68, 68, 0.25),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+
+    svg {
+      transition: 0.25s;
+      flex-shrink: 0;
+    }
+
+    &:hover:not(:disabled) {
+      transform: translateY(-2px);
+
+      box-shadow:
+        0 16px 30px rgba(239, 68, 68, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.25);
+
+      svg {
+        transform: rotate(-10deg) scale(1.08);
+      }
+    }
+
+    &:active:not(:disabled) {
+      transform: scale(0.97);
+    }
+
+    &:disabled {
+      background: #e5e7eb;
+      color: #94a3b8;
+      cursor: not-allowed;
+      box-shadow: none;
+
+      svg {
+        opacity: 0.5;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .voucher-action {
+    margin: 20px 0 28px;
+
+    button {
+      width: 100%;
+      min-width: 0;
+    }
+  }
+}

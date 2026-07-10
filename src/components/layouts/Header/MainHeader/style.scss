@@ -33,48 +33,70 @@
       LOGO
   ========================== */
 
+  /* =========================
+      BRAND
+========================= */
+
   &__logo {
     display: flex;
     align-items: center;
-    gap: 14px;
     text-decoration: none;
-    color: inherit;
     flex-shrink: 0;
-    transition: 0.3s;
+    transition: all 0.25s ease;
 
     &:hover {
       transform: translateY(-2px);
     }
   }
 
-  &__logo-image {
-    width: 56px;
-    height: 56px;
-    border-radius: 18px;
-    overflow: hidden;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+  &__brand {
+    display: flex;
+    flex-direction: column;
+    line-height: 1;
 
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-  }
-
-  &__logo-content {
     h1 {
       margin: 0;
-      font-size: 30px;
-      font-weight: 800;
-      background: linear-gradient(90deg, #111, #db4444);
+
+      font-size: 38px;
+      font-weight: 900;
+      letter-spacing: -2px;
+
+      text-transform: uppercase;
+
+      background: linear-gradient(
+        135deg,
+        #111827 0%,
+        #ef4444 35%,
+        #dc2626 65%,
+        #7f1d1d 100%
+      );
+
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+
+      user-select: none;
+
+      transition: 0.3s;
     }
 
     span {
-      font-size: 13px;
-      color: #777;
+      margin-top: 4px;
+
+      font-size: 11px;
+
+      font-weight: 600;
+
+      letter-spacing: 4px;
+
+      text-transform: uppercase;
+
+      color: #94a3b8;
     }
+  }
+
+  &__logo:hover &__brand h1 {
+    transform: scale(1.03);
+    filter: drop-shadow(0 8px 18px rgba(239, 68, 68, 0.28));
   }
 
   /* =========================
@@ -259,7 +281,6 @@
     }
   }
 }
-
 
 .user-dropdown {
   z-index: 9999;

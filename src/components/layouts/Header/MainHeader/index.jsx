@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Search, ShoppingCart, Menu, UserRound } from "lucide-react";
-import logo from "../../../../assets/icons/logo.jpg";
 import UserDropdown from "../../../common/UserDropDown";
 import Button from "../../../common/Button/Button";
 import Input from "../../../common/Input";
@@ -93,13 +92,9 @@ export default function MainHeader() {
           </button>
 
           <Link to="/" className="main-header__logo">
-            <div className="main-header__logo-image">
-              <img src={logo} alt="Secom logo" />
-            </div>
-
-            <div className="main-header__logo-content">
-              <h1>Secom</h1>
-              <span>Smart Tech, Recharged.</span>
+            <div className="main-header__brand">
+              <h1>AIDR</h1>
+              <span>AI Driven Retail</span>
             </div>
           </Link>
 
