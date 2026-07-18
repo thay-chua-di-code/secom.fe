@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { createSellerProduct } from "../../../../redux/slice/seller/product/thunk";
 import { categoriesService } from "../../../../service/categoriesService";
 import "./style.scss";
+import { toast } from "react-hot-toast";
+import { X, PackagePlus } from "lucide-react";
 const AddProductModal = ({ open, onClose }) => {
   const dispatch = useDispatch();
   const { categories } = useSelector((state) => state.categories);
@@ -28,14 +30,34 @@ const AddProductModal = ({ open, onClose }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     e.stopPropagation();
-    const result = await dispatch(
-      createSellerProduct({
-        ...form,
-        price: Number(form.price),
-      }),
-    );
 
-    onClose();
+    try {
+      await dispatch(
+        createSellerProduct({
+          ...form,
+          price: Number(form.price),
+        }),
+      ).unwrap();
+
+      toast.success("Product created successfully!", {
+        position: "top-right",
+        autoClose: 2500,
+      });
+
+      onClose();
+    } catch (error) {
+      console.error("Create product failed:", error);
+
+      toast.error(
+        error?.message ||
+          error?.data?.message ||
+          "Failed to create product. Please try again.",
+        {
+          position: "top-right",
+          autoClose: 3000,
+        },
+      );
+    }
   };
 
   useEffect(() => {
@@ -52,11 +74,16 @@ const AddProductModal = ({ open, onClose }) => {
     <div className="modal-overlay">
       <div className="product-modal">
         <div className="modal-header">
-          <h2>Create Product</h2>
+          <div className="modal-title">
+            <div className="modal-icon">
+              <PackagePlus size={22} />
+            </div>
 
-          <button type="button" className="close-btn" onClick={onClose}>
-            ✕
-          </button>
+            <div>
+              <h2>Create Product</h2>
+              <p>Add a new product to your store</p>
+            </div>
+          </div>
         </div>
 
         <form onSubmit={handleSubmit}>
@@ -117,12 +144,15 @@ const AddProductModal = ({ open, onClose }) => {
             <div className="form-group">
               <label>Condition</label>
 
-              <input
+              <select
                 name="condition"
-                placeholder="New"
                 value={form.condition}
                 onChange={handleChange}
-              />
+              >
+                <option value="">-- Select Condition --</option>
+                <option value="new">New</option>
+                <option value="old">Old</option>
+              </select>
             </div>
 
             <div className="form-group">

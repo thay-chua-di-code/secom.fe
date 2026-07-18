@@ -107,6 +107,7 @@ export const sellerService = {
         API_ENDPOINTS.SELLER.PRODUCT(productId),
       );
 
+      console.log(result);
       return result.data.data;
     } catch (e) {
       throw new Error(e?.response?.data?.message || "Delete product failed");

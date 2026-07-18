@@ -1,14 +1,56 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchSellerProducts } from "../../../redux/slice/seller/product/thunk";
+import {
+  fetchSellerProducts,
+  deleteSellerProduct,
+} from "../../../redux/slice/seller/product/thunk";
 import Button from "../../../components/common/Button/Button";
+import UpdateProductModal from "./FormUpdate";
 import AddProductModal from "./FormAdd";
+import { Plus, Pencil, Trash2, Package, TrendingUp } from "lucide-react";
+import { formatCurrencyVN } from "../../../utils/fncUtils";
+import "./style.scss";
+import { toast } from "react-hot-toast";
+
 const Products = () => {
   const dispatch = useDispatch();
   const [openAdd, setOpenAdd] = useState(false);
+  const [openUpdate, setOpenUpdate] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
   const { products, loading, error } = useSelector(
     (state) => state.sellerProduct,
   );
+
+  const handleDeleteProduct = async (productId) => {
+    try {
+      await dispatch(deleteSellerProduct(productId)).unwrap();
+
+      toast.success("Product deleted successfully!", {
+        duration: 2500,
+      });
+    } catch (error) {
+      console.error("Delete product failed:", error);
+
+      toast.error(
+        error?.message ||
+          error?.data?.message ||
+          "Failed to delete product. Please try again.",
+        {
+          duration: 3000,
+        },
+      );
+    }
+  };
+
+  const handleOpenUpdate = (product) => {
+    setSelectedProduct(product);
+    setOpenUpdate(true);
+  };
+
+  const handleCloseUpdate = () => {
+    setSelectedProduct(null);
+    setOpenUpdate(false);
+  };
 
   useEffect(() => {
     dispatch(
@@ -17,55 +59,177 @@ const Products = () => {
         pageSize: 10,
       }),
     );
-  }, [dispatch]);
+  }, []);
 
-  if (loading) return <h3>Loading...</h3>;
+  if (loading) {
+    return (
+      <div className="seller-products__loading">
+        <div className="loading-spinner" />
+        <span>Loading products...</span>
+      </div>
+    );
+  }
 
   return (
-    <div>
-      <div className="page-header">
-        <h1>Product Management</h1>
-        <Button onClick={() => setOpenAdd(true)}>Add Product</Button>
+    <div className="seller-products">
+      {/* HEADER */}
+      <div className="seller-products__header">
+        <div className="seller-products__heading">
+          <div className="seller-products__icon">
+            <Package size={24} />
+          </div>
+
+          <div>
+            <h1>Product Management</h1>
+            <p>Manage and monitor all products in your store</p>
+          </div>
+        </div>
+
+        <Button className="add-product-btn" onClick={() => setOpenAdd(true)}>
+          <Plus size={18} />
+          Add Product
+        </Button>
       </div>
 
-      <div className="table-container">
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Stock</th>
-              <th>Price</th>
-              <th>Action</th>
-            </tr>
-          </thead>
+      {/* STATS */}
+      <div className="seller-products__stats">
+        <div className="stat-card">
+          <div className="stat-card__icon">
+            <Package size={20} />
+          </div>
 
-          <tbody>
-            {products?.map((item) => (
-              <tr key={item.productId}>
-                <td>{item.name}</td>
-                <td>{item.stock}</td>
-                <td>${item.price}</td>
+          <div>
+            <span>Total Products</span>
+            <strong>{products?.length || 0}</strong>
+          </div>
+        </div>
 
-                <td>
-                  <button>Edit</button>
-                  <button>Delete</button>
-                </td>
-              </tr>
-            ))}
+        <div className="stat-card">
+          <div className="stat-card__icon">
+            <TrendingUp size={20} />
+          </div>
 
-            {products?.length === 0 && (
+          <div>
+            <span>Active Products</span>
+            <strong>
+              {products?.filter((item) => item.isActive)?.length || 0}
+            </strong>
+          </div>
+        </div>
+      </div>
+
+      {/* TABLE */}
+      <div className="products-card">
+        <div className="products-card__header">
+          <div>
+            <h2>Your Products</h2>
+            <p>View and manage your product inventory</p>
+          </div>
+
+          <span className="products-count">
+            {products?.length || 0} Products
+          </span>
+        </div>
+
+        <div className="table-container">
+          <table className="products-table">
+            <thead>
               <tr>
-                <td colSpan={4} style={{ textAlign: "center" }}>
-                  No products found
-                </td>
+                <th>Product</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Status</th>
+                <th className="action-column">Action</th>
               </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+
+            <tbody>
+              {products?.map((item) => (
+                <tr key={item.id}>
+                  <td>
+                    <div className="product-info">
+                      <div className="product-avatar">
+                        {item.name?.charAt(0)?.toUpperCase()}
+                      </div>
+
+                      <div>
+                        <strong>{item.name}</strong>
+                        <span>ID: {item.id.slice(0, 8).toUpperCase()}</span>
+                      </div>
+                    </div>
+                  </td>
+
+                  <td>
+                    <span className="category-badge">{item.categoryName}</span>
+                  </td>
+
+                  <td>
+                    <strong className="product-price">
+                      {formatCurrencyVN(item.price)}
+                    </strong>
+                  </td>
+
+                  <td>
+                    <span
+                      className={`status-badge ${
+                        item.isActive ? "active" : "inactive"
+                      }`}
+                    >
+                      <span className="status-dot" />
+                      {item.isActive ? "Active" : "Inactive"}
+                    </span>
+                  </td>
+
+                  <td>
+                    <div className="product-actions">
+                      <button
+                        type="button"
+                        className="action-btn edit"
+                        onClick={() => handleOpenUpdate(item)}
+                      >
+                        <Pencil size={18} />
+                      </button>
+                      {/* 
+                      <button
+                        type="button"
+                        className="action-btn delete"
+                        onClick={() => handleDeleteProduct(item.id)}
+                      >
+                        <Trash2 size={16} />
+                      </button> */}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+
+              {products?.length === 0 && (
+                <tr>
+                  <td colSpan={5}>
+                    <div className="empty-products">
+                      <Package size={40} />
+                      <h3>No products found</h3>
+                      <p>Start by adding your first product.</p>
+                    </div>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
+
+      {error && <div className="products-error">{error}</div>}
 
       {openAdd && (
         <AddProductModal open={openAdd} onClose={() => setOpenAdd(false)} />
+      )}
+
+      {openUpdate && selectedProduct && (
+        <UpdateProductModal
+          open={openUpdate}
+          product={selectedProduct}
+          onClose={handleCloseUpdate}
+        />
       )}
     </div>
   );

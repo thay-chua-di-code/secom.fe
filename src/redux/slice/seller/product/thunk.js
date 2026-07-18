@@ -35,7 +35,8 @@ export const createSellerProduct = createAsyncThunk(
   "sellerProduct/createSellerProduct",
   async (data, { rejectWithValue }) => {
     try {
-      return await sellerService.createProduct(data);
+      const res = await sellerService.createProduct(data);
+      return res;
     } catch (err) {
       return rejectWithValue(err.message);
     }
@@ -43,7 +44,6 @@ export const createSellerProduct = createAsyncThunk(
 );
 
 // ================= UPDATE =================
-
 export const updateSellerProduct = createAsyncThunk(
   "sellerProduct/updateSellerProduct",
   async ({ productId, data }, { rejectWithValue }) => {
@@ -54,6 +54,7 @@ export const updateSellerProduct = createAsyncThunk(
     }
   },
 );
+
 
 // ================= DELETE =================
 

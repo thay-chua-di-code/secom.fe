@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ShoppingCart } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import CartList from "./List/index";
@@ -78,10 +77,6 @@ export default function CartPage() {
     actionLoading,
     error,
     voucherCode,
-    subtotal,
-    discountAmount,
-    finalTotal,
-    checkoutSummary,
     updateQuantity,
     applyVoucher,
   } = useCart();
@@ -115,16 +110,45 @@ export default function CartPage() {
     0,
   );
 
-  const backendSubtotal = checkoutSummary?.subtotal ?? subtotal;
-  const backendDiscountAmount =
-    checkoutSummary?.discountAmount ?? discountAmount;
-  const backendFinalTotal = checkoutSummary?.finalTotal ?? finalTotal;
-  const summarySubtotal =
-    voucherCode || checkoutSummary ? backendSubtotal : selectedSubtotal;
-  const summaryDiscountAmount =
-    voucherCode || checkoutSummary ? backendDiscountAmount : 0;
-  const summaryFinalTotal =
-    voucherCode || checkoutSummary ? backendFinalTotal : selectedSubtotal;
+  const activeVoucherCode = selectedVoucher || voucherCode;
+  const activeVoucher = useMemo(
+    () =>
+      (Array.isArray(vouchers) ? vouchers : []).find(
+        (voucher) => voucher.code === activeVoucherCode,
+      ),
+    [activeVoucherCode, vouchers],
+  );
+
+  const summaryDiscountAmount = useMemo(() => {
+    if (!activeVoucher || selectedSubtotal <= 0) {
+      return 0;
+    }
+
+    const minOrderAmount = Number(activeVoucher.minOrderAmount || 0);
+
+    if (selectedSubtotal < minOrderAmount) {
+      return 0;
+    }
+
+    const discountValue = Number(activeVoucher.discountValue || 0);
+    const discountType = String(activeVoucher.discountType || "").toLowerCase();
+    const rawDiscount = discountType.includes("percent")
+      ? (selectedSubtotal * discountValue) / 100
+      : discountValue;
+    const maxDiscountAmount = Number(activeVoucher.maxDiscountAmount || 0);
+    const cappedDiscount =
+      maxDiscountAmount > 0
+        ? Math.min(rawDiscount, maxDiscountAmount)
+        : rawDiscount;
+
+    return Math.min(Math.max(cappedDiscount, 0), selectedSubtotal);
+  }, [activeVoucher, selectedSubtotal]);
+
+  const summarySubtotal = selectedSubtotal;
+  const summaryFinalTotal = Math.max(
+    selectedSubtotal - summaryDiscountAmount,
+    0,
+  );
 
   const allSelected = items.length > 0 && selectedItems.length === items.length;
 
@@ -173,6 +197,11 @@ export default function CartPage() {
   };
 
   const handleApplyVoucher = async () => {
+    if (!selectedItemIds.length) {
+      toast.error("Please select at least one item before applying a voucher.");
+      return;
+    }
+
     if (!selectedVoucher) {
       toast.error("Please select a voucher.");
       return;
@@ -241,6 +270,9 @@ export default function CartPage() {
         cartItemIds: selectedItemIds,
         voucherCode: selectedVoucher || voucherCode || null,
       });
+
+      console.log("Create order response:", createOrderResponse);
+
       createdOrder = getCreatedOrder(createOrderResponse);
     } catch (orderError) {
       toast.error(getCreateOrderErrorMessage(orderError));
@@ -251,6 +283,8 @@ export default function CartPage() {
     try {
       const orderId = getCreatedOrderId(createdOrder);
       const amount = getCreatedOrderAmount(createdOrder);
+
+      console.log("Created order:", createdOrder);
 
       if (!orderId) {
         throw new Error("Missing orderId from create order response");
@@ -284,8 +318,12 @@ export default function CartPage() {
         throw new Error("Missing cancelUri");
       }
 
+      console.log("PayOS payment request:", paymentRequest);
+
       const paymentResponse =
         await paymentApi.createPaymentTransaction(paymentRequest);
+
+      console.log("Payment response:", paymentResponse);
 
       const paymentUrl =
         paymentResponse?.data?.data?.paymentUrl ||
