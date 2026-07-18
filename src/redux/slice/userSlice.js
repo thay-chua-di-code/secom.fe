@@ -10,6 +10,7 @@ const initialState = {
     totalCount: 0,
     totalPages: 0,
   },
+  viewedProduct: [],
   addresses: [],
   wishlist: [],
   loading: false,
@@ -139,6 +140,14 @@ const userSlice = createSlice({
         totalPages: action.payload.totalPages,
       };
     },
+    getViewedProduct: (state, action) => {
+      state.viewedProduct = action.payload;
+      state.loading = false;
+    },
+    clearAllViewedProduct: (state, action) => {
+      state.viewedProduct = [];
+      state.loading = false;
+    },
   },
 
   extraReducers: (builder) => {
@@ -246,6 +255,8 @@ export const {
   getFolloweShop,
   setLoading,
   setError,
+  getViewedProduct,
+  clearAllViewedProduct,
 } = userSlice.actions;
 
 export default userSlice.reducer;

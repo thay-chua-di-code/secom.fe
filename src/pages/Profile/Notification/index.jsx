@@ -4,7 +4,6 @@ import { useSelector } from "react-redux";
 
 export default function NotificationList() {
   const { items } = useSelector((state) => state.notification);
-  console.log("items:", items);
   return (
     <div className="notification-content">
       <div className="notification-content__header">

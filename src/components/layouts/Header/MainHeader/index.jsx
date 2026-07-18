@@ -30,7 +30,6 @@ export default function MainHeader() {
 
   const handleInputChange = (e) => {
     const value = e.target.value;
-    console.log("input:", value);
     setKeyword(value);
 
     if (!value.trim()) return;

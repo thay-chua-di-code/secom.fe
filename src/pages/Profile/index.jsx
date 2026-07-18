@@ -163,8 +163,6 @@ const ProfilePage = () => {
 
       toast.success("Profile updated successfully");
     } catch (error) {
-      console.log(error);
-
       toast.error("Update profile failed");
     } finally {
       setLoading(false);

@@ -43,7 +43,6 @@ const AddVoucherModal = ({ open, onClose }) => {
       endAtUtc: new Date(form.endAtUtc).toISOString(),
     });
 
-    console.log('Compoennt: ', res)
 
     onClose();
   };

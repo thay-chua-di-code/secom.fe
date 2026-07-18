@@ -29,7 +29,6 @@ export default function AddressModal({ open, onClose }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const result = await addressService.createAddress(formData, dispatch);
-    console.log(result.success);
     if (result.success) {
       toast.success("Address added successfully!");
 

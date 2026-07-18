@@ -1,0 +1,425 @@
+// =========================
+// COLOR
+// =========================
+
+$primary: #ef4444;
+$primary-dark: #dc2626;
+$primary-light: #fff1f2;
+
+$text: #1f2937;
+$text-light: #6b7280;
+$border: #f1f5f9;
+
+// =========================
+// RECENTLY VIEWED
+// =========================
+
+.recently-viewed {
+  width: 100%;
+  margin: 50px 0;
+
+  padding: 26px 28px;
+
+  background: #fff;
+
+  border: 1px solid #fee2e2;
+  border-radius: 22px;
+
+  box-shadow:
+    0 10px 30px rgba(239, 68, 68, 0.05),
+    0 2px 8px rgba(15, 23, 42, 0.03);
+
+  overflow: hidden;
+}
+
+// =========================
+// HEADER
+// =========================
+
+.recently-viewed__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 22px;
+}
+
+.recently-viewed__title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.recently-viewed__icon {
+  width: 42px;
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: $primary;
+
+  background: $primary-light;
+
+  border-radius: 12px;
+
+  svg {
+    stroke-width: 2.3;
+  }
+}
+
+.recently-viewed__title {
+  h2 {
+    margin: 0;
+
+    color: $text;
+
+    font-size: 21px;
+    font-weight: 750;
+  }
+
+  p {
+    margin: 3px 0 0;
+
+    color: $text-light;
+
+    font-size: 13px;
+  }
+}
+
+.recently-viewed__view-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  color: $primary;
+
+  font-size: 14px;
+  font-weight: 650;
+
+  text-decoration: none;
+
+  transition:
+    color 0.25s ease,
+    transform 0.25s ease;
+
+  &:hover {
+    color: $primary-dark;
+
+    transform: translateX(3px);
+  }
+}
+
+// =========================
+// PRODUCT LIST
+// =========================
+
+.recently-viewed__list {
+  display: grid;
+
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+
+  gap: 16px;
+}
+
+// =========================
+// PRODUCT CARD
+// =========================
+
+.recent-product {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  overflow: hidden;
+
+  color: inherit;
+
+  background: #fff;
+
+  border: 1px solid $border;
+  border-radius: 16px;
+
+  text-decoration: none;
+
+  transition:
+    transform 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+
+  &:hover {
+    border-color: #fecaca;
+
+    transform: translateY(-4px);
+
+    box-shadow: 0 12px 24px rgba(239, 68, 68, 0.1);
+
+    .recent-product__image {
+      transform: scale(1.06);
+    }
+  }
+}
+
+// =========================
+// IMAGE
+// =========================
+
+.recent-product__image-wrapper {
+  position: relative;
+
+  width: 100%;
+  height: 180px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  overflow: hidden;
+
+  background: #fafafa;
+}
+
+.recent-product__image {
+  width: 100%;
+  height: 100%;
+
+  object-fit: contain;
+
+  padding: 16px;
+
+  transition: transform 0.35s ease;
+}
+
+.recent-product__placeholder {
+  color: #cbd5e1;
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.recent-product__viewed {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+
+  padding: 5px 8px;
+
+  color: $primary;
+
+  background: rgba(255, 241, 242, 0.94);
+
+  border: 1px solid #fecaca;
+  border-radius: 999px;
+
+  font-size: 10px;
+  font-weight: 650;
+}
+
+// =========================
+// CONTENT
+// =========================
+
+.recent-product__content {
+  display: flex;
+  flex-direction: column;
+
+  padding: 14px 15px 16px;
+}
+
+.recent-product__content h3 {
+  display: -webkit-box;
+
+  min-height: 40px;
+  margin: 0 0 10px;
+
+  overflow: hidden;
+
+  color: $text;
+
+  font-size: 14px;
+  font-weight: 650;
+  line-height: 1.4;
+
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.recent-product__content strong {
+  color: $primary;
+
+  font-size: 17px;
+  font-weight: 750;
+}
+
+.recent-product__time {
+  margin-top: 6px;
+
+  color: #9ca3af;
+
+  font-size: 11px;
+}
+
+// =========================
+// RESPONSIVE
+// =========================
+
+@media (max-width: 1100px) {
+  .recently-viewed__list {
+    grid-template-columns: repeat(3, 1fr);
+
+    .recent-product:last-child {
+      display: none;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .recently-viewed {
+    padding: 22px 20px;
+  }
+
+  .recently-viewed__list {
+    display: flex;
+
+    overflow-x: auto;
+
+    padding-bottom: 8px;
+
+    scroll-snap-type: x mandatory;
+
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .recent-product {
+    flex: 0 0 190px;
+
+    scroll-snap-align: start;
+  }
+
+  .recent-product__image-wrapper {
+    height: 160px;
+  }
+}
+
+@media (max-width: 520px) {
+  .recently-viewed {
+    margin: 35px 0;
+    padding: 18px 16px;
+
+    border-radius: 18px;
+  }
+
+  .recently-viewed__title {
+    h2 {
+      font-size: 18px;
+    }
+
+    p {
+      font-size: 12px;
+    }
+  }
+
+  .recently-viewed__icon {
+    width: 38px;
+    height: 38px;
+  }
+
+  .recently-viewed__view-all {
+    font-size: 12px;
+  }
+
+  .recent-product {
+    flex-basis: 170px;
+  }
+}
+
+.recently-viewed__actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding-bottom: 20px;
+}
+
+.recently-viewed__clear {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0;
+  color: #9ca3af;
+  background: transparent;
+  border: none;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+
+  transition:
+    color 0.25s ease,
+    transform 0.25s ease;
+
+  &:hover {
+    color: #ef4444;
+
+    transform: translateY(-1px);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+
+    cursor: not-allowed;
+
+    transform: none;
+  }
+}
+
+// =========================
+// LOADING
+// =========================
+
+.recently-viewed__loading {
+  grid-column: 1 / -1;
+
+  min-height: 220px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+
+  color: #9ca3af;
+
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.recently-viewed__spinner {
+  width: 38px;
+  height: 38px;
+
+  border: 4px solid #fee2e2;
+  border-top-color: #ef4444;
+
+  border-radius: 50%;
+
+  animation: recently-viewed-spin 0.8s linear infinite;
+}
+
+@keyframes recently-viewed-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}

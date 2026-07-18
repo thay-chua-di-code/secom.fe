@@ -11,7 +11,6 @@ export default function SearchDropdown({
   onClose,
 }) {
   const { productSearch } = useSelector((state) => state.products);
-  console.log("productSearch: ", productSearch);
   if (!open) return null;
 
   return (

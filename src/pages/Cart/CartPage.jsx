@@ -241,9 +241,6 @@ export default function CartPage() {
         cartItemIds: selectedItemIds,
         voucherCode: selectedVoucher || voucherCode || null,
       });
-
-      console.log("Create order response:", createOrderResponse);
-
       createdOrder = getCreatedOrder(createOrderResponse);
     } catch (orderError) {
       toast.error(getCreateOrderErrorMessage(orderError));
@@ -254,8 +251,6 @@ export default function CartPage() {
     try {
       const orderId = getCreatedOrderId(createdOrder);
       const amount = getCreatedOrderAmount(createdOrder);
-
-      console.log("Created order:", createdOrder);
 
       if (!orderId) {
         throw new Error("Missing orderId from create order response");
@@ -289,12 +284,8 @@ export default function CartPage() {
         throw new Error("Missing cancelUri");
       }
 
-      console.log("PayOS payment request:", paymentRequest);
-
       const paymentResponse =
         await paymentApi.createPaymentTransaction(paymentRequest);
-
-      console.log("Payment response:", paymentResponse);
 
       const paymentUrl =
         paymentResponse?.data?.data?.paymentUrl ||

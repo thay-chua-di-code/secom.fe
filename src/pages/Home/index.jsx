@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Banner from "../../components/layouts/Banner";
 import CategorySidebar from "./CategoriesSideBar";
 import Policy from "./Policy";
@@ -7,9 +7,10 @@ import SectionDivider from "../../components/layouts/SectionDivider/index";
 import { fetchHomepage } from "../../redux/slice/homeSlice";
 import FeatureProducts from "./Products/FeatureProducts";
 import LastestProduct from "./Products/LatestProducts";
+import RecentlyViewed from "./Product-viewed/index";
 const Home = () => {
   const dispatch = useDispatch();
-
+  const { isAuthenticated, role } = useSelector((state) => state.auth);
   useEffect(() => {
     dispatch(fetchHomepage());
   }, [dispatch]);
@@ -22,6 +23,13 @@ const Home = () => {
           <CategorySidebar />
         </aside>
       </section>
+
+      {isAuthenticated && (
+        <section className="mt-16 lg:mt-24">
+          <SectionDivider />
+          <RecentlyViewed />
+        </section>
+      )}
 
       <SectionDivider />
 
