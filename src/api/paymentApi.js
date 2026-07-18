@@ -9,4 +9,10 @@ export const paymentApi = {
   getPaymentTransactionByOrderId: (orderId) => {
     return axiosClient.get(API_ENDPOINTS.PAYMENT.ORDER_TRANSACTION(orderId));
   },
+
+  verifyPayOSPayment: (orderCode) => {
+    return axiosClient.get(API_ENDPOINTS.PAYMENT.PAYOS_VERIFY, {
+      params: { orderCode },
+    });
+  },
 };

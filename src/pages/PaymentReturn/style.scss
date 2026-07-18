@@ -39,6 +39,14 @@
       color: #dc2626;
     }
 
+    &--cancelled .payment-return__icon {
+      color: #f97316;
+    }
+
+    &--error .payment-return__icon {
+      color: #dc2626;
+    }
+
     &--refunded .payment-return__icon {
       color: #2563eb;
     }
@@ -207,5 +215,20 @@
     &__section dd {
       text-align: left;
     }
+  }
+}
+
+
+.payment-return__spinner {
+  animation: payment-spin 0.9s linear infinite;
+}
+
+@keyframes payment-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
   }
 }
