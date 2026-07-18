@@ -26,6 +26,7 @@ axiosClient.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       logoutHandler?.();
+      localStorage.clear();
     }
 
     return Promise.reject(error);

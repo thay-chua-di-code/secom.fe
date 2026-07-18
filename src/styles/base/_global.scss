@@ -1,12 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
 .container-custom {
-  width: min(1200px, 100%);
+  width: min(1500px, 100%);
   margin: auto;
-  padding-inline: 16px;
-
-  .container {
-    margin-top: 10px;
-  }
 }
 
 * {

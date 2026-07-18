@@ -43,7 +43,6 @@ const AddVoucherModal = ({ open, onClose }) => {
       endAtUtc: new Date(form.endAtUtc).toISOString(),
     });
 
-
     onClose();
   };
 
@@ -54,10 +53,6 @@ const AddVoucherModal = ({ open, onClose }) => {
       <div className="product-modal">
         <div className="modal-header">
           <h2>Create Voucher</h2>
-
-          <button type="button" className="close-btn" onClick={onClose}>
-            ✕
-          </button>
         </div>
 
         <form onSubmit={handleSubmit}>
