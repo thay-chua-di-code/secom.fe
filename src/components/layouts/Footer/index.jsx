@@ -15,7 +15,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-5">
           {/* Exclusive */}
           <div>
-            <h3 className="footer__title">Secom</h3>
+            <h3 className="footer__title">AIDR</h3>
 
             <h4 className="footer__subtitle">Subscribe</h4>
 
