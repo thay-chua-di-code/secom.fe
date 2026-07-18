@@ -72,170 +72,169 @@ export default function SellerDetail() {
   ];
   return (
     <div className="seller-detail">
-      {/* Banner */}
+      {/* =========================
+        COVER
+    ========================= */}
 
-      <section
-        className="seller-banner"
-        style={{
-          background: "linear-gradient(135deg,#0ea5e9,#2563eb)",
-        }}
-      >
-        <div className="overlay"></div>
+      <section className="seller-cover">
+        <div className="seller-cover__shape seller-cover__shape--one" />
+        <div className="seller-cover__shape seller-cover__shape--two" />
+        <div className="seller-cover__shape seller-cover__shape--three" />
+      </section>
 
-        <div className="seller-info">
-          <img
-            src={
-              seller?.avatarUrl ||
-              "https://i.redd.it/homelander-the-boys-show-vs-vecna-st-v0-kfm3629trbbg1.jpg?width=1200&format=pjpg&auto=webp&s=52d04d9b395f0205c5fb4cdbf7a2063db9c8d9c3"
-            }
-            alt={"this is my image"}
-            className="avatar"
-          />
+      {/* =========================
+        SHOP PROFILE
+    ========================= */}
 
-          <div className="content">
-            <h2>
-              {/* {seller.fullName} */}
-              Seller Shop
-              <BadgeCheck size={22} />
-            </h2>
+      <main className="seller-container">
+        <section className="seller-profile">
+          <div className="seller-profile__avatar">
+            <img
+              src={
+                seller?.avatarUrl ||
+                "https://i.redd.it/homelander-the-boys-show-vs-vecna-st-v0-kfm3629trbbg1.jpg?width=1200&format=pjpg&auto=webp&s=52d04d9b395f0205c5fb4cdbf7a2063db9c8d9c3"
+              }
+              alt="Seller avatar"
+            />
 
-            <p>Trusted seller on Secom Marketplace.</p>
+            <span className="seller-profile__online">
+              <span />
+              Online
+            </span>
+          </div>
 
-            <div className="meta">
+          <div className="seller-profile__content">
+            <div className="seller-profile__heading">
+              <div>
+                <span className="seller-profile__eyebrow">OFFICIAL SELLER</span>
+
+                <h1>
+                  Seller Shop
+                  <BadgeCheck size={22} />
+                </h1>
+
+                <p>Trusted seller on Secom Marketplace.</p>
+              </div>
+
+              <div className="seller-profile__actions">
+                <button className="btn-follow">
+                  <Users size={17} />
+                  Follow
+                </button>
+
+                <button className="btn-chat">Chat</button>
+              </div>
+            </div>
+
+            <div className="seller-profile__meta">
               <span>
                 <MapPin size={16} />
-                {productDetail?.data?.location}
+                {productDetail?.data?.location || "Vietnam"}
               </span>
 
               <span>
                 <Package size={16} />
                 Product Seller
               </span>
+
+              <span>
+                <Calendar size={16} />
+                Joined recently
+              </span>
+            </div>
+          </div>
+        </section>
+
+        {/* =========================
+          SHOP STATS
+      ========================= */}
+
+        <section className="seller-stats">
+          <div className="seller-stat">
+            <div className="seller-stat__icon">
+              <Package size={19} />
             </div>
 
-            <div className="actions">
-              <button>Follow</button>
-              <button className="outline">Chat</button>
+            <div>
+              <strong>120+</strong>
+              <span>Products</span>
             </div>
           </div>
-        </div>
-      </section>
 
-      {/* Stats */}
+          <div className="seller-stat">
+            <div className="seller-stat__icon">
+              <Users size={19} />
+            </div>
 
-      {/* <section className="seller-stats">
-        <div className="item">
-          <Package />
-          <strong>{sellerDetail.totalProducts}</strong>
-          <span>Products</span>
-        </div>
-
-        <div className="item">
-          <Users />
-          <strong>{sellerDetail.followers}</strong>
-          <span>Followers</span>
-        </div>
-
-        <div className="item">
-          <ShoppingBag />
-          <strong>{sellerDetail.totalOrders}</strong>
-          <span>Orders</span>
-        </div>
-
-        <div className="item">
-          <Star />
-          <strong>{sellerDetail.rating}</strong>
-          <span>Rating</span>
-        </div>
-      </section> */}
-
-      {/* About */}
-
-      {/* <section className="seller-body">
-        <div className="seller-about card">
-          <h3>About Shop</h3>
-
-          <p>{sellerDetail.about}</p>
-        </div>
-
-        <div className="seller-performance card">
-          <h3>Shop Performance</h3>
-
-          <div className="performance-item">
-            <Clock3 size={18} />
-            <span>Response Time</span>
-            <strong>{sellerDetail.responseTime}</strong>
+            <div>
+              <strong>2.4K</strong>
+              <span>Followers</span>
+            </div>
           </div>
 
-          <div className="performance-item">
-            <Users size={18} />
-            <span>Response Rate</span>
-            <strong>{sellerDetail.responseRate}</strong>
+          <div className="seller-stat">
+            <div className="seller-stat__icon">
+              <ShoppingBag size={19} />
+            </div>
+
+            <div>
+              <strong>8.6K</strong>
+              <span>Orders</span>
+            </div>
           </div>
 
-          <div className="performance-item">
-            <Package size={18} />
-            <span>Following</span>
-            <strong>{sellerDetail.following}</strong>
+          <div className="seller-stat">
+            <div className="seller-stat__icon">
+              <Star size={19} />
+            </div>
+
+            <div>
+              <strong>4.9</strong>
+              <span>Rating</span>
+            </div>
           </div>
-        </div>
-      </section> */}
+        </section>
 
-      {/* Reviews */}
+        {/* =========================
+          PRODUCTS
+      ========================= */}
 
-      {/* <section className="seller-review">
-        <div className="review-header">
-          <h3>Customer Reviews</h3>
+        <section className="seller-products">
+          <div className="seller-products__header">
+            <div>
+              <span className="seller-products__eyebrow">EXPLORE THE SHOP</span>
 
-          <div className="overall">⭐ {sellerDetail.rating}/5</div>
-        </div>
+              <h2>Products from this shop</h2>
+            </div>
 
-        {sellerDetail.reviews.map((review) => (
-          <div className="review-item" key={review.id}>
-            <img src={review.avatar} alt="" />
+            <span className="seller-products__count">
+              {sellerProducts.length} Products
+            </span>
+          </div>
 
-            <div className="review-content">
-              <div className="top">
-                <strong>{review.user}</strong>
+          <div className="product-grid">
+            {sellerProducts.map((item) => (
+              <div className="product-card" key={item.id}>
+                <div className="product-card__image">
+                  <img src={item.image} alt={item.name} />
 
-                <span>{review.date}</span>
+                  <span className="product-card__badge">Official</span>
+                </div>
+
+                <div className="product-card__body">
+                  <h3>{item.name}</h3>
+
+                  <div className="product-card__bottom">
+                    <strong>{formatCurrencyVN(item.price)} ₫</strong>
+
+                    <button>View</button>
+                  </div>
+                </div>
               </div>
-
-              <div className="rating">{"⭐".repeat(review.rating)}</div>
-
-              <ul>
-                {review.comments.map((c, index) => (
-                  <li key={index}>{c}</li>
-                ))}
-              </ul>
-            </div>
+            ))}
           </div>
-        ))}
-      </section> */}
-
-      <section className="seller-products">
-        <div className="title">
-          <h3>Products from this shop</h3>
-
-          <span>{sellerProducts.length} Products</span>
-        </div>
-
-        <div className="product-grid">
-          {sellerProducts.map((item) => (
-            <div className="product-card" key={item.id}>
-              <img src={item.image} alt={item.name} />
-
-              <div className="body">
-                <h4>{item.name}</h4>
-
-                <p>{formatCurrencyVN(item.price)} ₫</p>
-
-                <button>View Product</button>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
+        </section>
+      </main>
     </div>
   );
 }
