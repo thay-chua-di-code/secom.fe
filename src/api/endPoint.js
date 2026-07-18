@@ -69,6 +69,7 @@ export const API_ENDPOINTS = {
   PAYMENT: {
     TRANSACTIONS: "/payments/transactions",
     ORDER_TRANSACTION: (orderId) => `/payments/orders/${orderId}/transaction`,
+    PAYOS_VERIFY: "/payments/payos/verify",
   },
 
   VOUCHER: {

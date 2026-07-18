@@ -1,316 +1,431 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
-import { CheckCircle, Clock3, RefreshCw, RotateCcw, XCircle } from "lucide-react";
-import { orderApi } from "../../api/orderApi";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  AlertTriangle,
+  CheckCircle,
+  Clock3,
+  LoaderCircle,
+  LogIn,
+  RefreshCw,
+  RotateCcw,
+  XCircle,
+} from "lucide-react";
+import axiosClient from "../../api/axiosClient";
 import { paymentApi } from "../../api/paymentApi";
-import { formatCurrencyVN } from "../../utils/fncUtils";
 import "./style.scss";
 
-const unwrapOrder = (response) => {
-  return response?.data?.order || response?.data || response?.order || response;
+const RETRY_DELAYS = [0, 1000, 2000, 3000];
+
+const sleep = (delay) =>
+  new Promise((resolve) => {
+    window.setTimeout(resolve, delay);
+  });
+
+const unwrapVerifyResponse = (response) => {
+  const payload = response?.data ?? response;
+  return payload?.data ?? payload;
 };
 
-const normalizeStatus = (status) => String(status || "").toLowerCase();
+const normalizePaymentStatus = (status) => status?.trim().toLowerCase() ?? "";
 
-const getPaymentInfo = (order) => {
-  return (
-    order?.paymentTransaction ||
-    order?.payment ||
-    order?.paymentInfo ||
-    order?.transaction ||
-    {}
-  );
+const getHttpStatus = (error) => error?.response?.status || error?.status;
+
+const getQueryOrderCode = () => {
+  const params = new URLSearchParams(window.location.search);
+
+  return params.get("orderCode");
 };
 
-const unwrapPayment = (response) => {
-  return response?.data?.data || response?.data || response?.paymentTransaction || response;
+const mapTerminalState = (result) => {
+  const paymentStatus = normalizePaymentStatus(result?.paymentStatus);
+  const orderStatus = normalizePaymentStatus(result?.orderStatus);
+
+  if (result?.isPaid || paymentStatus === "success" || paymentStatus === "paid") {
+    return "success";
+  }
+
+  if (result?.isPending) {
+    return "pending";
+  }
+
+  if (
+    paymentStatus === "cancelled" ||
+    paymentStatus === "canceled" ||
+    orderStatus === "cancelled" ||
+    orderStatus === "canceled"
+  ) {
+    return "cancelled";
+  }
+
+  if (paymentStatus === "pending" || orderStatus === "pending") {
+    return "pending";
+  }
+
+  if (paymentStatus === "refunded" || orderStatus === "refunded") {
+    return "failed";
+  }
+
+  return "failed";
 };
 
-const getOrderItems = (order) => {
-  return order?.items || order?.orderItems || order?.products || [];
-};
-
-const getOrderAmount = (order) => {
-  return order?.finalTotal ?? order?.finalTotalAmount ?? order?.total ?? 0;
+const getResultConfig = (state) => {
+  switch (state) {
+    case "verifying":
+      return {
+        className: "pending",
+        icon: <LoaderCircle className="payment-return__spinner" size={64} />,
+        title: "Đang xác minh thanh toán",
+        message:
+          "Hệ thống đang kiểm tra giao dịch và cập nhật trạng thái đơn hàng. Vui lòng không đóng trang.",
+      };
+    case "success":
+      return {
+        className: "success",
+        icon: <CheckCircle size={64} />,
+        title: "Thanh toán thành công",
+        message: "Đơn hàng của bạn đã được cập nhật thành công.",
+      };
+    case "pending":
+      return {
+        className: "pending",
+        icon: <Clock3 size={64} />,
+        title: "Thanh toán đang được xử lý",
+        message:
+          "Hệ thống chưa nhận được xác nhận cuối cùng từ cổng thanh toán. Bạn có thể chờ thêm hoặc kiểm tra lại trong danh sách đơn hàng.",
+      };
+    case "cancelled":
+      return {
+        className: "failed",
+        icon: <RotateCcw size={64} />,
+        title: "Thanh toán đã bị hủy",
+        message: "Giao dịch chưa được hoàn tất. Đơn hàng chưa được đánh dấu đã thanh toán.",
+      };
+    case "failed":
+      return {
+        className: "failed",
+        icon: <XCircle size={64} />,
+        title: "Thanh toán không thành công",
+        message: "Cổng thanh toán không xác nhận giao dịch thành công.",
+      };
+    case "not_found":
+      return {
+        className: "failed",
+        icon: <AlertTriangle size={64} />,
+        title: "Không tìm thấy giao dịch",
+        message:
+          "Không thể xác định giao dịch từ thông tin PayOS trả về hoặc giao dịch không thuộc tài khoản hiện tại.",
+      };
+    case "unauthorized":
+      return {
+        className: "failed",
+        icon: <LogIn size={64} />,
+        title: "Phiên đăng nhập đã hết hạn",
+        message: "Vui lòng đăng nhập lại để kiểm tra trạng thái thanh toán.",
+      };
+    case "error":
+    default:
+      return {
+        className: "failed",
+        icon: <XCircle size={64} />,
+        title: "Không thể xác minh thanh toán",
+        message:
+          "Đã xảy ra lỗi khi kết nối với hệ thống. Trạng thái đơn hàng chưa được xác nhận.",
+      };
+  }
 };
 
 export default function PaymentReturn() {
-  const [searchParams] = useSearchParams();
-  const queryOrderId = searchParams.get("orderId") || searchParams.get("order_id");
-  const chargeId = searchParams.get("charge_id");
-  const queryStatus = searchParams.get("status");
-  const savedOrderId = localStorage.getItem("lastOrderId");
-  const orderId = queryOrderId || savedOrderId;
-  const pollCountRef = useRef(0);
+  const navigate = useNavigate();
+  const hasStartedRef = useRef(false);
+  const isMountedRef = useRef(true);
+  const [uiState, setUiState] = useState("verifying");
+  const [paymentData, setPaymentData] = useState(null);
+  const [message, setMessage] = useState("");
+  const [retryCount, setRetryCount] = useState(0);
+  const [manualChecking, setManualChecking] = useState(false);
+  const orderCode = useMemo(() => getQueryOrderCode(), []);
 
-  const [order, setOrder] = useState(null);
-  const [payment, setPayment] = useState(null);
-  const [loading, setLoading] = useState(Boolean(orderId));
-  const [error, setError] = useState("");
-
-  const fetchOrder = useCallback(async () => {
-    if (!orderId) {
-      setError("Không tìm thấy mã đơn hàng để kiểm tra thanh toán.");
-      setLoading(false);
+  const applyVerifyResult = useCallback((result, mappedState) => {
+    if (!isMountedRef.current) {
       return;
     }
 
-    try {
-      setLoading(true);
-      const [orderResponse, paymentResponse] = await Promise.allSettled([
-        orderApi.getOrderDetail(orderId),
-        paymentApi.getPaymentTransactionByOrderId(orderId),
-      ]);
+    setPaymentData(result || null);
+    setMessage(result?.message || "");
+    setUiState(mappedState);
 
-      if (orderResponse.status !== "fulfilled") {
-        throw orderResponse.reason;
+    if (mappedState === "success") {
+      localStorage.removeItem("lastOrderId");
+    }
+  }, []);
+
+  const verifyOnce = useCallback(async () => {
+    if (!orderCode) {
+      return {
+        state: "not_found",
+        result: {
+          message: "Không tìm thấy mã giao dịch thanh toán.",
+        },
+      };
+    }
+
+    if (import.meta.env.DEV) {
+      console.info("Verifying PayOS payment", {
+        orderCode,
+        baseURL: axiosClient.defaults.baseURL,
+        endpoint: "/payments/payos/verify",
+      });
+    }
+
+    const response = await paymentApi.verifyPayOSPayment(orderCode);
+    const result = unwrapVerifyResponse(response);
+
+    return {
+      state: mapTerminalState(result),
+      result,
+    };
+  }, [orderCode]);
+
+  const verifyWithRetry = useCallback(async () => {
+    if (!orderCode) {
+      return {
+        state: "not_found",
+        result: {
+          message: "Không tìm thấy mã giao dịch thanh toán.",
+        },
+      };
+    }
+
+    let lastResult = null;
+
+    for (let attempt = 0; attempt < RETRY_DELAYS.length; attempt += 1) {
+      if (RETRY_DELAYS[attempt] > 0) {
+        await sleep(RETRY_DELAYS[attempt]);
       }
 
-      const latestOrder = unwrapOrder(orderResponse.value);
-      setOrder(latestOrder);
-      setPayment(
-        paymentResponse.status === "fulfilled"
-          ? unwrapPayment(paymentResponse.value)
-          : getPaymentInfo(latestOrder),
-      );
-      setError("");
-    } catch (fetchError) {
-      setError(
-        fetchError?.response?.data?.message ||
-          fetchError?.message ||
-          "Không thể lấy trạng thái đơn hàng.",
-      );
-    } finally {
-      setLoading(false);
-    }
-  }, [orderId]);
+      if (!isMountedRef.current) {
+        return { state: "verifying", result: lastResult };
+      }
 
-  useEffect(() => {
-    const timeoutId = window.setTimeout(fetchOrder, 0);
+      setRetryCount(attempt + 1);
 
-    return () => window.clearTimeout(timeoutId);
-  }, [fetchOrder]);
+      if (import.meta.env.DEV) {
+        console.info("Verifying PayOS payment", {
+          orderCode,
+          baseURL: axiosClient.defaults.baseURL,
+          endpoint: "/payments/payos/verify",
+        });
+      }
 
-  const paymentInfo = payment || getPaymentInfo(order);
-  const paymentStatus = paymentInfo?.status || order?.paymentStatus || queryStatus;
-  const orderStatus = order?.status;
+      const response = await paymentApi.verifyPayOSPayment(orderCode);
+      const result = unwrapVerifyResponse(response);
+      const mappedState = mapTerminalState(result);
 
-  const result = useMemo(() => {
-    const normalizedOrderStatus = normalizeStatus(orderStatus);
-    const normalizedPaymentStatus = normalizeStatus(paymentStatus);
+      if (mappedState === "success") {
+        return { state: "success", result };
+      }
 
-    if (
-      normalizedOrderStatus === "paid" ||
-      normalizedOrderStatus === "completed" ||
-      normalizedPaymentStatus === "paid" ||
-      normalizedPaymentStatus === "successful" ||
-      normalizedPaymentStatus === "success" ||
-      normalizedPaymentStatus === "completed"
-    ) {
-      return {
-        type: "success",
-        icon: <CheckCircle size={64} />,
-        title: "Thanh toán thành công",
-        message: "Đơn hàng của bạn đã được ghi nhận.",
-      };
-    }
+      lastResult = result;
 
-    if (normalizedPaymentStatus === "failed" || normalizedPaymentStatus === "fail") {
-      return {
-        type: "failed",
-        icon: <XCircle size={64} />,
-        title: "Thanh toán thất bại",
-        message: "Giao dịch không thành công. Vui lòng thử lại.",
-      };
-    }
-
-    if (normalizedPaymentStatus === "refunded") {
-      return {
-        type: "refunded",
-        icon: <RotateCcw size={64} />,
-        title: "Đơn hàng đã được hoàn tiền.",
-        message: "Giao dịch của bạn đã được hoàn tiền.",
-      };
+      if (mappedState !== "pending") {
+        return { state: mappedState, result };
+      }
     }
 
     return {
-      type: "pending",
-      icon: <Clock3 size={64} />,
-      title: "Thanh toán đang được xử lý",
-      message: "Chúng tôi đang xác nhận giao dịch.",
+      state: "pending",
+      result: lastResult,
     };
-  }, [orderStatus, paymentStatus]);
+  }, [orderCode]);
+
+  const handleVerifyError = useCallback((error) => {
+    const status = getHttpStatus(error);
+
+    if (status === 401) {
+      setUiState("unauthorized");
+      setMessage("Vui lòng đăng nhập lại để kiểm tra thanh toán.");
+      return;
+    }
+
+    if (status === 403) {
+      setUiState("unauthorized");
+      setMessage("Tài khoản không có quyền kiểm tra giao dịch này.");
+      return;
+    }
+
+    if (status === 404) {
+      setUiState("not_found");
+      setMessage(
+        error?.response?.data?.message ||
+          error?.response?.data?.data?.message ||
+          "Không tìm thấy giao dịch tương ứng.",
+      );
+      return;
+    }
+
+    setUiState("error");
+    setMessage(
+      error?.response?.data?.message ||
+        error?.response?.data?.data?.message ||
+        "Không thể xác minh trạng thái thanh toán.",
+    );
+  }, []);
+
+  const runVerification = useCallback(
+    async ({ withRetry = true, manual = false } = {}) => {
+      try {
+        if (manual) {
+          setManualChecking(true);
+        }
+
+        setUiState("verifying");
+        setMessage("");
+
+        const { state, result } = withRetry
+          ? await verifyWithRetry()
+          : await verifyOnce();
+
+        applyVerifyResult(result, state);
+      } catch (error) {
+        if (isMountedRef.current) {
+          handleVerifyError(error);
+        }
+      } finally {
+        if (isMountedRef.current && manual) {
+          setManualChecking(false);
+        }
+      }
+    },
+    [applyVerifyResult, handleVerifyError, verifyOnce, verifyWithRetry],
+  );
 
   useEffect(() => {
-    if (result.type === "success") {
-      localStorage.removeItem("lastOrderId");
+    isMountedRef.current = true;
+
+    if (hasStartedRef.current) {
       return undefined;
     }
 
-    if (result.type !== "pending" || !orderId) {
-      return undefined;
+    hasStartedRef.current = true;
+    runVerification({ withRetry: true });
+
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, [runVerification]);
+
+  const resultConfig = getResultConfig(uiState);
+  const orderId = paymentData?.orderId || null;
+  const canOpenOrder = Boolean(orderId);
+
+  const handleOpenOrder = () => {
+    if (orderId) {
+      navigate(`/order-self?orderId=${orderId}`);
     }
+  };
 
-    pollCountRef.current = 0;
-
-    const intervalId = window.setInterval(() => {
-      pollCountRef.current += 1;
-
-      if (pollCountRef.current > 12) {
-        window.clearInterval(intervalId);
-        return;
-      }
-
-      fetchOrder();
-    }, 5000);
-
-    return () => window.clearInterval(intervalId);
-  }, [fetchOrder, orderId, result.type]);
-
-  const orderItems = getOrderItems(order);
-  const paymentId =
-    paymentInfo?.id || paymentInfo?.paymentId || paymentInfo?.transactionId || chargeId || "--";
-  const gatewayTransactionId =
-    paymentInfo?.gatewayTransactionId || paymentInfo?.chargeId || chargeId || "--";
-
-  if (!orderId) {
-    return (
-      <main className="payment-return">
-        <section className="payment-return__card payment-return__card--failed">
-          <XCircle size={64} />
-          <h1>Không tìm thấy đơn hàng</h1>
-          <p>Không thể xác định đơn hàng cần kiểm tra thanh toán.</p>
-          <Link to="/order-self" className="payment-return__button">
-            Quay về đơn hàng
-          </Link>
-        </section>
-      </main>
-    );
-  }
+  const handleRetry = () => {
+    runVerification({ withRetry: true, manual: true });
+  };
 
   return (
     <main className="payment-return">
-      <section className={`payment-return__card payment-return__card--${result.type}`}>
-        <div className="payment-return__icon">{result.icon}</div>
-        <h1>{result.title}</h1>
-        <p>{result.message}</p>
+      <section className={`payment-return__card payment-return__card--${resultConfig.className}`}>
+        <div className="payment-return__icon">{resultConfig.icon}</div>
+        <h1>{resultConfig.title}</h1>
+        <p>{resultConfig.message}</p>
 
-        {loading && <p className="payment-return__muted">Đang cập nhật trạng thái...</p>}
-        {error && <p className="payment-return__error">{error}</p>}
+        {message && <p className="payment-return__muted">{message}</p>}
+        {uiState === "verifying" && retryCount > 0 && (
+          <p className="payment-return__muted">Đang kiểm tra lần {retryCount}/{RETRY_DELAYS.length}...</p>
+        )}
 
         <div className="payment-return__actions">
-          {result.type === "pending" && (
-            <button type="button" onClick={fetchOrder} disabled={loading}>
+          {(uiState === "pending" || uiState === "error") && (
+            <button type="button" onClick={handleRetry} disabled={manualChecking}>
               <RefreshCw size={16} />
-              Làm mới
+              {manualChecking ? "Đang kiểm tra..." : "Kiểm tra lại"}
             </button>
           )}
 
-          {result.type === "failed" && (
-            <Link to={`/order-self?orderId=${orderId}`}>Thanh toán lại</Link>
+          {uiState === "success" && canOpenOrder && (
+            <button type="button" onClick={handleOpenOrder}>
+              Xem chi tiết đơn hàng
+            </button>
           )}
 
-          <Link to={`/order-self?orderId=${orderId}`}>Xem chi tiết đơn hàng</Link>
-          <Link to="/products" className="payment-return__secondary">
-            Tiếp tục mua sắm
-          </Link>
+          {uiState === "success" && !canOpenOrder && (
+            <Link to="/order-self">Xem danh sách đơn hàng</Link>
+          )}
+
+          {uiState === "pending" && <Link to="/order-self">Xem danh sách đơn hàng</Link>}
+
+          {uiState === "cancelled" && (
+            <>
+              {canOpenOrder && <button type="button" onClick={handleOpenOrder}>Xem đơn hàng</button>}
+              <Link to="/cart">Về giỏ hàng</Link>
+            </>
+          )}
+
+          {uiState === "failed" && (
+            <>
+              {canOpenOrder && <button type="button" onClick={handleOpenOrder}>Xem đơn hàng</button>}
+              <Link to="/order-self">Xem danh sách đơn hàng</Link>
+            </>
+          )}
+
+          {uiState === "not_found" && <Link to="/order-self">Xem danh sách đơn hàng</Link>}
+
+          {uiState === "unauthorized" && (
+            <Link to={`/login?returnUrl=${encodeURIComponent(window.location.pathname + window.location.search)}`}>
+              Đăng nhập
+            </Link>
+          )}
+
+          {uiState === "error" && <Link to="/order-self">Xem đơn hàng</Link>}
+
+          {uiState !== "unauthorized" && (
+            <Link to="/products" className="payment-return__secondary">
+              Tiếp tục mua sắm
+            </Link>
+          )}
+
+          {(uiState === "pending" || uiState === "not_found" || uiState === "error") && (
+            <Link to="/" className="payment-return__secondary">
+              Về trang chủ
+            </Link>
+          )}
         </div>
       </section>
 
-      {order && (
+      {paymentData && (
         <section className="payment-return__details">
           <div className="payment-return__section">
-            <h2>Thông tin đơn hàng</h2>
+            <h2>Thông tin xác minh</h2>
             <dl>
               <div>
+                <dt>Mã giao dịch PayOS</dt>
+                <dd>{paymentData.orderCode || orderCode || "--"}</dd>
+              </div>
+              <div>
                 <dt>Order ID</dt>
-                <dd>{order.orderId || order.id || orderId}</dd>
-              </div>
-              <div>
-                <dt>Payment ID</dt>
-                <dd>{paymentId}</dd>
-              </div>
-              <div>
-                <dt>Tổng tiền</dt>
-                <dd>{formatCurrencyVN(getOrderAmount(order))}</dd>
-              </div>
-              <div>
-                <dt>Trạng thái đơn hàng</dt>
-                <dd>{orderStatus || "--"}</dd>
+                <dd>{paymentData.orderId || "--"}</dd>
               </div>
               <div>
                 <dt>Trạng thái thanh toán</dt>
-                <dd>{paymentStatus || "--"}</dd>
+                <dd>{paymentData.paymentStatus || "--"}</dd>
               </div>
               <div>
-                <dt>Thời gian tạo</dt>
+                <dt>Trạng thái đơn hàng</dt>
+                <dd>{paymentData.orderStatus || "--"}</dd>
+              </div>
+              <div>
+                <dt>Thời gian thanh toán</dt>
                 <dd>
-                  {order.createdAtUtc || order.createdAt
-                    ? new Date(order.createdAtUtc || order.createdAt).toLocaleString()
+                  {paymentData.paidAtUtc || paymentData.paidAt
+                    ? new Date(paymentData.paidAtUtc || paymentData.paidAt).toLocaleString("vi-VN")
                     : "--"}
                 </dd>
-              </div>
-            </dl>
-          </div>
-
-          <div className="payment-return__section">
-            <h2>Order Summary</h2>
-            <div className="payment-return__items">
-              {orderItems.length === 0 && <p>Không có sản phẩm.</p>}
-              {orderItems.map((item) => {
-                const quantity = item.quantity || 0;
-                const unitPrice = item.unitPrice || item.price || 0;
-                const lineTotal = item.subtotal || unitPrice * quantity;
-
-                return (
-                  <div className="payment-return__item" key={item.id || item.orderItemId || item.productId}>
-                    <div>
-                      <strong>{item.productName || item.name || "Sản phẩm"}</strong>
-                      <span>Số lượng: {quantity}</span>
-                    </div>
-                    <div>
-                      <span>Đơn giá: {formatCurrencyVN(unitPrice)}</span>
-                      <strong>{formatCurrencyVN(lineTotal)}</strong>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            <dl>
-              <div>
-                <dt>Voucher</dt>
-                <dd>{order.voucherCode || "--"}</dd>
-              </div>
-              <div>
-                <dt>Shipping Fee</dt>
-                <dd>{formatCurrencyVN(order.shippingFee || 0)}</dd>
-              </div>
-              <div>
-                <dt>Discount</dt>
-                <dd>{formatCurrencyVN(order.discountAmount || 0)}</dd>
-              </div>
-              <div>
-                <dt>Final Total</dt>
-                <dd>{formatCurrencyVN(getOrderAmount(order))}</dd>
-              </div>
-            </dl>
-          </div>
-
-          <div className="payment-return__section">
-            <h2>Payment Info</h2>
-            <dl>
-              <div>
-                <dt>Gateway</dt>
-                <dd>{paymentInfo?.gateway || "Omise"}</dd>
-              </div>
-              <div>
-                <dt>Gateway Transaction ID</dt>
-                <dd>{gatewayTransactionId}</dd>
-              </div>
-              <div>
-                <dt>Payment Status</dt>
-                <dd>{paymentStatus || "--"}</dd>
               </div>
             </dl>
           </div>
