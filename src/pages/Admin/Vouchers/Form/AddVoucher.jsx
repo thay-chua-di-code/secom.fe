@@ -43,11 +43,7 @@ const AddVoucher = ({ open, onClose }) => {
         expiresAtUtc: new Date(formData.expiresAtUtc).toISOString(),
       };
 
-      console.log("Payload:", payload);
-
       const res = await dispatch(createAdminVoucher(payload)).unwrap();
-
-      console.log("Response:", res);
 
       toast.success("Add voucher successfully");
 

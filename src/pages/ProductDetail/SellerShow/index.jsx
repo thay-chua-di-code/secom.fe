@@ -33,7 +33,7 @@ export default function SellerShow({ seller, shop }) {
               {sellerName}
 
               {sellerInfo.verified && (
-                <BadgeCheck size={18} color="#0284c7" fill="#0284c7" />
+                <BadgeCheck size={18} color="#ef4444" fill="#fee2e2" />
               )}
             </h3>
 

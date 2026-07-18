@@ -6,21 +6,32 @@ import NotificationDropdown from "../../../../pages/Notifications/Popup";
 export default function TopHeader({ onOpenLogin, onOpenRegister }) {
   const { isAuthenticated, role } = useSelector((state) => state.auth);
 
+  const normalizedRole = role?.toLowerCase();
+
+  const isAdmin = normalizedRole === "admin";
+  const isSeller = normalizedRole === "seller";
+
   return (
     <div className="top-header">
       <div className="container-custom">
-        <div className="top-header__wrapper">
-          <div className="top-header__left">
-            {role?.toLowerCase() === "seller" ? (
-              <Link to="/seller" className="top-header__link">
-                Seller Channel
-              </Link>
-            ) : (
-              <Link to="/seller-register" className="top-header__link">
-                Become a Seller
-              </Link>
-            )}
-          </div>
+        <div
+          className={`top-header__wrapper ${
+            isAdmin ? "top-header__wrapper--admin" : ""
+          }`}
+        >
+          {!isAdmin && (
+            <div className="top-header__left">
+              {isSeller ? (
+                <Link to="/seller" className="top-header__link">
+                  Seller Channel
+                </Link>
+              ) : (
+                <Link to="/seller-register" className="top-header__link">
+                  Become a Seller
+                </Link>
+              )}
+            </div>
+          )}
 
           <div className="top-header__right">
             <NotificationDropdown />

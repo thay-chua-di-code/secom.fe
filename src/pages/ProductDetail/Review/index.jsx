@@ -52,7 +52,6 @@ function ProductReview({ productId }) {
       comment: reviewData.comment,
     };
     const result = await reviewService.createReview(productId, payload);
-    console.log(result);
   };
 
   return (

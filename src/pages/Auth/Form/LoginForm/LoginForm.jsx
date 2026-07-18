@@ -104,7 +104,7 @@ export default function LoginForm() {
                 <GoogleLogin
                   width="100%"
                   onSuccess={handleLoginGoogle}
-                  onError={() => console.log("Login failure")}
+                  onError={() => toast.error("Login Failure")}
                   text="signin_with"
                 />
               </div>

@@ -6,6 +6,8 @@ import {
   getFolloweShop,
   setLoading,
   setError,
+  getViewedProduct,
+  clearAllViewedProduct,
 } from "../redux/slice/userSlice";
 import wishlistApi from "../api/wishlistApi";
 export const userService = {
@@ -41,14 +43,43 @@ export const userService = {
     }
   },
 
+  // [VIEWED PRODUCT]
+  getViewedProductSvc: async (dispatch) => {
+    try {
+      dispatch(setLoading(true));
+      const result = await axiosClient.get("/me/viewed-products");
+      if (result) {
+        dispatch(getViewedProduct(result.data.data));
+      }
+    } catch (e) {
+      throw new Error(
+        e.message || "Something went wrong when get viewed product",
+        {
+          cause: e,
+        },
+      );
+      dispatch(setError(e.message));
+    }
+  },
+
+  clearAllViewedProductSvc: async (dispatch) => {
+    try {
+      dispatch(setLoading(true));
+      const result = await axiosClient.delete("/me/viewed-products");
+      if (result.data.success) {
+        dispatch(clearAllViewedProduct());
+      }
+    } catch (e) {
+      setError(e.message || "Something wrong when you clear");
+    }
+  },
+
   // [WISH LIST]
   getWishList: async (params) => {
     try {
       const result = await axiosClient.get(API_ENDPOINTS.USER.WISH_LIST.GET, {
         params,
       });
-
-      console.log("Wishlist API: ", result);
       return result.data.data;
     } catch (e) {
       throw new Error(e.message || "Something went wrong when get wishlist", {
