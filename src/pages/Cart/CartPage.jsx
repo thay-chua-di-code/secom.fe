@@ -401,13 +401,6 @@ export default function CartPage() {
               headerCheckboxRef={headerCheckboxRef}
             />
 
-            <VoucherList
-              vouchers={vouchers}
-              loading={voucherLoading}
-              selectedVoucher={selectedVoucher}
-              onSelectVoucher={setSelectedVoucher}
-            />
-
             <div className="voucher-action">
               <button
                 onClick={handleApplyVoucher}
@@ -417,6 +410,13 @@ export default function CartPage() {
                 {actionLoading ? "Applying..." : "Apply Voucher"}
               </button>
             </div>
+
+            <VoucherList
+              vouchers={vouchers}
+              loading={voucherLoading}
+              selectedVoucher={selectedVoucher}
+              onSelectVoucher={setSelectedVoucher}
+            />
           </div>
 
           <CartSummary

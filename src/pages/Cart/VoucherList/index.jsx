@@ -32,6 +32,7 @@ export default function VoucherList({
     <div className="voucher-list">
       <div className="voucher-list__header">
         <h3>Available Vouchers</h3>
+        <span>{voucherItems.length} vouchers</span>
       </div>
 
       {loading ? (
@@ -49,23 +50,25 @@ export default function VoucherList({
               onClick={() => onSelectVoucher(voucher.code)}
               type="button"
             >
-              <span className="voucher-card__code">{voucher.code}</span>
+              <div className="voucher-card__top">
+                <span className="voucher-card__code">{voucher.code}</span>
+
+                <span className="voucher-card__discount">
+                  {formatDiscount(voucher)}
+                </span>
+              </div>
 
               <span className="voucher-card__description">
                 {voucher.description || voucher.name || "SECOM voucher"}
               </span>
 
-              <span className="voucher-card__discount">
-                Discount {formatDiscount(voucher)}
-              </span>
+              <div className="voucher-card__meta">
+                <span>Min {formatCurrencyVN(voucher.minOrderAmount || 0)}</span>
 
-              <span className="voucher-card__description">
-                Min order: {formatCurrencyVN(voucher.minOrderAmount || 0)}
-              </span>
-
-              <span className="voucher-card__description">
-                Expires: {formatDate(voucher.expiresAtUtc || voucher.endAtUtc)}
-              </span>
+                <span>
+                  Exp {formatDate(voucher.expiresAtUtc || voucher.endAtUtc)}
+                </span>
+              </div>
             </button>
           ))}
         </div>
