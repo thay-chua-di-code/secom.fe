@@ -1,78 +1,87 @@
 import "./style.scss";
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { getSellerWalletThunk } from "../../../redux/slice/seller/wallet/thunk";
+import { useEffect, useRef, useState } from "react";
+import { getSellerDashboard } from "../../../api/sellerDashboardApi";
 import { formatCurrencyVN } from "../../../utils/fncUtils";
 const Dashboard = () => {
-  const dispatch = useDispatch();
-
-  const { wallet, loading } = useSelector((state) => state.sellerWallet);
+  const [dashboard, setDashboard] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const hasLoadedRef = useRef(false);
 
   useEffect(() => {
-    dispatch(getSellerWalletThunk());
-  }, [dispatch]);
+    if (hasLoadedRef.current) return;
+
+    hasLoadedRef.current = true;
+    let isMounted = true;
+
+    const loadDashboard = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+
+        const result = await getSellerDashboard();
+
+        if (isMounted) {
+          setDashboard(result);
+        }
+      } catch (requestError) {
+        if (isMounted) {
+          console.error("Seller dashboard error:", requestError);
+          setError(
+            requestError?.message || "Unable to load seller dashboard.",
+          );
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    loadDashboard();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const wallet = dashboard?.wallet;
+  const overview = dashboard?.overview;
+  const revenueOverview = dashboard?.revenueOverview;
+
+  const formatGrowth = (value) => {
+    const safeValue = value ?? 0;
+    const prefix = safeValue > 0 ? "+" : "";
+
+    return `${prefix}${safeValue}%`;
+  };
 
   const stats = [
     {
       title: "Products",
-      value: 120,
-      growth: "+12%",
+      value: overview?.totalProducts ?? 0,
+      growth: formatGrowth(overview?.productGrowthPercentage),
     },
     {
       title: "Orders",
-      value: 58,
-      growth: "+8%",
+      value: overview?.totalOrders ?? 0,
+      growth: formatGrowth(overview?.orderGrowthPercentage),
     },
     {
       title: "Customers",
-      value: 234,
-      growth: "+15%",
+      value: overview?.totalCustomers ?? 0,
+      growth: formatGrowth(overview?.customerGrowthPercentage),
     },
     {
       title: "Revenue",
-      value: "$12,450",
-      growth: "+20%",
+      value: formatCurrencyVN(overview?.totalRevenue ?? 0),
+      growth: formatGrowth(overview?.revenueGrowthPercentage),
     },
   ];
 
-  const recentOrders = [
-    {
-      id: "#ORD001",
-      customer: "Nguyen Van A",
-      total: "$120",
-      status: "Delivered",
-    },
-    {
-      id: "#ORD002",
-      customer: "Tran Thi B",
-      total: "$85",
-      status: "Shipping",
-    },
-    {
-      id: "#ORD003",
-      customer: "Le Van C",
-      total: "$220",
-      status: "Pending",
-    },
-  ];
-
-  const topProducts = [
-    {
-      id: 1,
-      name: "Nike Air Force 1",
-      sold: 150,
-    },
-    {
-      id: 2,
-      name: "Adidas Ultraboost",
-      sold: 122,
-    },
-    {
-      id: 3,
-      name: "Jordan 1 Retro",
-      sold: 98,
-    },
-  ];
+  const recentOrders = dashboard?.recentOrders ?? [];
+  const topProducts = dashboard?.topSellingProducts ?? [];
+  const recentActivities = dashboard?.recentActivities ?? [];
 
   return (
     <div className="dashboard">
@@ -87,7 +96,7 @@ const Dashboard = () => {
             <span>Available</span>
 
             <strong>
-              {loading
+              {isLoading
                 ? "..."
                 : formatCurrencyVN(wallet?.availableBalance ?? 0)}
             </strong>
@@ -97,7 +106,9 @@ const Dashboard = () => {
             <span>Pending</span>
 
             <strong>
-              {loading ? "..." : formatCurrencyVN(wallet?.pendingBalance ?? 0)}
+              {isLoading
+                ? "..."
+                : formatCurrencyVN(wallet?.pendingBalance ?? 0)}
             </strong>
           </div>
 
@@ -105,7 +116,7 @@ const Dashboard = () => {
             <span>Withdrawn</span>
 
             <strong>
-              {loading
+              {isLoading
                 ? "..."
                 : formatCurrencyVN(wallet?.withdrawnBalance ?? 0)}
             </strong>
@@ -137,17 +148,17 @@ const Dashboard = () => {
           <div className="revenue-overview">
             <div className="revenue-item">
               <span>Today</span>
-              <h2>$580</h2>
+              <h2>{formatCurrencyVN(revenueOverview?.today ?? 0)}</h2>
             </div>
 
             <div className="revenue-item">
               <span>This Week</span>
-              <h2>$3,450</h2>
+              <h2>{formatCurrencyVN(revenueOverview?.thisWeek ?? 0)}</h2>
             </div>
 
             <div className="revenue-item">
               <span>This Month</span>
-              <h2>$12,450</h2>
+              <h2>{formatCurrencyVN(revenueOverview?.thisMonth ?? 0)}</h2>
             </div>
           </div>
         </div>
@@ -172,14 +183,20 @@ const Dashboard = () => {
               </thead>
 
               <tbody>
-                {recentOrders.map((order) => (
-                  <tr key={order.id}>
-                    <td>{order.id}</td>
-                    <td>{order.customer}</td>
-                    <td>{order.total}</td>
-                    <td>{order.status}</td>
+                {recentOrders.length > 0 ? (
+                  recentOrders.map((order) => (
+                    <tr key={order.orderId || order.orderCode}>
+                      <td>{order.orderCode || order.orderId}</td>
+                      <td>{order.customerName || "--"}</td>
+                      <td>{formatCurrencyVN(order.sellerTotal ?? 0)}</td>
+                      <td>{order.status || "--"}</td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="4">No recent orders</td>
                   </tr>
-                ))}
+                )}
               </tbody>
             </table>
           </div>
@@ -192,16 +209,27 @@ const Dashboard = () => {
         </div>
 
         <div className="top-products">
-          {topProducts.map((product) => (
-            <div className="top-products__item" key={product.id}>
+          {topProducts.length > 0 ? (
+            topProducts.map((product) => (
+              <div className="top-products__item" key={product.productId}>
+                <div>
+                  <h4>{product.productName}</h4>
+                  <p>{product.quantitySold ?? 0} sold</p>
+                </div>
+
+                <span>🔥</span>
+              </div>
+            ))
+          ) : (
+            <div className="top-products__item">
               <div>
-                <h4>{product.name}</h4>
-                <p>{product.sold} sold</p>
+                <h4>No sales data yet</h4>
+                <p>0 sold</p>
               </div>
 
               <span>🔥</span>
             </div>
-          ))}
+          )}
         </div>
       </div>
 
@@ -213,13 +241,20 @@ const Dashboard = () => {
         </div>
 
         <div className="activities">
-          <div className="activity">New order #ORD001 received.</div>
-
-          <div className="activity">Product Nike Air Force updated.</div>
-
-          <div className="activity">Customer left a 5⭐ review.</div>
-
-          <div className="activity">Voucher SUMMER2026 created.</div>
+          {recentActivities.length > 0 ? (
+            recentActivities.map((activity) => (
+              <div
+                className="activity"
+                key={activity.referenceId || activity.createdAtUtc}
+              >
+                {activity.message}
+              </div>
+            ))
+          ) : (
+            <div className="activity">
+              {error ? "Unable to load seller dashboard." : "No recent activities"}
+            </div>
+          )}
         </div>
       </div>
     </div>
