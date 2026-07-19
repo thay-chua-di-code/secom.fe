@@ -5,19 +5,110 @@ import {
   Users,
   Star,
   Package,
-  Clock3,
   ShoppingBag,
 } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { mockSellerReviews } from "../../utils/temporary";
 import "./style.scss";
 import { useSelector } from "react-redux";
+import { getSellerStatistics } from "../../api/sellerStatisticsApi";
 import { formatCurrencyVN } from "../../utils/fncUtils";
+
+function formatCompactNumber(value) {
+  const numericValue = Number(value);
+
+  if (!Number.isFinite(numericValue)) {
+    return "0";
+  }
+
+  if (numericValue >= 1000000) {
+    const formatted = numericValue / 1000000;
+
+    return `${formatted % 1 === 0 ? formatted.toFixed(0) : formatted.toFixed(1)}M`;
+  }
+
+  if (numericValue >= 1000) {
+    const formatted = numericValue / 1000;
+
+    return `${formatted % 1 === 0 ? formatted.toFixed(0) : formatted.toFixed(1)}K`;
+  }
+
+  return numericValue.toString();
+}
+
+function formatRating(value) {
+  const numericValue = Number(value);
+
+  if (!Number.isFinite(numericValue)) {
+    return "0.0";
+  }
+
+  return numericValue.toFixed(1);
+}
 
 export default function SellerDetail() {
   const { id } = useParams();
+  const [statistics, setStatistics] = useState(null);
+  const [isLoadingStatistics, setIsLoadingStatistics] = useState(false);
+  const [statisticsError, setStatisticsError] = useState(null);
   const productDetail = useSelector((state) => state.products.productDetail);
   const seller = productDetail?.data?.seller;
+
+  useEffect(() => {
+    if (!id) {
+      return undefined;
+    }
+
+    const controller = new AbortController();
+    let isMounted = true;
+
+    const loadStatistics = async () => {
+      try {
+        setIsLoadingStatistics(true);
+        setStatisticsError(null);
+
+        const result = await getSellerStatistics(id, controller.signal);
+
+        if (isMounted) {
+          setStatistics(result);
+        }
+      } catch (error) {
+        if (isMounted && error.name !== "CanceledError") {
+          console.error("Seller statistics error:", error);
+          setStatisticsError(
+            error?.response?.data?.message ||
+              error?.message ||
+              "Unable to load seller statistics.",
+          );
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoadingStatistics(false);
+        }
+      }
+    };
+
+    loadStatistics();
+
+    return () => {
+      isMounted = false;
+      controller.abort();
+    };
+  }, [id]);
+
+  const hasStatisticsError = Boolean(statisticsError || !id);
+  const productsValue = isLoadingStatistics || hasStatisticsError
+    ? "--"
+    : formatCompactNumber(statistics?.totalProducts ?? 0);
+  const followersValue = isLoadingStatistics || hasStatisticsError
+    ? "--"
+    : formatCompactNumber(statistics?.totalFollowers ?? 0);
+  const ordersValue = isLoadingStatistics || hasStatisticsError
+    ? "--"
+    : formatCompactNumber(statistics?.totalOrders ?? 0);
+  const ratingValue = isLoadingStatistics || hasStatisticsError
+    ? "--"
+    : formatRating(statistics?.averageRating ?? 0);
 
   // if (!seller) {
   //   return (
@@ -156,7 +247,7 @@ export default function SellerDetail() {
             </div>
 
             <div>
-              <strong>120+</strong>
+              <strong>{productsValue}</strong>
               <span>Products</span>
             </div>
           </div>
@@ -167,7 +258,7 @@ export default function SellerDetail() {
             </div>
 
             <div>
-              <strong>2.4K</strong>
+              <strong>{followersValue}</strong>
               <span>Followers</span>
             </div>
           </div>
@@ -178,7 +269,7 @@ export default function SellerDetail() {
             </div>
 
             <div>
-              <strong>8.6K</strong>
+              <strong>{ordersValue}</strong>
               <span>Orders</span>
             </div>
           </div>
@@ -189,7 +280,7 @@ export default function SellerDetail() {
             </div>
 
             <div>
-              <strong>4.9</strong>
+              <strong>{ratingValue}</strong>
               <span>Rating</span>
             </div>
           </div>

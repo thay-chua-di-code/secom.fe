@@ -57,6 +57,7 @@ export const API_ENDPOINTS = {
   SELLER: {
     REGISTER: "/seller/shop/register",
     DASHBOARD: "/seller/dashboard",
+    STATISTICS: (id) => `/sellers/${id}/statistics`,
     PRODUCT: (id) =>
       id || id === 0 ? `/seller/products/${id}` : "/seller/products",
     BANK: {
