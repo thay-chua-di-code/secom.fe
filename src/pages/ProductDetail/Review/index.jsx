@@ -1,31 +1,17 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "../../../components/common/Button/Button";
 import Input from "../../../components/common/Input";
 import "./style.scss";
 import { reviewService } from "../../../service/reviewSevice";
-
-const reviews = [
-  {
-    id: 1,
-    userName: "Nguyễn Văn A",
-    rating: 5,
-    createdAt: "15/06/2026",
-    comment: "Sản phẩm rất tốt, đóng gói cẩn thận, giao hàng nhanh.",
-  },
-  {
-    id: 2,
-    userName: "Trần Văn B",
-    rating: 4,
-    createdAt: "12/06/2026",
-    comment: "Chất lượng ổn trong tầm giá.",
-  },
-];
+import { useDispatch, useSelector } from "react-redux";
 
 function ProductReview({ productId }) {
   const [reviewData, setReviewData] = useState({
     rating: 5,
     comment: "",
   });
+  const dispatch = useDispatch();
+  const reviews = useSelector((state) => state.products.reviews);
 
   const handleChange = (e) => {
     setReviewData((prev) => ({
@@ -53,6 +39,14 @@ function ProductReview({ productId }) {
     };
     const result = await reviewService.createReview(productId, payload);
   };
+
+  const handleGetReviews = async () => {
+    await reviewService.getReviewsPropductDetail(productId);
+  };
+
+  useEffect(() => {
+    handleGetReviews();
+  }, [dispatch]);
 
   return (
     <section className="product-review">
@@ -108,7 +102,7 @@ function ProductReview({ productId }) {
       </div>
 
       <div className="review-list">
-        {reviews.map((item) => (
+        {reviews?.map((item) => (
           <div key={item.id} className="review-item">
             <div className="review-user">
               <div className="avatar">{item.userName[0]}</div>

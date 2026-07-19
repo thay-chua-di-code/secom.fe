@@ -33,7 +33,7 @@ export default function UserRow({ user }) {
       </td>
 
       <td className="actions">
-        <button>Edit</button>
+        {/* <button>Edit</button> */}
         <button className="danger" onClick={handleBanUser}>
           {user.isActive ? "Ban" : "Unban"}
         </button>

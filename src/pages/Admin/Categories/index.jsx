@@ -162,13 +162,13 @@ export default function Categories() {
                     >
                       Edit
                     </button>
-
+{/* 
                     <button
                       className="delete-btn"
                       onClick={() => handleDelete(item.id)}
                     >
                       Delete
-                    </button>
+                    </button> */}
                   </td>
                 </tr>
               ))}

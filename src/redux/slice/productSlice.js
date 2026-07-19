@@ -7,6 +7,7 @@ const initialState = {
   productSearch: [],
   productFilter: [],
   productDetail: null,
+  reviews: [],
   pagination: {
     page: 1,
     limit: 12,
@@ -85,7 +86,6 @@ export const searchProductsThunk = createAsyncThunk(
 const productSlice = createSlice({
   name: "products",
   initialState,
-
   reducers: {
     setFilters(state, action) {
       state.filters = {
@@ -118,6 +118,10 @@ const productSlice = createSlice({
       state.products = Array.from(
         new Map(products.map((item) => [item.id, item])).values(),
       );
+    },
+
+    getReviews(state, action) {
+      state.reviews = action.payload;
     },
   },
 
@@ -174,7 +178,13 @@ const productSlice = createSlice({
   },
 });
 
-export const { setFilters, resetFilters, clearProductDetail, clearProducts, getProduct } =
-  productSlice.actions;
+export const {
+  setFilters,
+  resetFilters,
+  clearProductDetail,
+  clearProducts,
+  getProduct,
+  getReviews,
+} = productSlice.actions;
 
 export default productSlice.reducer;
