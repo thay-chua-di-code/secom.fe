@@ -1,17 +1,34 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import Button from "../../../components/common/Button/Button";
-import Input from "../../../components/common/Input";
 import "./style.scss";
 import { reviewService } from "../../../service/reviewSevice";
 import { useDispatch, useSelector } from "react-redux";
+
+const formatReviewDate = (dateString) => {
+  if (!dateString) return "--";
+
+  return new Date(dateString).toLocaleString("vi-VN");
+};
+
+const renderStars = (rating = 0) => {
+  const safeRating = Math.max(0, Math.min(5, Number(rating) || 0));
+  return `${"★".repeat(safeRating)}${"☆".repeat(5 - safeRating)}`;
+};
+
+const getReviewerInitial = (name) => name?.trim()?.[0]?.toUpperCase() || "U";
 
 function ProductReview({ productId }) {
   const [reviewData, setReviewData] = useState({
     rating: 5,
     comment: "",
   });
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState("");
   const dispatch = useDispatch();
   const reviews = useSelector((state) => state.products.reviews);
+  const reviewsData = useSelector((state) => state.products.reviewsData);
 
   const handleChange = (e) => {
     setReviewData((prev) => ({
@@ -37,16 +54,42 @@ function ProductReview({ productId }) {
       rating: reviewData.rating,
       comment: reviewData.comment,
     };
-    const result = await reviewService.createReview(productId, payload);
+
+    try {
+      setIsSubmitting(true);
+      await reviewService.createReview(productId, payload);
+      setReviewData((prev) => ({ ...prev, comment: "" }));
+      await handleGetReviews();
+      toast.success("Review submitted successfully");
+    } catch (submitError) {
+      toast.error(submitError.message || "Cannot submit review");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  const handleGetReviews = async () => {
-    await reviewService.getReviewsPropductDetail(productId);
-  };
+  const handleGetReviews = useCallback(async () => {
+    if (!productId) return;
+
+    try {
+      setIsLoading(true);
+      setError("");
+      await reviewService.getReviewsPropductDetail(productId, dispatch);
+    } catch (reviewsError) {
+      setError(reviewsError.message || "Cannot load reviews");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [dispatch, productId]);
 
   useEffect(() => {
     handleGetReviews();
-  }, [dispatch]);
+  }, [handleGetReviews]);
+
+  const reviewItems = Array.isArray(reviews) ? reviews : [];
+  const averageRating = Number(reviewsData?.averageRating ?? 0).toFixed(1);
+  const totalReviews = reviewsData?.totalReviews ?? reviewItems.length;
+  const totalPages = reviewsData?.totalPages ?? 0;
 
   return (
     <section className="product-review">
@@ -55,11 +98,13 @@ function ProductReview({ productId }) {
 
         <div className="review-summary">
           <div className="average-rating">
-            <span className="score">4.8</span>
+            <span className="score">{averageRating}</span>
 
             <div>
-              <div className="stars">★★★★★</div>
-              <p>150 Reviews</p>
+              <div className="stars">{renderStars(Math.round(averageRating))}</div>
+              <p>
+                {totalReviews} Reviews • {totalPages} Pages
+              </p>
             </div>
           </div>
         </div>
@@ -89,7 +134,9 @@ function ProductReview({ productId }) {
           onChange={handleChange}
         />
 
-        <Button onClick={handleSubmit}>Submit Review</Button>
+        <Button onClick={handleSubmit} disabled={isSubmitting}>
+          {isSubmitting ? "Submitting..." : "Submit Review"}
+        </Button>
       </div>
 
       <div className="review-filter">
@@ -102,23 +149,45 @@ function ProductReview({ productId }) {
       </div>
 
       <div className="review-list">
-        {reviews?.map((item) => (
-          <div key={item.id} className="review-item">
-            <div className="review-user">
-              <div className="avatar">{item.userName[0]}</div>
+        {isLoading && <div className="review-empty">Loading reviews...</div>}
 
-              <div>
-                <h4>{item.userName}</h4>
+        {!isLoading && error && <div className="review-empty">{error}</div>}
 
-                <div className="stars">{"★".repeat(item.rating)}</div>
+        {!isLoading && !error && reviewItems.length === 0 && (
+          <div className="review-empty">No reviews yet.</div>
+        )}
 
-                <span>{item.createdAt}</span>
+        {!isLoading &&
+          !error &&
+          reviewItems.map((item) => (
+            <div key={item.id} className="review-item">
+              <div className="review-user">
+                <div className="avatar">
+                  {item.reviewerAvatarUrl ? (
+                    <img
+                      src={item.reviewerAvatarUrl}
+                      alt={item.reviewerName || "Reviewer avatar"}
+                    />
+                  ) : (
+                    getReviewerInitial(item.reviewerName)
+                  )}
+                </div>
+
+                <div>
+                  <h4>{item.reviewerName || "Anonymous reviewer"}</h4>
+
+                  <div className="stars">{renderStars(item.rating)}</div>
+
+                  <span>{formatReviewDate(item.createdAtUtc)}</span>
+                  {item.isVerifiedPurchase && (
+                    <span className="verified-badge">Đã mua hàng</span>
+                  )}
+                </div>
               </div>
-            </div>
 
-            <p className="comment">{item.comment}</p>
-          </div>
-        ))}
+              <p className="comment">{item.content || "No review content."}</p>
+            </div>
+          ))}
       </div>
     </section>
   );

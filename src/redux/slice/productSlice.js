@@ -8,6 +8,15 @@ const initialState = {
   productFilter: [],
   productDetail: null,
   reviews: [],
+  reviewsData: {
+    productId: null,
+    averageRating: 0,
+    totalReviews: 0,
+    pageNumber: 1,
+    pageSize: 10,
+    totalPages: 0,
+    items: [],
+  },
   pagination: {
     page: 1,
     limit: 12,
@@ -121,7 +130,25 @@ const productSlice = createSlice({
     },
 
     getReviews(state, action) {
-      state.reviews = action.payload;
+      const payload = action.payload?.data ?? action.payload ?? {};
+      const items = Array.isArray(payload)
+        ? payload
+        : Array.isArray(payload.items)
+          ? payload.items
+          : [];
+
+      state.reviews = items;
+      state.reviewsData = Array.isArray(payload)
+        ? {
+            ...initialState.reviewsData,
+            items,
+            totalReviews: items.length,
+          }
+        : {
+            ...initialState.reviewsData,
+            ...payload,
+            items,
+          };
     },
   },
 
