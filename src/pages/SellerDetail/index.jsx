@@ -8,11 +8,14 @@ import {
   ShoppingBag,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import toast from "react-hot-toast";
+import { useNavigate, useParams } from "react-router-dom";
 import "./style.scss";
 import { useSelector } from "react-redux";
 import { getSellerStatistics } from "../../api/sellerStatisticsApi";
 import { formatCurrencyVN } from "../../utils/fncUtils";
+import { chatService } from "../../service/chatService";
+import sellerFollowApi from "../../api/sellerFollowApi";
 
 function formatCompactNumber(value) {
   const numericValue = Number(value);
@@ -48,9 +51,16 @@ function formatRating(value) {
 
 export default function SellerDetail() {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  const userInfo = useSelector((state) => state.user.userInfo);
   const [statistics, setStatistics] = useState(null);
   const [isLoadingStatistics, setIsLoadingStatistics] = useState(false);
   const [statisticsError, setStatisticsError] = useState(null);
+  const [chatLoading, setChatLoading] = useState(false);
+  const [followLoading, setFollowLoading] = useState(false);
+  const [followStatusLoading, setFollowStatusLoading] = useState(false);
+  const [isFollowing, setIsFollowing] = useState(false);
   const productDetail = useSelector((state) => state.products.productDetail);
   const seller = productDetail?.data?.seller;
 
@@ -97,6 +107,11 @@ export default function SellerDetail() {
   }, [id]);
 
   const hasStatisticsError = Boolean(statisticsError || !id);
+  const isOwnSeller =
+    id &&
+    (String(userInfo?.sellerId) === String(id) ||
+      String(userInfo?.userId) === String(id) ||
+      String(userInfo?.id) === String(id));
   const productsValue = isLoadingStatistics || hasStatisticsError
     ? "--"
     : formatCompactNumber(statistics?.totalProducts ?? 0);
@@ -109,6 +124,150 @@ export default function SellerDetail() {
   const ratingValue = isLoadingStatistics || hasStatisticsError
     ? "--"
     : formatRating(statistics?.averageRating ?? 0);
+
+  const handleChatWithSeller = async () => {
+    if (!id) {
+      toast.error("Seller not found");
+      return;
+    }
+
+    if (!isAuthenticated) {
+      navigate(`/login?returnUrl=${encodeURIComponent(window.location.pathname)}`);
+      return;
+    }
+
+    try {
+      setChatLoading(true);
+      const thread = await chatService.createChatThread({ sellerId: id });
+      const chatId = thread?.chatId || thread?.id;
+
+      if (!chatId) {
+        throw new Error("Chat thread response does not contain chatId");
+      }
+
+      window.dispatchEvent(
+        new CustomEvent("secom:open-chat", {
+          detail: {
+            chatId,
+            sellerId: thread.sellerId || id,
+            sellerName: thread.sellerName || "Seller Shop",
+            sellerAvatarUrl: thread.sellerAvatarUrl,
+          },
+        }),
+      );
+    } catch (error) {
+      toast.error(error.message || "Cannot open chat");
+    } finally {
+      setChatLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!id || !isAuthenticated) return undefined;
+
+    let isMounted = true;
+
+    const loadFollowStatus = async () => {
+      try {
+        setFollowStatusLoading(true);
+        const status = await sellerFollowApi.getSellerFollowStatus(id);
+
+        if (isMounted) {
+          setIsFollowing(Boolean(status?.isFollowing));
+        }
+      } catch (error) {
+        console.error("Seller follow status error:", error);
+      } finally {
+        if (isMounted) {
+          setFollowStatusLoading(false);
+        }
+      }
+    };
+
+    loadFollowStatus();
+
+    const handleFollowChanged = (event) => {
+      if (String(event.detail?.sellerId) !== String(id)) return;
+
+      setIsFollowing(Boolean(event.detail?.isFollowing));
+      setStatistics((currentStatistics) => {
+        if (!currentStatistics) return currentStatistics;
+
+        return {
+          ...currentStatistics,
+          totalFollowers: Number.isFinite(event.detail?.totalFollowers)
+            ? event.detail.totalFollowers
+            : event.detail?.isFollowing
+              ? (currentStatistics.totalFollowers ?? 0) + 1
+              : Math.max(0, (currentStatistics.totalFollowers ?? 0) - 1),
+        };
+      });
+    };
+
+    window.addEventListener("secom:seller-follow-changed", handleFollowChanged);
+
+    return () => {
+      isMounted = false;
+      window.removeEventListener(
+        "secom:seller-follow-changed",
+        handleFollowChanged,
+      );
+    };
+  }, [id, isAuthenticated]);
+
+  const handleToggleFollow = async () => {
+    if (!id || followLoading || followStatusLoading || isOwnSeller) return;
+
+    if (!isAuthenticated) {
+      navigate(`/login?returnUrl=${encodeURIComponent(window.location.pathname)}`);
+      return;
+    }
+
+    const nextFollowing = !isFollowing;
+
+    try {
+      setFollowLoading(true);
+
+      const result = nextFollowing
+        ? await sellerFollowApi.followSeller(id)
+        : await sellerFollowApi.unfollowSeller(id);
+
+      const confirmedFollowing = result?.isFollowing ?? nextFollowing;
+      let nextFollowerCount = statistics?.totalFollowers ?? 0;
+
+      setIsFollowing(confirmedFollowing);
+      setStatistics((currentStatistics) => {
+        if (!currentStatistics) return currentStatistics;
+
+        nextFollowerCount = confirmedFollowing
+          ? (currentStatistics.totalFollowers ?? 0) + 1
+          : Math.max(0, (currentStatistics.totalFollowers ?? 0) - 1);
+
+        return {
+          ...currentStatistics,
+          totalFollowers: nextFollowerCount,
+        };
+      });
+
+      window.dispatchEvent(
+        new CustomEvent("secom:seller-follow-changed", {
+          detail: {
+            sellerId: id,
+            isFollowing: confirmedFollowing,
+            totalFollowers: nextFollowerCount,
+          },
+        }),
+      );
+
+      toast.success(
+        confirmedFollowing ? "Đã theo dõi cửa hàng" : "Đã bỏ theo dõi cửa hàng",
+      );
+    } catch (error) {
+      toast.error(error.message || "Cannot update follow status");
+    } finally {
+      setFollowLoading(false);
+    }
+  };
 
   // if (!seller) {
   //   return (
@@ -208,12 +367,28 @@ export default function SellerDetail() {
               </div>
 
               <div className="seller-profile__actions">
-                <button className="btn-follow">
+                <button
+                  className="btn-follow"
+                  onClick={handleToggleFollow}
+                  disabled={followLoading || followStatusLoading || isOwnSeller}
+                >
                   <Users size={17} />
-                  Follow
+                  {followLoading
+                    ? "Đang xử lý..."
+                    : followStatusLoading
+                      ? "Đang tải..."
+                      : isFollowing
+                        ? "Đang theo dõi"
+                        : "Theo dõi"}
                 </button>
 
-                <button className="btn-chat">Chat</button>
+                <button
+                  className="btn-chat"
+                  onClick={handleChatWithSeller}
+                  disabled={chatLoading}
+                >
+                  {chatLoading ? "Opening..." : "Chat"}
+                </button>
               </div>
             </div>
 

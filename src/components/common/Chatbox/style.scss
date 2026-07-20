@@ -318,6 +318,8 @@ $bg: #f8fafc;
 
 .message {
   max-width: 70%;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
 
   padding: 14px 16px;
 

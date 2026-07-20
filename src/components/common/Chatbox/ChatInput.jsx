@@ -3,15 +3,20 @@ import { useState } from "react";
 
 const ChatInput = ({ isAi, onSend, disabled = false }) => {
   const [message, setMessage] = useState("");
+  const [isSending, setIsSending] = useState(false);
 
-  const handleSend = () => {
+  const handleSend = async () => {
     const text = message.trim();
 
-    if (!text || disabled) return;
+    if (!text || disabled || isSending) return;
 
-    onSend?.(text);
-
-    setMessage("");
+    try {
+      setIsSending(true);
+      await onSend?.(text);
+      setMessage("");
+    } finally {
+      setIsSending(false);
+    }
   };
 
   const handleKeyDown = (e) => {
@@ -29,10 +34,13 @@ const ChatInput = ({ isAi, onSend, disabled = false }) => {
         placeholder={isAi ? "Ask Secom AI anything..." : "Enter message..."}
         onChange={(e) => setMessage(e.target.value)}
         onKeyDown={handleKeyDown}
-        disabled={disabled}
+        disabled={disabled || isSending}
       />
 
-      <button onClick={handleSend} disabled={!message.trim() || disabled}>
+      <button
+        onClick={handleSend}
+        disabled={!message.trim() || disabled || isSending}
+      >
         <SendHorizonal size={20} />
       </button>
     </div>

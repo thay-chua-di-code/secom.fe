@@ -1,20 +1,32 @@
-const ChatMessage = ({ message }) => {
+const formatMessageTime = (message) => {
+  if (message?.time) return message.time;
+  if (!message?.createdAtUtc) return "";
+
+  return new Date(message.createdAtUtc).toLocaleString("vi-VN", {
+    hour: "2-digit",
+    minute: "2-digit",
+    day: "2-digit",
+    month: "2-digit",
+  });
+};
+
+const ChatMessage = ({ message, isOwnMessage }) => {
+  const text = message?.text ?? message?.content ?? "";
+
   return (
     <div
       className={`message-wrapper ${
-        message?.sender === "user"
-          ? "message-wrapper--user"
-          : "message-wrapper--shop"
+        isOwnMessage ? "message-wrapper--user" : "message-wrapper--shop"
       }`}
     >
       <div
         className={`message ${
-          message?.sender === "user" ? "message--user" : "message--shop"
+          isOwnMessage ? "message--user" : "message--shop"
         }`}
       >
-        <p>{message?.text}</p>
+        <p>{text}</p>
 
-        <span>{message?.time}</span>
+        <span>{formatMessageTime(message)}</span>
       </div>
     </div>
   );

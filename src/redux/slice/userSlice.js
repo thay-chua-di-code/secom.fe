@@ -132,19 +132,21 @@ const userSlice = createSlice({
       state.error = action.payload;
     },
     getFolloweShop: (state, action) => {
-      state.shopFollowed = action.payload.items || [];
+      const payload = action.payload ?? {};
+
+      state.shopFollowed = Array.isArray(payload.items) ? payload.items : [];
       state.pagination = {
-        pageNumber: action.payload.pageNumber,
-        pageSize: action.payload.pageSize,
-        totalCount: action.payload.totalCount,
-        totalPages: action.payload.totalPages,
+        pageNumber: payload.pageNumber ?? 1,
+        pageSize: payload.pageSize ?? 10,
+        totalCount: payload.totalCount ?? 0,
+        totalPages: payload.totalPages ?? 0,
       };
     },
     getViewedProduct: (state, action) => {
       state.viewedProduct = action.payload;
       state.loading = false;
     },
-    clearAllViewedProduct: (state, action) => {
+    clearAllViewedProduct: (state) => {
       state.viewedProduct = [];
       state.loading = false;
     },

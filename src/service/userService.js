@@ -10,6 +10,7 @@ import {
   clearAllViewedProduct,
 } from "../redux/slice/userSlice";
 import wishlistApi from "../api/wishlistApi";
+import sellerFollowApi from "../api/sellerFollowApi";
 export const userService = {
   getMyInfo: async () => {
     try {
@@ -52,13 +53,13 @@ export const userService = {
         dispatch(getViewedProduct(result.data.data));
       }
     } catch (e) {
+      dispatch(setError(e.message));
       throw new Error(
         e.message || "Something went wrong when get viewed product",
         {
           cause: e,
         },
       );
-      dispatch(setError(e.message));
     }
   },
 
@@ -99,25 +100,25 @@ export const userService = {
 
   // [FOLLOWED SHOP]
   getFollowedShop:
-    ({ pageNumber = 1, pageSize = 10 } = {}) =>
+    ({ page = 1, pageSize = 10 } = {}) =>
     async (dispatch) => {
       try {
         dispatch(setLoading(true));
 
-        const res = await axiosClient.get("/followed", {
-          params: {
-            pageNumber,
-            pageSize,
-          },
+        const followedSellers = await sellerFollowApi.getFollowedSellers({
+          page,
+          pageSize,
         });
 
-        if (res.data.success) {
-          dispatch(getFolloweShop(res.data.data));
-        }
+        dispatch(getFolloweShop(followedSellers));
       } catch (e) {
-        dispatch(setError("Get followed shop failed."));
+        dispatch(setError(e.message || "Get followed shop failed."));
       } finally {
         dispatch(setLoading(false));
       }
     },
+
+  unfollowShop: async (sellerId) => {
+    return sellerFollowApi.unfollowSeller(sellerId);
+  },
 };

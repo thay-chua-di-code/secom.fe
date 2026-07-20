@@ -11,8 +11,7 @@ export const getChatsThunk = createAsyncThunk(
   "chat/getChats",
   async (params, thunkAPI) => {
     try {
-      const res = await chatService.getChats(params);
-      return res.data.data;
+      return await chatService.getChats(params);
     } catch (err) {
       return thunkAPI.rejectWithValue(getApiError(err));
     }
@@ -21,10 +20,9 @@ export const getChatsThunk = createAsyncThunk(
 
 export const getChatDetailThunk = createAsyncThunk(
   "chat/getChatDetail",
-  async (chatId, thunkAPI) => {
+  async ({ chatId, page = 1, pageSize = 50 }, thunkAPI) => {
     try {
-      const res = await chatService.getChatById(chatId);
-      return res.data.data;
+      return await chatService.getChatById(chatId, { page, pageSize });
     } catch (err) {
       return thunkAPI.rejectWithValue(getApiError(err));
     }
@@ -35,8 +33,7 @@ export const sendMessageThunk = createAsyncThunk(
   "chat/sendMessage",
   async ({ chatId, data }, thunkAPI) => {
     try {
-      const res = await chatService.sendMessage(chatId, data);
-      return res.data.data;
+      return await chatService.sendMessage(chatId, data);
     } catch (err) {
       return thunkAPI.rejectWithValue(getApiError(err));
     }
@@ -69,6 +66,8 @@ const initialState = {
 
   sending: false,
 
+  markingRead: false,
+
   error: null,
 };
 
@@ -81,7 +80,10 @@ const chatSlice = createSlice({
     addRealtimeMessage(state, action) {
       if (!state.currentChat) return;
 
-      state.currentChat.messages.push(action.payload);
+      state.currentChat.messages = [
+        ...(state.currentChat.messages ?? []),
+        action.payload,
+      ];
     },
 
     clearCurrentChat(state) {
@@ -101,8 +103,15 @@ const chatSlice = createSlice({
       .addCase(getChatsThunk.fulfilled, (state, action) => {
         state.loading = false;
 
-        state.chats = action.payload.items;
-        state.pagination = action.payload.pagination;
+        const payload = action.payload ?? {};
+
+        state.chats = Array.isArray(payload.items) ? payload.items : [];
+        state.pagination = {
+          pageNumber: payload.pageNumber ?? 1,
+          pageSize: payload.pageSize ?? 20,
+          totalCount: payload.totalCount ?? 0,
+          totalPages: payload.totalPages ?? 0,
+        };
       })
 
       .addCase(getChatsThunk.rejected, (state, action) => {
@@ -137,7 +146,24 @@ const chatSlice = createSlice({
         state.sending = false;
 
         if (state.currentChat) {
-          state.currentChat.messages.push(action.payload);
+          const messages = state.currentChat.messages ?? [];
+          const messageExists = messages.some(
+            (message) => message.messageId === action.payload?.messageId,
+          );
+
+          if (!messageExists) {
+            state.currentChat.messages = [...messages, action.payload];
+          }
+        }
+
+        const chatIndex = state.chats.findIndex(
+          (chat) => chat.chatId === action.payload?.chatId,
+        );
+
+        if (chatIndex >= 0) {
+          state.chats[chatIndex].latestMessagePreview = action.payload?.content;
+          state.chats[chatIndex].latestMessageAtUtc =
+            action.payload?.createdAtUtc;
         }
       })
 
@@ -148,12 +174,29 @@ const chatSlice = createSlice({
 
       // ================= READ =================
 
-      .addCase(markAsReadThunk.fulfilled, (state) => {
+      .addCase(markAsReadThunk.pending, (state) => {
+        state.markingRead = true;
+      })
+
+      .addCase(markAsReadThunk.fulfilled, (state, action) => {
+        state.markingRead = false;
+
         if (!state.currentChat) return;
 
-        state.currentChat.messages.forEach((m) => {
+        (state.currentChat.messages ?? []).forEach((m) => {
           m.isRead = true;
         });
+
+        const chat = state.chats.find((item) => item.chatId === action.payload);
+
+        if (chat) {
+          chat.unreadCount = 0;
+        }
+      })
+
+      .addCase(markAsReadThunk.rejected, (state, action) => {
+        state.markingRead = false;
+        state.error = action.payload;
       });
   },
 });

@@ -58,6 +58,10 @@ export const API_ENDPOINTS = {
     REGISTER: "/seller/shop/register",
     DASHBOARD: "/seller/dashboard",
     STATISTICS: (id) => `/sellers/${id}/statistics`,
+    FOLLOW: (id) => `/sellers/${id}/follow`,
+    FOLLOW_STATUS: (id) => `/sellers/${id}/follow-status`,
+    FOLLOWED: "/followed",
+    MY_FOLLOWED: "/users/me/followed-sellers",
     PRODUCT: (id) =>
       id || id === 0 ? `/seller/products/${id}` : "/seller/products",
     BANK: {
@@ -90,8 +94,10 @@ export const API_ENDPOINTS = {
 
   CHATS: {
     GET_CHATS: "/chats",
-    GET_CAHT_DETAIL: (id) => `/chats/${id}`,
-    CREATE_CHAT: (id) => `/chats/${id}/message`,
+    CREATE_THREAD: "/chats/threads",
+    GET_CHAT_DETAIL: (id) => `/chats/${id}`,
+    SEND_MESSAGE: (id) => `/chats/${id}/messages`,
+    MARK_READ: (id) => `/chats/${id}/messages/read`,
   },
 
   CART: {

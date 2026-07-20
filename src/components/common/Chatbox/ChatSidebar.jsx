@@ -8,19 +8,16 @@ const ChatSidebar = ({
   onSelectConversation,
   setOpen,
 }) => {
+  const sellerConversations = conversations.filter(
+    (item) => item?.type !== "ai",
+  );
+
   return (
     <div className="chat-sidebar">
       <div className="chat-sidebar__header">
         <h3>
           Chat
-          <span>
-            (
-            {conversations.reduce(
-              (total, item) => total + (item.unread || 0),
-              0,
-            )}
-            )
-          </span>
+          <span>({sellerConversations.length})</span>
         </h3>
 
         <button onClick={() => setOpen(false)}>
@@ -34,6 +31,10 @@ const ChatSidebar = ({
       </div>
 
       <div className="chat-sidebar__list">
+        {conversations.filter(Boolean).length === 0 && (
+          <div className="chat-empty">No conversations yet.</div>
+        )}
+
         {conversations.filter(Boolean).map((item, index) => (
           <ChatConversationItem
             key={item.id ?? `conversation-${index}`}

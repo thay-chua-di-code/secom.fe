@@ -5,7 +5,9 @@ import { useEffect, useRef } from "react";
 const ChatContent = ({
   selectedConversation,
   currentChat,
+  currentUserId,
   loading,
+  sending,
   onSendAI,
   onSendSeller,
 }) => {
@@ -69,9 +71,28 @@ const ChatContent = ({
           </div>
         )}
 
-        {currentChat?.map((msg) => (
-          <ChatMessage key={msg.id} message={msg} />
-        ))}
+        {!isAI && !loading && currentChat?.length === 0 && (
+          <div className="chat-empty">No messages yet.</div>
+        )}
+
+        {currentChat?.map((msg) => {
+          const isOwnMessage = isAI
+            ? msg.sender === "user"
+            : Boolean(
+                currentUserId &&
+                  msg.senderId &&
+                  String(msg.senderId).toLowerCase() ===
+                    String(currentUserId).toLowerCase(),
+              );
+
+          return (
+            <ChatMessage
+              key={msg.messageId || msg.id}
+              message={msg}
+              isOwnMessage={isOwnMessage}
+            />
+          );
+        })}
 
         {loading && (
           <div className="typing">
@@ -87,7 +108,7 @@ const ChatContent = ({
       <ChatInput
         isAi={isAI}
         onSend={isAI ? onSendAI : onSendSeller}
-        disabled={loading}
+        disabled={loading || sending}
       />
     </div>
   );
