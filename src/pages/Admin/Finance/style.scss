@@ -1,6 +1,6 @@
 .finance-page {
   padding: 30px;
-  background: #f6f9fc;
+  background: #111622;
   min-height: 100vh;
 
   .finance-header {
@@ -51,7 +51,7 @@
   }
 
   .finance-card {
-    background: white;
+    background: #111622;
 
     border-radius: 18px;
 
@@ -62,7 +62,7 @@
     align-items: center;
 
     gap: 20px;
-
+    color: #414040;
     transition: 0.3s;
 
     box-shadow: 0 5px 18px rgba(0, 0, 0, 0.08);
