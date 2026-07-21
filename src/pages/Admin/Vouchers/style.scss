@@ -1,196 +1,645 @@
 .voucher-admin {
-  padding: 24px;
-  background: #f8fafc;
-  min-height: 100vh;
+  min-height: calc(100vh - 62px);
 
-  .page-header {
+  color: #e5e7eb;
+  // ========================================
+  // ADD BUTTON
+  // ========================================
+
+  &__heading {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 25px;
-    flex-wrap: wrap;
-    gap: 20px;
-
-    h2 {
-      font-size: 28px;
-      margin-bottom: 5px;
-      color: #0f172a;
-    }
-
-    p {
-      color: #64748b;
-    }
-
-    .btn-add {
-      background: #0284c7;
-      color: white;
-      border: none;
-      padding: 12px 22px;
-      border-radius: 10px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      transition: 0.25s;
-
-      &:hover {
-        background: #0369a1;
-      }
-    }
+    width: 100%;
+    justify-content: flex-end;
+    margin-bottom: 10px;
   }
 
-  .toolbar {
-    margin-bottom: 25px;
-
-    .search-box {
-      max-width: 380px;
-      display: flex;
-      align-items: center;
-      background: white;
-      border-radius: 10px;
-      padding: 0 15px;
-      border: 1px solid #e2e8f0;
-
-      input {
-        flex: 1;
-        border: none;
-        outline: none;
-        padding: 13px;
-      }
-
-      svg {
-        color: #94a3b8;
-      }
-    }
-  }
-
-  .table-wrapper {
-    overflow-x: auto;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.06);
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-
-      th {
-        background: #0284c7;
-        color: white;
-        padding: 16px;
-        text-align: left;
-      }
-
-      td {
-        padding: 16px;
-        border-bottom: 1px solid #f1f5f9;
-      }
-
-      tr:hover {
-        background: #f8fafc;
-      }
-    }
-  }
-
-  .voucher-code,
-  .discount,
-  .date {
+  &__add-btn {
     display: flex;
     align-items: center;
+    justify-content: center;
+
     gap: 8px;
-  }
 
-  .status {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    padding: 6px 12px;
-    border-radius: 30px;
-    font-size: 13px;
+    height: 36px;
 
-    &.active {
-      background: #dcfce7;
-      color: #15803d;
-    }
+    padding: 0 14px;
 
-    &.inactive {
-      background: #fee2e2;
-      color: #dc2626;
-    }
-  }
-
-  .edit-btn {
-    width: 38px;
-    height: 38px;
-    border-radius: 8px;
     border: none;
+    border-radius: 8px;
+
+    background: #3b82f6;
+
+    color: white;
+
+    font-size: 11px;
+    font-weight: 600;
+
     cursor: pointer;
-    background: #e0f2fe;
-    color: #0284c7;
-    transition: 0.25s;
+
+    transition: 0.2s ease;
 
     &:hover {
-      background: #0284c7;
-      color: white;
+      background: #2563eb;
+
+      transform: translateY(-1px);
     }
   }
 
-  .loading,
-  .empty {
-    text-align: center;
-    padding: 40px;
-    color: #64748b;
+  // ========================================
+  // CARD
+  // ========================================
+
+  &__card {
+    overflow: hidden;
+
+    border: 1px solid #202b3d;
+    border-radius: 15px;
+
+    background: #111827;
   }
 
-  .pagination {
-    margin-top: 25px;
+  // ========================================
+  // TOOLBAR
+  // ========================================
+
+  &__toolbar {
     display: flex;
+    align-items: center;
     justify-content: space-between;
+
+    min-height: 76px;
+
+    padding: 0 20px;
+
+    border-bottom: 1px solid #202b3d;
+  }
+
+  // ========================================
+  // TABS
+  // ========================================
+
+  &__tabs {
+    display: flex;
     align-items: center;
 
-    .pages {
+    gap: 8px;
+
+    button {
       display: flex;
-      gap: 10px;
+      align-items: center;
 
-      button {
-        width: 38px;
-        height: 38px;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        background: white;
+      gap: 7px;
 
-        &.active {
-          background: #0284c7;
+      height: 32px;
+
+      padding: 0 11px;
+
+      border: none;
+      border-radius: 7px;
+
+      background: transparent;
+
+      color: #6d82a2;
+
+      font-size: 11px;
+      font-weight: 500;
+
+      cursor: pointer;
+
+      transition: 0.2s ease;
+
+      b {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        min-width: 18px;
+        height: 17px;
+
+        padding: 0 4px;
+
+        border-radius: 5px;
+
+        background: #1d2940;
+
+        color: #7184a3;
+
+        font-size: 9px;
+      }
+
+      &:hover {
+        color: #dbeafe;
+      }
+
+      &.active {
+        background: #3b82f6;
+
+        color: white;
+
+        b {
+          background: rgba(255, 255, 255, 0.18);
+
           color: white;
         }
       }
     }
   }
-}
 
-@media (max-width: 768px) {
-  .voucher-admin {
-    padding: 15px;
+  // ========================================
+  // SEARCH
+  // ========================================
 
-    .page-header {
+  &__search {
+    display: flex;
+    align-items: center;
+
+    width: 208px;
+    height: 38px;
+
+    gap: 8px;
+
+    padding: 0 12px;
+
+    border: 1px solid #29344a;
+    border-radius: 11px;
+
+    background: #171f31;
+
+    color: #5e7190;
+
+    transition: 0.2s ease;
+
+    &:focus-within {
+      border-color: #3b82f6;
+
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    input {
+      width: 100%;
+
+      border: none;
+      outline: none;
+
+      background: transparent;
+
+      color: #e5e7eb;
+
+      font-size: 11px;
+
+      &::placeholder {
+        color: #5d6f8c;
+      }
+    }
+  }
+
+  // ========================================
+  // TABLE WRAPPER
+  // ========================================
+
+  &__table-wrapper {
+    overflow-x: auto;
+
+    background: #111827;
+  }
+
+  // ========================================
+  // TABLE
+  // ========================================
+
+  &__table {
+    width: 100%;
+
+    min-width: 1050px;
+
+    border-collapse: separate;
+    border-spacing: 0;
+
+    thead {
+      background: #151e2d;
+
+      th {
+        height: 48px;
+
+        padding: 20px 20px;
+
+        background: #151e2d;
+
+        border-bottom: 1px solid #27344a;
+
+        color: #8294ae;
+
+        font-size: 10px;
+        font-weight: 700;
+
+        text-align: left;
+        text-transform: uppercase;
+
+        letter-spacing: 0.65px;
+
+        white-space: nowrap;
+      }
+    }
+
+    tbody {
+      background: #111827;
+    }
+
+    td {
+      height: 72px;
+
+      padding: 25px 10px;
+
+      border-bottom: 1px solid #202b3d;
+
+      color: #dbe4f1;
+
+      font-size: 12px;
+    }
+
+    tbody tr {
+      background: #111827;
+
+      transition: 0.2s ease;
+
+      &:hover {
+        background: #151f31;
+
+        td {
+          border-bottom-color: #2b3a52;
+        }
+      }
+
+      &:last-child {
+        td {
+          border-bottom: none;
+        }
+      }
+    }
+  }
+
+  // ========================================
+  // VOUCHER INFO
+  // ========================================
+
+  .voucher-info {
+    display: flex;
+    align-items: center;
+
+    gap: 11px;
+
+    .voucher-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      width: 34px;
+      height: 34px;
+
+      flex-shrink: 0;
+
+      border-radius: 10px;
+
+      background: #263b61;
+
+      color: #60a5fa;
+    }
+
+    strong {
+      display: block;
+
+      color: #f1f5f9;
+
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    span {
+      display: block;
+
+      margin-top: 4px;
+
+      color: #536783;
+
+      font-size: 9px;
+    }
+  }
+
+  // ========================================
+  // DISCOUNT
+  // ========================================
+
+  .discount-info {
+    display: flex;
+    align-items: center;
+
+    gap: 6px;
+
+    color: #60a5fa;
+
+    strong {
+      color: #dbe4f1;
+
+      font-size: 12px;
+      font-weight: 600;
+    }
+  }
+
+  // ========================================
+  // USAGE
+  // ========================================
+
+  .usage-info {
+    width: 120px;
+
+    .usage-number {
+      display: flex;
+      align-items: center;
+
+      gap: 5px;
+
+      margin-bottom: 6px;
+
+      color: #7185a4;
+
+      font-size: 10px;
+    }
+
+    .usage-progress {
+      width: 100%;
+      height: 4px;
+
+      overflow: hidden;
+
+      border-radius: 999px;
+
+      background: #1d2940;
+
+      span {
+        display: block;
+
+        height: 100%;
+
+        border-radius: inherit;
+
+        background: #3b82f6;
+      }
+    }
+  }
+
+  // ========================================
+  // DATE
+  // ========================================
+
+  .date-info {
+    display: flex;
+    align-items: center;
+
+    gap: 6px;
+
+    color: #7185a4;
+
+    font-size: 10px;
+
+    > div {
+      display: flex;
+      align-items: center;
+
+      gap: 5px;
+    }
+
+    small {
+      color: #43536c;
+
+      font-size: 9px;
+    }
+  }
+
+  // ========================================
+  // STATUS
+  // ========================================
+
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 6px;
+
+    padding: 5px 9px;
+
+    border-radius: 999px;
+
+    font-size: 10px;
+    font-weight: 600;
+
+    span {
+      width: 5px;
+      height: 5px;
+
+      border-radius: 50%;
+    }
+
+    &.active {
+      border: 1px solid rgba(16, 185, 129, 0.25);
+
+      background: rgba(16, 185, 129, 0.1);
+
+      color: #10b981;
+
+      span {
+        background: #10b981;
+      }
+    }
+
+    &.inactive {
+      border: 1px solid rgba(239, 68, 68, 0.25);
+
+      background: rgba(239, 68, 68, 0.1);
+
+      color: #ef4444;
+
+      span {
+        background: #ef4444;
+      }
+    }
+  }
+
+  // ========================================
+  // ACTION
+  // ========================================
+
+  .action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 30px;
+    height: 30px;
+
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    border-radius: 7px;
+
+    background: rgba(59, 130, 246, 0.1);
+
+    color: #60a5fa;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+
+    &:hover {
+      background: rgba(59, 130, 246, 0.2);
+    }
+  }
+
+  // ========================================
+  // PAGINATION
+  // ========================================
+
+  &__pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    min-height: 58px;
+
+    padding: 0 20px;
+
+    border-top: 1px solid #202b3d;
+
+    color: #637795;
+
+    font-size: 11px;
+
+    b {
+      color: #a9bad1;
+    }
+
+    > div {
+      display: flex;
+
+      gap: 6px;
+    }
+
+    button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      width: 30px;
+      height: 30px;
+
+      border: 1px solid #29344a;
+      border-radius: 7px;
+
+      background: #171f31;
+
+      color: #8da0bc;
+
+      cursor: pointer;
+
+      transition: 0.2s ease;
+
+      &:hover {
+        border-color: #3b82f6;
+
+        color: #60a5fa;
+      }
+
+      &.active {
+        border-color: #3b82f6;
+
+        background: #3b82f6;
+
+        color: white;
+      }
+    }
+  }
+
+  // ========================================
+  // LOADING / EMPTY
+  // ========================================
+
+  &__loading,
+  &__empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 10px;
+
+    min-height: 220px;
+
+    color: #617491;
+
+    font-size: 12px;
+  }
+
+  // ========================================
+  // RESPONSIVE
+  // ========================================
+
+  @media (max-width: 768px) {
+    &__heading {
+      align-items: flex-end;
+
       flex-direction: column;
+
+      gap: 16px;
+
+      .voucher-admin__add-btn {
+        width: 100%;
+      }
+    }
+
+    &__toolbar {
       align-items: stretch;
 
-      .btn-add {
-        justify-content: center;
-      }
-    }
-
-    .toolbar {
-      .search-box {
-        max-width: 100%;
-      }
-    }
-
-    .pagination {
       flex-direction: column;
-      gap: 15px;
+
+      gap: 14px;
+
+      padding: 16px 20px;
+    }
+
+    &__tabs {
+      overflow-x: auto;
+
+      button {
+        flex-shrink: 0;
+      }
+    }
+
+    &__search {
+      width: 100%;
+    }
+
+    &__pagination {
+      align-items: flex-start;
+
+      flex-direction: column;
+
+      gap: 12px;
+
+      padding: 16px 20px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    &__heading {
+      h1 {
+        font-size: 20px;
+      }
+    }
+
+    &__tabs {
+      button {
+        padding: 0 9px;
+
+        span {
+          display: none;
+        }
+      }
     }
   }
 }

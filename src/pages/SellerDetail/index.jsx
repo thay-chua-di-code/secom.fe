@@ -62,7 +62,7 @@ export default function SellerDetail() {
   const [followStatusLoading, setFollowStatusLoading] = useState(false);
   const [isFollowing, setIsFollowing] = useState(false);
   const productDetail = useSelector((state) => state.products.productDetail);
-  const seller = productDetail?.data?.seller;
+  const seller = productDetail?.seller;
 
   useEffect(() => {
     if (!id) {
@@ -112,18 +112,22 @@ export default function SellerDetail() {
     (String(userInfo?.sellerId) === String(id) ||
       String(userInfo?.userId) === String(id) ||
       String(userInfo?.id) === String(id));
-  const productsValue = isLoadingStatistics || hasStatisticsError
-    ? "--"
-    : formatCompactNumber(statistics?.totalProducts ?? 0);
-  const followersValue = isLoadingStatistics || hasStatisticsError
-    ? "--"
-    : formatCompactNumber(statistics?.totalFollowers ?? 0);
-  const ordersValue = isLoadingStatistics || hasStatisticsError
-    ? "--"
-    : formatCompactNumber(statistics?.totalOrders ?? 0);
-  const ratingValue = isLoadingStatistics || hasStatisticsError
-    ? "--"
-    : formatRating(statistics?.averageRating ?? 0);
+  const productsValue =
+    isLoadingStatistics || hasStatisticsError
+      ? "--"
+      : formatCompactNumber(statistics?.totalProducts ?? 0);
+  const followersValue =
+    isLoadingStatistics || hasStatisticsError
+      ? "--"
+      : formatCompactNumber(statistics?.totalFollowers ?? 0);
+  const ordersValue =
+    isLoadingStatistics || hasStatisticsError
+      ? "--"
+      : formatCompactNumber(statistics?.totalOrders ?? 0);
+  const ratingValue =
+    isLoadingStatistics || hasStatisticsError
+      ? "--"
+      : formatRating(statistics?.averageRating ?? 0);
 
   const handleChatWithSeller = async () => {
     if (!id) {
@@ -132,7 +136,9 @@ export default function SellerDetail() {
     }
 
     if (!isAuthenticated) {
-      navigate(`/login?returnUrl=${encodeURIComponent(window.location.pathname)}`);
+      navigate(
+        `/login?returnUrl=${encodeURIComponent(window.location.pathname)}`,
+      );
       return;
     }
 
@@ -219,7 +225,9 @@ export default function SellerDetail() {
     if (!id || followLoading || followStatusLoading || isOwnSeller) return;
 
     if (!isAuthenticated) {
-      navigate(`/login?returnUrl=${encodeURIComponent(window.location.pathname)}`);
+      navigate(
+        `/login?returnUrl=${encodeURIComponent(window.location.pathname)}`,
+      );
       return;
     }
 
@@ -320,6 +328,7 @@ export default function SellerDetail() {
         "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=500",
     },
   ];
+
   return (
     <div className="seller-detail">
       {/* =========================
@@ -342,7 +351,7 @@ export default function SellerDetail() {
             <img
               src={
                 seller?.avatarUrl ||
-                "https://i.redd.it/homelander-the-boys-show-vs-vecna-st-v0-kfm3629trbbg1.jpg?width=1200&format=pjpg&auto=webp&s=52d04d9b395f0205c5fb4cdbf7a2063db9c8d9c3"
+                "https://static.vecteezy.com/system/resources/thumbnails/050/907/528/small_2x/3d-rendered-cartoon-boy-wearing-a-blue-hoodie-png.png"
               }
               alt="Seller avatar"
             />
@@ -359,7 +368,7 @@ export default function SellerDetail() {
                 <span className="seller-profile__eyebrow">OFFICIAL SELLER</span>
 
                 <h1>
-                  Seller Shop
+                  {seller.fullName}
                   <BadgeCheck size={22} />
                 </h1>
 

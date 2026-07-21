@@ -29,6 +29,8 @@ export default function LoginForm() {
           password: loginData.password,
         }),
       ).unwrap();
+
+      console.log(result);
       if (result) {
         toast.success("Login successful!");
         navigate("/");

@@ -5,10 +5,11 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 24px;
+    margin-bottom: 10px;
+    color: #dde3ee;
 
     h1 {
-      font-size: 28px;
+      font-size: 25px;
       font-weight: 700;
       margin-bottom: 4px;
     }
@@ -67,25 +68,86 @@
 
 table {
   width: 100%;
-  border-collapse: collapse;
   min-width: 1000px;
 
-  th {
-    text-align: left;
-    background: #f8fafc;
-    padding: 16px;
-    font-weight: 600;
-    color: #475569;
-    border-bottom: 1px solid #e2e8f0;
+  border-collapse: collapse;
+
+  tr {
+    background: transparent !important;
+
+    &:hover {
+      background: transparent !important;
+    }
+
+    td {
+      background: transparent !important;
+      border-bottom: 1px solid #494747;
+    }
+
+    &:hover td {
+      background: transparent !important;
+    }
+  }
+
+  thead {
+    th {
+      padding: 16px;
+      background: #1e2640;
+      color: #475569;
+      font-weight: 600;
+      text-align: left;
+      // border-bottom: 1px solid #e2e8f0;
+    }
   }
 
   td {
     padding: 16px;
-    border-bottom: 1px solid #f1f5f9;
+
+    // border-bottom: 1px solid #f1f5f9;
   }
 
-  tr:hover {
-    background: #fafafa;
+  // ================================
+  // PRODUCT INFO
+  // ================================
+
+  .product-info {
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    min-width: 240px;
+
+    .icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      flex-shrink: 0;
+
+      width: 38px;
+      height: 38px;
+
+      border: 1px solid #353636;
+      border-radius: 9px;
+
+      background: #1e2640;
+
+      color: #757577;
+      svg {
+        width: 18px;
+        height: 18px;
+      }
+    }
+
+    span {
+      overflow: hidden;
+      color: #dde3ee;
+      font-size: 14px;
+      font-weight: 600;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
   }
 }
 
@@ -116,31 +178,6 @@ table {
   gap: 8px;
 }
 
-.view-btn,
-.approve-btn,
-.reject-btn {
-  height: 36px;
-  padding: 0 14px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 500;
-}
-
-.view-btn {
-  background: #e2e8f0;
-}
-
-.approve-btn {
-  background: #16a34a;
-  color: white;
-}
-
-.reject-btn {
-  background: #dc2626;
-  color: white;
-}
-
 /* Tablet */
 
 @media (max-width: 992px) {
@@ -149,6 +186,11 @@ table {
       flex-direction: column;
       align-items: flex-start;
       gap: 16px;
+
+      h1 {
+        color: #dde3ee;
+        font-size: 15px;
+      }
     }
   }
 }
@@ -170,5 +212,234 @@ table {
 
   .add-btn {
     width: 100%;
+  }
+}
+
+// ========================================
+// FILTER
+// ========================================
+
+.admin-products__filter {
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  margin-bottom: 20px;
+}
+
+// ========================================
+// SEARCH
+// ========================================
+
+.search-box {
+  display: flex;
+  align-items: center;
+
+  width: 320px;
+  height: 42px;
+
+  gap: 10px;
+
+  padding: 0 14px;
+
+  border: 1px solid #262c3f;
+  border-radius: 9px;
+
+  background: #111625;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+
+  svg {
+    flex-shrink: 0;
+
+    color: #5d6b89;
+  }
+
+  &:focus-within {
+    border-color: #3b82f6;
+
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+
+    svg {
+      color: #60a5fa;
+    }
+  }
+
+  input {
+    width: 100%;
+    height: 100%;
+
+    padding: 0;
+
+    border: none !important;
+    outline: none !important;
+
+    background: transparent !important;
+
+    color: #f1f5f9 !important;
+
+    font-family: inherit;
+    font-size: 13px;
+
+    &::placeholder {
+      color: #5d6b89;
+    }
+  }
+}
+
+// ========================================
+// STATUS SELECT
+// ========================================
+
+.admin-products__filter select {
+  width: 160px;
+  height: 42px;
+
+  padding: 0 14px;
+
+  border: 1px solid #262c3f;
+  border-radius: 9px;
+
+  outline: none;
+
+  background: #111625;
+
+  color: #cbd5e1;
+
+  font-family: inherit;
+  font-size: 13px;
+
+  cursor: pointer;
+
+  &:focus {
+    border-color: #3b82f6;
+  }
+
+  option {
+    background: #111625;
+    color: #f1f5f9;
+  }
+}
+
+// ========================================
+// ACTION BUTTONS
+// ========================================
+
+.action-buttons {
+  display: flex;
+  align-items: center;
+
+  gap: 7px;
+}
+
+// ========================================
+// ACTION BUTTON
+// ========================================
+
+.action-btn {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+
+  width: 32px !important;
+  height: 32px !important;
+
+  padding: 0 !important;
+
+  border-radius: 8px !important;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+  }
+}
+
+// ========================================
+// VIEW
+// ========================================
+
+.view-btn {
+  border: 1px solid rgba(59, 130, 246, 0.25) !important;
+
+  background: rgba(59, 130, 246, 0.1) !important;
+
+  color: #60a5fa !important;
+
+  &:hover {
+    border-color: #3b82f6 !important;
+
+    background: #3b82f6 !important;
+
+    color: #ffffff !important;
+  }
+}
+
+// ========================================
+// EDIT
+// ========================================
+
+.edit-btn {
+  border: 1px solid rgba(168, 85, 247, 0.25) !important;
+
+  background: rgba(168, 85, 247, 0.1) !important;
+
+  color: #c084fc !important;
+
+  &:hover {
+    border-color: #a855f7 !important;
+
+    background: #a855f7 !important;
+
+    color: #ffffff !important;
+  }
+}
+
+// ========================================
+// APPROVE
+// ========================================
+
+.approve-btn {
+  border: 1px solid rgba(34, 197, 94, 0.25) !important;
+
+  background: rgba(34, 197, 94, 0.1) !important;
+
+  color: #4ade80 !important;
+
+  &:hover {
+    border-color: #22c55e !important;
+
+    background: #22c55e !important;
+
+    color: #ffffff !important;
+  }
+}
+
+// ========================================
+// REJECT
+// ========================================
+
+.reject-btn {
+  border: 1px solid rgba(239, 68, 68, 0.25) !important;
+
+  background: rgba(239, 68, 68, 0.1) !important;
+
+  color: #f87171 !important;
+
+  &:hover {
+    border-color: #ef4444 !important;
+
+    background: #ef4444 !important;
+
+    color: #ffffff !important;
   }
 }

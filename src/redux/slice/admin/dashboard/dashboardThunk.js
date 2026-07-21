@@ -6,8 +6,8 @@ export const fetchDashboardStatistics = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const response = await adminService.getDashBoard();
-
-      return response.data.data;
+      console.log(response);
+      return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
         error.response?.data?.message || "Failed",

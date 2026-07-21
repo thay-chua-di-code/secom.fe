@@ -1,134 +1,232 @@
-.dashboard {
-  &__header {
+// Toàn bộ mã màu Hex được bóc tách từ ảnh Figma Dark Mode
+$bg-dashboard: #0b0f19;
+$bg-card: #111622;
+$border-color: #1d2433;
+
+$text-main: #ffffff;
+$text-muted: #64748b;
+
+$blue-accent: #3b82f6;
+$cyan-accent: #06b6d4;
+$purple-accent: #6366f1;
+$orange-accent: #f59e0b;
+
+$green-trend: #10b981;
+$red-trend: #ef4444;
+
+.dashboard-dark {
+  background-color: $bg-dashboard;
+  min-height: 100vh;
+  padding: 30px;
+  color: $text-main;
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
+
+  .dashboard__header {
     margin-bottom: 32px;
 
     h1 {
-      font-size: 36px;
+      font-size: 28px;
       font-weight: 700;
-      color: #111827;
+      color: $text-main;
+      margin: 0;
     }
 
     p {
-      color: #6b7280;
-      margin-top: 8px;
-      font-size: 16px;
+      color: $text-muted;
+      margin-top: 6px;
+      font-size: 14px;
     }
   }
 
-  &__grid {
+  // Bố cục grid cho 4 thẻ KPI hàng đầu giống hệt Figma
+  .kpi-grid {
     display: grid;
+    grid-template-columns: repeat(4, 1fr);
     gap: 20px;
-    margin-bottom: 30px;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    margin-bottom: 32px;
   }
-}
 
-.dashboard-section {
-  margin-bottom: 40px;
+  .kpi-card {
+    background: $bg-card;
+    border: 1px solid $border-color;
+    border-radius: 14px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 140px;
 
-  h2 {
-    font-size: 22px;
-    margin-bottom: 20px;
-    font-weight: 600;
-    color: #1e293b;
-  }
-}
-
-/* ======================
-   Tablet
-====================== */
-
-@media (max-width: 992px) {
-  .dashboard {
     &__header {
-      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
 
-      h1 {
-        font-size: 30px;
+      .icon-wrapper {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &.blue {
+          background: rgba(59, 130, 246, 0.15);
+          color: $blue-accent;
+        }
+        &.cyan {
+          background: rgba(6, 182, 212, 0.15);
+          color: $cyan-accent;
+        }
+        &.purple {
+          background: rgba(99, 102, 241, 0.15);
+          color: $purple-accent;
+        }
+        &.orange {
+          background: rgba(245, 158, 11, 0.15);
+          color: $orange-accent;
+        }
       }
 
-      p {
-        font-size: 15px;
+      .trend {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 13px;
+        font-weight: 600;
+
+        &.positive {
+          color: $green-trend;
+        }
+        &.negative {
+          color: $red-trend;
+        }
       }
     }
 
-    &__grid {
-      gap: 16px;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    &__body {
+      margin-top: 16px;
+
+      h3 {
+        font-size: 24px;
+        font-weight: 700;
+        color: $text-main;
+        margin: 0 0 4px 0;
+        letter-spacing: -0.5px;
+      }
+
+      label {
+        font-size: 13px;
+        color: $text-muted;
+        font-weight: 500;
+      }
     }
+  }
+
+  // Các khối chi tiết thống kê phía dưới
+  .detail-sections-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
   }
 
   .dashboard-section {
-    margin-bottom: 32px;
+    background: $bg-card;
+    border: 1px solid $border-color;
+    border-radius: 16px;
+    padding: 24px;
+
+    &.full-width {
+      grid-column: span 2;
+    }
 
     h2 {
-      font-size: 20px;
-      margin-bottom: 16px;
+      font-size: 16px;
+      font-weight: 600;
+      color: $text-main;
+      margin-bottom: 20px;
+      margin-top: 0;
+    }
+
+    .sub-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+
+      &.finance-cols {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .sub-card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid $border-color;
+      border-radius: 10px;
+      padding: 16px;
+
+      label {
+        font-size: 12px;
+        color: $text-muted;
+        display: block;
+        margin-bottom: 6px;
+      }
+
+      .value {
+        font-size: 18px;
+        font-weight: 600;
+        margin: 0;
+        color: $text-main;
+
+        &.money-red {
+          color: $red-trend;
+        }
+        &.money-blue {
+          color: $blue-accent;
+        }
+      }
+
+      &.pending {
+        border-left: 3px solid $orange-accent;
+      }
+      &.approved {
+        border-left: 3px solid $green-trend;
+      }
+      &.rejected {
+        border-left: 3px solid $red-trend;
+      }
     }
   }
 }
 
-/* ======================
-   Mobile
-====================== */
+/* Responsive mượt mà cho các kích cỡ màn hình */
+@media (max-width: 1200px) {
+  .dashboard-dark {
+    .kpi-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+}
 
 @media (max-width: 768px) {
-  .dashboard {
-    &__header {
-      margin-bottom: 20px;
+  .dashboard-dark {
+    padding: 20px;
 
-      h1 {
-        font-size: 26px;
-        line-height: 1.3;
-      }
-
-      p {
-        font-size: 14px;
-      }
-    }
-
-    &__grid {
-      gap: 14px;
-
-      /* 1 card mỗi hàng */
+    .kpi-grid {
       grid-template-columns: 1fr;
     }
-  }
 
-  .dashboard-section {
-    margin-bottom: 24px;
-
-    h2 {
-      font-size: 18px;
-      margin-bottom: 14px;
-    }
-  }
-}
-
-/* ======================
-   Small Mobile
-====================== */
-
-@media (max-width: 480px) {
-  .dashboard {
-    &__header {
-      h1 {
-        font-size: 22px;
-      }
-
-      p {
-        font-size: 13px;
-      }
+    .detail-sections-grid {
+      grid-template-columns: 1fr;
     }
 
-    &__grid {
-      gap: 12px;
+    .dashboard-section.full-width {
+      grid-column: span 1;
     }
-  }
 
-  .dashboard-section {
-    h2 {
-      font-size: 16px;
+    .dashboard-section .sub-grid.finance-cols {
+      grid-template-columns: 1fr;
     }
   }
 }

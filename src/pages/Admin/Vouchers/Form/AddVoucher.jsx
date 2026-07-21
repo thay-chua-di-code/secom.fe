@@ -1,5 +1,7 @@
 import React, { useState } from "react";
+import { X, Check } from "lucide-react";
 import "./style.scss";
+
 import Button from "../../../../components/common/Button/Button";
 import { createAdminVoucher } from "../../../../redux/slice/admin/vouchers/voucherThunk";
 import { useDispatch } from "react-redux";
@@ -12,18 +14,17 @@ const initialForm = {
   minOrderAmount: "",
   expiresAtUtc: "",
   usageLimit: "",
+  status: "active", // Thêm trường status theo UI
 };
 
 const AddVoucher = ({ open, onClose }) => {
   const dispatch = useDispatch();
-
   const [formData, setFormData] = useState(initialForm);
 
   if (!open) return null;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
     setFormData((prev) => ({
       ...prev,
       [name]: value,
@@ -32,27 +33,23 @@ const AddVoucher = ({ open, onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       const payload = {
-        code: formData.code.trim(),
+        code: formData.code.trim().toUpperCase(),
         discountType: formData.discountType,
         discountValue: Number(formData.discountValue),
         minOrderAmount: Number(formData.minOrderAmount),
         usageLimit: Number(formData.usageLimit),
         expiresAtUtc: new Date(formData.expiresAtUtc).toISOString(),
+        status: formData.status,
       };
 
-      const res = await dispatch(createAdminVoucher(payload)).unwrap();
-
+      await dispatch(createAdminVoucher(payload)).unwrap();
       toast.success("Add voucher successfully");
-
       setFormData(initialForm);
-
       onClose();
     } catch (error) {
       console.error("Create voucher error:", error);
-
       toast.error(
         error?.message ||
           error?.response?.data?.message ||
@@ -62,106 +59,157 @@ const AddVoucher = ({ open, onClose }) => {
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="voucher-modal">
-        <div className="modal-header">
-          <h3>Add New Voucher</h3>
-
-          <button className="close-btn" onClick={onClose}>
-            ✕
+    <div className="voucher-modal-overlay" onClick={onClose}>
+      <div className="voucher-modal" onClick={(e) => e.stopPropagation()}>
+        {/* HEADER */}
+        <div className="voucher-modal__header">
+          <h3>Create Voucher</h3>
+          <button
+            type="button"
+            className="voucher-modal__close"
+            onClick={onClose}
+          >
+            <X size={18} />
           </button>
         </div>
 
+        {/* FORM */}
         <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label>Voucher Code</label>
+          <div className="voucher-modal__body">
+            {/* ROW 1: CODE & TYPE */}
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="code">VOUCHER CODE</label>
+                <div className="input-wrapper">
+                  <input
+                    id="code"
+                    type="text"
+                    name="code"
+                    placeholder="e.g. SAVE20"
+                    value={formData.code}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+              </div>
 
-            <input
-              type="text"
-              name="code"
-              placeholder="SUMMER2026"
-              value={formData.code}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Discount Type</label>
-
-            <select
-              name="discountType"
-              value={formData.discountType}
-              onChange={handleChange}
-            >
-              <option value="percentage">Percentage</option>
-              <option value="fixed">Fixed Amount</option>
-            </select>
-          </div>
-
-          <div className="row">
-            <div className="form-group">
-              <label>Discount Value</label>
-
-              <input
-                type="number"
-                name="discountValue"
-                min="1"
-                value={formData.discountValue}
-                onChange={handleChange}
-                required
-              />
+              <div className="form-group">
+                <label htmlFor="discountType">DISCOUNT TYPE</label>
+                <div className="input-wrapper">
+                  <select
+                    id="discountType"
+                    name="discountType"
+                    value={formData.discountType}
+                    onChange={handleChange}
+                  >
+                    <option value="percentage">Percentage (%)</option>
+                    <option value="fixed">Fixed Amount ($)</option>
+                  </select>
+                </div>
+              </div>
             </div>
 
-            <div className="form-group">
-              <label>Minimum Order</label>
+            {/* ROW 2: VALUE & MIN ORDER */}
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="discountValue">
+                  {formData.discountType === "percentage"
+                    ? "DISCOUNT (%)"
+                    : "DISCOUNT ($)"}
+                </label>
+                <div className="input-wrapper">
+                  <input
+                    id="discountValue"
+                    type="number"
+                    name="discountValue"
+                    min="1"
+                    placeholder="0"
+                    value={formData.discountValue}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+              </div>
 
-              <input
-                type="number"
-                name="minOrderAmount"
-                min="0"
-                value={formData.minOrderAmount}
-                onChange={handleChange}
-                required
-              />
+              <div className="form-group">
+                <label htmlFor="minOrderAmount">MIN ORDER ($)</label>
+                <div className="input-wrapper">
+                  <input
+                    id="minOrderAmount"
+                    type="number"
+                    name="minOrderAmount"
+                    min="0"
+                    placeholder="0"
+                    value={formData.minOrderAmount}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+              </div>
             </div>
-          </div>
 
-          <div className="row">
-            <div className="form-group">
-              <label>Usage Limit</label>
+            {/* ROW 3: MAX USES & EXPIRY */}
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="usageLimit">MAX USES</label>
+                <div className="input-wrapper">
+                  <input
+                    id="usageLimit"
+                    type="number"
+                    name="usageLimit"
+                    min="1"
+                    placeholder="100"
+                    value={formData.usageLimit}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+              </div>
 
-              <input
-                type="number"
-                name="usageLimit"
-                min="1"
-                value={formData.usageLimit}
-                onChange={handleChange}
-                required
-              />
+              <div className="form-group">
+                <label htmlFor="expiresAtUtc">EXPIRY DATE</label>
+                <div className="input-wrapper">
+                  <input
+                    id="expiresAtUtc"
+                    type="date" // Chuyển thành date cho giống mm/dd/yyyy trong ảnh
+                    name="expiresAtUtc"
+                    value={formData.expiresAtUtc}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+              </div>
             </div>
 
-            <div className="form-group">
-              <label>Expired At</label>
+            {/* ROW 4: STATUS & BUTTONS (Xếp hàng theo đúng UI) */}
+            {/* STATUS */}
+            <div className="form-group status-group">
+              <label htmlFor="status">STATUS</label>
 
-              <input
-                type="datetime-local"
-                name="expiresAtUtc"
-                value={formData.expiresAtUtc}
-                onChange={handleChange}
-                required
-              />
+              <div className="input-wrapper">
+                <select
+                  id="status"
+                  name="status"
+                  value={formData.status}
+                  onChange={handleChange}
+                >
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
+                </select>
+              </div>
             </div>
-          </div>
 
-          <div className="modal-footer">
-            <Button type="button" className="cancel-btn" onClick={onClose}>
-              Cancel
-            </Button>
+            {/* ACTIONS */}
+            <div className="form-actions-group">
+              <Button type="button" className="cancel-btn" onClick={onClose}>
+                Cancel
+              </Button>
 
-            <Button type="submit" className="save-btn">
-              Create Voucher
-            </Button>
+              <Button type="submit" className="save-btn">
+                <Check size={16} />
+                Create Voucher
+              </Button>
+            </div>
           </div>
         </form>
       </div>
