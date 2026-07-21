@@ -1,59 +1,143 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { categoriesService } from "../../../../service/categoriesService";
-import { updateSellerProduct } from "../../../../redux/slice/seller/product/thunk";
+import { fetchSellerProducts, updateSellerProduct } from "../../../../redux/slice/seller/product/thunk";
+import {
+  deleteProductImage,
+  getProductImages,
+  setPrimaryProductImage,
+  uploadProductImages,
+} from "../../../../api/productImageApi";
+import ProductImageManager from "../components/ProductImageManager";
 import { toast } from "react-hot-toast";
 import { PackageCheck, X } from "lucide-react";
 import "./style.scss";
 
+const getErrorMessage = (error, fallback) =>
+  error?.response?.data?.message || error?.data?.message || error?.message || fallback;
+
+const mapProductToForm = (product) => ({
+  name: product?.name || "",
+  description: product?.description || "",
+  price: product?.price || "",
+  categoryId: product?.categoryId || "",
+  condition: product?.condition || "",
+  location: product?.location || "",
+  isActive: product?.isActive ?? true,
+  isPublic: product?.isPublic ?? true,
+});
+
+const extractPublicIdFromUrl = (imageUrl) => {
+  if (!imageUrl) return "";
+  const marker = "/upload/";
+  const markerIndex = imageUrl.indexOf(marker);
+  if (markerIndex < 0) return "";
+
+  const path = imageUrl.slice(markerIndex + marker.length).split(/[?#]/)[0];
+  const withoutVersion = path.replace(/^v\d+\//, "");
+  return withoutVersion.replace(/\.[^/.]+$/, "");
+};
+
+const normalizeExistingImage = (image, index, isPrimary) => {
+  const publicId = image.publicId || image.public_id || extractPublicIdFromUrl(image.imageUrl);
+
+  if (!image.imageUrl || !publicId) {
+    throw new Error("Ảnh hiện có thiếu imageUrl hoặc publicId.");
+  }
+
+  return {
+    imageUrl: image.imageUrl,
+    publicId,
+    isPrimary,
+    displayOrder: index,
+  };
+};
+
 const UpdateProductModal = ({ open, product, onClose }) => {
   const dispatch = useDispatch();
-
   const { categories } = useSelector((state) => state.categories);
+  const productId = product?.id || product?.productId;
 
-  const [form, setForm] = useState({
-    name: "",
-    description: "",
-    price: "",
-    categoryId: "",
-    condition: "",
-    location: "",
-    isActive: true,
-    isPublic: true,
-  });
-
+  const [form, setForm] = useState(() => mapProductToForm(product));
+  const [existingImages, setExistingImages] = useState([]);
+  const [pendingImages, setPendingImages] = useState([]);
+  const [selectedPrimary, setSelectedPrimary] = useState(null);
+  const [imagesLoading, setImagesLoading] = useState(true);
+  const [imagesError, setImagesError] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [imageActionLoading, setImageActionLoading] = useState(false);
+
+  const orderedExistingImages = useMemo(
+    () =>
+      [...existingImages].sort((a, b) => {
+        if (a.isPrimary !== b.isPrimary) return a.isPrimary ? -1 : 1;
+        return (a.displayOrder ?? 0) - (b.displayOrder ?? 0);
+      }),
+    [existingImages],
+  );
+
+  const currentPrimaryImage = existingImages.find((image) => image.isPrimary);
+
+  const pendingPrimaryIndex = useMemo(() => {
+    if (selectedPrimary?.type !== "pending") return undefined;
+    const index = pendingImages.findIndex((image) => image.clientId === selectedPrimary.clientId);
+    return index >= 0 ? index : undefined;
+  }, [pendingImages, selectedPrimary]);
+
+  const refetchImages = useCallback(async () => {
+    if (!productId) return;
+
+    setImagesLoading(true);
+    setImagesError(false);
+    try {
+      const images = await getProductImages(productId);
+      setExistingImages(images);
+      setSelectedPrimary((current) => {
+        if (current) return current;
+        const primary = images.find((image) => image.isPrimary) ?? images[0];
+        return primary ? { type: "existing", imageId: primary.id } : null;
+      });
+    } catch (error) {
+      setImagesError(true);
+      toast.error(getErrorMessage(error, "Không tải được ảnh sản phẩm."));
+    } finally {
+      setImagesLoading(false);
+    }
+  }, [productId]);
+
+  const clearPendingImages = () => {
+    pendingImages.forEach((image) => URL.revokeObjectURL(image.previewUrl));
+    setPendingImages([]);
+  };
 
   useEffect(() => {
     if (!open || !product) return;
 
-    setForm({
-      name: product.name || "",
-      description: product.description || "",
-      price: product.price || "",
-      categoryId: product.categoryId || "",
-      condition: product.condition || "",
-      location: product.location || "",
-      isActive: product.isActive ?? true,
-      isPublic: product.isPublic ?? true,
-    });
-  }, [open, product]);
-
-  // ===============================
-  // FETCH CATEGORIES
-  // ===============================
+    getProductImages(productId)
+      .then((images) => {
+        setExistingImages(images);
+        const primary = images.find((image) => image.isPrimary) ?? images[0];
+        setSelectedPrimary(primary ? { type: "existing", imageId: primary.id } : null);
+      })
+      .catch((error) => {
+        setImagesError(true);
+        toast.error(getErrorMessage(error, "Không tải được ảnh sản phẩm."));
+      })
+      .finally(() => {
+        setImagesLoading(false);
+      });
+  }, [open, product, productId]);
 
   useEffect(() => {
-    if (!open) return;
-
-    if (categories.length) return;
-
+    if (!open || categories.length) return;
     categoriesService.getCategories(dispatch);
   }, [dispatch, open, categories.length]);
 
-  // ===============================
-  // HANDLE CHANGE
-  // ===============================
+  const handleClose = () => {
+    if (submitting || imageActionLoading) return;
+    clearPendingImages();
+    onClose();
+  };
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -64,21 +148,106 @@ const UpdateProductModal = ({ open, product, onClose }) => {
     }));
   };
 
-  // ===============================
-  // HANDLE UPDATE
-  // ===============================
+  const handleDeleteExistingImage = async (image) => {
+    if (!productId || imageActionLoading) return;
+
+    const confirmed = window.confirm(
+      image.isPrimary
+        ? "Đây là ảnh chính. Sau khi xóa, hệ thống sẽ tự chọn ảnh khác làm ảnh chính. Bạn có chắc muốn xóa?"
+        : "Bạn có chắc muốn xóa ảnh sản phẩm này không?",
+    );
+
+    if (!confirmed) return;
+
+    setImageActionLoading(true);
+    try {
+      await deleteProductImage(productId, image.id);
+      toast.success("Đã xóa ảnh sản phẩm");
+      if (selectedPrimary?.type === "existing" && selectedPrimary.imageId === image.id) {
+        setSelectedPrimary(null);
+      }
+      await refetchImages();
+      await dispatch(fetchSellerProducts({ pageNumber: 1, pageSize: 10 }));
+    } catch (error) {
+      toast.error(getErrorMessage(error, "Xóa ảnh sản phẩm thất bại."));
+    } finally {
+      setImageActionLoading(false);
+    }
+  };
+
+  const handleSetExistingPrimary = async (imageId) => {
+    if (!productId || imageActionLoading) return;
+
+    setImageActionLoading(true);
+    try {
+      await setPrimaryProductImage(productId, imageId);
+      toast.success("Đã cập nhật ảnh chính");
+      await refetchImages();
+      await dispatch(fetchSellerProducts({ pageNumber: 1, pageSize: 10 }));
+    } catch (error) {
+      toast.error(getErrorMessage(error, "Cập nhật ảnh chính thất bại."));
+    } finally {
+      setImageActionLoading(false);
+    }
+  };
+
+  const uploadPendingImages = async () => {
+    if (!pendingImages.length) return [];
+
+    const imagesForUpload = pendingImages.map((image, index) => ({
+      ...image,
+      isPrimary: pendingPrimaryIndex === index,
+    }));
+
+    return uploadProductImages({
+      pendingImages: imagesForUpload,
+    });
+  };
+
+  const buildImagePayload = async () => {
+    const selectedExistingPrimaryId =
+      selectedPrimary?.type === "existing" ? selectedPrimary.imageId : null;
+
+    const existingPayload = orderedExistingImages.map((image, index) =>
+      normalizeExistingImage(image, index, selectedExistingPrimaryId === image.id),
+    );
+
+    const uploadedPayload = await uploadPendingImages();
+    const offset = existingPayload.length;
+    const pendingPrimarySelected = selectedPrimary?.type === "pending";
+    const normalizedUploadedPayload = uploadedPayload.map((image, index) => ({
+      imageUrl: image.imageUrl,
+      publicId: image.publicId,
+      isPrimary: pendingPrimarySelected ? image.isPrimary : false,
+      displayOrder: offset + index,
+    }));
+
+    const images = [...existingPayload, ...normalizedUploadedPayload];
+    const hasPrimary = images.some((image) => image.isPrimary);
+    const normalizedImages = images.map((image, index) => ({
+      imageUrl: image.imageUrl,
+      publicId: image.publicId,
+      isPrimary: hasPrimary ? image.isPrimary : index === 0,
+      displayOrder: index,
+    }));
+
+    console.debug("Normalized images:", normalizedImages);
+
+    return normalizedImages;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!product?.id) {
-      toast.error("Product not found!");
+    if (!productId || submitting || imageActionLoading) {
+      if (!productId) toast.error("Product not found!");
       return;
     }
 
-    try {
-      setSubmitting(true);
+    setSubmitting(true);
+    let metadataUpdated = false;
 
+    try {
       const updateData = {
         name: form.name,
         description: form.description,
@@ -90,28 +259,43 @@ const UpdateProductModal = ({ open, product, onClose }) => {
         isPublic: form.isPublic,
       };
 
-      await dispatch(
-        updateSellerProduct({
-          productId: product.id,
-          data: updateData,
-        }),
-      ).unwrap();
+      const images = await buildImagePayload();
+      const payload = {
+        ...updateData,
+        images,
+      };
 
-      toast.success("Product updated successfully!", {
-        duration: 2500,
-      });
+      console.debug("Product payload:", payload);
 
+      await dispatch(updateSellerProduct({ productId, data: payload })).unwrap();
+      metadataUpdated = true;
+
+      if (
+        selectedPrimary?.type === "existing" &&
+        selectedPrimary.imageId &&
+        currentPrimaryImage?.id !== selectedPrimary.imageId
+      ) {
+        try {
+          await setPrimaryProductImage(productId, selectedPrimary.imageId);
+        } catch (primaryError) {
+          toast.error(getErrorMessage(primaryError, "Ảnh đã được tải lên nhưng chưa đặt được ảnh chính."));
+          await refetchImages();
+          return;
+        }
+      }
+
+      clearPendingImages();
+      await refetchImages();
+      await dispatch(fetchSellerProducts({ pageNumber: 1, pageSize: 10 }));
+      toast.success("Product updated successfully!", { duration: 2500 });
       onClose();
     } catch (error) {
       console.error("Update product failed:", error);
-
       toast.error(
-        error?.message ||
-          error ||
-          "Failed to update product. Please try again.",
-        {
-          duration: 3000,
-        },
+        metadataUpdated
+          ? getErrorMessage(error, "Thông tin sản phẩm đã được cập nhật nhưng xử lý ảnh thất bại.")
+          : getErrorMessage(error, "Failed to update product. Please try again."),
+        { duration: 3000 },
       );
     } finally {
       setSubmitting(false);
@@ -120,80 +304,46 @@ const UpdateProductModal = ({ open, product, onClose }) => {
 
   if (!open) return null;
 
+  const isBusy = submitting || imageActionLoading;
+
   return (
     <div className="modal-overlay">
       <div className="product-modal">
-        {/* HEADER */}
         <div className="modal-header">
           <div className="modal-title">
-            <div className="modal-icon">
-              <PackageCheck size={22} />
-            </div>
-
+            <div className="modal-icon"><PackageCheck size={22} /></div>
             <div>
               <h2>Update Product</h2>
               <p>Update your product information</p>
             </div>
           </div>
+          <button type="button" className="close-btn" onClick={handleClose} disabled={isBusy} aria-label="Close update product modal">
+            <X size={18} />
+          </button>
         </div>
 
-        {/* FORM */}
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label>Product Name</label>
-
-            <input
-              name="name"
-              placeholder="Nike Air Force"
-              value={form.name}
-              onChange={handleChange}
-              required
-            />
+            <input name="name" placeholder="Nike Air Force" value={form.name} onChange={handleChange} required disabled={isBusy} />
           </div>
 
           <div className="form-group">
             <label>Description</label>
-
-            <textarea
-              name="description"
-              placeholder="Product description..."
-              value={form.description}
-              onChange={handleChange}
-              required
-            />
+            <textarea name="description" placeholder="Product description..." value={form.description} onChange={handleChange} required disabled={isBusy} />
           </div>
 
           <div className="row">
             <div className="form-group">
               <label>Price</label>
-
-              <input
-                type="number"
-                name="price"
-                min="0"
-                placeholder="100"
-                value={form.price}
-                onChange={handleChange}
-                required
-              />
+              <input type="number" name="price" min="0" placeholder="100" value={form.price} onChange={handleChange} required disabled={isBusy} />
             </div>
 
             <div className="form-group">
               <label>Category</label>
-
-              <select
-                name="categoryId"
-                value={form.categoryId}
-                onChange={handleChange}
-                required
-              >
+              <select name="categoryId" value={form.categoryId} onChange={handleChange} required disabled={isBusy}>
                 <option value="">-- Select Category --</option>
-
-                {categories.map((category) => (
-                  <option key={category.id} value={category.id}>
-                    {category.name}
-                  </option>
-                ))}
+                {categories.map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}
               </select>
             </div>
           </div>
@@ -201,80 +351,52 @@ const UpdateProductModal = ({ open, product, onClose }) => {
           <div className="row">
             <div className="form-group">
               <label>Condition</label>
-
-              <select
-                name="condition"
-                value={form.condition}
-                onChange={handleChange}
-                required
-              >
+              <select name="condition" value={form.condition} onChange={handleChange} required disabled={isBusy}>
                 <option value="">-- Select Condition --</option>
                 <option value="new">New</option>
-                <option value="old">Old</option>
+                <option value="used">Used</option>
               </select>
             </div>
 
             <div className="form-group">
               <label>Location</label>
-
-              <input
-                name="location"
-                placeholder="Da Nang"
-                value={form.location}
-                onChange={handleChange}
-                required
-              />
+              <input name="location" placeholder="Ha Noi" value={form.location} onChange={handleChange} disabled={isBusy} />
             </div>
           </div>
 
-          {/* STATUS */}
           <div className="switch-group">
             <label className="switch-item">
-              <input
-                type="checkbox"
-                name="isActive"
-                checked={form.isActive}
-                onChange={handleChange}
-              />
-
+              <input type="checkbox" name="isActive" checked={form.isActive} onChange={handleChange} disabled={isBusy} />
               <span className="switch" />
-
-              <span className="switch-label">
-                <strong>Active Product</strong>
-                <small>Product is available for customers</small>
-              </span>
+              <span className="switch-label"><strong>Active Product</strong><small>Product is available for customers</small></span>
             </label>
 
             <label className="switch-item">
-              <input
-                type="checkbox"
-                name="isPublic"
-                checked={form.isPublic}
-                onChange={handleChange}
-              />
-
+              <input type="checkbox" name="isPublic" checked={form.isPublic} onChange={handleChange} disabled={isBusy} />
               <span className="switch" />
-
-              <span className="switch-label">
-                <strong>Public Product</strong>
-                <small>Allow this product to be visible publicly</small>
-              </span>
+              <span className="switch-label"><strong>Public Product</strong><small>Allow this product to be visible publicly</small></span>
             </label>
           </div>
 
-          {/* ACTIONS */}
-          <div className="actions">
-            <button
-              type="button"
-              className="cancel-btn"
-              onClick={onClose}
-              disabled={submitting}
-            >
-              Cancel
-            </button>
+          <ProductImageManager
+            mode="edit"
+            productName={form.name}
+            existingImages={orderedExistingImages}
+            pendingImages={pendingImages}
+            onPendingImagesChange={setPendingImages}
+            selectedPrimary={selectedPrimary}
+            onSelectedPrimaryChange={setSelectedPrimary}
+            onDeleteExistingImage={handleDeleteExistingImage}
+            onSetExistingPrimary={handleSetExistingPrimary}
+            isLoadingExisting={imagesLoading}
+            isErrorExisting={imagesError}
+            isBusy={isBusy}
+          />
 
-            <button type="submit" className="create-btn" disabled={submitting}>
-              {submitting ? "Updating..." : "Update Product"}
+          <div className="actions">
+            <button type="button" className="cancel-btn" onClick={handleClose} disabled={isBusy}>Cancel</button>
+            <button type="submit" className="create-btn" disabled={isBusy}>
+              {imageActionLoading ? "Đang xử lý ảnh..." : submitting ? "Đang lưu thay đổi..." : "Update Product"}
             </button>
           </div>
         </form>

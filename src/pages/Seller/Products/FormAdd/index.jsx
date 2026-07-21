@@ -1,22 +1,47 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
-import { createSellerProduct } from "../../../../redux/slice/seller/product/thunk";
+import { createSellerProduct, fetchSellerProducts } from "../../../../redux/slice/seller/product/thunk";
 import { categoriesService } from "../../../../service/categoriesService";
+import { uploadProductImages } from "../../../../api/productImageApi";
+import ProductImageManager from "../components/ProductImageManager";
 import "./style.scss";
 import { toast } from "react-hot-toast";
-import { X, PackagePlus } from "lucide-react";
+import { PackagePlus, X } from "lucide-react";
+
+const initialForm = {
+  name: "",
+  description: "",
+  price: "",
+  categoryId: "",
+  condition: "",
+  location: "",
+  isPublic: true,
+};
+
+const getErrorMessage = (error, fallback) =>
+  error?.response?.data?.message || error?.data?.message || error?.message || fallback;
+
 const AddProductModal = ({ open, onClose }) => {
   const dispatch = useDispatch();
   const { categories } = useSelector((state) => state.categories);
-  const [form, setForm] = useState({
-    name: "",
-    description: "",
-    price: "",
-    categoryId: "",
-    condition: "",
-    location: "",
-    isPublic: true,
-  });
+  const [form, setForm] = useState(initialForm);
+  const [pendingImages, setPendingImages] = useState([]);
+  const [selectedPrimary, setSelectedPrimary] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [uploadingImages, setUploadingImages] = useState(false);
+
+  const resetModalState = () => {
+    pendingImages.forEach((image) => URL.revokeObjectURL(image.previewUrl));
+    setForm(initialForm);
+    setPendingImages([]);
+    setSelectedPrimary(null);
+  };
+
+  const handleClose = () => {
+    if (submitting || uploadingImages) return;
+    resetModalState();
+    onClose();
+  };
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -27,115 +52,114 @@ const AddProductModal = ({ open, onClose }) => {
     }));
   };
 
+  const buildImagePayload = async () => {
+    if (!pendingImages.length) return [];
+
+    const imagesForUpload = pendingImages.map((image) => ({
+      ...image,
+      isPrimary:
+        selectedPrimary?.type === "pending" &&
+        selectedPrimary.clientId === image.clientId,
+    }));
+
+    setUploadingImages(true);
+    try {
+      const uploadedImages = await uploadProductImages({
+        pendingImages: imagesForUpload,
+      });
+
+      const hasPrimary = uploadedImages.some((image) => image.isPrimary);
+      return uploadedImages.map((image, index) => ({
+        imageUrl: image.imageUrl,
+        publicId: image.publicId,
+        isPrimary: hasPrimary ? image.isPrimary : index === 0,
+        displayOrder: index,
+      }));
+    } finally {
+      setUploadingImages(false);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     e.stopPropagation();
 
+    if (submitting || uploadingImages) return;
+
     try {
+      setSubmitting(true);
+      const images = await buildImagePayload();
+      const payload = {
+        ...form,
+        price: Number(form.price),
+        images,
+      };
+
+      console.debug("Product payload:", payload);
+
       await dispatch(
-        createSellerProduct({
-          ...form,
-          price: Number(form.price),
-        }),
+        createSellerProduct(payload),
       ).unwrap();
 
-      toast.success("Product created successfully!", {
-        position: "top-right",
-        autoClose: 2500,
-      });
-
+      toast.success("Product created successfully!", { duration: 2500 });
+      await dispatch(fetchSellerProducts({ pageNumber: 1, pageSize: 10 }));
+      resetModalState();
       onClose();
     } catch (error) {
       console.error("Create product failed:", error);
-
-      toast.error(
-        error?.message ||
-          error?.data?.message ||
-          "Failed to create product. Please try again.",
-        {
-          position: "top-right",
-          autoClose: 3000,
-        },
-      );
+      toast.error(getErrorMessage(error, "Failed to create product. Please try again."), { duration: 3000 });
+    } finally {
+      setSubmitting(false);
     }
   };
 
   useEffect(() => {
-    if (!open) return;
-
-    if (categories.length) return;
-
+    if (!open || categories.length) return;
     categoriesService.getCategories(dispatch);
   }, [dispatch, open, categories.length]);
 
   if (!open) return null;
+
+  const isBusy = submitting || uploadingImages;
 
   return (
     <div className="modal-overlay">
       <div className="product-modal">
         <div className="modal-header">
           <div className="modal-title">
-            <div className="modal-icon">
-              <PackagePlus size={22} />
-            </div>
-
+            <div className="modal-icon"><PackagePlus size={22} /></div>
             <div>
               <h2>Create Product</h2>
               <p>Add a new product to your store</p>
             </div>
           </div>
+          <button type="button" className="close-btn" onClick={handleClose} disabled={isBusy} aria-label="Close create product modal">
+            <X size={18} />
+          </button>
         </div>
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label>Product Name</label>
-            <input
-              name="name"
-              placeholder="Nike Air Force"
-              value={form.name}
-              onChange={handleChange}
-            />
+            <input name="name" placeholder="Nike Air Force" value={form.name} onChange={handleChange} required disabled={isBusy} />
           </div>
 
           <div className="form-group">
             <label>Description</label>
-
-            <textarea
-              name="description"
-              placeholder="Product description..."
-              value={form.description}
-              onChange={handleChange}
-            />
+            <textarea name="description" placeholder="Product description..." value={form.description} onChange={handleChange} required disabled={isBusy} />
           </div>
 
           <div className="row">
             <div className="form-group">
               <label>Price</label>
-
-              <input
-                type="number"
-                name="price"
-                placeholder="100"
-                value={form.price}
-                onChange={handleChange}
-              />
+              <input type="number" name="price" min="0" placeholder="100" value={form.price} onChange={handleChange} required disabled={isBusy} />
             </div>
 
             <div className="form-group">
               <label>Category</label>
-
-              <select
-                name="categoryId"
-                value={form.categoryId}
-                onChange={handleChange}
-              >
+              <select name="categoryId" value={form.categoryId} onChange={handleChange} required disabled={isBusy}>
                 <option value="">-- Select Category --</option>
-
-                {categories.map((category) => (
-                  <option key={category.id} value={category.id}>
-                    {category.name}
-                  </option>
-                ))}
+                {categories.map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}
               </select>
             </div>
           </div>
@@ -143,48 +167,39 @@ const AddProductModal = ({ open, onClose }) => {
           <div className="row">
             <div className="form-group">
               <label>Condition</label>
-
-              <select
-                name="condition"
-                value={form.condition}
-                onChange={handleChange}
-              >
+              <select name="condition" value={form.condition} onChange={handleChange} required disabled={isBusy}>
                 <option value="">-- Select Condition --</option>
                 <option value="new">New</option>
-                <option value="old">Old</option>
+                <option value="used">Used</option>
               </select>
             </div>
 
             <div className="form-group">
               <label>Location</label>
-
-              <input
-                name="location"
-                placeholder="Ha Noi"
-                value={form.location}
-                onChange={handleChange}
-              />
+              <input name="location" placeholder="Ha Noi" value={form.location} onChange={handleChange} disabled={isBusy} />
             </div>
           </div>
 
           <div className="checkbox-group">
-            <input
-              type="checkbox"
-              name="isPublic"
-              checked={form.isPublic}
-              onChange={handleChange}
-            />
-
+            <input type="checkbox" name="isPublic" checked={form.isPublic} onChange={handleChange} disabled={isBusy} />
             <span>Public Product</span>
           </div>
 
-          <div className="actions">
-            <button type="button" className="cancel-btn" onClick={onClose}>
-              Cancel
-            </button>
+          <ProductImageManager
+            mode="create"
+            productName={form.name}
+            pendingImages={pendingImages}
+            onPendingImagesChange={setPendingImages}
+            selectedPrimary={selectedPrimary}
+            onSelectedPrimaryChange={setSelectedPrimary}
+            disabled={isBusy}
+            isBusy={isBusy}
+          />
 
-            <button className="create-btn" type="submit">
-              Create Product
+          <div className="actions">
+            <button type="button" className="cancel-btn" onClick={handleClose} disabled={isBusy}>Cancel</button>
+            <button className="create-btn" type="submit" disabled={isBusy}>
+              {uploadingImages ? "Đang tải ảnh..." : submitting ? "Đang tạo sản phẩm..." : "Create Product"}
             </button>
           </div>
         </form>

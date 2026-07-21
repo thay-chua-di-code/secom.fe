@@ -1,16 +1,12 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  fetchSellerProducts,
-  deleteSellerProduct,
-} from "../../../redux/slice/seller/product/thunk";
+import { fetchSellerProducts } from "../../../redux/slice/seller/product/thunk";
 import Button from "../../../components/common/Button/Button";
 import UpdateProductModal from "./FormUpdate";
 import AddProductModal from "./FormAdd";
-import { Plus, Pencil, Trash2, Package, TrendingUp } from "lucide-react";
+import { Plus, Pencil, Package, TrendingUp } from "lucide-react";
 import { formatCurrencyVN } from "../../../utils/fncUtils";
 import "./style.scss";
-import { toast } from "react-hot-toast";
 
 const Products = () => {
   const dispatch = useDispatch();
@@ -20,27 +16,6 @@ const Products = () => {
   const { products, loading, error } = useSelector(
     (state) => state.sellerProduct,
   );
-
-  const handleDeleteProduct = async (productId) => {
-    try {
-      await dispatch(deleteSellerProduct(productId)).unwrap();
-
-      toast.success("Product deleted successfully!", {
-        duration: 2500,
-      });
-    } catch (error) {
-      console.error("Delete product failed:", error);
-
-      toast.error(
-        error?.message ||
-          error?.data?.message ||
-          "Failed to delete product. Please try again.",
-        {
-          duration: 3000,
-        },
-      );
-    }
-  };
 
   const handleOpenUpdate = (product) => {
     setSelectedProduct(product);
@@ -59,7 +34,7 @@ const Products = () => {
         pageSize: 10,
       }),
     );
-  }, []);
+  }, [dispatch]);
 
   if (loading) {
     return (
@@ -226,6 +201,7 @@ const Products = () => {
 
       {openUpdate && selectedProduct && (
         <UpdateProductModal
+          key={selectedProduct.id}
           open={openUpdate}
           product={selectedProduct}
           onClose={handleCloseUpdate}

@@ -52,6 +52,17 @@ export const API_ENDPOINTS = {
     LIST: "/products",
     DETAIL: (id) => `/products/${id}`,
     CREATE_RV: (id) => `/products/${id}/reviews`,
+    IMAGES: {
+      LIST: (productId) => `/products/${productId}/images`,
+      UPLOAD: (productId) => `/products/${productId}/images`,
+      PRIMARY: (productId, imageId) =>
+        `/products/${productId}/images/${imageId}/primary`,
+      UPDATE: (productId, imageId) =>
+        `/products/${productId}/images/${imageId}`,
+      DELETE: (productId, imageId) =>
+        `/products/${productId}/images/${imageId}`,
+      ORDER: (productId) => `/products/${productId}/images/order`,
+    },
   },
 
   SELLER: {

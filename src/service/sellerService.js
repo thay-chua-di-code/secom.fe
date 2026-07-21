@@ -1,3 +1,4 @@
+/* eslint-disable preserve-caught-error */
 import axiosClient from "../api/axiosClient";
 import { API_ENDPOINTS } from "../api/endPoint";
 import {
@@ -6,7 +7,7 @@ import {
   setStatus,
 } from "../redux/slice/sellerStatusSlice";
 export const sellerService = {
-  becomeSeller: async (payload, dispatch) => {
+  becomeSeller: async (payload) => {
     try {
       const result = await axiosClient.post(
         API_ENDPOINTS.SELLER.REGISTER,
@@ -77,11 +78,12 @@ export const sellerService = {
 
   createProduct: async (data) => {
     try {
-      console.log("Call me");
-      console.log(data);
-      const result = await axiosClient.post(`/seller/products`, data);
+      const result = await axiosClient.post(`/seller/products`, data, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
-      console.log("Service: ", result);
       return result.data.data;
     } catch (e) {
       throw new Error(e?.response?.data?.message || "Create product failed");
@@ -93,6 +95,11 @@ export const sellerService = {
       const result = await axiosClient.put(
         API_ENDPOINTS.SELLER.PRODUCT(productId),
         data,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
       );
 
       return result.data.data;
