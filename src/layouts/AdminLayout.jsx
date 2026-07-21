@@ -2,14 +2,21 @@ import React from "react";
 import { Outlet } from "react-router-dom";
 
 import Sidebar from "../components/common/Admin/Sidebar";
+import AdminHeader from "../components/common/Admin/AdminHeader";
+
+import "./style.scss";
 
 const AdminLayout = () => {
   return (
-    <div className="admin-layout flex-g">
+    <div className="admin-layout">
       <Sidebar />
 
-      <main className="admin-layout__content" style={{ width: "100%" }}>
-        <Outlet />
+      <main className="admin-layout__content">
+        <AdminHeader />
+
+        <div className="admin-layout__page">
+          <Outlet />
+        </div>
       </main>
     </div>
   );

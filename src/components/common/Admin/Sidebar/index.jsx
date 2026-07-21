@@ -6,11 +6,12 @@ import {
   Package,
   ShoppingCart,
   Wallet,
-  Settings,
   Menu,
   X,
   Tags,
   Ticket,
+  Zap,
+  Settings,
 } from "lucide-react";
 
 import "./style.scss";
@@ -21,42 +22,38 @@ const Sidebar = () => {
   const menus = [
     {
       title: "Dashboard",
-      icon: <LayoutDashboard size={20} />,
+      icon: <LayoutDashboard size={17} />,
       path: "/admin",
     },
-    // {
-    //   title: "Banner",
-    //   icon: <Wallet size={20} />,
-    //   path: "/admin/finance",
-    // },
     {
       title: "Categories",
-      icon: <Tags size={20} />,
+      icon: <Tags size={17} />,
       path: "/admin/categories",
     },
     {
       title: "Users",
-      icon: <Users size={20} />,
+      icon: <Users size={17} />,
       path: "/admin/users",
+      badge: 2,
     },
     {
       title: "Products",
-      icon: <Package size={20} />,
+      icon: <Package size={17} />,
       path: "/admin/products",
     },
     {
       title: "Orders",
-      icon: <ShoppingCart size={20} />,
+      icon: <ShoppingCart size={17} />,
       path: "/admin/orders",
     },
     {
       title: "Vouchers",
-      icon: <Ticket size={20} />,
+      icon: <Ticket size={17} />,
       path: "/admin/vouchers",
     },
     {
       title: "Finance",
-      icon: <Wallet size={20} />,
+      icon: <Wallet size={17} />,
       path: "/admin/finance",
     },
   ];
@@ -64,43 +61,73 @@ const Sidebar = () => {
   return (
     <>
       {/* Mobile Toggle */}
-
       <button className="sidebar-toggle" onClick={() => setIsOpen(true)}>
-        <Menu size={24} />
+        <Menu size={22} />
       </button>
 
       {/* Overlay */}
-
       {isOpen && (
         <div className="sidebar-overlay" onClick={() => setIsOpen(false)} />
       )}
 
       <aside className={`sidebar ${isOpen ? "open" : ""}`}>
+        {/* Mobile Close */}
         <button className="sidebar-close" onClick={() => setIsOpen(false)}>
-          <X size={22} />
+          <X size={20} />
         </button>
 
-        <Link to={"/"} className="sidebar__logo">
-          <h2>SECOM</h2>
-          <span>Admin Panel</span>
+        {/* Logo */}
+        <Link to="/" className="sidebar__brand">
+          <div className="sidebar__brand-icon">
+            <Zap size={18} fill="white" />
+          </div>
+
+          <div className="sidebar__brand-content">
+            <strong>ElectroAdmin</strong>
+            <span>Management Console</span>
+          </div>
         </Link>
 
-        <nav className="sidebar__menu">
-          {menus.map((item) => (
-            <NavLink
-              key={item.path}
-              to={item.path}
-              end={item.path === "/admin"}
-              className={({ isActive }) =>
-                `sidebar__item ${isActive ? "active" : ""}`
-              }
-              onClick={() => setIsOpen(false)}
-            >
-              {item.icon}
-              <span>{item.title}</span>
-            </NavLink>
-          ))}
-        </nav>
+        {/* Menu */}
+        <div className="sidebar__content">
+          <span className="sidebar__section-title">MAIN MENU</span>
+
+          <nav className="sidebar__menu">
+            {menus.map((item) => (
+              <NavLink
+                key={item.path}
+                to={item.path}
+                end={item.path === "/admin"}
+                className={({ isActive }) =>
+                  `sidebar__item ${isActive ? "active" : ""}`
+                }
+                onClick={() => setIsOpen(false)}
+              >
+                <span className="sidebar__item-icon">{item.icon}</span>
+
+                <span className="sidebar__item-title">{item.title}</span>
+
+                {item.badge && (
+                  <span className="sidebar__badge">{item.badge}</span>
+                )}
+              </NavLink>
+            ))}
+          </nav>
+        </div>
+
+        {/* User */}
+        <div className="sidebar__user">
+          <div className="sidebar__avatar">AD</div>
+
+          <div className="sidebar__user-info">
+            <strong>Admin</strong>
+            <span>admin@aidr.vn</span>
+          </div>
+
+          <button className="sidebar__settings">
+            <Settings size={15} />
+          </button>
+        </div>
       </aside>
     </>
   );

@@ -1,58 +1,101 @@
+// ==============================
+// COLOR SYSTEM
+// ==============================
+
+$primary: #0ea5e9;
+$primary-dark: #0284c7;
+$primary-light: #f0f9ff;
+
+$text-main: #0f172a;
+$text-secondary: #64748b;
+$text-muted: #94a3b8;
+
+$border: #e2e8f0;
+$background: #f8fafc;
+$white: #ffffff;
+
 .followed-shop {
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 24px;
+  padding: 28px 24px 40px;
 
-  h2 {
-    margin-bottom: 24px;
-    font-size: 28px;
-    font-weight: 600;
-  }
+  // ==============================
+  // SHOP LIST
+  // ==============================
 
   .shop-list {
-    width: 100%;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
   }
 
+  // ==============================
+  // SHOP CARD
+  // ==============================
+
   .shop-card {
-    width: 100%;
-    min-height: 110px;
+    position: relative;
+
     display: flex;
     align-items: center;
     gap: 16px;
 
-    padding: 18px 20px;
-    border: 1px solid #e5e7eb;
-    border-radius: 14px;
-    background: #fff;
-    transition: all 0.25s ease;
+    min-width: 0;
+    padding: 18px;
+
+    background: $white;
+    border: 1px solid $border;
+    border-radius: 18px;
+
+    transition:
+      transform 0.25s ease,
+      box-shadow 0.25s ease,
+      border-color 0.25s ease;
 
     &:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+      transform: translateY(-4px);
+      border-color: rgba($primary, 0.35);
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+
+      img {
+        transform: scale(1.05);
+      }
     }
+
+    // ==============================
+    // AVATAR
+    // ==============================
 
     img {
-      width: 72px;
-      height: 72px;
+      width: 76px;
+      height: 76px;
       flex-shrink: 0;
-      border-radius: 50%;
+
       object-fit: cover;
-      border: 1px solid #eee;
+      border-radius: 50%;
+
+      border: 3px solid $white;
+      outline: 1px solid $border;
+
+      transition: transform 0.25s ease;
     }
 
+    // ==============================
+    // SHOP INFO
+    // ==============================
+
     .shop-info {
-      flex: 1;
       min-width: 0;
+      flex: 1;
 
       h3 {
         margin: 0 0 8px;
-        font-size: 18px;
-        font-weight: 600;
-        color: #222;
+
+        color: $text-main;
+        font-size: 17px;
+        font-weight: 700;
+        line-height: 1.3;
 
         white-space: nowrap;
         overflow: hidden;
@@ -60,18 +103,214 @@
       }
 
       p {
-        margin: 4px 0;
-        color: #666;
-        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+
+        margin: 5px 0;
+
+        color: $text-secondary;
+        font-size: 13px;
+        line-height: 1.4;
+      }
+
+      // ==============================
+      // ACTIONS
+      // ==============================
+
+      a {
+        display: inline-flex;
+        align-items: center;
+
+        margin-top: 8px;
+        margin-right: 10px;
+
+        color: $primary-dark;
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+
+        transition: color 0.2s ease;
+
+        &:hover {
+          color: $primary;
+          text-decoration: underline;
+        }
+      }
+
+      button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        min-width: 112px;
+        height: 34px;
+        padding: 0 13px;
+
+        color: #dc2626;
+        background: #fff1f2;
+
+        border: 1px solid #fecdd3;
+        border-radius: 8px;
+
+        font-size: 12px;
+        font-weight: 600;
+
+        cursor: pointer;
+
+        transition:
+          background 0.2s ease,
+          color 0.2s ease,
+          transform 0.2s ease;
+
+        &:hover:not(:disabled) {
+          color: $white;
+          background: #ef4444;
+          border-color: #ef4444;
+          transform: translateY(-1px);
+        }
+
+        &:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
       }
     }
   }
 
-  .pagination {
-    margin-top: 24px;
-    display: flex;
-    justify-content: center;
+  // ==============================
+  // EMPTY STATE
+  // ==============================
+
+  .shop-list > p {
+    grid-column: 1 / -1;
+
+    padding: 56px 24px;
+
+    color: $text-secondary;
+    background: $white;
+
+    border: 1px dashed $border;
+    border-radius: 16px;
+
+    text-align: center;
     font-size: 15px;
-    font-weight: 500;
+  }
+
+  // ==============================
+  // PAGINATION
+  // ==============================
+
+  .pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+
+    margin-top: 28px;
+
+    color: $text-secondary;
+    font-size: 14px;
+    font-weight: 600;
+
+    button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+
+      min-width: 88px;
+      height: 36px;
+      padding: 0 16px;
+
+      color: $text-main;
+      background: $white;
+
+      border: 1px solid $border;
+      border-radius: 9px;
+
+      font-size: 13px;
+      font-weight: 600;
+
+      cursor: pointer;
+
+      transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+
+      &:hover:not(:disabled) {
+        color: $white;
+        background: $primary;
+        border-color: $primary;
+        transform: translateY(-1px);
+      }
+
+      &:disabled {
+        color: $text-muted;
+        background: #f8fafc;
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  // ==============================
+  // RESPONSIVE
+  // ==============================
+
+  @media (max-width: 768px) {
+    padding: 20px 16px 32px;
+
+    .shop-list {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 480px) {
+    padding: 16px 12px 28px;
+
+    .shop-card {
+      align-items: flex-start;
+      padding: 15px;
+      gap: 12px;
+
+      img {
+        width: 62px;
+        height: 62px;
+      }
+
+      .shop-info {
+        h3 {
+          font-size: 15px;
+        }
+
+        p {
+          font-size: 12px;
+        }
+
+        a,
+        button {
+          margin-top: 8px;
+        }
+
+        button {
+          min-width: 100px;
+          height: 32px;
+          padding: 0 10px;
+          font-size: 11px;
+        }
+      }
+    }
+
+    .pagination {
+      gap: 10px;
+      font-size: 13px;
+
+      button {
+        min-width: 76px;
+        height: 34px;
+        padding: 0 10px;
+      }
+    }
   }
 }

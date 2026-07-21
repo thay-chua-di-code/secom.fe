@@ -1,158 +1,156 @@
+$bg-overlay: rgba(0, 0, 0, 0.6);
+$bg-modal: #111622;
+$bg-primary: #1e2640;
+$bg-card: #1d2433;
+$border-color: #262f45;
+$text-main: #ffffff;
+$text-muted: #64748b;
+$blue-accent: #3b82f6;
+$green-status-bg: rgba(4, 120, 87, 0.2);
+$green-status-text: #10b981;
+
 .order-detail-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.45);
-
+  background: $bg-overlay;
   display: flex;
   justify-content: center;
   align-items: center;
-
   z-index: 999;
   padding: 20px;
+  backdrop-filter: blur(4px);
 }
 
 .order-detail-modal {
-  width: 900px;
+  width: 560px;
   max-width: 100%;
-
-  background: white;
-
+  background: $bg-modal;
+  border: 1px solid $border-color;
   border-radius: 16px;
-
   overflow: hidden;
+  overflow-y: hidden;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
 
   .modal-header {
-    background: #0369a1;
-
-    color: white;
-
-    padding: 20px 28px;
-
+    padding: 24px 24px 16px 24px;
     display: flex;
     justify-content: space-between;
+    background: $bg-primary;
     align-items: center;
+    border-bottom: 1px solid $border-color;
+    overflow: hidden;
+    h2 {
+      color: $text-main;
+      font-size: 18px;
+      font-weight: 600;
+      margin: 0;
+    }
 
-    button {
-      border: none;
-      background: none;
-      color: white;
+    .close-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      padding: 0;
+      margin-bottom: 25px;
+      border: none !important;
+      outline: none;
+      background: transparent !important;
+      color: $text-muted;
       cursor: pointer;
+      transition: color 0.2s ease;
+
+      &:hover,
+      &:focus,
+      &:focus-visible,
+      &:active {
+        border: none !important;
+        outline: none !important;
+
+        background: transparent !important;
+
+        color: $text-main;
+      }
     }
   }
 
   .modal-body {
-    padding: 30px;
-
+    padding: 24px;
     display: flex;
     flex-direction: column;
-
-    gap: 25px;
+    background: $bg-primary;
+    gap: 16px;
+    overflow: hidden;
   }
 
-  .section {
-    border: 1px solid #e2e8f0;
-
-    border-radius: 12px;
-
-    padding: 20px;
-
-    h3 {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-
-      color: #0369a1;
-
-      margin-bottom: 20px;
-    }
-  }
-
-  .grid {
+  .info-grid {
     display: grid;
-
     grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
 
-    gap: 20px;
+  .info-card {
+    background: $bg-card;
+    border-radius: 12px;
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    &.full-width {
+      grid-column: span 2;
+    }
 
     label {
-      color: #64748b;
-
-      font-size: 14px;
-
-      display: block;
-
-      margin-bottom: 6px;
+      color: $text-muted;
+      font-size: 13px;
+      font-weight: 500;
     }
 
     p {
+      color: $text-main;
+      font-size: 16px;
       font-weight: 600;
-
-      word-break: break-all;
+      margin: 0;
     }
-  }
 
-  .status {
-    display: inline-block;
+    .highlight-blue {
+      color: $blue-accent;
+    }
 
-    background: #dbeafe;
+    .price-amount {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
 
-    color: #0369a1;
-
-    padding: 6px 14px;
-
-    border-radius: 999px;
-
-    font-weight: 600;
-  }
-
-  .payment-list {
-    display: flex;
-    flex-direction: column;
-
-    gap: 16px;
-
-    div {
-      display: flex;
-      align-items: center;
+    &.total-row {
+      flex-direction: row;
       justify-content: space-between;
-
-      svg {
-        margin-right: 8px;
-      }
-
-      span {
-        flex: 1;
-
-        margin-left: 10px;
-      }
+      align-items: center;
     }
+  }
 
-    .discount {
-      color: #ef4444;
-    }
-
-    .total {
-      border-top: 1px solid #e2e8f0;
-
-      padding-top: 18px;
-
-      font-size: 20px;
-
-      color: #0369a1;
-
-      font-weight: bold;
-    }
+  .status-badge {
+    padding: 6px 16px;
+    background: $green-status-bg;
+    color: $green-status-text;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: capitalize;
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 576px) {
   .order-detail-modal {
-    .modal-body {
-      padding: 20px;
+    .info-grid {
+      grid-template-columns: 1fr;
     }
 
-    .grid {
-      grid-template-columns: 1fr;
+    .info-card.full-width {
+      grid-column: span 1;
     }
   }
 }

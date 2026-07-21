@@ -14,14 +14,17 @@ export default function Follow() {
     (state) => state.user,
   );
 
-  const loadFollowedShops = useCallback(({ nextPage = page } = {}) => {
-    dispatch(
-      userService.getFollowedShop({
-        page: nextPage,
-        pageSize: 10,
-      }),
-    );
-  }, [dispatch, page]);
+  const loadFollowedShops = useCallback(
+    ({ nextPage = page } = {}) => {
+      dispatch(
+        userService.getFollowedShop({
+          page: nextPage,
+          pageSize: 10,
+        }),
+      );
+    },
+    [dispatch, page],
+  );
 
   useEffect(() => {
     loadFollowedShops({ nextPage: page });
@@ -61,10 +64,6 @@ export default function Follow() {
 
   return (
     <div className="followed-shop">
-      <h2>Followed Shops</h2>
-
-      {error && <p>{error}</p>}
-
       <div className="shop-list">
         {!error && shopFollowed?.length === 0 && <p>No followed shops yet.</p>}
 
@@ -78,7 +77,7 @@ export default function Follow() {
               <p>⭐ {shop.rating ?? "N/A"}</p>
 
               <p>
-                Followed at: {" "}
+                Followed at:{" "}
                 {shop.followedAtUtc
                   ? new Date(shop.followedAtUtc).toLocaleDateString("vi-VN")
                   : "--"}
@@ -92,8 +91,8 @@ export default function Follow() {
                 disabled={actionLoadingId === shop.sellerId}
               >
                 {actionLoadingId === shop.sellerId
-                  ? "Đang xử lý..."
-                  : "Bỏ theo dõi"}
+                  ? "Executing..."
+                  : "Unfollow"}
               </button>
             </div>
           </div>

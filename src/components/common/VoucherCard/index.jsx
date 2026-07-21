@@ -17,7 +17,7 @@ export default function VoucherCard({ voucher }) {
         <div className="discount">
           {voucher.discountType === "PERCENT"
             ? `${voucher.discountValue}%`
-            : formatMoney(voucher.discountValue)}
+            : formatMoney(voucher?.discountValue)}
         </div>
 
         <span>OFF</span>
@@ -29,12 +29,17 @@ export default function VoucherCard({ voucher }) {
         <div className="voucher-info">
           <p>
             Minimum order:
-            <strong>{formatMoney(voucher.minOrderAmount)}</strong>
+            <strong>
+              {voucher?.minOrderAmount && formatMoney(voucher?.minOrderAmount)}
+            </strong>
           </p>
 
           <p>
             Maximum discount:
-            <strong>{formatMoney(voucher.maxDiscountAmount)}</strong>
+            <strong>
+              {voucher?.maxDiscountAmount &&
+                formatMoney(voucher?.maxDiscountAmount)}
+            </strong>
           </p>
 
           <p>

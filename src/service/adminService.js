@@ -1,13 +1,27 @@
 import axiosClient from "../api/axiosClient";
 import { API_ENDPOINTS } from "../api/endPoint";
+import {
+  setDashboardData,
+  setError,
+  setLoading,
+} from "../redux/slice/admin/dashboard/dashboardSlice";
 
 export const adminService = {
   getDashBoard: async () => {
+    console.log("Call me");
     try {
-      const result = await axiosClient.get(API_ENDPOINTS.ADMIN.DASHBOARD);
-      return result.data.data;
+      const result = await axiosClient.get("/admin/dashboard");
+      console.log(result);
+      return result.data;
     } catch (e) {
-      throw new Error(e?.response?.data);
+      const errorMessage =
+        e?.response?.data?.message ||
+        e?.response?.data ||
+        "Failed to fetch dashboard statistics";
+
+      throw new Error(errorMessage);
+    } finally {
+      console.log("Done");
     }
   },
   // [USER]

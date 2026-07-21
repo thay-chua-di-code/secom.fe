@@ -1,14 +1,4 @@
-import {
-  User,
-  Receipt,
-  CalendarDays,
-  TicketPercent,
-  Wallet,
-  Truck,
-  CircleDollarSign,
-  X,
-} from "lucide-react";
-
+import { X } from "lucide-react";
 import "./style.scss";
 
 export default function OrderDetailModal({ open, onClose, order }) {
@@ -21,137 +11,58 @@ export default function OrderDetailModal({ open, onClose, order }) {
     }).format(value);
 
   return (
-    <div className="order-detail-overlay">
-      <div className="order-detail-modal">
-        <div className="modal-header">
-          <h2>Order Detail</h2>
+    <div className="order-detail-overlay" onClick={onClose}>
+      <div className="order-detail-modal" onClick={(e) => e.stopPropagation()}>
 
-          <button onClick={onClose}>
-            <X size={20} />
+        <div className="modal-header">
+          <h2>Order Details</h2>
+          <button className="close-btn" onClick={onClose}>
+            <X size={18} />
           </button>
         </div>
 
         <div className="modal-body">
-          {/* Customer */}
+       
+          <div className="info-grid">
+            <div className="info-card">
+              <label>Order ID</label>
+              <p className="highlight-blue">{order.id}</p>
+            </div>
 
-          <div className="section">
-            <h3>
-              <User size={18} />
-              Customer Information
-            </h3>
+            <div className="info-card">
+              <label>Date</label>
+              <p>{new Date(order.createdAtUtc).toLocaleDateString("en-CA")}</p>
+             
+            </div>
 
-            <div className="grid">
-              <div>
-                <label>Buyer ID</label>
-                <p>{order.buyerId}</p>
-              </div>
+            <div className="info-card">
+              <label>Customer</label>
+              <p>{order.buyerFullName}</p>
+            </div>
 
-              <div>
-                <label>Buyer Name</label>
-                <p>{order.buyerFullName}</p>
-              </div>
+            <div className="info-card">
+              <label>Payment Method</label>
+              <p>{order.paymentMethod || "Credit Card"}</p>
             </div>
           </div>
 
-          {/* Order */}
-
-          <div className="section">
-            <h3>
-              <Receipt size={18} />
-              Order Information
-            </h3>
-
-            <div className="grid">
-              <div>
-                <label>Order ID</label>
-                <p>{order.id}</p>
-              </div>
-
-              <div>
-                <label>Status</label>
-
-                <span className="status">{order.status}</span>
-              </div>
-
-              <div>
-                <label>
-                  <CalendarDays size={15} />
-                  Created
-                </label>
-
-                <p>{new Date(order.createdAtUtc).toLocaleString()}</p>
-              </div>
-
-              <div>
-                <label>
-                  <CalendarDays size={15} />
-                  Cancelled
-                </label>
-
-                <p>
-                  {order.cancelledAtUtc
-                    ? new Date(order.cancelledAtUtc).toLocaleString()
-                    : "--"}
-                </p>
-              </div>
-            </div>
+         
+          <div className="info-card full-width">
+            <label>Product</label>
+            <p>{order.productName || "Samsung Galaxy S24 Ultra"}</p>
           </div>
 
-          {/* Payment */}
-
-          <div className="section">
-            <h3>
-              <Wallet size={18} />
-              Payment Summary
-            </h3>
-
-            <div className="payment-list">
-              <div>
-                <CircleDollarSign size={18} />
-
-                <span>Subtotal</span>
-
-                <strong>{formatMoney(order.subtotal)}</strong>
-              </div>
-
-              <div>
-                <Truck size={18} />
-
-                <span>Shipping Fee</span>
-
-                <strong>{formatMoney(order.shippingFee)}</strong>
-              </div>
-
-              <div>
-                <Wallet size={18} />
-
-                <span>Service Fee</span>
-
-                <strong>{formatMoney(order.serviceFee)}</strong>
-              </div>
-
-              <div>
-                <TicketPercent size={18} />
-
-                <span>Discount</span>
-
-                <strong className="discount">
-                  -{formatMoney(order.discountAmount)}
-                </strong>
-              </div>
-
-              <div>
-                <span>Voucher</span>
-
-                <strong>{order.voucherCode || "--"}</strong>
-              </div>
-
-              <div className="total">
-                <span>Final Total</span>
-
-                <strong>{formatMoney(order.finalTotal)}</strong>
-              </div>
+         
+          <div className="info-card full-width total-row">
+            <div>
+              <label>Total Amount</label>
+              <p className="price-amount">{formatMoney(order.finalTotal)}</p>
             </div>
+            <span
+              className={`status-badge ${order.status?.toLowerCase() || ""}`}
+            >
+              {order.status || "Delivered"}
+            </span>
           </div>
         </div>
       </div>
