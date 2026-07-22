@@ -1,133 +1,238 @@
-import "./style.scss";
-import { X } from "lucide-react";
-import { formatCurrencyVN, formatDate } from "../../../../utils/fncUtils";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  X,
+  PackageCheck,
+  CalendarDays,
+  ShoppingBag,
+  CircleDollarSign,
+} from "lucide-react";
 import toast from "react-hot-toast";
+
+import "./style.scss";
+
+import { formatCurrencyVN, formatDate } from "../../../../utils/fncUtils";
 import {
   confirmOrderThunk,
   resetConfirmState,
 } from "../../../../redux/slice/seller/order/slice";
-import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
 
 const OrderDetail = ({ open, onClose, order }) => {
-  if (!open || !order) return null;
   const dispatch = useDispatch();
 
   const { confirmLoading, confirmSuccess, confirmMessage, confirmError } =
     useSelector((state) => state.sellerOrder);
 
+  useEffect(() => {
+    if (!confirmSuccess) return;
+
+    toast.success(confirmMessage || "Order confirmed successfully.");
+
+    dispatch(resetConfirmState());
+
+    onClose();
+  }, [confirmSuccess, confirmMessage, dispatch, onClose]);
+
+  useEffect(() => {
+    if (!confirmError) return;
+
+    toast.error(confirmError);
+
+    dispatch(resetConfirmState());
+  }, [confirmError, dispatch]);
+
+  if (!open || !order) {
+    return null;
+  }
+
+  const statusClass = String(order.status || "")
+    .toLowerCase()
+    .replace(/\s+/g, "-");
+
   const handleConfirm = async () => {
     const result = await dispatch(confirmOrderThunk(order.orderId));
 
     if (confirmOrderThunk.fulfilled.match(result)) {
-      toast.success(result.payload.message);
+      toast.success(result.payload?.message || "Order confirmed successfully.");
+
       onClose();
     } else {
       toast.error(result.payload || "Confirm order failed.");
     }
   };
 
-  useEffect(() => {
-    if (confirmSuccess) {
-      toast.success(confirmMessage);
-      dispatch(resetConfirmState());
-      onClose();
-    }
-  }, [confirmSuccess, confirmMessage, dispatch, onClose]);
-
-  useEffect(() => {
-    if (confirmError) {
-      toast.error(confirmError);
-      dispatch(resetConfirmState());
-      onClose();
-    }
-  }, [confirmError, dispatch]);
   return (
-    <div className="order-detail-overlay" onClick={onClose}>
-      <div className="order-detail-modal" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-header">
-          <div>
-            <h2>Order Detail</h2>
+    <div className="seller-order-detail-overlay" onClick={onClose}>
+      <div
+        className="seller-order-detail-modal"
+        onClick={(event) => event.stopPropagation()}
+      >
+        {/* HEADER */}
+        <header className="seller-order-detail-header">
+          <div className="seller-order-detail-heading">
+            <div className="seller-order-detail-icon">
+              <PackageCheck size={22} />
+            </div>
 
-            <span>#{order.orderId}</span>
+            <div>
+              <span className="seller-order-detail-eyebrow">
+                Seller Order Management
+              </span>
+
+              <h2>Order Details</h2>
+
+              <p>Order #{order.orderId}</p>
+            </div>
           </div>
 
-          <button onClick={onClose}>
+          <button
+            type="button"
+            className="seller-order-detail-close"
+            onClick={onClose}
+            aria-label="Close order detail"
+          >
             <X size={20} />
           </button>
-        </div>
+        </header>
 
-        <div className="summary">
-          <div className="summary-item">
-            <span>Status</span>
+        {/* SUMMARY */}
+        <section className="seller-order-detail-summary">
+          <div className="seller-order-detail-summary-card">
+            <div className="seller-order-detail-summary-icon">
+              <PackageCheck size={18} />
+            </div>
 
-            <strong className={`status ${order.status.toLowerCase()}`}>
-              {order.status}
-            </strong>
+            <div>
+              <span>Status</span>
+
+              <strong className={`seller-order-detail-status ${statusClass}`}>
+                {order.status}
+              </strong>
+            </div>
           </div>
 
-          <div className="summary-item">
-            <span>Created</span>
+          <div className="seller-order-detail-summary-card">
+            <div className="seller-order-detail-summary-icon">
+              <CalendarDays size={18} />
+            </div>
 
-            <strong>{formatDate(order.createdAtUtc)}</strong>
+            <div>
+              <span>Created Date</span>
+
+              <strong>{formatDate(order.createdAtUtc)}</strong>
+            </div>
           </div>
 
-          <div className="summary-item">
-            <span>Total</span>
+          <div className="seller-order-detail-summary-card">
+            <div className="seller-order-detail-summary-icon">
+              <CircleDollarSign size={18} />
+            </div>
 
-            <strong>{formatCurrencyVN(order.finalTotal)}</strong>
+            <div>
+              <span>Order Total</span>
+
+              <strong className="seller-order-detail-price">
+                {formatCurrencyVN(order.finalTotal)}
+              </strong>
+            </div>
           </div>
 
-          <div className="summary-item">
-            <span>Products</span>
+          <div className="seller-order-detail-summary-card">
+            <div className="seller-order-detail-summary-icon">
+              <ShoppingBag size={18} />
+            </div>
 
-            <strong>{order.items.length}</strong>
+            <div>
+              <span>Total Products</span>
+
+              <strong>{order.items?.length || 0}</strong>
+            </div>
           </div>
-        </div>
+        </section>
 
-        <div className="product-list">
-          {order.items.length === 0 ? (
-            <div className="empty">No products in this order.</div>
+        {/* PRODUCTS */}
+        <section className="seller-order-detail-products">
+          <div className="seller-order-detail-section-heading">
+            <div>
+              <h3>Order Items</h3>
+
+              <p>Products included in this order</p>
+            </div>
+
+            <span>{order.items?.length || 0} items</span>
+          </div>
+
+          {order.items?.length === 0 ? (
+            <div className="seller-order-detail-empty">
+              <ShoppingBag size={32} />
+
+              <p>No products in this order.</p>
+            </div>
           ) : (
-            order.items.map((item) => (
-              <div className="product-card" key={item.productId}>
-                <img src={item.productImageUrl} alt={item.productName} />
+            <div className="seller-order-detail-product-list">
+              {order.items.map((item, index) => (
+                <article
+                  className="seller-order-detail-product"
+                  key={item.productId || `order-product-${index}`}
+                >
+                  <div className="seller-order-detail-product-image">
+                    <img src={item.productImageUrl} alt={item.productName} />
+                  </div>
 
-                <div className="content">
-                  <h4>{item.productName}</h4>
+                  <div className="seller-order-detail-product-info">
+                    <h4>{item.productName}</h4>
 
-                  <p>Quantity: {item.quantity}</p>
+                    <div className="seller-order-detail-product-meta">
+                      <span>
+                        Quantity:
+                        <strong>{item.quantity}</strong>
+                      </span>
 
-                  <p>
-                    Unit Price:
-                    <strong>{formatCurrencyVN(item.unitPrice)}</strong>
-                  </p>
-                </div>
+                      <span>
+                        Unit Price:
+                        <strong>{formatCurrencyVN(item.unitPrice)}</strong>
+                      </span>
+                    </div>
+                  </div>
 
-                <div className="subtotal">
-                  {formatCurrencyVN(item.subtotal)}
-                </div>
-              </div>
-            ))
+                  <div className="seller-order-detail-product-total">
+                    <span>Subtotal</span>
+
+                    <strong>{formatCurrencyVN(item.subtotal)}</strong>
+                  </div>
+                </article>
+              ))}
+            </div>
           )}
-        </div>
+        </section>
 
-        <div className="footer">
-          <div className="total">
-            Total
+        {/* FOOTER */}
+        <footer className="seller-order-detail-footer">
+          <div className="seller-order-detail-total">
+            <span>Final Total</span>
+
             <strong>{formatCurrencyVN(order.finalTotal)}</strong>
           </div>
 
-          <div className="actions">
+          <div className="seller-order-detail-actions">
             <button
-              className="confirm-btn"
+              type="button"
+              className="seller-order-detail-cancel-btn"
+              onClick={onClose}
+            >
+              Close
+            </button>
+
+            <button
+              type="button"
+              className="seller-order-detail-confirm-btn"
               onClick={handleConfirm}
               disabled={confirmLoading}
             >
               {confirmLoading ? "Confirming..." : "Confirm Order"}
             </button>
           </div>
-        </div>
+        </footer>
       </div>
     </div>
   );

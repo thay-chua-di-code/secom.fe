@@ -46,8 +46,8 @@ export default function UserDropdown({ open }) {
             />
 
             <div className="user-content">
-              <h3>{userInfo.name}</h3>
-              <p>{userInfo.email}</p>
+              <h3>{userInfo?.fullName}</h3>
+              <p>Welcome back to Secom</p>
             </div>
           </div>
         </div>

@@ -7,7 +7,7 @@ import Button from "../../../../components/common/Button/Button";
 import { authService } from "../../../../service/authService";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 import { useState } from "react";
-
+import toast from "react-hot-toast";
 export default function RegisterForm() {
   const [registerData, setRegisterData] = useState({
     email: "",
@@ -18,9 +18,15 @@ export default function RegisterForm() {
   });
   const handleSubmitRegister = async (e) => {
     e.preventDefault();
-    // if (password.trim() !== confirmPassword.trim()) {
-    //   alert("Password must same confirmPassWord");
-    // }
+
+    if (registerData.password.length < 8) {
+      toast.error("The password must greater than 8 character!");
+      return;
+    }
+    if (registerData.password.trim() !== registerData.confirmPassword.trim()) {
+      toast.error("Password must same confirmPassWord");
+      return;
+    }
 
     const payload = {
       email: registerData.email,
@@ -29,7 +35,11 @@ export default function RegisterForm() {
       role: registerData.role,
     };
 
-    await authService.register(payload);
+    const result = await authService.register(payload);
+
+    if (result.data.success) {
+      toast.success("Register successfully, we'll send to you mail to confirm");
+    }
   };
 
   const handleRegisterGoogle = (credentialResponse) => {

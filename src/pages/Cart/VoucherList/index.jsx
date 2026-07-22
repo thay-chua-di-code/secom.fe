@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import "./style.scss";
 import { formatCurrencyVN } from "../../../utils/fncUtils";
 
@@ -28,11 +29,31 @@ export default function VoucherList({
 }) {
   const voucherItems = Array.isArray(vouchers) ? vouchers : [];
 
+  const viewportRef = useRef(null);
+
+  const handleScroll = (direction) => {
+    if (!viewportRef.current) return;
+
+    const scrollAmount = viewportRef.current.clientWidth * 0.8;
+
+    viewportRef.current.scrollBy({
+      left: direction === "left" ? -scrollAmount : scrollAmount,
+      behavior: "smooth",
+    });
+  };
+
   return (
-    <div className="voucher-list">
+    <section className="voucher-list">
       <div className="voucher-list__header">
-        <h3>Available Vouchers</h3>
-        <span>{voucherItems.length} vouchers</span>
+        <div className="voucher-list__title">
+          <h3>Available Vouchers</h3>
+
+          <span>Choose a voucher to save more</span>
+        </div>
+
+        <span className="voucher-list__count">
+          {voucherItems.length} vouchers
+        </span>
       </div>
 
       {loading ? (
@@ -40,39 +61,77 @@ export default function VoucherList({
       ) : voucherItems.length === 0 ? (
         <div className="voucher-list__empty">No active vouchers available.</div>
       ) : (
-        <div className="voucher-list__grid">
-          {voucherItems.map((voucher) => (
-            <button
-              key={voucher.id || voucher.voucherId || voucher.code}
-              className={`voucher-card ${
-                selectedVoucher === voucher.code ? "voucher-card--active" : ""
-              }`}
-              onClick={() => onSelectVoucher(voucher.code)}
-              type="button"
+        <div className="voucher-list__content">
+          <button
+            type="button"
+            className="voucher-list__nav voucher-list__nav--prev"
+            onClick={() => handleScroll("left")}
+            aria-label="Scroll vouchers left"
+          >
+            ‹
+          </button>
+
+          <div ref={viewportRef} className="voucher-list__viewport">
+            <div
+              className={`voucher-list__grid voucher-list__grid--count-${Math.min(
+                voucherItems.length,
+                3,
+              )}`}
             >
-              <div className="voucher-card__top">
-                <span className="voucher-card__code">{voucher.code}</span>
+              {voucherItems.map((voucher) => {
+                const voucherKey =
+                  voucher.id || voucher.voucherId || voucher.code;
 
-                <span className="voucher-card__discount">
-                  {formatDiscount(voucher)}
-                </span>
-              </div>
+                const isSelected = selectedVoucher === voucher.code;
 
-              <span className="voucher-card__description">
-                {voucher.description || voucher.name || "SECOM voucher"}
-              </span>
+                return (
+                  <button
+                    key={voucherKey}
+                    type="button"
+                    aria-label={`Select voucher ${voucher.code}`}
+                    className={`voucher-card ${
+                      isSelected ? "voucher-card--active" : ""
+                    }`}
+                    onClick={() => onSelectVoucher?.(voucher.code)}
+                  >
+                    <div className="voucher-card__top">
+                      <span className="voucher-card__code">{voucher.code}</span>
 
-              <div className="voucher-card__meta">
-                <span>Min {formatCurrencyVN(voucher.minOrderAmount || 0)}</span>
+                      <span className="voucher-card__discount">
+                        {formatDiscount(voucher)}
+                      </span>
+                    </div>
 
-                <span>
-                  Exp {formatDate(voucher.expiresAtUtc || voucher.endAtUtc)}
-                </span>
-              </div>
-            </button>
-          ))}
+                    <span className="voucher-card__description">
+                      {voucher.description || voucher.name || "SECOM voucher"}
+                    </span>
+
+                    <div className="voucher-card__meta">
+                      <span>
+                        Min {formatCurrencyVN(voucher.minOrderAmount || 0)}
+                      </span>
+
+                      <span>
+                        Exp{" "}
+                        {formatDate(voucher.expiresAtUtc || voucher.endAtUtc)}
+                      </span>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <button
+            type="button"
+            className="voucher-list__nav voucher-list__nav--next"
+            onClick={() => handleScroll("right")}
+            aria-label="Scroll vouchers right"
+          >
+            ›
+          </button>
         </div>
       )}
-    </div>
+    </section>
   );
 }
