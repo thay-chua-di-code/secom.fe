@@ -1,11 +1,9 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import "./style.scss";
-
 import Button from "../../../components/common/Button/Button";
 import { formatCurrencyVN } from "../../../utils/fncUtils";
 import { fetchProducts } from "../../../redux/slice/admin/products/productAdminSlice";
-
 import { Package, Search, Eye, Pencil, Check, X } from "lucide-react";
 
 const Products = () => {
@@ -59,8 +57,6 @@ const Products = () => {
 
   const handleSearchChange = (e) => {
     setSearch(e.target.value);
-
-    // Search FE nên không cần page cũ
     setPage(1);
   };
 

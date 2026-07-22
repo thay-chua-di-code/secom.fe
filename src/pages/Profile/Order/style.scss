@@ -1,3 +1,8 @@
+.order-detail-panel {
+  height: 800px;
+  overflow-y: scroll;
+  margin-top: 10px;
+}
 .order-history {
   .order-header {
     display: flex;
@@ -423,7 +428,7 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
 
-  >div {
+  > div {
     display: flex;
     flex-direction: column;
     gap: 6px;
@@ -464,7 +469,6 @@
 }
 
 @media (max-width: 700px) {
-
   .detail-grid,
   .order-detail-item {
     grid-template-columns: 1fr;
