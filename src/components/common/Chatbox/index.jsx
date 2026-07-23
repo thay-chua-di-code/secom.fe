@@ -39,6 +39,35 @@ const normalizeChatListItem = (chat, index) => ({
   unread: chat.unreadCount ?? 0,
 });
 
+const createMessageId = () => {
+  if (typeof crypto !== "undefined" && crypto.randomUUID) {
+    return crypto.randomUUID();
+  }
+
+  return `${Date.now()}-${Math.random()}`;
+};
+
+const formatAiTime = (dateString) =>
+  new Date(dateString).toLocaleTimeString("vi-VN", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+const toAiHistory = (messages) =>
+  messages
+    .filter(
+      (item) =>
+        item.id !== "welcome" &&
+        item.status !== "failed" &&
+        item.status !== "sending" &&
+        item.content?.trim().length > 0,
+    )
+    .slice(-20)
+    .map(({ role, content }) => ({
+      role,
+      content,
+    }));
+
 const ChatBox = () => {
   const { chats, currentChat, loading, sending } = useSelector(
     (state) => state.chat,
@@ -78,16 +107,24 @@ const ChatBox = () => {
   );
   const dispatch = useDispatch();
   const [aiLoading, setAiLoading] = useState(false);
+  const aiAbortControllerRef = useRef(null);
   const markedChatIdsRef = useRef(new Set());
   const hasAutoSelectedRef = useRef(false);
   const [aiMessages, setAiMessages] = useState([
     {
       id: "welcome",
-      sender: "ai",
-      text: "Hi 👋 I'm Secom AI. How can I help you today?",
-      time: "Now",
+      role: "assistant",
+      content: "Hi 👋 I'm Secom AI. How can I help you today?",
+      createdAt: new Date().toISOString(),
+      status: "sent",
     },
   ]);
+
+  useEffect(() => {
+    return () => {
+      aiAbortControllerRef.current?.abort();
+    };
+  }, []);
 
   const fetchChatList = useCallback(() => {
     if (!isAuthenticated) return undefined;
@@ -115,7 +152,9 @@ const ChatBox = () => {
 
   useEffect(() => {
     if (!selectedConversation) {
-      setSelectedConversation(conversations[0]);
+      queueMicrotask(() => {
+        setSelectedConversation(conversations[0]);
+      });
       return;
     }
 
@@ -124,7 +163,9 @@ const ChatBox = () => {
     );
 
     if (updatedConversation && updatedConversation !== selectedConversation) {
-      setSelectedConversation(updatedConversation);
+      queueMicrotask(() => {
+        setSelectedConversation(updatedConversation);
+      });
     }
   }, [conversations, selectedConversation]);
 
@@ -161,8 +202,10 @@ const ChatBox = () => {
     if (!firstSellerConversation) return;
 
     hasAutoSelectedRef.current = true;
-    loadConversation(firstSellerConversation).catch((error) => {
-      toast.error(error || "Cannot load chat");
+    queueMicrotask(() => {
+      loadConversation(firstSellerConversation).catch((error) => {
+        toast.error(error || "Cannot load chat");
+      });
     });
   }, [conversations, loadConversation, open]);
 
@@ -220,49 +263,99 @@ const ChatBox = () => {
   const messages =
     selectedConversation?.type === "ai" ? aiMessages : sellerMessages;
 
-  const handleSendAI = async (text) => {
-    if (!text.trim()) return;
+  const sendAiMessage = async (text, historySource) => {
+    const content = text.trim();
 
+    if (!content || aiLoading) return;
+
+    const createdAt = new Date().toISOString();
     const userMessage = {
-      id: Date.now(),
-      sender: "user",
-      text,
-      time: new Date().toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
+      id: createMessageId(),
+      role: "user",
+      content,
+      createdAt,
+      time: formatAiTime(createdAt),
+      status: "sent",
     };
+    const loadingMessage = {
+      id: createMessageId(),
+      role: "assistant",
+      content: "",
+      createdAt: new Date().toISOString(),
+      status: "sending",
+    };
+    const history = toAiHistory(historySource);
+    const abortController = new AbortController();
 
-    setAiMessages((prev) => [...prev, userMessage]);
+    aiAbortControllerRef.current?.abort();
+    aiAbortControllerRef.current = abortController;
+
     setAiLoading(true);
+    setAiMessages([...historySource, userMessage, loadingMessage]);
 
     try {
-      const res = await aiService.chatAi(text);
+      const response = await aiService.chatAi(
+        {
+          message: content,
+          history,
+        },
+        abortController.signal,
+      );
+      const responseCreatedAt = response.generatedAtUtc || new Date().toISOString();
 
       const aiMessage = {
-        id: Date.now() + 1,
-        sender: "ai",
-        text: res.reply,
-        time: new Date().toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
+        id: loadingMessage.id,
+        role: "assistant",
+        content: response.message,
+        createdAt: responseCreatedAt,
+        time: formatAiTime(responseCreatedAt),
+        model: response.model,
+        status: "sent",
       };
 
-      setAiMessages((prev) => [...prev, aiMessage]);
-    } catch (err) {
-      setAiMessages((prev) => [
-        ...prev,
-        {
-          id: Date.now() + 2,
-          sender: "ai",
-          text: err.message,
-          time: "Now",
-        },
-      ]);
+      setAiMessages((prev) =>
+        prev.map((message) =>
+          message.id === loadingMessage.id ? aiMessage : message,
+        ),
+      );
+    } catch (error) {
+      if (abortController.signal.aborted) return;
+
+      const failedMessage = {
+        id: loadingMessage.id,
+        role: "assistant",
+        content: error.message || "Không gửi được tin nhắn AI.",
+        createdAt: new Date().toISOString(),
+        status: "failed",
+        retryText: content,
+      };
+
+      setAiMessages((prev) =>
+        prev.map((message) =>
+          message.id === loadingMessage.id ? failedMessage : message,
+        ),
+      );
+      toast.error(failedMessage.content);
     } finally {
-      setAiLoading(false);
+      if (aiAbortControllerRef.current === abortController) {
+        aiAbortControllerRef.current = null;
+        setAiLoading(false);
+      }
     }
+  };
+
+  const handleSendAI = async (text) => {
+    await sendAiMessage(text, aiMessages);
+  };
+
+  const handleRetryAI = async (failedMessage) => {
+    if (!failedMessage?.retryText || aiLoading) return;
+
+    const historyWithoutFailed = aiMessages.filter(
+      (message) => message.id !== failedMessage.id,
+    );
+    setAiMessages(historyWithoutFailed);
+    await sendAiMessage(failedMessage.retryText, historyWithoutFailed);
   };
 
   const handleSendSeller = async (text) => {
@@ -317,6 +410,7 @@ const ChatBox = () => {
           loading={selectedConversation?.type === "ai" ? aiLoading : loading}
           sending={sending}
           onSendAI={handleSendAI}
+          onRetryAI={handleRetryAI}
           onSendSeller={handleSendSeller}
         />
       </div>

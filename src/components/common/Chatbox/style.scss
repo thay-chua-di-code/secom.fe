@@ -272,17 +272,35 @@ $bg: #f8fafc;
 
     padding: 0 20px;
 
-    input {
+    .chat-input-wrapper {
       flex: 1;
 
-      height: 50px;
+      position: relative;
+    }
+
+    textarea {
+      width: 100%;
+
+      min-height: 50px;
+      max-height: 120px;
 
       border: 1px solid $border;
-      border-radius: 999px;
+      border-radius: 18px;
 
-      padding: 0 18px;
+      padding: 14px 18px;
 
       outline: none;
+      resize: none;
+      line-height: 1.4;
+      font: inherit;
+    }
+
+    .chat-input-counter {
+      position: absolute;
+      right: 14px;
+      bottom: 4px;
+      color: $text-light;
+      font-size: 10px;
     }
 
     button {
@@ -298,6 +316,14 @@ $bg: #f8fafc;
       display: flex;
       align-items: center;
       justify-content: center;
+
+      border: none;
+      cursor: pointer;
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
     }
   }
 }
@@ -332,6 +358,30 @@ $bg: #f8fafc;
 
   &--shop {
     background: $white;
+  }
+
+  &--failed {
+    border: 1px solid #fecaca;
+    background: #fff1f2;
+    color: #991b1b;
+  }
+
+  &__meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+
+    button {
+      border: 0;
+      border-radius: 999px;
+      padding: 4px 8px;
+      color: #ffffff;
+      background: #dc2626;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 700;
+    }
   }
 }
 
@@ -446,6 +496,11 @@ $bg: #f8fafc;
 
   span:nth-child(3) {
     animation-delay: 0.3s;
+  }
+
+  &--inline {
+    margin-top: 0;
+    padding: 4px 0;
   }
 }
 

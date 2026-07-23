@@ -2,6 +2,7 @@ import ChatInput from "./ChatInput";
 import ChatMessage from "./ChatMessage";
 import { Bot } from "lucide-react";
 import { useEffect, useRef } from "react";
+
 const ChatContent = ({
   selectedConversation,
   currentChat,
@@ -9,24 +10,21 @@ const ChatContent = ({
   loading,
   sending,
   onSendAI,
+  onRetryAI,
   onSendSeller,
 }) => {
   const isAI = selectedConversation?.type === "ai";
-  const aiObject = {
-    text: currentChat?.text,
-    sender: "ai",
-    time: "Now",
-  };
   const messagesEndRef = useRef(null);
+
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({
       behavior: "smooth",
       block: "end",
     });
-  }, [currentChat]);
+  }, [currentChat, loading]);
+
   return (
     <div className="chat-content">
-      {/* HEADER */}
       <div className={`chat-content__header ${isAI ? "chat-ai-header" : ""}`}>
         <div className="shop-info">
           {isAI ? (
@@ -39,15 +37,13 @@ const ChatContent = ({
 
           <div>
             <h4>{selectedConversation.name}</h4>
-
             <p>{isAI ? "AI Assistant • Always ready to help" : "Is active"}</p>
           </div>
         </div>
       </div>
 
-      {/* BODY */}
       <div className="chat-content__body">
-        {isAI && (
+        {isAI && currentChat?.length <= 1 && (
           <div className="ai-welcome">
             <div className="ai-welcome__icon">
               <Bot size={40} />
@@ -61,13 +57,11 @@ const ChatContent = ({
             </p>
 
             <div className="quick-actions">
-              <button>📦 Order</button>
-              <button>🛍️ Product</button>
-              <button>🚚 Shipping</button>
-              <button>🎁 Voucher</button>
+              <button type="button">📦 Order</button>
+              <button type="button">🛍️ Product</button>
+              <button type="button">🚚 Shipping</button>
+              <button type="button">🎁 Voucher</button>
             </div>
-
-            <ChatMessage message={aiObject} />
           </div>
         )}
 
@@ -77,7 +71,7 @@ const ChatContent = ({
 
         {currentChat?.map((msg) => {
           const isOwnMessage = isAI
-            ? msg.sender === "user"
+            ? msg.role === "user" || msg.sender === "user"
             : Boolean(
                 currentUserId &&
                   msg.senderId &&
@@ -90,11 +84,12 @@ const ChatContent = ({
               key={msg.messageId || msg.id}
               message={msg}
               isOwnMessage={isOwnMessage}
+              onRetry={isAI ? onRetryAI : undefined}
             />
           );
         })}
 
-        {loading && (
+        {loading && !isAI && (
           <div className="typing">
             <span />
             <span />
@@ -104,7 +99,6 @@ const ChatContent = ({
         <div ref={messagesEndRef} />
       </div>
 
-      {/* FOOTER */}
       <ChatInput
         isAi={isAI}
         onSend={isAI ? onSendAI : onSendSeller}

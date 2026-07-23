@@ -111,6 +111,10 @@ export const API_ENDPOINTS = {
     MARK_READ: (id) => `/chats/${id}/messages/read`,
   },
 
+  AI: {
+    CHAT: "/ai/chat",
+  },
+
   CART: {
     GET_CG: "/cart",
     ADD_ITEM: "/cart/items",

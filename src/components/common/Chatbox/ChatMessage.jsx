@@ -1,8 +1,9 @@
 const formatMessageTime = (message) => {
   if (message?.time) return message.time;
-  if (!message?.createdAtUtc) return "";
+  const dateValue = message?.createdAtUtc || message?.createdAt;
+  if (!dateValue) return "";
 
-  return new Date(message.createdAtUtc).toLocaleString("vi-VN", {
+  return new Date(dateValue).toLocaleString("vi-VN", {
     hour: "2-digit",
     minute: "2-digit",
     day: "2-digit",
@@ -10,8 +11,10 @@ const formatMessageTime = (message) => {
   });
 };
 
-const ChatMessage = ({ message, isOwnMessage }) => {
+const ChatMessage = ({ message, isOwnMessage, onRetry }) => {
   const text = message?.text ?? message?.content ?? "";
+  const isSending = message?.status === "sending";
+  const isFailed = message?.status === "failed";
 
   return (
     <div
@@ -22,11 +25,26 @@ const ChatMessage = ({ message, isOwnMessage }) => {
       <div
         className={`message ${
           isOwnMessage ? "message--user" : "message--shop"
-        }`}
+        } ${isFailed ? "message--failed" : ""}`}
       >
-        <p>{text}</p>
+        {isSending ? (
+          <div className="typing typing--inline" aria-label="AI is replying">
+            <span />
+            <span />
+            <span />
+          </div>
+        ) : (
+          <p>{text}</p>
+        )}
 
-        <span>{formatMessageTime(message)}</span>
+        <div className="message__meta">
+          <span>{isSending ? "Đang trả lời..." : formatMessageTime(message)}</span>
+          {isFailed && onRetry && (
+            <button type="button" onClick={() => onRetry(message)}>
+              Thử lại
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );
