@@ -64,7 +64,7 @@ export default function Banner() {
         </div>
 
         <div className="hero__dots">
-          {bannerImages.map((_, index) => (
+          {bannerImages?.map((_, index) => (
             <span
               key={index}
               className={currentSlide === index ? "active" : ""}
