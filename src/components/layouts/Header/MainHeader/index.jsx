@@ -18,6 +18,7 @@ export default function MainHeader() {
   const [openCart, setOpenCart] = useState(false);
   const [keyword, setKeyword] = useState("");
   const { isAuthenticated, user } = useSelector((state) => state.auth);
+  const auth = useSelector((state) => state.auth);
   const userInfo = useSelector((state) => state.user?.userInfo);
   const { items = [] } = useSelector((state) => state.cart);
   const { categories } = useSelector((state) => state.categories);
@@ -142,24 +143,25 @@ export default function MainHeader() {
 
                   <UserDropdown user={user} open={openUser} />
                 </div>
+                {auth.role.toLowerCase() === "customer" && (
+                  <div
+                    className="main-header__cart"
+                    onMouseEnter={handleCartEnter}
+                    onMouseLeave={handleCartLeave}
+                  >
+                    <Button variant="ghost" className="main-header__cart-btn">
+                      <ShoppingCart size={24} />
 
-                <div
-                  className="main-header__cart"
-                  onMouseEnter={handleCartEnter}
-                  onMouseLeave={handleCartLeave}
-                >
-                  <Button variant="ghost" className="main-header__cart-btn">
-                    <ShoppingCart size={24} />
+                      {cartCount > 0 && (
+                        <span className="main-header__cart-badge">
+                          {cartCount}
+                        </span>
+                      )}
+                    </Button>
 
-                    {cartCount > 0 && (
-                      <span className="main-header__cart-badge">
-                        {cartCount}
-                      </span>
-                    )}
-                  </Button>
-
-                  <Cart open={openCart} />
-                </div>
+                    <Cart open={openCart} />
+                  </div>
+                )}
               </>
             )}
           </div>

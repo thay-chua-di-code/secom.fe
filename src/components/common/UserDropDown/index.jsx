@@ -22,7 +22,6 @@ const UserNotLogin = () => {
 export default function UserDropdown({ open }) {
   const userInfo = useSelector((state) => state.user.userInfo);
   const auth = useSelector((state) => state.auth);
-  console.log(auth);
   const dispatch = useDispatch();
 
   if (!open) return null;
