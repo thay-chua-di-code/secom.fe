@@ -1,6 +1,7 @@
 import { Filter as FilterIcon, Tags, Wallet } from "lucide-react";
 import { useSelector } from "react-redux";
 import "./style.scss";
+import { truncateText } from "../../../utils/fncUtils";
 
 export default function Filter({
   categoryFilter,
@@ -51,7 +52,7 @@ export default function Filter({
 
                 <span className="radio"></span>
 
-                {category.name}
+                {truncateText(category.name, 20)}
               </label>
             </li>
           ))}

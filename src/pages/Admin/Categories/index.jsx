@@ -4,7 +4,6 @@ import {
   Plus,
   Search,
   Pencil,
-  Trash2,
   ChevronLeft,
   ChevronRight,
   Check,
@@ -20,11 +19,21 @@ import {
 
 import "./style.scss";
 
+const ITEMS_PER_PAGE = 7;
+
 export default function Categories() {
   const dispatch = useDispatch();
 
-  const { categories, pagination, loading, createLoading, updateLoading } =
-    useSelector((state) => state.categoriesAdmin);
+  const {
+    categories = [],
+    loading,
+    createLoading,
+    updateLoading,
+  } = useSelector((state) => state.categoriesAdmin);
+
+  // ==============================
+  // STATE
+  // ==============================
 
   const [page, setPage] = useState(1);
 
@@ -41,19 +50,22 @@ export default function Categories() {
 
   const [editingId, setEditingId] = useState(null);
 
+  // ==============================
+  // FETCH ALL CATEGORIES
+  // ==============================
+
   useEffect(() => {
-    dispatch(
-      fetchCategories({
-        pageNumber: page,
-        pageSize: 10,
-      }),
-    );
-  }, [dispatch, page]);
+    dispatch(fetchCategories());
+  }, [dispatch]);
+
+  // ==============================
+  // FILTER
+  // ==============================
 
   const filteredCategories = useMemo(() => {
-    return categories.filter((item) => {
-      const keyword = search.toLowerCase();
+    const keyword = search.toLowerCase().trim();
 
+    return categories.filter((item) => {
       const matchesSearch =
         item.name?.toLowerCase().includes(keyword) ||
         item.slug?.toLowerCase().includes(keyword);
@@ -66,6 +78,59 @@ export default function Categories() {
       return matchesSearch && matchesStatus;
     });
   }, [categories, search, statusFilter]);
+
+  // ==============================
+  // PAGINATION
+  // ==============================
+
+  const totalPages = Math.ceil(filteredCategories.length / ITEMS_PER_PAGE);
+
+  const currentPage = Math.min(page, Math.max(totalPages, 1));
+
+  const paginatedCategories = useMemo(() => {
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+
+    const endIndex = startIndex + ITEMS_PER_PAGE;
+
+    return filteredCategories.slice(startIndex, endIndex);
+  }, [filteredCategories, currentPage]);
+
+  // ==============================
+  // FIXED TABLE HEIGHT
+  // ALWAYS 7 ROWS
+  // ==============================
+
+  const displayCategories = useMemo(() => {
+    const items = [...paginatedCategories];
+
+    while (items.length < ITEMS_PER_PAGE) {
+      items.push(null);
+    }
+
+    return items;
+  }, [paginatedCategories]);
+
+  // ==============================
+  // RESET PAGE WHEN FILTER CHANGES
+  // ==============================
+
+  useEffect(() => {
+    setPage(1);
+  }, [search, statusFilter]);
+
+  // ==============================
+  // STATISTICS
+  // ==============================
+
+  const totalCategories = categories.length;
+
+  const activeCategories = categories.filter((item) => item.isActive).length;
+
+  const inactiveCategories = categories.filter((item) => !item.isActive).length;
+
+  // ==============================
+  // MODAL
+  // ==============================
 
   const handleOpenCreate = () => {
     setEditingId(null);
@@ -90,7 +155,9 @@ export default function Categories() {
   };
 
   const handleCloseModal = () => {
-    if (createLoading || updateLoading) return;
+    if (createLoading || updateLoading) {
+      return;
+    }
 
     setIsModalOpen(false);
 
@@ -101,6 +168,10 @@ export default function Categories() {
       slug: "",
     });
   };
+
+  // ==============================
+  // CREATE / UPDATE
+  // ==============================
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -117,12 +188,8 @@ export default function Categories() {
         await dispatch(createCategory(formData)).unwrap();
       }
 
-      await dispatch(
-        fetchCategories({
-          pageNumber: page,
-          pageSize: 10,
-        }),
-      );
+      // Fetch lại toàn bộ categories
+      await dispatch(fetchCategories());
 
       handleCloseModal();
     } catch (error) {
@@ -130,30 +197,52 @@ export default function Categories() {
     }
   };
 
+  // ==============================
+  // DELETE
+  // ==============================
+
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this category?")) {
       return;
     }
 
-    await dispatch(deleteCategory(id));
+    try {
+      await dispatch(deleteCategory(id)).unwrap();
 
-    dispatch(
-      fetchCategories({
-        pageNumber: page,
-        pageSize: 10,
-      }),
-    );
+      await dispatch(fetchCategories());
+
+      // Nếu xóa item cuối cùng của page hiện tại
+      // thì quay về page trước
+      if (currentPage > 1 && paginatedCategories.length === 1) {
+        setPage((prev) => prev - 1);
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
-  const totalCategories = pagination?.totalCount || categories.length;
+  // ==============================
+  // PAGINATION ACTIONS
+  // ==============================
 
-  const activeCategories = categories.filter((item) => item.isActive).length;
+  const handlePreviousPage = () => {
+    setPage((prev) => Math.max(prev - 1, 1));
+  };
 
-  const inactiveCategories = categories.filter((item) => !item.isActive).length;
+  const handleNextPage = () => {
+    setPage((prev) => Math.min(prev + 1, totalPages));
+  };
+
+  // ==============================
+  // RENDER
+  // ==============================
 
   return (
     <div className="categories">
-      {/* Page Heading */}
+      {/* ==============================
+          PAGE HEADING
+      ============================== */}
+
       <div className="categories__heading">
         <div>
           <h1>Categories</h1>
@@ -168,9 +257,15 @@ export default function Categories() {
         </button>
       </div>
 
-      {/* Main Card */}
+      {/* ==============================
+          MAIN CARD
+      ============================== */}
+
       <div className="categories__card">
-        {/* Toolbar */}
+        {/* ==============================
+            TOOLBAR
+        ============================== */}
+
         <div className="categories__toolbar">
           <div className="categories__tabs">
             <button
@@ -210,7 +305,10 @@ export default function Categories() {
           </div>
         </div>
 
-        {/* Table */}
+        {/* ==============================
+            TABLE
+        ============================== */}
+
         <div className="categories__table-wrapper">
           {loading ? (
             <div className="categories__loading">Loading categories...</div>
@@ -228,65 +326,91 @@ export default function Categories() {
 
               <tbody>
                 {filteredCategories.length > 0 ? (
-                  filteredCategories.map((item) => (
-                    <tr key={item.id}>
-                      <td>
-                        <div className="category-name">
-                          <div className="category-icon">
-                            {item.name?.charAt(0).toUpperCase()}
+                  displayCategories.map((item, index) => {
+                    // Empty row
+                    if (!item) {
+                      return (
+                        <tr key={`empty-${index}`} className="empty-row">
+                          <td colSpan="5"></td>
+                        </tr>
+                      );
+                    }
+
+                    return (
+                      <tr key={item.id}>
+                        {/* CATEGORY */}
+
+                        <td>
+                          <div className="category-name">
+                            <div className="category-icon">
+                              {item.name?.charAt(0).toUpperCase()}
+                            </div>
+
+                            <span>{item.name}</span>
                           </div>
+                        </td>
 
-                          <span>{item.name}</span>
-                        </div>
-                      </td>
+                        {/* SLUG */}
 
-                      <td>
-                        <span className="category-slug">{item.slug}</span>
-                      </td>
+                        <td>
+                          <span className="category-slug">{item.slug}</span>
+                        </td>
 
-                      <td>
-                        {item.isActive ? (
-                          <span className="status active">
-                            <Check size={12} />
-                            Active
-                          </span>
-                        ) : (
-                          <span className="status inactive">
-                            <X size={12} />
-                            Inactive
-                          </span>
-                        )}
-                      </td>
+                        {/* STATUS */}
 
-                      <td>
-                        <span className="created-date">
-                          {new Date(item.createdAtUtc).toLocaleDateString(
-                            "en-CA",
+                        <td>
+                          {item.isActive ? (
+                            <span className="status active">
+                              <Check size={12} />
+                              Active
+                            </span>
+                          ) : (
+                            <span className="status inactive">
+                              <X size={12} />
+                              Inactive
+                            </span>
                           )}
-                        </span>
-                      </td>
+                        </td>
 
-                      <td>
-                        <div className="category-actions">
-                          <button
-                            className="action-btn edit"
-                            onClick={() => handleEdit(item)}
-                            title="Edit category"
-                          >
-                            <Pencil size={15} />
-                          </button>
+                        {/* CREATED */}
 
-                          {/* <button
-                            className="action-btn delete"
-                            onClick={() => handleDelete(item.id)}
-                            title="Delete category"
-                          >
-                            <Trash2 size={15} />
-                          </button> */}
-                        </div>
-                      </td>
-                    </tr>
-                  ))
+                        <td>
+                          <span className="created-date">
+                            {new Date(item.createdAtUtc).toLocaleDateString(
+                              "en-CA",
+                            )}
+                          </span>
+                        </td>
+
+                        {/* ACTIONS */}
+
+                        <td>
+                          <div className="category-actions">
+                            <button
+                              className="action-btn edit"
+                              onClick={() => handleEdit(item)}
+                              title="Edit category"
+                            >
+                              <Pencil size={15} />
+                            </button>
+
+                            {/* DELETE */}
+
+                            {/* 
+                              <button
+                                className="action-btn delete"
+                                onClick={() =>
+                                  handleDelete(item.id)
+                                }
+                              >
+                                <Trash2 size={15} />
+                              </button>
+                              */}
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })
                 ) : (
                   <tr>
                     <td colSpan="5" className="empty-state">
@@ -299,23 +423,23 @@ export default function Categories() {
           )}
         </div>
 
-        {/* Pagination */}
+        {/* ==============================
+            PAGINATION
+        ============================== */}
+
         <div className="categories__pagination">
           <span>
-            Page {pagination?.pageNumber || page} of{" "}
-            {pagination?.totalPages || 1}
+            Page {currentPage} of {totalPages || 1}
           </span>
 
           <div>
-            <button disabled={page === 1} onClick={() => setPage(page - 1)}>
+            <button disabled={currentPage <= 1} onClick={handlePreviousPage}>
               <ChevronLeft size={16} />
             </button>
 
             <button
-              disabled={
-                page === pagination?.totalPages || !pagination?.totalPages
-              }
-              onClick={() => setPage(page + 1)}
+              disabled={currentPage >= totalPages || totalPages === 0}
+              onClick={handleNextPage}
             >
               <ChevronRight size={16} />
             </button>
@@ -323,11 +447,15 @@ export default function Categories() {
         </div>
       </div>
 
-      {/* Modal */}
+      {/* ==============================
+          MODAL
+      ============================== */}
+
       {isModalOpen && (
         <div className="category-modal-overlay" onClick={handleCloseModal}>
           <div className="category-modal" onClick={(e) => e.stopPropagation()}>
-            {/* Modal Header */}
+            {/* HEADER */}
+
             <div className="category-modal__header">
               <div className="category-modal__title">
                 <div className="category-modal__icon">
@@ -354,7 +482,8 @@ export default function Categories() {
               </button>
             </div>
 
-            {/* Modal Body */}
+            {/* FORM */}
+
             <form className="category-modal__form" onSubmit={handleSubmit}>
               <div className="form-group">
                 <label htmlFor="category-name">Category Name</label>
@@ -392,7 +521,8 @@ export default function Categories() {
                 />
               </div>
 
-              {/* Modal Footer */}
+              {/* FOOTER */}
+
               <div className="category-modal__footer">
                 <button
                   type="button"

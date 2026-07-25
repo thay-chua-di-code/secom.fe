@@ -39,7 +39,7 @@ export const authService = {
           headers: {
             "Content-Type": "application/json",
           },
-        }
+        },
       );
 
       dispatch(clearUserInfo());
@@ -59,10 +59,10 @@ export const authService = {
         API_ENDPOINTS.AUTH.REGISTER,
         payload,
       );
-      console.log("result: ", result);
+
       return result;
     } catch (e) {
-      console.error(e?.response?.data);
+      throw new Error(e?.response?.data);
     }
   },
   reset_pwd: async (payload) => {

@@ -11,12 +11,10 @@ import {
 } from "lucide-react";
 import "./style.scss";
 import { adminService } from "../../../service/adminService";
-
+import AdminDashboardCharts from "./Chart";
 const Dashboard = () => {
   const dispatch = useDispatch();
-  const statistics = useSelector(
-  (state) => state.dashboardAdmin.statistics,
-);
+  const statistics = useSelector((state) => state.dashboardAdmin.statistics);
 
   console.log(statistics);
 
@@ -135,26 +133,8 @@ const Dashboard = () => {
         </section>
 
         <section className="dashboard-section full-width">
-          <h2>Financial Adjustments</h2>
-          <div className="sub-grid finance-cols">
-            <div className="sub-card">
-              <label>Total Refund</label>
-              <p className="value money-red">
-                {formatMoney(statistics?.totalRefundAmount)}
-              </p>
-            </div>
-            <div className="sub-card">
-              <label>Seller Payout</label>
-              <p className="value money-blue">
-                {formatMoney(statistics?.totalSellerPayoutAmount)}
-              </p>
-            </div>
-            <div className="sub-card">
-              <label>Withdrawal Amount</label>
-              <p className="value money-blue">
-                {formatMoney(statistics?.totalWithdrawalAmount)}
-              </p>
-            </div>
+          <div className="dashboard-chart-wrapper">
+            <AdminDashboardCharts statistics={statistics} />
           </div>
         </section>
       </div>

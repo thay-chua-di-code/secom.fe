@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import {
@@ -34,9 +34,9 @@ export default function UsersPage() {
   const {
     users = [],
     loading: usersLoading,
-    pageNumber,
-    pageSize,
-    totalPages,
+    pageNumber = 1,
+    pageSize = 10,
+    totalPages = 1,
   } = usersState;
 
   const sellersState = useSelector((state) => state?.sellersAdmin);
@@ -44,12 +44,16 @@ export default function UsersPage() {
   const {
     sellers = [],
     loading: sellersLoading,
-    pageNumber: sellerPageNumber,
-    pageSize: sellerPageSize,
-    totalPages: sellerTotalPages,
+    pageNumber: sellerPageNumber = 1,
+    pageSize: sellerPageSize = 10,
+    totalPages: sellerTotalPages = 1,
   } = sellersState;
 
   const loading = activeTab === "users" ? usersLoading : sellersLoading;
+
+  // ============================================
+  // FETCH USERS
+  // ============================================
 
   useEffect(() => {
     dispatch(
@@ -60,18 +64,33 @@ export default function UsersPage() {
     );
   }, [dispatch]);
 
+  // ============================================
+  // FETCH SELLERS
+  // ============================================
+
   useEffect(() => {
     if (activeTab === "sellers") {
       dispatch(fetchAdminSellers());
     }
   }, [activeTab, dispatch]);
 
+  // ============================================
+  // TAB CHANGE
+  // ============================================
+
   const handleTabChange = (tab) => {
     setActiveTab(tab);
     setSearch("");
+    setSellerStatus("all");
   };
 
+  // ============================================
+  // USER PAGINATION
+  // ============================================
+
   const handleUserPageChange = (page) => {
+    if (page < 1 || page > totalPages) return;
+
     dispatch(
       fetchAdminUsers({
         pageNumber: page,
@@ -80,44 +99,35 @@ export default function UsersPage() {
     );
   };
 
-  const pendingSellers = sellers.filter(
-    (seller) => seller.statusText === "PendingApproval",
-  ).length;
+  // ============================================
+  // SELLER FILTER
+  // ============================================
 
-  const filteredSellers = sellers.filter((seller) => {
-    const keyword = search.toLowerCase();
+  const filteredSellers = useMemo(() => {
+    const keyword = search.toLowerCase().trim();
 
-    const matchSearch =
-      seller.shopName?.toLowerCase().includes(keyword) ||
-      seller.userFullName?.toLowerCase().includes(keyword) ||
-      seller.userEmail?.toLowerCase().includes(keyword);
+    return sellers.filter((seller) => {
+      const matchSearch =
+        seller.shopName?.toLowerCase().includes(keyword) ||
+        seller.userFullName?.toLowerCase().includes(keyword) ||
+        seller.userEmail?.toLowerCase().includes(keyword);
 
-    const matchStatus =
-      sellerStatus === "all" ||
-      seller.statusText?.toLowerCase() === sellerStatus.toLowerCase();
+      const matchStatus =
+        sellerStatus === "all" ||
+        seller.statusText?.toLowerCase() === sellerStatus.toLowerCase();
 
-    return matchSearch && matchStatus;
-  });
+      return matchSearch && matchStatus;
+    });
+  }, [sellers, search, sellerStatus]);
+
+  const pendingSellers = useMemo(() => {
+    return sellers.filter((seller) => seller.statusText === "PendingApproval")
+      .length;
+  }, [sellers]);
 
   return (
     <div className="users-page">
-      {/* PAGE HEADING */}
-      <div className="users-page__heading">
-        <div>
-          <h1>User Management</h1>
-
-          <p>Manage platform users, sellers and account permissions.</p>
-        </div>
-
-        <Link to="/admin/seller" className="users-page__seller-btn">
-          <Store size={14} />
-          Seller Applications
-        </Link>
-      </div>
-
-      {/* MAIN CARD */}
       <div className="users-page__card">
-        {/* TOOLBAR */}
         <div className="users-page__toolbar">
           <div className="users-page__tabs">
             <button
@@ -125,7 +135,9 @@ export default function UsersPage() {
               onClick={() => handleTabChange("users")}
             >
               <Users size={14} />
-              Users
+
+              <span>Users</span>
+
               <b>{users.length}</b>
             </button>
 
@@ -134,7 +146,9 @@ export default function UsersPage() {
               onClick={() => handleTabChange("sellers")}
             >
               <Store size={14} />
-              Sellers
+
+              <span>Sellers</span>
+
               <b>{pendingSellers}</b>
             </button>
           </div>
@@ -169,202 +183,203 @@ export default function UsersPage() {
           </div>
         </div>
 
-        {/* USERS TABLE */}
         {activeTab === "users" && (
           <div className="users-page__table-wrapper">
-            <table className="users-page__table">
-              <thead>
-                <tr>
-                  <th>User</th>
-                  <th>Email</th>
-                  <th>Role</th>
-                  <th>Status</th>
-                  <th>Created</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {usersLoading ? (
+            {usersLoading ? (
+              <div className="users-page__loading">Loading users...</div>
+            ) : (
+              <table className="users-page__table">
+                <thead>
                   <tr>
-                    <td colSpan="6">
-                      <div className="users-page__loading">
-                        Loading users...
-                      </div>
-                    </td>
+                    <th>USER</th>
+                    <th>EMAIL</th>
+                    <th>ROLE</th>
+                    <th>STATUS</th>
+                    <th>CREATED</th>
+                    <th>ACTIONS</th>
                   </tr>
-                ) : users.length === 0 ? (
-                  <tr>
-                    <td colSpan="6">
-                      <div className="empty-state">No users found.</div>
-                    </td>
-                  </tr>
-                ) : (
-                  users.map((user) => (
-                    <tr key={user.id}>
-                      <td>
-                        <div className="user-info">
-                          <div className="user-avatar">
-                            {user.fullName?.charAt(0)}
-                          </div>
+                </thead>
 
-                          <div>
-                            <strong>{user.fullName}</strong>
-                            <span>{user.id}</span>
-                          </div>
-                        </div>
-                      </td>
-
-                      <td>
-                        <span className="user-email">{user.email}</span>
-                      </td>
-
-                      <td>
-                        <span className="role-badge">{user.role}</span>
-                      </td>
-
-                      <td>
-                        <span
-                          className={`status-badge ${
-                            user.isActive ? "active" : "inactive"
-                          }`}
-                        >
-                          <span />
-                          {user.isActive ? "Active" : "Inactive"}
-                        </span>
-                      </td>
-
-                      <td>
-                        <span className="created-date">
-                          {new Date(user.createdAtUtc).toLocaleDateString(
-                            "vi-VN",
-                          )}
-                        </span>
-                      </td>
-
-                      <td>
-                        <div className="user-actions">
-                          <button className="action-btn edit">
-                            <Eye size={14} />
-                          </button>
-                        </div>
+                <tbody>
+                  {users.length === 0 ? (
+                    <tr>
+                      <td colSpan="6">
+                        <div className="empty-state">No users found.</div>
                       </td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+                  ) : (
+                    users.map((user) => (
+                      <tr key={user.id}>
+                        <td>
+                          <div className="user-info">
+                            <div className="user-avatar">
+                              {user.fullName?.charAt(0)?.toUpperCase()}
+                            </div>
+
+                            <div>
+                              <strong>{user.fullName}</strong>
+
+                              <span>{user.id}</span>
+                            </div>
+                          </div>
+                        </td>
+
+                        <td>
+                          <span className="user-email">{user.email}</span>
+                        </td>
+
+                        <td>
+                          <span className="role-badge">{user.role}</span>
+                        </td>
+
+                        <td>
+                          <span
+                            className={`status-badge ${
+                              user.isActive ? "active" : "inactive"
+                            }`}
+                          >
+                            <span />
+
+                            {user.isActive ? "Active" : "Inactive"}
+                          </span>
+                        </td>
+
+                        <td>
+                          <span className="created-date">
+                            {new Date(user.createdAtUtc).toLocaleDateString(
+                              "vi-VN",
+                            )}
+                          </span>
+                        </td>
+
+                        <td>
+                          <div className="user-actions">
+                            <button className="action-btn edit">
+                              <Eye size={14} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            )}
           </div>
         )}
 
-        {/* SELLERS TABLE */}
+        {/* ============================================
+            SELLERS TABLE
+        ============================================ */}
+
         {activeTab === "sellers" && (
           <div className="users-page__table-wrapper">
-            <table className="users-page__table sellers-table">
-              <thead>
-                <tr>
-                  <th>Seller</th>
-                  <th>Email</th>
-                  <th>Status</th>
-                  <th>Applied</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {sellersLoading ? (
+            {sellersLoading ? (
+              <div className="users-page__loading">Loading sellers...</div>
+            ) : (
+              <table className="users-page__table sellers-table">
+                <thead>
                   <tr>
-                    <td colSpan="5">
-                      <div className="users-page__loading">
-                        Loading sellers...
-                      </div>
-                    </td>
+                    <th>SELLER</th>
+                    <th>EMAIL</th>
+                    <th>STATUS</th>
+                    <th>APPLIED</th>
+                    <th>ACTIONS</th>
                   </tr>
-                ) : filteredSellers.length === 0 ? (
-                  <tr>
-                    <td colSpan="5">
-                      <div className="empty-state">
-                        No seller applications found.
-                      </div>
-                    </td>
-                  </tr>
-                ) : (
-                  filteredSellers.map((seller) => (
-                    <tr key={seller.id}>
-                      <td>
-                        <div className="user-info seller-info">
-                          <img
-                            src={
-                              seller.verificationImageUrl ||
-                              "https://i.pravatar.cc/100"
-                            }
-                            alt={seller.shopName}
-                          />
+                </thead>
 
-                          <div>
-                            <strong>{seller.shopName}</strong>
-                            <span>{seller.userFullName}</span>
-                          </div>
-                        </div>
-                      </td>
-
-                      <td>
-                        <span className="user-email">{seller.userEmail}</span>
-                      </td>
-
-                      <td>
-                        <span
-                          className={`status-badge ${seller.statusText
-                            ?.toLowerCase()
-                            .replace("pendingapproval", "pending")}`}
-                        >
-                          <span />
-                          {seller.statusText}
-                        </span>
-                      </td>
-
-                      <td>
-                        <span className="created-date">
-                          {new Date(seller.submittedAtUtc).toLocaleDateString(
-                            "vi-VN",
-                          )}
-                        </span>
-                      </td>
-
-                      <td>
-                        <div className="user-actions">
-                          <button
-                            className="action-btn edit"
-                            onClick={() => {
-                              setSellerId(seller.id);
-                              setOpenDetail(true);
-                            }}
-                          >
-                            <Eye size={14} />
-                          </button>
-
-                          {seller.statusText === "PendingApproval" && (
-                            <>
-                              <button className="action-btn approve">
-                                <Check size={14} />
-                              </button>
-
-                              <button className="action-btn delete">
-                                <X size={14} />
-                              </button>
-                            </>
-                          )}
+                <tbody>
+                  {filteredSellers.length === 0 ? (
+                    <tr>
+                      <td colSpan="5">
+                        <div className="empty-state">
+                          No seller applications found.
                         </div>
                       </td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+                  ) : (
+                    filteredSellers.map((seller) => (
+                      <tr key={seller.id}>
+                        <td>
+                          <div className="user-info seller-info">
+                            <img
+                              src={
+                                seller.verificationImageUrl ||
+                                "https://i.pravatar.cc/100"
+                              }
+                              alt={seller.shopName}
+                            />
+
+                            <div>
+                              <strong>{seller.shopName}</strong>
+
+                              <span>{seller.userFullName}</span>
+                            </div>
+                          </div>
+                        </td>
+
+                        <td>
+                          <span className="user-email">{seller.userEmail}</span>
+                        </td>
+
+                        <td>
+                          <span
+                            className={`status-badge ${seller.statusText
+                              ?.toLowerCase()
+                              .replace("pendingapproval", "pending")}`}
+                          >
+                            <span />
+
+                            {seller.statusText}
+                          </span>
+                        </td>
+
+                        <td>
+                          <span className="created-date">
+                            {new Date(seller.submittedAtUtc).toLocaleDateString(
+                              "vi-VN",
+                            )}
+                          </span>
+                        </td>
+
+                        <td>
+                          <div className="user-actions">
+                            <button
+                              className="action-btn edit"
+                              onClick={() => {
+                                setSellerId(seller.id);
+                                setOpenDetail(true);
+                              }}
+                            >
+                              <Eye size={14} />
+                            </button>
+
+                            {seller.statusText === "PendingApproval" && (
+                              <>
+                                <button className="action-btn approve">
+                                  <Check size={14} />
+                                </button>
+
+                                <button className="action-btn delete">
+                                  <X size={14} />
+                                </button>
+                              </>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            )}
           </div>
         )}
 
-        {/* PAGINATION */}
+        {/* ============================================
+            PAGINATION
+        ============================================ */}
+
         <div className="users-page__pagination">
           <span>
             Page <b>{activeTab === "users" ? pageNumber : sellerPageNumber}</b>{" "}
@@ -374,9 +389,7 @@ export default function UsersPage() {
           <div>
             <button
               disabled={
-                activeTab === "users"
-                  ? pageNumber === 1
-                  : sellerPageNumber === 1
+                activeTab === "users" ? pageNumber <= 1 : sellerPageNumber <= 1
               }
               onClick={() => {
                 if (activeTab === "users") {
@@ -390,8 +403,8 @@ export default function UsersPage() {
             <button
               disabled={
                 activeTab === "users"
-                  ? pageNumber === totalPages
-                  : sellerPageNumber === sellerTotalPages
+                  ? pageNumber >= totalPages
+                  : sellerPageNumber >= sellerTotalPages
               }
               onClick={() => {
                 if (activeTab === "users") {
@@ -405,7 +418,10 @@ export default function UsersPage() {
         </div>
       </div>
 
-      {/* SELLER DETAIL MODAL */}
+      {/* ============================================
+          SELLER DETAIL MODAL
+      ============================================ */}
+
       <SellerDetailModal
         open={openDetail}
         sellerId={sellerId}

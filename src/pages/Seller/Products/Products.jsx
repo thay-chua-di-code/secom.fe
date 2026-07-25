@@ -10,9 +10,11 @@ import "./style.scss";
 
 const Products = () => {
   const dispatch = useDispatch();
+
   const [openAdd, setOpenAdd] = useState(false);
   const [openUpdate, setOpenUpdate] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
+
   const { products, loading, error } = useSelector(
     (state) => state.sellerProduct,
   );
@@ -39,7 +41,7 @@ const Products = () => {
   if (loading) {
     return (
       <div className="seller-products__loading">
-        <div className="loading-spinner" />
+        <div className="seller-products__loading-spinner" />
         <span>Loading products...</span>
       </div>
     );
@@ -50,17 +52,25 @@ const Products = () => {
       {/* HEADER */}
       <div className="seller-products__header">
         <div className="seller-products__heading">
-          <div className="seller-products__icon">
+          <div className="seller-products__heading-icon">
             <Package size={24} />
           </div>
 
           <div>
+            <span className="seller-products__eyebrow">
+              Inventory Management
+            </span>
+
             <h1>Product Management</h1>
+
             <p>Manage and monitor all products in your store</p>
           </div>
         </div>
 
-        <Button className="add-product-btn" onClick={() => setOpenAdd(true)}>
+        <Button
+          className="seller-products__add-btn"
+          onClick={() => setOpenAdd(true)}
+        >
           <Plus size={18} />
           Add Product
         </Button>
@@ -68,24 +78,25 @@ const Products = () => {
 
       {/* STATS */}
       <div className="seller-products__stats">
-        <div className="stat-card">
-          <div className="stat-card__icon">
+        <div className="seller-products__stat-card">
+          <div className="seller-products__stat-icon">
             <Package size={20} />
           </div>
 
-          <div>
+          <div className="seller-products__stat-content">
             <span>Total Products</span>
             <strong>{products?.length || 0}</strong>
           </div>
         </div>
 
-        <div className="stat-card">
-          <div className="stat-card__icon">
+        <div className="seller-products__stat-card">
+          <div className="seller-products__stat-icon seller-products__stat-icon--success">
             <TrendingUp size={20} />
           </div>
 
-          <div>
+          <div className="seller-products__stat-content">
             <span>Active Products</span>
+
             <strong>
               {products?.filter((item) => item.isActive)?.length || 0}
             </strong>
@@ -93,85 +104,89 @@ const Products = () => {
         </div>
       </div>
 
-      {/* TABLE */}
-      <div className="products-card">
-        <div className="products-card__header">
+      {/* PRODUCTS */}
+      <div className="seller-products__card">
+        <div className="seller-products__card-header">
           <div>
+            <span className="seller-products__section-label">
+              Product Inventory
+            </span>
+
             <h2>Your Products</h2>
+
             <p>View and manage your product inventory</p>
           </div>
 
-          <span className="products-count">
+          <span className="seller-products__count">
             {products?.length || 0} Products
           </span>
         </div>
 
-        <div className="table-container">
-          <table className="products-table">
+        <div className="seller-products__table-wrapper">
+          <table className="seller-products__table">
             <thead>
               <tr>
                 <th>Product</th>
                 <th>Category</th>
                 <th>Price</th>
                 <th>Status</th>
-                <th className="action-column">Action</th>
+                <th className="seller-products__action-column">Action</th>
               </tr>
             </thead>
 
             <tbody>
               {products?.map((item) => (
                 <tr key={item.id}>
-                  <td>
-                    <div className="product-info">
-                      <div className="product-avatar">
+                  <td data-label="Product">
+                    <div className="seller-products__product-info">
+                      <div className="seller-products__product-avatar">
                         {item.name?.charAt(0)?.toUpperCase()}
                       </div>
 
-                      <div>
+                      <div className="seller-products__product-details">
                         <strong>{item.name}</strong>
+
                         <span>ID: {item.id.slice(0, 8).toUpperCase()}</span>
                       </div>
                     </div>
                   </td>
 
-                  <td>
-                    <span className="category-badge">{item.categoryName}</span>
+                  <td data-label="Category">
+                    <span className="seller-products__category">
+                      {item.categoryName}
+                    </span>
                   </td>
 
-                  <td>
-                    <strong className="product-price">
+                  <td data-label="Price">
+                    <strong className="seller-products__price">
                       {formatCurrencyVN(item.price)}
                     </strong>
                   </td>
 
-                  <td>
+                  <td data-label="Status">
                     <span
-                      className={`status-badge ${
-                        item.isActive ? "active" : "inactive"
+                      className={`seller-products__status ${
+                        item.isActive
+                          ? "seller-products__status--active"
+                          : "seller-products__status--inactive"
                       }`}
                     >
-                      <span className="status-dot" />
+                      <span className="seller-products__status-dot" />
+
                       {item.isActive ? "Active" : "Inactive"}
                     </span>
                   </td>
 
-                  <td>
-                    <div className="product-actions">
+                  <td data-label="Action">
+                    <div className="seller-products__actions">
                       <button
                         type="button"
-                        className="action-btn edit"
+                        className="seller-products__action-btn seller-products__action-btn--edit"
                         onClick={() => handleOpenUpdate(item)}
+                        aria-label={`Edit ${item.name}`}
                       >
-                        <Pencil size={18} />
+                        <Pencil size={17} />
                       </button>
-                      {/* 
-                      <button
-                        type="button"
-                        className="action-btn delete"
-                        onClick={() => handleDeleteProduct(item.id)}
-                      >
-                        <Trash2 size={16} />
-                      </button> */}
                     </div>
                   </td>
                 </tr>
@@ -180,10 +195,23 @@ const Products = () => {
               {products?.length === 0 && (
                 <tr>
                   <td colSpan={5}>
-                    <div className="empty-products">
-                      <Package size={40} />
+                    <div className="seller-products__empty">
+                      <div className="seller-products__empty-icon">
+                        <Package size={38} />
+                      </div>
+
                       <h3>No products found</h3>
+
                       <p>Start by adding your first product.</p>
+
+                      <button
+                        type="button"
+                        className="seller-products__empty-btn"
+                        onClick={() => setOpenAdd(true)}
+                      >
+                        <Plus size={16} />
+                        Add Product
+                      </button>
                     </div>
                   </td>
                 </tr>
@@ -193,7 +221,7 @@ const Products = () => {
         </div>
       </div>
 
-      {error && <div className="products-error">{error}</div>}
+      {error && <div className="seller-products__error">{error}</div>}
 
       {openAdd && (
         <AddProductModal open={openAdd} onClose={() => setOpenAdd(false)} />
