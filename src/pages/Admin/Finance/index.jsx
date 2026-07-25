@@ -19,6 +19,7 @@ import {
   approvePayout,
   rejectPayout,
 } from "../../../redux/slice/admin/finance/financeThunk";
+import FinanceCharts from "./Chart";
 
 export default function Finance() {
   const dispatch = useDispatch();
@@ -161,6 +162,11 @@ export default function Finance() {
             })}
           </div>
 
+          {/* Charts */}
+
+          <div>
+            <FinanceCharts summary={summary} />
+          </div>
           {/* Withdrawal Table */}
 
           <div className="withdraw-section">

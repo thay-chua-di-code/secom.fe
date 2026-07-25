@@ -1,6 +1,6 @@
 .finance-page {
   padding: 30px;
-  background: #111622;
+  background: transparent !important;
   min-height: 100vh;
 
   .finance-header {
@@ -97,14 +97,14 @@
       flex: 1;
 
       span {
-        color: gray;
+        color: #dde3ee;
         font-size: 14px;
       }
 
       h3 {
         margin-top: 10px;
         font-size: 26px;
-        color: #0f172a;
+        color: #dde3ee;
       }
     }
   }

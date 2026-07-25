@@ -22,6 +22,7 @@ const UserNotLogin = () => {
 export default function UserDropdown({ open }) {
   const userInfo = useSelector((state) => state.user.userInfo);
   const auth = useSelector((state) => state.auth);
+  console.log(auth);
   const dispatch = useDispatch();
 
   if (!open) return null;
@@ -59,23 +60,28 @@ export default function UserDropdown({ open }) {
       <div className="user-dropdown__body">
         {userInfo && (
           <div>
-            <Link to={`/profile`} className="dropdown-item">
-              <User size={20} />
-              My Profile
-            </Link>
-            <Link to="/order-self" className="dropdown-item">
-              <Package size={20} />
-              My Orders
-            </Link>
+            {auth.role.toLowerCase() === "customer" && (
+              <div>
+                <Link to={`/profile`} className="dropdown-item">
+                  <User size={20} />
+                  My Profile
+                </Link>
+                <Link to="/order-self" className="dropdown-item">
+                  <Package size={20} />
+                  My Orders
+                </Link>
 
-            <Link
-              to="/wish-list"
-              data-testid="wishlist-link"
-              className="dropdown-item"
-            >
-              <Heart size={20} />
-              Wishlist
-            </Link>
+                <Link
+                  to="/wish-list"
+                  data-testid="wishlist-link"
+                  className="dropdown-item"
+                >
+                  <Heart size={20} />
+                  Wishlist
+                </Link>
+              </div>
+            )}
+
             {isAdmin(auth.role) && (
               <Link to="/admin" className="dropdown-item">
                 <Package size={20} />

@@ -4,20 +4,32 @@ import { fetchSellerProducts } from "../../../redux/slice/seller/product/thunk";
 import Button from "../../../components/common/Button/Button";
 import UpdateProductModal from "./FormUpdate";
 import AddProductModal from "./FormAdd";
-import { Plus, Pencil, Package, TrendingUp } from "lucide-react";
+import {
+  Plus,
+  Pencil,
+  Package,
+  TrendingUp,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import { formatCurrencyVN } from "../../../utils/fncUtils";
 import "./style.scss";
+
+const ITEMS_PER_PAGE = 8;
 
 const Products = () => {
   const dispatch = useDispatch();
 
+  const [currentPage, setCurrentPage] = useState(1);
   const [openAdd, setOpenAdd] = useState(false);
   const [openUpdate, setOpenUpdate] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
-  const { products, loading, error } = useSelector(
-    (state) => state.sellerProduct,
-  );
+  const {
+    products = [],
+    loading,
+    error,
+  } = useSelector((state) => state.sellerProduct);
 
   const handleOpenUpdate = (product) => {
     setSelectedProduct(product);
@@ -33,10 +45,25 @@ const Products = () => {
     dispatch(
       fetchSellerProducts({
         pageNumber: 1,
-        pageSize: 10,
+        pageSize: 100,
       }),
     );
   }, [dispatch]);
+
+  const totalPages = Math.ceil(products.length / ITEMS_PER_PAGE);
+
+  const paginatedProducts = products.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE,
+  );
+
+  const handlePreviousPage = () => {
+    setCurrentPage((prev) => Math.max(prev - 1, 1));
+  };
+
+  const handleNextPage = () => {
+    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+  };
 
   if (loading) {
     return (
@@ -45,6 +72,13 @@ const Products = () => {
         <span>Loading products...</span>
       </div>
     );
+  }
+
+  {
+    /* ERROR */
+  }
+  {
+    error && <div className="seller-products__error">{error}</div>;
   }
 
   return (
@@ -85,7 +119,7 @@ const Products = () => {
 
           <div className="seller-products__stat-content">
             <span>Total Products</span>
-            <strong>{products?.length || 0}</strong>
+            <strong>{products.length}</strong>
           </div>
         </div>
 
@@ -97,15 +131,14 @@ const Products = () => {
           <div className="seller-products__stat-content">
             <span>Active Products</span>
 
-            <strong>
-              {products?.filter((item) => item.isActive)?.length || 0}
-            </strong>
+            <strong>{products.filter((item) => item.isActive).length}</strong>
           </div>
         </div>
       </div>
 
-      {/* PRODUCTS */}
+      {/* PRODUCTS CARD */}
       <div className="seller-products__card">
+        {/* CARD HEADER */}
         <div className="seller-products__card-header">
           <div>
             <span className="seller-products__section-label">
@@ -118,10 +151,11 @@ const Products = () => {
           </div>
 
           <span className="seller-products__count">
-            {products?.length || 0} Products
+            {products.length} Products
           </span>
         </div>
 
+        {/* TABLE */}
         <div className="seller-products__table-wrapper">
           <table className="seller-products__table">
             <thead>
@@ -135,8 +169,9 @@ const Products = () => {
             </thead>
 
             <tbody>
-              {products?.map((item) => (
+              {paginatedProducts.map((item) => (
                 <tr key={item.id}>
+                  {/* PRODUCT */}
                   <td data-label="Product">
                     <div className="seller-products__product-info">
                       <div className="seller-products__product-avatar">
@@ -146,23 +181,26 @@ const Products = () => {
                       <div className="seller-products__product-details">
                         <strong>{item.name}</strong>
 
-                        <span>ID: {item.id.slice(0, 8).toUpperCase()}</span>
+                        <span>ID: {item.id?.slice(0, 8)?.toUpperCase()}</span>
                       </div>
                     </div>
                   </td>
 
+                  {/* CATEGORY */}
                   <td data-label="Category">
                     <span className="seller-products__category">
-                      {item.categoryName}
+                      {item.categoryName || "-"}
                     </span>
                   </td>
 
+                  {/* PRICE */}
                   <td data-label="Price">
                     <strong className="seller-products__price">
                       {formatCurrencyVN(item.price)}
                     </strong>
                   </td>
 
+                  {/* STATUS */}
                   <td data-label="Status">
                     <span
                       className={`seller-products__status ${
@@ -177,6 +215,7 @@ const Products = () => {
                     </span>
                   </td>
 
+                  {/* ACTION */}
                   <td data-label="Action">
                     <div className="seller-products__actions">
                       <button
@@ -192,7 +231,7 @@ const Products = () => {
                 </tr>
               ))}
 
-              {products?.length === 0 && (
+              {products.length === 0 && (
                 <tr>
                   <td colSpan={5}>
                     <div className="seller-products__empty">
@@ -219,14 +258,44 @@ const Products = () => {
             </tbody>
           </table>
         </div>
+
+        {/* PAGINATION */}
+        {products.length > 0 && (
+          <div className="seller-products__pagination">
+            <button
+              type="button"
+              className="seller-products__pagination-btn seller-products__pagination-btn--prev"
+              disabled={currentPage === 1}
+              onClick={handlePreviousPage}
+            >
+              <ChevronLeft size={18} />
+              <span>Previous</span>
+            </button>
+
+            <span className="seller-products__pagination-info">
+              Page <strong>{currentPage}</strong> of{" "}
+              <strong>{totalPages}</strong>
+            </span>
+
+            <button
+              type="button"
+              className="seller-products__pagination-btn seller-products__pagination-btn--next"
+              disabled={currentPage === totalPages}
+              onClick={handleNextPage}
+            >
+              <span>Next</span>
+              <ChevronRight size={18} />
+            </button>
+          </div>
+        )}
       </div>
 
-      {error && <div className="seller-products__error">{error}</div>}
-
+      {/* ADD MODAL */}
       {openAdd && (
         <AddProductModal open={openAdd} onClose={() => setOpenAdd(false)} />
       )}
 
+      {/* UPDATE MODAL */}
       {openUpdate && selectedProduct && (
         <UpdateProductModal
           key={selectedProduct.id}
