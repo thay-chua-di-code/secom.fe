@@ -4,7 +4,18 @@ import "./style.scss";
 import Button from "../../../components/common/Button/Button";
 import { formatCurrencyVN } from "../../../utils/fncUtils";
 import { fetchProducts } from "../../../redux/slice/admin/products/productAdminSlice";
-import { Package, Search, Eye, Pencil, Check, X } from "lucide-react";
+import {
+  Package,
+  Search,
+  Eye,
+  Pencil,
+  Check,
+  X,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
+
+const ITEMS_PER_PAGE = 7;
 
 const Products = () => {
   const dispatch = useDispatch();
@@ -33,11 +44,10 @@ const Products = () => {
   // ========================================
   // SEARCH + FILTER ON FRONTEND
   // ========================================
-
   const filteredProducts = useMemo(() => {
     const keyword = search.trim().toLowerCase();
 
-    return products?.filter((product) => {
+    return products.filter((product) => {
       const matchesSearch =
         !keyword ||
         product.name?.toLowerCase().includes(keyword) ||
@@ -73,14 +83,17 @@ const Products = () => {
   // PAGINATION FRONTEND
   // ========================================
 
-  const pageSize = 10;
+  const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
 
-  const totalPages = Math.ceil(filteredProducts.length / pageSize);
+  const currentPage = Math.min(page, Math.max(totalPages, 1));
 
-  const paginatedProducts = filteredProducts.slice(
-    (page - 1) * pageSize,
-    page * pageSize,
-  );
+  const paginatedProducts = useMemo(() => {
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+
+    const endIndex = startIndex + ITEMS_PER_PAGE;
+
+    return filteredProducts.slice(startIndex, endIndex);
+  }, [filteredProducts, currentPage]);
 
   // ========================================
   // LOADING
@@ -112,148 +125,193 @@ const Products = () => {
       <div className="admin-products__header">
         <div>
           <h1>Products</h1>
-
           <p>{filteredProducts.length} listings</p>
         </div>
       </div>
 
-      {/* FILTER */}
-      <div className="admin-products__filter">
-        {/* SEARCH */}
-        <div className="search-box">
-          <Search size={18} />
+      {/* TABLE CARD */}
+      <div className="table-wrapper">
+        {/* FILTER */}
+        <div className="table-toolbar">
+          {/* SEARCH */}
+          <div className="search-box">
+            <Search size={18} />
 
-          <input
-            type="text"
-            placeholder="Search product..."
-            value={search}
-            onChange={handleSearchChange}
-          />
+            <input
+              type="text"
+              placeholder="Search products or sellers..."
+              value={search}
+              onChange={handleSearchChange}
+            />
+          </div>
+
+          {/* CATEGORY */}
+          <select value={status} onChange={handleStatusChange}>
+            <option value="">All Categories</option>
+            <option value="PENDING">Pending</option>
+            <option value="APPROVED">Approved</option>
+            <option value="REJECTED">Rejected</option>
+          </select>
         </div>
 
-        {/* STATUS */}
-        <select value={status} onChange={handleStatusChange}>
-          <option value="">All Status</option>
+        {/* TABLE */}
+        <div className="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Category</th>
+                <th>Seller</th>
+                <th>Price</th>
+                <th>Stock</th>
+                <th>Rating</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
 
-          <option value="PENDING">Pending</option>
+            <tbody>
+              {paginatedProducts.length > 0 ? (
+                paginatedProducts.map((product) => (
+                  <tr key={product.id}>
+                    {/* PRODUCT */}
+                    <td>
+                      <div className="product-info">
+                        <div className="icon">
+                          <Package size={18} />
+                        </div>
 
-          <option value="APPROVED">Approved</option>
+                        <div className="product-info__content">
+                          <span className="product-name">{product.name}</span>
 
-          <option value="REJECTED">Rejected</option>
-        </select>
-      </div>
-
-      {/* TABLE */}
-      <div className="table-wrapper">
-        <table>
-          <thead>
-            <tr>
-              <th>Product</th>
-              <th>Category</th>
-              <th>Seller</th>
-              <th>Price</th>
-              <th>Status</th>
-              <th width="160">Actions</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {paginatedProducts.length > 0 ? (
-              paginatedProducts.map((product) => (
-                <tr key={product.id}>
-                  {/* PRODUCT */}
-                  <td>
-                    <div className="product-info">
-                      <div className="icon">
-                        <Package size={18} />
+                          <span className="product-sold">
+                            {product.sold || 0} sold
+                          </span>
+                        </div>
                       </div>
+                    </td>
 
-                      <span>{product.name}</span>
-                    </div>
-                  </td>
+                    {/* CATEGORY */}
+                    <td>
+                      <span className="category-name">
+                        {product.categoryName || "-"}
+                      </span>
+                    </td>
 
-                  {/* CATEGORY */}
-                  <td>{product.categoryName || "-"}</td>
+                    {/* SELLER */}
+                    <td>
+                      <span className="seller-name">
+                        {product.sellerFullName || "-"}
+                      </span>
+                    </td>
 
-                  {/* SELLER */}
-                  <td>{product.sellerFullName || "-"}</td>
+                    {/* PRICE */}
+                    <td>
+                      <span className="price">
+                        ${formatCurrencyVN(product.price)}
+                      </span>
+                    </td>
 
-                  {/* PRICE */}
-                  <td>₫{formatCurrencyVN(product.price)}</td>
-
-                  {/* STATUS */}
-                  <td>
-                    <span
-                      className={`status status--${product.status?.toLowerCase()}`}
-                    >
-                      {product.status}
-                    </span>
-                  </td>
-
-                  {/* ACTIONS */}
-                  <td>
-                    <div className="action-buttons">
-                      <Button
-                        className="action-btn view-btn"
-                        title="View product"
+                    {/* STOCK */}
+                    <td>
+                      <span
+                        className={`stock ${
+                          product.stock === 0
+                            ? "stock--empty"
+                            : product.stock < 20
+                              ? "stock--low"
+                              : ""
+                        }`}
                       >
-                        <Eye size={17} />
-                      </Button>
+                        {product.stock || 0}
+                      </span>
+                    </td>
 
-                      <Button
-                        className="action-btn edit-btn"
-                        title="Edit product"
-                      >
-                        <Pencil size={17} />
-                      </Button>
+                    {/* RATING */}
+                    <td>
+                      <span className="rating">
+                        <span>★</span>
+                        {product.rating || "-"}
+                      </span>
+                    </td>
 
-                      <Button
-                        className="action-btn approve-btn"
-                        title="Approve product"
+                    {/* STATUS */}
+                    <td>
+                      <span
+                        className={`status status--${product.status?.toLowerCase()}`}
                       >
-                        <Check size={17} />
-                      </Button>
+                        {product.status}
+                      </span>
+                    </td>
 
-                      <Button
-                        className="action-btn reject-btn"
-                        title="Reject product"
-                      >
-                        <X size={17} />
-                      </Button>
-                    </div>
+                    {/* ACTIONS */}
+                    <td>
+                      <div className="action-buttons">
+                        <Button
+                          className="action-btn edit-btn"
+                          title="Edit product"
+                        >
+                          <Pencil size={16} />
+                        </Button>
+
+                        <Button
+                          className="action-btn view-btn"
+                          title="View product"
+                        >
+                          <Eye size={16} />
+                        </Button>
+
+                        <Button
+                          className="action-btn approve-btn"
+                          title="Approve product"
+                        >
+                          <Check size={16} />
+                        </Button>
+
+                        <Button
+                          className="action-btn reject-btn"
+                          title="Reject product"
+                        >
+                          <X size={16} />
+                        </Button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={8} className="empty-state">
+                    No products found
                   </td>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={6}>No products found</td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+              )}
+            </tbody>
+          </table>
+        </div>
 
-      {/* PAGINATION */}
-      <div className="pagination">
-        <Button
-          disabled={page === 1}
-          onClick={() => setPage((prev) => prev - 1)}
-        >
-          Previous
-        </Button>
+        {/* PAGINATION */}
 
-        <span>
-          {totalPages === 0 ? 0 : page}
-          {" / "}
-          {totalPages || 1}
-        </span>
+        <div className="pagination">
+          <span>
+            Page {currentPage} of {totalPages || 1}
+          </span>
 
-        <Button
-          disabled={page >= totalPages}
-          onClick={() => setPage((prev) => prev + 1)}
-        >
-          Next
-        </Button>
+          <div className="pagination__buttons">
+            <button
+              disabled={currentPage <= 1}
+              onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+            >
+              <ChevronLeft size={16} />
+            </button>
+
+            <button
+              disabled={currentPage >= totalPages || totalPages === 0}
+              onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
+            >
+              <ChevronRight size={16} />
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );

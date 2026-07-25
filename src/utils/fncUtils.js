@@ -30,3 +30,13 @@ export const formatDate = (dateString) => {
     minute: "2-digit",
   });
 };
+
+
+// Func: Text length > 12 => .....
+export const truncateText = (text, maxLength = 12) => {
+  if (!text) return "";
+
+  return text.length > maxLength
+    ? `${text.slice(0, maxLength)}...`
+    : text;
+};

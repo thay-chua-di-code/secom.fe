@@ -20,9 +20,9 @@ const SellerLayout = () => {
 
           <NavLink to="/seller/orders">Orders</NavLink>
 
-          <NavLink to="/seller/customers">Customers</NavLink>
+          {/* <NavLink to="/seller/customers">Customers</NavLink>
 
-          <NavLink to="/seller/revenue">Revenue</NavLink>
+          <NavLink to="/seller/revenue">Revenue</NavLink> */}
 
           <NavLink to="/seller/settings">Settings</NavLink>
         </nav>

@@ -48,7 +48,7 @@ export default function ProductDetail() {
   const { productDetail, loading } = useSelector((state) => state.products);
   // const [productDetail, setProductDetail] = useState(null);
   const [selectedImage, setSelectedImage] = useState("");
-  const [quantity, setQuantity] = useState(2);
+  const [quantity, setQuantity] = useState(1);
   // const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [wishlistLoading, setWishlistLoading] = useState(false);

@@ -27,9 +27,7 @@ const Dashboard = () => {
       } catch (requestError) {
         if (isMounted) {
           console.error("Seller dashboard error:", requestError);
-          setError(
-            requestError?.message || "Unable to load seller dashboard.",
-          );
+          setError(requestError?.message || "Unable to load seller dashboard.");
         }
       } finally {
         if (isMounted) {
@@ -67,16 +65,16 @@ const Dashboard = () => {
       value: overview?.totalOrders ?? 0,
       growth: formatGrowth(overview?.orderGrowthPercentage),
     },
-    {
-      title: "Customers",
-      value: overview?.totalCustomers ?? 0,
-      growth: formatGrowth(overview?.customerGrowthPercentage),
-    },
-    {
-      title: "Revenue",
-      value: formatCurrencyVN(overview?.totalRevenue ?? 0),
-      growth: formatGrowth(overview?.revenueGrowthPercentage),
-    },
+    // {
+    //   title: "Customers",
+    //   value: overview?.totalCustomers ?? 0,
+    //   growth: formatGrowth(overview?.customerGrowthPercentage),
+    // },
+    // {
+    //   title: "Revenue",
+    //   value: formatCurrencyVN(overview?.totalRevenue ?? 0),
+    //   growth: formatGrowth(overview?.revenueGrowthPercentage),
+    // },
   ];
 
   const recentOrders = dashboard?.recentOrders ?? [];
@@ -166,13 +164,21 @@ const Dashboard = () => {
 
       {/* Orders + Top Products */}
 
-      <div className="dashboard__grid">
-        <div className="dashboard-card">
-          <div className="dashboard-card__header">
-            <h3>Recent Orders</h3>
+      <div className="seller-dashboard__grid">
+        <div className="seller-dashboard-card seller-orders-card">
+          <div className="seller-dashboard-card__header">
+            <div>
+              <span className="seller-section-label">Order Management</span>
+              <h3>Recent Orders</h3>
+            </div>
+
+            <span className="seller-order-count">
+              {recentOrders.length} orders
+            </span>
           </div>
-          <div className="table-wrapper">
-            <table>
+
+          <div className="seller-orders-table-wrapper">
+            <table className="seller-orders-table">
               <thead>
                 <tr>
                   <th>Order ID</th>
@@ -186,15 +192,41 @@ const Dashboard = () => {
                 {recentOrders.length > 0 ? (
                   recentOrders.map((order) => (
                     <tr key={order.orderId || order.orderCode}>
-                      <td>{order.orderCode || order.orderId}</td>
-                      <td>{order.customerName || "--"}</td>
-                      <td>{formatCurrencyVN(order.sellerTotal ?? 0)}</td>
-                      <td>{order.status || "--"}</td>
+                      <td>
+                        <span className="seller-order-code">
+                          #{order.orderCode || order.orderId}
+                        </span>
+                      </td>
+
+                      <td>
+                        <span className="seller-customer-name">
+                          {order.customerName || "--"}
+                        </span>
+                      </td>
+
+                      <td>
+                        <strong className="seller-order-total">
+                          {formatCurrencyVN(order.sellerTotal ?? 0)}
+                        </strong>
+                      </td>
+
+                      <td>
+                        <span
+                          className={`seller-order-status seller-order-status--${(
+                            order.status || "unknown"
+                          ).toLowerCase()}`}
+                        >
+                          {order.status || "--"}
+                        </span>
+                      </td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="4">No recent orders</td>
+                    <td colSpan="4" className="seller-empty-orders">
+                      <span>📦</span>
+                      <p>No recent orders</p>
+                    </td>
                   </tr>
                 )}
               </tbody>
@@ -252,7 +284,9 @@ const Dashboard = () => {
             ))
           ) : (
             <div className="activity">
-              {error ? "Unable to load seller dashboard." : "No recent activities"}
+              {error
+                ? "Unable to load seller dashboard."
+                : "No recent activities"}
             </div>
           )}
         </div>
