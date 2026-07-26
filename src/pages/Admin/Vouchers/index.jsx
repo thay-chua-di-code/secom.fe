@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Search,
   Plus,
@@ -19,6 +19,8 @@ import Button from "../../../components/common/Button/Button";
 import AddVoucher from "./Form/AddVoucher";
 
 import "./style.scss";
+
+const isVoucherActive = (voucher) => voucher?.isActive ?? voucher?.active ?? false;
 
 const VoucherAdmin = () => {
   const dispatch = useDispatch();
@@ -51,20 +53,20 @@ const VoucherAdmin = () => {
         .includes(keyword.toLowerCase());
 
       if (activeTab === "active") {
-        return matchKeyword && voucher.active;
+        return matchKeyword && isVoucherActive(voucher);
       }
 
       if (activeTab === "inactive") {
-        return matchKeyword && !voucher.active;
+        return matchKeyword && !isVoucherActive(voucher);
       }
 
       return matchKeyword;
     });
   }, [voucherItems, keyword, activeTab]);
 
-  const activeCount = voucherItems.filter((item) => item.active).length;
+  const activeCount = voucherItems.filter((item) => isVoucherActive(item)).length;
 
-  const inactiveCount = voucherItems.filter((item) => !item.active).length;
+  const inactiveCount = voucherItems.filter((item) => !isVoucherActive(item)).length;
 
   const formatDate = (date) => {
     if (!date) return "-";
@@ -282,12 +284,12 @@ const VoucherAdmin = () => {
                     <td>
                       <span
                         className={`status-badge ${
-                          voucher.active ? "active" : "inactive"
+                          isVoucherActive(voucher) ? "active" : "inactive"
                         }`}
                       >
                         <span />
 
-                        {voucher.active ? "Active" : "Inactive"}
+                        {isVoucherActive(voucher) ? "Active" : "Inactive"}
                       </span>
                     </td>
 

@@ -187,9 +187,20 @@ export const sellerService = {
   // [VOUCHERS]
   createVoucher: async (data) => {
     try {
-      console.log(data);
-      const res = await axiosClient.post("/seller/vouchers", data);
-      console.log("Service: ", res);
+      const payload = {
+        ...data,
+        isActive: data?.isActive ?? true,
+      };
+
+      if (typeof payload.isActive !== "boolean") {
+        payload.isActive = payload.isActive === "true";
+      }
+
+      const res = await axiosClient.post("/seller/vouchers", payload, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
       return res.data;
     } catch (e) {
       throw new Error(e.message);

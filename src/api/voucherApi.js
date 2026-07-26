@@ -43,11 +43,39 @@ export const voucherApi = {
   },
 
   createVoucher(payload) {
-    return axiosClient.post(API_ENDPOINTS.ADMIN.VOUCHER.GP, payload);
+    const normalizedPayload = {
+      ...payload,
+      isActive: payload?.isActive ?? true,
+    };
+
+    if (typeof normalizedPayload.isActive !== "boolean") {
+      normalizedPayload.isActive = normalizedPayload.isActive === "true";
+    }
+
+    console.debug("[CreateVoucher] API payload", normalizedPayload);
+
+    return axiosClient.post(API_ENDPOINTS.ADMIN.VOUCHER.GP, normalizedPayload, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
   },
 
   updateVoucher(voucherId, payload) {
-    return axiosClient.put(API_ENDPOINTS.ADMIN.VOUCHER.PUT(voucherId), payload);
+    const normalizedPayload = {
+      ...payload,
+      isActive: payload?.isActive ?? true,
+    };
+
+    if (typeof normalizedPayload.isActive !== "boolean") {
+      normalizedPayload.isActive = normalizedPayload.isActive === "true";
+    }
+
+    return axiosClient.put(API_ENDPOINTS.ADMIN.VOUCHER.PUT(voucherId), normalizedPayload, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
   },
 };
 

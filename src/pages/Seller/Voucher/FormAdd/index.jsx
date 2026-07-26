@@ -1,11 +1,8 @@
-import { useDispatch, useSelector } from "react-redux";
-import { useEffect, useState } from "react";
-import { createSellerProduct } from "../../../../redux/slice/seller/product/thunk";
-import { categoriesService } from "../../../../service/categoriesService";
+import { useSelector } from "react-redux";
+import { useState } from "react";
 import "./style.scss";
 import { sellerService } from "../../../../service/sellerService";
 const AddVoucherModal = ({ open, onClose }) => {
-  const dispatch = useDispatch();
   const userInfo = useSelector((state) => state.user.userInfo);
   const [form, setForm] = useState({
     code: "",
@@ -18,6 +15,7 @@ const AddVoucherModal = ({ open, onClose }) => {
     quantity: "",
     startAtUtc: "",
     endAtUtc: "",
+    isActive: true,
   });
 
   const handleChange = (e) => {
@@ -32,7 +30,7 @@ const AddVoucherModal = ({ open, onClose }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const res = await sellerService.createVoucher({
+    const payload = {
       ...form,
       sellerId: userInfo.userId,
       discountValue: Number(form.discountValue),
@@ -41,7 +39,12 @@ const AddVoucherModal = ({ open, onClose }) => {
       quantity: Number(form.quantity),
       startAtUtc: new Date(form.startAtUtc).toISOString(),
       endAtUtc: new Date(form.endAtUtc).toISOString(),
-    });
+      isActive: form.isActive ?? true,
+    };
+
+    console.debug("[CreateSellerVoucher] payload", payload);
+
+    await sellerService.createVoucher(payload);
 
     onClose();
   };
@@ -180,6 +183,17 @@ const AddVoucherModal = ({ open, onClose }) => {
                 onChange={handleChange}
               />
             </div>
+          </div>
+
+          <div className="checkbox-group">
+            <input
+              type="checkbox"
+              name="isActive"
+              checked={form.isActive}
+              onChange={handleChange}
+            />
+
+            <span>Active Voucher</span>
           </div>
 
           <div className="actions">

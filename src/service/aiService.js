@@ -9,6 +9,17 @@ const unwrapApiData = (response) => {
   return body;
 };
 
+const normalizeAiResponse = (data) => {
+  const message = data?.message ?? data?.reply ?? data?.content ?? "";
+  const productReferences = data?.productReferences ?? data?.products ?? [];
+
+  return {
+    ...data,
+    message,
+    productReferences: Array.isArray(productReferences) ? productReferences : [],
+  };
+};
+
 const getApiErrorMessage = (error, fallback) => {
   if (error?.code === "ERR_CANCELED" || error?.name === "CanceledError") {
     return "Request canceled";
@@ -34,11 +45,13 @@ export const aiService = {
       });
       const data = unwrapApiData(response);
 
-      if (!data?.message) {
+      const normalizedData = normalizeAiResponse(data);
+
+      if (!normalizedData.message) {
         throw new Error("AI response không chứa message.");
       }
 
-      return data;
+      return normalizedData;
     } catch (error) {
       throw new Error(getApiErrorMessage(error, "Không gửi được tin nhắn AI."));
     }

@@ -310,6 +310,7 @@ const ChatBox = () => {
         createdAt: responseCreatedAt,
         time: formatAiTime(responseCreatedAt),
         model: response.model,
+        productReferences: response.productReferences ?? [],
         status: "sent",
       };
 
