@@ -15,6 +15,7 @@ const ChatMessage = ({ message, isOwnMessage, onRetry }) => {
   const text = message?.text ?? message?.content ?? "";
   const isSending = message?.status === "sending";
   const isFailed = message?.status === "failed";
+  const isAssistantAiMessage = !isOwnMessage && message?.role === "assistant";
 
   return (
     <div
@@ -34,7 +35,14 @@ const ChatMessage = ({ message, isOwnMessage, onRetry }) => {
             <span />
           </div>
         ) : (
-          <p>{text}</p>
+          isAssistantAiMessage ? (
+            <AiMessageContent
+              content={text}
+              productReferences={message?.productReferences ?? []}
+            />
+          ) : (
+            <p>{text}</p>
+          )
         )}
 
         <div className="message__meta">
@@ -51,3 +59,4 @@ const ChatMessage = ({ message, isOwnMessage, onRetry }) => {
 };
 
 export default ChatMessage;
+import AiMessageContent from "./AiMessageContent";

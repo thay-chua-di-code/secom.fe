@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { X, Check } from "lucide-react";
 import "./style.scss";
 
@@ -14,7 +14,7 @@ const initialForm = {
   minOrderAmount: "",
   expiresAtUtc: "",
   usageLimit: "",
-  status: "active", // Thêm trường status theo UI
+  isActive: true,
 };
 
 const AddVoucher = ({ open, onClose }) => {
@@ -24,10 +24,10 @@ const AddVoucher = ({ open, onClose }) => {
   if (!open) return null;
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
 
@@ -41,8 +41,14 @@ const AddVoucher = ({ open, onClose }) => {
         minOrderAmount: Number(formData.minOrderAmount),
         usageLimit: Number(formData.usageLimit),
         expiresAtUtc: new Date(formData.expiresAtUtc).toISOString(),
-        status: formData.status,
+        isActive: formData.isActive ?? true,
       };
+
+      if (typeof payload.isActive !== "boolean") {
+        throw new Error("Voucher status must be active or inactive.");
+      }
+
+      console.debug("[CreateVoucher] payload", payload);
 
       await dispatch(createAdminVoucher(payload)).unwrap();
       toast.success("Add voucher successfully");
@@ -184,17 +190,22 @@ const AddVoucher = ({ open, onClose }) => {
             {/* ROW 4: STATUS & BUTTONS (Xếp hàng theo đúng UI) */}
             {/* STATUS */}
             <div className="form-group status-group">
-              <label htmlFor="status">STATUS</label>
+              <label htmlFor="isActive">STATUS</label>
 
               <div className="input-wrapper">
                 <select
-                  id="status"
-                  name="status"
-                  value={formData.status}
-                  onChange={handleChange}
+                  id="isActive"
+                  name="isActive"
+                  value={String(formData.isActive)}
+                  onChange={(event) => {
+                    setFormData((prev) => ({
+                      ...prev,
+                      isActive: event.target.value === "true",
+                    }));
+                  }}
                 >
-                  <option value="active">Active</option>
-                  <option value="inactive">Inactive</option>
+                  <option value="true">Active</option>
+                  <option value="false">Inactive</option>
                 </select>
               </div>
             </div>
