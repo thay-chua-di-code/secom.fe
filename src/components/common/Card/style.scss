@@ -168,3 +168,11 @@
   margin-top: 8px;
   background: #111827;
 }
+
+.compare-btn {
+  background: linear-gradient(135deg, #ff758f, #ef476f);
+}
+
+.compare-btn.active {
+  background: #16a34a;
+}

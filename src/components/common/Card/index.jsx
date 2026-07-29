@@ -11,6 +11,8 @@ import {
 import "./style.scss";
 import { formatCurrencyVN } from "../../../utils/fncUtils";
 import { addCompareProductId } from "../../../utils/compareProducts";
+import useCompare from "../../../hooks/useCompare";
+
 const getApiErrorMessage = (error) =>
   error?.response?.data?.message ||
   error?.response?.data?.error ||
@@ -19,6 +21,7 @@ const getApiErrorMessage = (error) =>
 
 export default function Card({ item }) {
   const { pathname } = useLocation();
+  const { toggle, isCompared } = useCompare();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
@@ -29,6 +32,8 @@ export default function Card({ item }) {
   });
   const [wishlistLoading, setWishlistLoading] = useState(false);
   const productId = item.id || item.productId;
+  const compared = isCompared(productId);
+
   const productName = item.name || item.title || item.productName;
   const productImages =
     item.images || [item.imageUrl || item.primaryImageUrl].filter(Boolean);
@@ -105,15 +110,16 @@ export default function Card({ item }) {
     }
   };
 
-  const handleAddCompare = (event) => {
+  const handleToggleCompare = (event) => {
     event.preventDefault();
     event.stopPropagation();
 
     try {
-      addCompareProductId(String(productId));
-      toast.success("Added to compare");
-    } catch (compareError) {
-      toast.error(compareError.message || "Cannot add to compare");
+      toggle(productId);
+
+      toast.success(compared ? "Removed from compare" : "Added to compare");
+    } catch (error) {
+      toast.error(error.message);
     }
   };
   return (
@@ -144,8 +150,11 @@ export default function Card({ item }) {
         <button className="quick-buy-btn" onClick={handleBuyNow}>
           Buy Now
         </button>
-        <button className="quick-buy-btn compare-btn" onClick={handleAddCompare}>
-          Compare
+        <button
+          className={`quick-buy-btn compare-btn ${compared ? "active" : ""}`}
+          onClick={handleToggleCompare}
+        >
+          {compared ? "✓ Compared" : "Compare"}
         </button>
       </div>
 

@@ -36,9 +36,8 @@
     transition: all 0.25s ease;
 
     &:focus-within {
-      border-color: #0284c7;
-
-      box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.1);
+      border-color: #dbe2ea;
+      box-shadow: none;
     }
 
     &.error {

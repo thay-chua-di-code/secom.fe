@@ -120,4 +120,12 @@ export const userService = {
   unfollowShop: async (sellerId) => {
     return sellerFollowApi.unfollowSeller(sellerId);
   },
+
+  confirmReceived: async(orderId) => {
+    try {
+      const result = await axiosClient.put(`/buyer/orders/${orderId}/shipping/confirm-received'`)
+    } catch (e) {
+      throw new Error(e?.response?.data)
+    }
+  }
 };

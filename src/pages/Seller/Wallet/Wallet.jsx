@@ -1,7 +1,13 @@
 import { useCallback, useEffect, useState } from "react";
-import { RefreshCw, Wallet as WalletIcon } from "lucide-react";
+import {
+  FileChartColumnIncreasingIcon,
+  RefreshCw,
+  Wallet as WalletIcon,
+} from "lucide-react";
 import { sellerService } from "../../../service/sellerService";
 import { formatCurrencyVN } from "../../../utils/fncUtils";
+import FormWithDraw from "./FormWithDraw";
+
 import "./style.scss";
 
 const getApiErrorMessage = (error) =>
@@ -19,6 +25,7 @@ const normalizeTransactions = (payload) => ({
 
 export default function SellerWallet() {
   const [wallet, setWallet] = useState(null);
+  const [openWithDraw, setOpenWithDraw] = useState(false);
   const [transactions, setTransactions] = useState([]);
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState({
@@ -29,26 +36,44 @@ export default function SellerWallet() {
   const [error, setError] = useState("");
 
   const loadWallet = useCallback(async () => {
+    setLoading(true);
+    setError("");
+
+    // Wallet
     try {
-      setLoading(true);
-      const [walletResponse, transactionResponse] = await Promise.all([
-        sellerService.getWalletSeller(),
-        sellerService.getWalletTransactionsSeller({ page, pageSize: 20 }),
-      ]);
+      const walletResponse = await sellerService.getWalletSeller();
+      setWallet(walletResponse);
+    } catch (err) {
+      console.error("Wallet:", err);
+      setError(getApiErrorMessage(err));
+    }
+
+    // Transactions
+    try {
+      const transactionResponse =
+        await sellerService.getWalletTransactionsSeller({
+          page,
+          pageSize: 20,
+        });
+
       const transactionPayload = normalizeTransactions(transactionResponse);
 
-      setWallet(walletResponse);
       setTransactions(transactionPayload.items);
       setPagination({
         totalCount: transactionPayload.totalCount,
         totalPages: transactionPayload.totalPages,
       });
-      setError("");
-    } catch (loadError) {
-      setError(getApiErrorMessage(loadError));
-    } finally {
-      setLoading(false);
+    } catch (err) {
+      console.error("Transactions:", err);
+
+      setTransactions([]);
+      setPagination({
+        totalCount: 0,
+        totalPages: 1,
+      });
     }
+
+    setLoading(false);
   }, [page]);
 
   useEffect(() => {
@@ -64,9 +89,26 @@ export default function SellerWallet() {
           <h1>Wallet</h1>
           <p>Balances and transaction history from backend.</p>
         </div>
-        <button type="button" disabled={loading} onClick={loadWallet}>
-          <RefreshCw size={16} /> Refresh
-        </button>
+        <div className="seller-wallet-page__actions">
+          <button
+            type="button"
+            className="withdraw-btn"
+            onClick={() => setOpenWithDraw(true)}
+          >
+            <WalletIcon size={18} />
+            Withdraw
+          </button>
+
+          <button
+            className="refresh-btn"
+            type="button"
+            disabled={loading}
+            onClick={loadWallet}
+          >
+            <RefreshCw size={16} />
+            Refresh
+          </button>
+        </div>
       </div>
 
       {error && <div className="seller-wallet-page__error">{error}</div>}
@@ -168,6 +210,32 @@ export default function SellerWallet() {
             Next
           </button>
         </div>
+
+        {openWithDraw && (
+          <div
+            className="withdraw-modal"
+            onClick={() => setOpenWithDraw(false)}
+          >
+            <div
+              className="withdraw-modal__content"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                className="withdraw-modal__close"
+                onClick={() => setOpenWithDraw(false)}
+              >
+                ✕
+              </button>
+
+              <FormWithDraw
+                onSuccess={() => {
+                  setOpenWithDraw(false);
+                  loadWallet();
+                }}
+              />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

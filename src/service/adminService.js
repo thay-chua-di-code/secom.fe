@@ -8,7 +8,6 @@ import {
 
 export const adminService = {
   getDashBoard: async () => {
-    console.log("Call me");
     try {
       const result = await axiosClient.get("/admin/dashboard");
       console.log(result);

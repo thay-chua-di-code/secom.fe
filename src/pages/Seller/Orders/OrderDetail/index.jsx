@@ -22,9 +22,9 @@ const sellerOrderTransitions = {
   pending: ["Confirmed"],
   paid: ["Confirmed", "Processing"],
   confirmed: ["Processing"],
-  processing: ["Packed", "Shipped"],
-  packed: ["Shipped"],
-  shipped: ["Delivered"],
+  processing: ["Packed", "Shipping"],
+  packed: ["Shipping"],
+  Shipping: ["Delivered"],
 };
 
 const OrderDetail = ({ open, onClose, order }) => {

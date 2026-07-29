@@ -20,10 +20,8 @@ $border: #e5e7eb;
   &__sidebar {
     width: 280px;
     flex-shrink: 0;
-    height: 100dvh;
-
+    height: 200vh;
     overflow-y: auto;
-
     background: $primary;
     color: white;
   }

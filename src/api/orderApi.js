@@ -31,7 +31,7 @@ export const orderApi = {
     }),
 
   confirmReceived: (orderId) =>
-    axiosClient.patch(API_ENDPOINTS.ORDER.CONFIRM_RECEIVED(orderId)),
+    axiosClient.put(API_ENDPOINTS.ORDER.CONFIRM_RECEIVED(orderId)),
 
   createReturnRequest: (orderId, payload) =>
     axiosClient.post(API_ENDPOINTS.ORDER.RETURN_REQUESTS(orderId), payload, {

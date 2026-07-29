@@ -184,7 +184,18 @@ export const sellerService = {
   // [WALLET]
   getWalletSeller: async () => {
     const response = await axiosClient.get("/seller/wallet");
+    console.log("re:", response);
     return response.data.data ?? response.data;
+  },
+
+  createWithDraw: async (payload) => {
+    try {
+      const result = await axiosClient.post("/seller/withdrawals", payload);
+
+      return result.data;
+    } catch (e) {
+      throw new Error(e?.response?.data?.message || "Withdraw is failure!");
+    }
   },
 
   getWalletTransactionsSeller: async (params = {}) => {
@@ -228,9 +239,12 @@ export const sellerService = {
 
       return res.data?.data ?? res.data;
     } catch (e) {
-      throw new Error(e?.response?.data?.message || "Update seller voucher failed", {
-        cause: e,
-      });
+      throw new Error(
+        e?.response?.data?.message || "Update seller voucher failed",
+        {
+          cause: e,
+        },
+      );
     }
   },
 
@@ -240,9 +254,12 @@ export const sellerService = {
 
       return res.data?.data ?? res.data;
     } catch (e) {
-      throw new Error(e?.response?.data?.message || "Delete seller voucher failed", {
-        cause: e,
-      });
+      throw new Error(
+        e?.response?.data?.message || "Delete seller voucher failed",
+        {
+          cause: e,
+        },
+      );
     }
   },
 

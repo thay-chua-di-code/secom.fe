@@ -6,6 +6,7 @@ import { paymentApi } from "../../../api/paymentApi";
 import { formatCurrencyVN } from "../../../utils/fncUtils";
 import { uploadImageToCloudinary } from "../../../services/cloudinaryService";
 import "./style.scss";
+import { userService } from "../../../service/userService";
 
 const orderStatuses = [
   "all",
@@ -43,13 +44,14 @@ const getApiErrorMessage = (error) =>
   error?.response?.data?.message ||
   error?.response?.data?.error ||
   error?.message ||
-  "Đã xảy ra lỗi. Vui lòng thử lại.";
+  "Something went wront. try it later!";
 
 const unwrapList = (response) => {
   const data = unwrapApiData(response);
   const payload = data?.data ?? data;
 
-  if (Array.isArray(payload)) return { items: payload, totalCount: payload.length };
+  if (Array.isArray(payload))
+    return { items: payload, totalCount: payload.length };
   if (Array.isArray(payload?.items)) return payload;
   if (Array.isArray(payload?.data)) return { ...payload, items: payload.data };
 
@@ -63,7 +65,12 @@ const unwrapOrder = (response) => {
 
 const unwrapPayment = (response) => {
   const data = unwrapApiData(response);
-  return data?.data?.paymentTransaction || data?.data || data?.paymentTransaction || data;
+  return (
+    data?.data?.paymentTransaction ||
+    data?.data ||
+    data?.paymentTransaction ||
+    data
+  );
 };
 
 const normalizeStatus = (status) => String(status || "").toLowerCase();
@@ -86,8 +93,10 @@ const canRequestReturn = (order) => {
 };
 
 const getOrderId = (order) => order?.orderId || order?.id;
-const getFinalTotal = (order) => order?.finalTotal ?? order?.finalTotalAmount ?? 0;
-const getOrderItems = (order) => order?.items || order?.orderItems || order?.products || [];
+const getFinalTotal = (order) =>
+  order?.finalTotal ?? order?.finalTotalAmount ?? 0;
+const getOrderItems = (order) =>
+  order?.items || order?.orderItems || order?.products || [];
 const getOrderItemId = (item) => item?.orderItemId || item?.id;
 
 const loadOmiseScript = () => {
@@ -103,7 +112,9 @@ const loadOmiseScript = () => {
 
     if (existingScript) {
       existingScript.addEventListener("load", () => resolve(window.Omise));
-      existingScript.addEventListener("error", () => reject(new Error("Cannot load Omise.js")));
+      existingScript.addEventListener("error", () =>
+        reject(new Error("Cannot load Omise.js")),
+      );
       return;
     }
 
@@ -142,7 +153,9 @@ const createOmiseToken = async (cardInfo) => {
           return;
         }
 
-        reject(new Error(response?.message || "Không thể tạo token thanh toán."));
+        reject(
+          new Error(response?.message || "Không thể tạo token thanh toán."),
+        );
       },
     );
   });
@@ -150,20 +163,24 @@ const createOmiseToken = async (cardInfo) => {
 
 function StatusBadge({ status }) {
   const normalized = normalizeStatus(status);
-  return <span className={`status-badge status-badge--${normalized}`}>{status || "--"}</span>;
+  return (
+    <span className={`status-badge status-badge--${normalized}`}>
+      {status || "--"}
+    </span>
+  );
 }
 
 function OrderDetailModal({ order, payment, loading, onClose, onRefresh }) {
   if (!order) return null;
-
   const items = getOrderItems(order);
-
   return (
     <div className="order-detail-backdrop">
       <div className="order-detail-panel">
         <div className="order-detail-panel__header">
           <h2>Order Detail</h2>
-          <button type="button" onClick={onClose}>×</button>
+          <button type="button" onClick={onClose}>
+            ×
+          </button>
         </div>
 
         {loading && <p className="order-muted">Loading latest order...</p>}
@@ -171,15 +188,48 @@ function OrderDetailModal({ order, payment, loading, onClose, onRefresh }) {
         <section>
           <h3>Order</h3>
           <div className="detail-grid">
-            <div><span>Order ID</span><strong>{getOrderId(order)}</strong></div>
-            <div><span>Status</span><StatusBadge status={order.status} /></div>
-            <div><span>Created At</span><strong>{order.createdAtUtc || order.createdAt ? new Date(order.createdAtUtc || order.createdAt).toLocaleString() : "--"}</strong></div>
-            <div><span>Subtotal</span><strong>{formatCurrencyVN(order.subtotal || 0)}</strong></div>
-            <div><span>Shipping Fee</span><strong>{formatCurrencyVN(order.shippingFee || 0)}</strong></div>
-            <div><span>Service Fee</span><strong>{formatCurrencyVN(order.serviceFee || 0)}</strong></div>
-            <div><span>Discount Amount</span><strong>{formatCurrencyVN(order.discountAmount || 0)}</strong></div>
-            <div><span>Final Total</span><strong>{formatCurrencyVN(getFinalTotal(order))}</strong></div>
-            <div><span>Voucher Code</span><strong>{order.voucherCode || "--"}</strong></div>
+            <div>
+              <span>Order ID</span>
+              <strong>{getOrderId(order)}</strong>
+            </div>
+            <div>
+              <span>Status</span>
+              <StatusBadge status={order.status} />
+            </div>
+            <div>
+              <span>Created At</span>
+              <strong>
+                {order.createdAtUtc || order.createdAt
+                  ? new Date(
+                      order.createdAtUtc || order.createdAt,
+                    ).toLocaleString()
+                  : "--"}
+              </strong>
+            </div>
+            <div>
+              <span>Subtotal</span>
+              <strong>{formatCurrencyVN(order.subtotal || 0)}</strong>
+            </div>
+            <div>
+              <span>Shipping Fee</span>
+              <strong>{formatCurrencyVN(order.shippingFee || 0)}</strong>
+            </div>
+            <div>
+              <span>Service Fee</span>
+              <strong>{formatCurrencyVN(order.serviceFee || 0)}</strong>
+            </div>
+            <div>
+              <span>Discount Amount</span>
+              <strong>{formatCurrencyVN(order.discountAmount || 0)}</strong>
+            </div>
+            <div>
+              <span>Final Total</span>
+              <strong>{formatCurrencyVN(getFinalTotal(order))}</strong>
+            </div>
+            <div>
+              <span>Voucher Code</span>
+              <strong>{order.voucherCode || "--"}</strong>
+            </div>
           </div>
         </section>
 
@@ -193,9 +243,21 @@ function OrderDetailModal({ order, payment, loading, onClose, onRefresh }) {
               const subtotal = item.subtotal || unitPrice * quantity;
 
               return (
-                <div className="order-detail-item" key={item.id || item.orderItemId || item.productId}>
-                  <div><strong>{item.productName || item.name || "Product"}</strong><span>Status: {item.status || "--"}</span></div>
-                  <div><span>Qty: {quantity}</span><span>Unit: {formatCurrencyVN(unitPrice)}</span><strong>{formatCurrencyVN(subtotal)}</strong></div>
+                <div
+                  className="order-detail-item"
+                  key={item.id || item.orderItemId || item.productId}
+                >
+                  <div>
+                    <strong>
+                      {item.productName || item.name || "Product"}
+                    </strong>
+                    <span>Status: {item.status || "--"}</span>
+                  </div>
+                  <div>
+                    <span>Qty: {quantity}</span>
+                    <span>Unit: {formatCurrencyVN(unitPrice)}</span>
+                    <strong>{formatCurrencyVN(subtotal)}</strong>
+                  </div>
                 </div>
               );
             })}
@@ -205,19 +267,36 @@ function OrderDetailModal({ order, payment, loading, onClose, onRefresh }) {
         <section>
           <h3>Payment</h3>
           <div className="detail-grid">
-            <div><span>Payment ID</span><strong>{payment?.id || payment?.paymentId || "--"}</strong></div>
-            <div><span>Gateway</span><strong>{payment?.gateway || "Omise"}</strong></div>
-            <div><span>Gateway Transaction ID</span><strong>{payment?.gatewayTransactionId || payment?.chargeId || "--"}</strong></div>
-            <div><span>Payment Status</span><StatusBadge status={payment?.status || order.paymentStatus} /></div>
-            <div><span>Amount</span><strong>{formatCurrencyVN(payment?.amount || getFinalTotal(order))}</strong></div>
-            <div><span>Currency</span><strong>{payment?.currency || "--"}</strong></div>
+            <div>
+              <span>Payment ID</span>
+              <strong>{payment?.id || payment?.paymentId || "--"}</strong>
+            </div>
+            <div>
+              <span>Gateway</span>
+              <strong>{payment?.gateway || "Omise"}</strong>
+            </div>
+            <div>
+              <span>Gateway Transaction ID</span>
+              <strong>
+                {payment?.gatewayTransactionId || payment?.chargeId || "--"}
+              </strong>
+            </div>
+            <div>
+              <span>Payment Status</span>
+              <StatusBadge status={payment?.status || order.paymentStatus} />
+            </div>
+            <div>
+              <span>Amount</span>
+              <strong>
+                {formatCurrencyVN(payment?.amount || getFinalTotal(order))}
+              </strong>
+            </div>
+            <div>
+              <span>Currency</span>
+              <strong>{payment?.currency || "--"}</strong>
+            </div>
           </div>
         </section>
-
-        <div className="order-detail-panel__footer">
-          <button type="button" onClick={onRefresh}>Refresh</button>
-          <button type="button" onClick={onClose}>Close</button>
-        </div>
       </div>
     </div>
   );
@@ -254,10 +333,17 @@ function OrderActionModal({ type, order, actionLoading, onClose, onConfirm }) {
 
   return (
     <div className="order-detail-backdrop">
-      <form className="order-action-panel" onSubmit={handleSubmit} role="dialog" aria-modal="true">
+      <form
+        className="order-action-panel"
+        onSubmit={handleSubmit}
+        role="dialog"
+        aria-modal="true"
+      >
         <div className="order-detail-panel__header">
           <h2>{title}</h2>
-          <button type="button" onClick={onClose} disabled={actionLoading}>×</button>
+          <button type="button" onClick={onClose} disabled={actionLoading}>
+            ×
+          </button>
         </div>
 
         <p className="order-muted">Order #{getOrderId(order)}</p>
@@ -320,8 +406,14 @@ function OrderActionModal({ type, order, actionLoading, onClose, onConfirm }) {
         )}
 
         <div className="order-detail-panel__footer">
-          <button type="button" onClick={onClose} disabled={actionLoading}>Cancel</button>
-          <button type="submit" className="primary-btn" disabled={actionLoading || (isReturn && !description.trim())}>
+          <button type="button" onClick={onClose} disabled={actionLoading}>
+            Cancel
+          </button>
+          <button
+            type="submit"
+            className="primary-btn"
+            disabled={actionLoading || (isReturn && !description.trim())}
+          >
             {actionLoading ? "Processing..." : "Confirm"}
           </button>
         </div>
@@ -333,7 +425,11 @@ function OrderActionModal({ type, order, actionLoading, onClose, onConfirm }) {
 export default function OrderHistory() {
   const [activeStatus, setActiveStatus] = useState("all");
   const [orders, setOrders] = useState([]);
-  const [pagination, setPagination] = useState({ page: 1, pageSize: 20, totalCount: 0 });
+  const [pagination, setPagination] = useState({
+    page: 1,
+    pageSize: 20,
+    totalCount: 0,
+  });
   const [loading, setLoading] = useState(false);
   const [actionLoading, setActionLoading] = useState("");
   const [error, setError] = useState("");
@@ -350,28 +446,31 @@ export default function OrderHistory() {
     }));
   };
 
-  const loadOrders = useCallback(async ({ page = 1, status = activeStatus } = {}) => {
-    try {
-      setLoading(true);
-      const response = await orderApi.getPurchasedOrdersPaged({
-        status: status === "all" ? undefined : status,
-        page,
-        pageSize: pagination.pageSize,
-      });
-      const payload = unwrapList(response);
-      setOrders(payload.items || []);
-      setPagination((prev) => ({
-        ...prev,
-        page,
-        totalCount: payload.totalCount || payload.items?.length || 0,
-      }));
-      setError("");
-    } catch (loadError) {
-      setError(getApiErrorMessage(loadError));
-    } finally {
-      setLoading(false);
-    }
-  }, [activeStatus, pagination.pageSize]);
+  const loadOrders = useCallback(
+    async ({ page = 1, status = activeStatus } = {}) => {
+      try {
+        setLoading(true);
+        const response = await orderApi.getPurchasedOrdersPaged({
+          status: status === "all" ? undefined : status,
+          page,
+          pageSize: pagination.pageSize,
+        });
+        const payload = unwrapList(response);
+        setOrders(payload.items || []);
+        setPagination((prev) => ({
+          ...prev,
+          page,
+          totalCount: payload.totalCount || payload.items?.length || 0,
+        }));
+        setError("");
+      } catch (loadError) {
+        setError(getApiErrorMessage(loadError));
+      } finally {
+        setLoading(false);
+      }
+    },
+    [activeStatus, pagination.pageSize],
+  );
 
   useEffect(() => {
     const timeoutId = window.setTimeout(() => loadOrders({ page: 1 }), 0);
@@ -427,7 +526,8 @@ export default function OrderHistory() {
         tokenId: token.id,
       };
 
-      const response = await paymentApi.createPaymentTransaction(paymentRequest);
+      const response =
+        await paymentApi.createPaymentTransaction(paymentRequest);
       const data = unwrapApiData(response);
       const payment = data?.data ?? data;
       const paymentUrl = payment?.paymentUrl;
@@ -480,13 +580,13 @@ export default function OrderHistory() {
 
     try {
       setActionLoading(orderId);
-      await orderApi.confirmReceived(orderId);
+      const result = await orderApi.confirmReceived(orderId);
       toast.success("Order receipt confirmed");
       setOrderAction(null);
       await refreshAfterOrderAction(orderId);
     } catch (confirmError) {
       setError(getApiErrorMessage(confirmError));
-      toast.error(getApiErrorMessage(confirmError));
+      toast.error("Shipping not yet!");
     } finally {
       setActionLoading("");
     }
@@ -565,7 +665,11 @@ export default function OrderHistory() {
           <input type="text" placeholder="Tìm theo ID đơn hàng..." />
         </div>
 
-        <button className="filter-btn" type="button" onClick={() => loadOrders({ page: pagination.page })}>
+        <button
+          className="filter-btn"
+          type="button"
+          onClick={() => loadOrders({ page: pagination.page })}
+        >
           <Clock3 size={18} />
           <span>Refresh</span>
         </button>
@@ -592,7 +696,9 @@ export default function OrderHistory() {
             <input
               type="text"
               value={cardInfo.cardName}
-              onChange={(event) => handleCardInfoChange("cardName", event.target.value)}
+              onChange={(event) =>
+                handleCardInfoChange("cardName", event.target.value)
+              }
             />
           </label>
           <label>
@@ -600,7 +706,9 @@ export default function OrderHistory() {
             <input
               type="text"
               value={cardInfo.cardNumber}
-              onChange={(event) => handleCardInfoChange("cardNumber", event.target.value)}
+              onChange={(event) =>
+                handleCardInfoChange("cardNumber", event.target.value)
+              }
             />
           </label>
           <label>
@@ -608,7 +716,9 @@ export default function OrderHistory() {
             <input
               type="text"
               value={cardInfo.expirationMonth}
-              onChange={(event) => handleCardInfoChange("expirationMonth", event.target.value)}
+              onChange={(event) =>
+                handleCardInfoChange("expirationMonth", event.target.value)
+              }
             />
           </label>
           <label>
@@ -616,7 +726,9 @@ export default function OrderHistory() {
             <input
               type="text"
               value={cardInfo.expirationYear}
-              onChange={(event) => handleCardInfoChange("expirationYear", event.target.value)}
+              onChange={(event) =>
+                handleCardInfoChange("expirationYear", event.target.value)
+              }
             />
           </label>
           <label>
@@ -624,17 +736,20 @@ export default function OrderHistory() {
             <input
               type="password"
               value={cardInfo.securityCode}
-              onChange={(event) => handleCardInfoChange("securityCode", event.target.value)}
+              onChange={(event) =>
+                handleCardInfoChange("securityCode", event.target.value)
+              }
             />
           </label>
         </div>
       </div>
 
-      {error && <div className="payment-error">{error}</div>}
       {loading && <p className="order-muted">Loading orders...</p>}
 
       <div className="order-list">
-        {!loading && orders.length === 0 && <p className="order-muted">No orders found.</p>}
+        {!loading && orders.length === 0 && (
+          <p className="order-muted">No orders found.</p>
+        )}
 
         {orders.map((order) => {
           const orderId = getOrderId(order);
@@ -657,7 +772,13 @@ export default function OrderHistory() {
               <div className="card-body order-card-summary">
                 <div>
                   <p>Created At</p>
-                  <strong>{order.createdAtUtc || order.createdAt ? new Date(order.createdAtUtc || order.createdAt).toLocaleString() : "--"}</strong>
+                  <strong>
+                    {order.createdAtUtc || order.createdAt
+                      ? new Date(
+                          order.createdAtUtc || order.createdAt,
+                        ).toLocaleString()
+                      : "--"}
+                  </strong>
                 </div>
                 <div>
                   <p>Final Total</p>
@@ -671,30 +792,54 @@ export default function OrderHistory() {
                 </div>
 
                 <div className="actions">
-                  <button className="outline-btn detail-btn" type="button" onClick={() => loadDetail(orderId)}>
+                  <button
+                    className="outline-btn detail-btn"
+                    type="button"
+                    onClick={() => loadDetail(orderId)}
+                  >
                     View Detail
                   </button>
 
                   {canPay(order) && (
-                    <button className="primary-btn" type="button" disabled={isLoading} onClick={() => handlePay(order)}>
+                    <button
+                      className="primary-btn"
+                      type="button"
+                      disabled={isLoading}
+                      onClick={() => handlePay(order)}
+                    >
                       {isLoading ? "Processing..." : "Pay"}
                     </button>
                   )}
 
                   {canCancel(order) && (
-                    <button className="outline-btn danger" type="button" disabled={isLoading} onClick={() => setOrderAction({ type: "cancel", order })}>
+                    <button
+                      className="outline-btn danger"
+                      type="button"
+                      disabled={isLoading}
+                      onClick={() => setOrderAction({ type: "cancel", order })}
+                    >
                       Cancel
                     </button>
                   )}
 
                   {canConfirmReceived(order) && (
-                    <button className="primary-btn" type="button" disabled={isLoading} onClick={() => setOrderAction({ type: "confirm", order })}>
+                    <button
+                      className="primary-btn"
+                      type="button"
+                      disabled={isLoading}
+                      onClick={() => setOrderAction({ type: "confirm", order })}
+                    >
                       Confirm Received
                     </button>
                   )}
 
                   {canRequestReturn(order) && (
-                    <button className="outline-btn" type="button" disabled={isLoading} onClick={() => setOrderAction({ type: "return", order })}>
+                    <button
+                      className="outline-btn"
+                      type="button"
+                      disabled={isLoading}
+                      onClick={() => setOrderAction({ type: "return", order })}
+                    >
                       Return/Refund
                     </button>
                   )}

@@ -7,7 +7,6 @@ import ProductsPage from "../pages/Products";
 import SellerDetail from "../pages/SellerDetail";
 import PaymentReturn from "../pages/PaymentReturn/PaymentReturn";
 import PaymentCancel from "../pages/PaymentCancel/PaymentCancel";
-import CompareProductsPage from "../pages/Compare";
 
 export const publicRoutes = [
   {
@@ -48,10 +47,6 @@ export const publicRoutes = [
       {
         path: ROUTES.PRODUCT.PRODUCTS,
         element: <ProductsPage />,
-      },
-      {
-        path: "/compare",
-        element: <CompareProductsPage />,
       },
       {
         path: "/payment-return",

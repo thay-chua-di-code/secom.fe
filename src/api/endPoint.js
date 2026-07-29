@@ -35,7 +35,7 @@ export const API_ENDPOINTS = {
     CREATE: "/orders",
     DELETE: (id) => `/orders/${id}`,
     CANCEL: (id) => `/orders/${id}/cancel`,
-    CONFIRM_RECEIVED: (id) => `/orders/${id}/confirm-received`,
+    CONFIRM_RECEIVED: (id) => `/buyer/orders/${id}/shipping/confirm-received`,
     RETURN_REQUESTS: (id) => `/orders/${id}/return-requests`,
   },
 

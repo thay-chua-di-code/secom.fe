@@ -190,3 +190,37 @@
     }
   }
 }
+
+.compare-floating-btn {
+  position: fixed;
+
+  right: 257px;
+
+  top: 200px;
+
+  border: none;
+
+  cursor: pointer;
+
+  padding: 14px 26px;
+
+  border-radius: 999px;
+
+  color: white;
+
+  font-size: 16px;
+
+  font-weight: 700;
+
+  background: linear-gradient(135deg, #e94848, #f31c1c);
+
+  box-shadow: 0 15px 35px rgba(239, 71, 111, 0.35);
+
+  transition: 0.25s;
+
+  z-index: 1000;
+
+  &:hover {
+    transform: translateY(-5px);
+  }
+}

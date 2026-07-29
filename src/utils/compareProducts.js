@@ -1,47 +1,58 @@
 const COMPARE_STORAGE_KEY = "secom_compare_products";
+
 const MAX_COMPARE_PRODUCTS = 4;
 
 export const getCompareProductIds = () => {
   try {
     const rawValue = window.localStorage.getItem(COMPARE_STORAGE_KEY);
-    const parsedValue = JSON.parse(rawValue || "[]");
-    return Array.isArray(parsedValue) ? parsedValue.filter(Boolean) : [];
+
+    const parsed = JSON.parse(rawValue || "[]");
+
+    return Array.isArray(parsed) ? parsed : [];
   } catch {
     return [];
   }
 };
 
-export const saveCompareProductIds = (productIds) => {
-  const normalizedIds = Array.from(new Set(productIds.filter(Boolean))).slice(
+export const saveCompareProductIds = (ids) => {
+  const normalized = Array.from(new Set(ids.map(String).filter(Boolean))).slice(
     0,
     MAX_COMPARE_PRODUCTS,
   );
-  window.localStorage.setItem(
-    COMPARE_STORAGE_KEY,
-    JSON.stringify(normalizedIds),
-  );
+
+  localStorage.setItem(COMPARE_STORAGE_KEY, JSON.stringify(normalized));
+
   window.dispatchEvent(new Event("compare-products-change"));
-  return normalizedIds;
+
+  return normalized;
 };
 
-export const addCompareProductId = (productId) => {
-  const currentIds = getCompareProductIds();
+export const addCompareProductId = (id) => {
+  const current = getCompareProductIds();
 
-  if (currentIds.includes(productId)) {
-    return currentIds;
+  if (current.includes(String(id))) {
+    return current;
   }
 
-  if (currentIds.length >= MAX_COMPARE_PRODUCTS) {
-    throw new Error(`You can compare up to ${MAX_COMPARE_PRODUCTS} products`);
+  if (current.length >= MAX_COMPARE_PRODUCTS) {
+    throw new Error("You can compare maximum 4 products");
   }
 
-  return saveCompareProductIds([...currentIds, productId]);
+  return saveCompareProductIds([...current, String(id)]);
 };
 
-export const removeCompareProductId = (productId) => {
+export const removeCompareProductId = (id) => {
   return saveCompareProductIds(
-    getCompareProductIds().filter((item) => String(item) !== String(productId)),
+    getCompareProductIds().filter((item) => String(item) !== String(id)),
   );
+};
+
+export const clearCompareProducts = () => {
+  saveCompareProductIds([]);
+};
+
+export const isCompareProduct = (id) => {
+  return getCompareProductIds().includes(String(id));
 };
 
 export { MAX_COMPARE_PRODUCTS };

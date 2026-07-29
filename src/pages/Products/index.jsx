@@ -5,6 +5,8 @@ import Filter from "./Filter";
 import Card from "../../components/common/Card/index";
 import { fetchProductsByCategory } from "../../redux/slice/productSlice";
 import { Search } from "lucide-react";
+import useCompare from "../../hooks/useCompare";
+import CompareModal from "../../components/common/CompareModal";
 import "./style.scss";
 
 export default function ProductsPage() {
@@ -22,7 +24,8 @@ export default function ProductsPage() {
   const [keyword, setKeyword] = useState("");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
-
+  const [openCompare, setOpenCompare] = useState(false);
+  const { compareIds, remove, clear } = useCompare();
   const categoryFilter = searchParams.get("category");
   const effectiveCategoryFilter = categoryId || categoryFilter;
 
@@ -59,6 +62,10 @@ export default function ProductsPage() {
       return matchesKeyword && matchesMin && matchesMax;
     });
   }, [sourceProducts, keyword, minPrice, maxPrice]);
+
+  const compareProducts = filteredProducts.filter((product) =>
+    compareIds.includes(String(product.id || product.productId)),
+  );
   return (
     <div className="products-page">
       <div className="container">
@@ -106,6 +113,22 @@ export default function ProductsPage() {
             )}
           </main>
         </div>
+        {compareIds.length > 0 && (
+          <button
+            className="compare-floating-btn"
+            onClick={() => setOpenCompare(true)}
+          >
+            Compare ({compareIds.length})
+          </button>
+        )}
+
+        <CompareModal
+          open={openCompare}
+          products={compareProducts}
+          onClose={() => setOpenCompare(false)}
+          onRemove={remove}
+          onClear={clear}
+        />
       </div>
     </div>
   );
