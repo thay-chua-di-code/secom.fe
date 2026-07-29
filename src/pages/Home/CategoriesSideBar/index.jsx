@@ -10,6 +10,7 @@ export default function CategorySideBar() {
   const dispatch = useDispatch();
   const [activeCategory, setActiveCategory] = useState(null);
   const [products, setProducts] = useState([]);
+  console.log(products)
   const resultRef = useRef(null);
   const [loading, setLoading] = useState(false);
 

@@ -21,6 +21,7 @@ const getApiErrorMessage = (error) =>
 
 export default function Card({ item }) {
   const { pathname } = useLocation();
+  const isProducts = pathname === "/products" ? true : false;
   const { toggle, isCompared } = useCompare();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -36,7 +37,10 @@ export default function Card({ item }) {
 
   const productName = item.name || item.title || item.productName;
   const productImages =
-    item.images || [item.imageUrl || item.primaryImageUrl].filter(Boolean);
+    item.images ||
+    [item.imageUrl || item.primaryImageUrl || item.thumbnailUrl].filter(
+      Boolean,
+    );
   const isWishlisted = useMemo(
     () =>
       pathname === "/wish-list" ||
@@ -150,12 +154,15 @@ export default function Card({ item }) {
         <button className="quick-buy-btn" onClick={handleBuyNow}>
           Buy Now
         </button>
-        <button
-          className={`quick-buy-btn compare-btn ${compared ? "active" : ""}`}
-          onClick={handleToggleCompare}
-        >
-          {compared ? "✓ Compared" : "Compare"}
-        </button>
+
+        {isProducts && (
+          <button
+            className={`quick-buy-btn compare-btn ${compared ? "active" : ""}`}
+            onClick={handleToggleCompare}
+          >
+            {compared ? "✓ Compared" : "Compare"}
+          </button>
+        )}
       </div>
 
       <div className="info-container">
