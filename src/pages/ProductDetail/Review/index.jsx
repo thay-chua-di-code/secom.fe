@@ -25,10 +25,14 @@ function ProductReview({ productId }) {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [editingReview, setEditingReview] = useState(null);
+  const [editForm, setEditForm] = useState({ rating: 5, comment: "" });
+  const [deleteTarget, setDeleteTarget] = useState(null);
   const [error, setError] = useState("");
   const dispatch = useDispatch();
   const reviews = useSelector((state) => state.products.reviews);
   const reviewsData = useSelector((state) => state.products.reviewsData);
+  const userInfo = useSelector((state) => state.user.userInfo);
 
   const handleChange = (e) => {
     setReviewData((prev) => ({
@@ -85,6 +89,56 @@ function ProductReview({ productId }) {
   useEffect(() => {
     handleGetReviews();
   }, [handleGetReviews]);
+
+  const isOwnerReview = (item) => {
+    const currentUserId = userInfo?.userId || userInfo?.id;
+    return currentUserId && String(item.buyerId) === String(currentUserId);
+  };
+
+  const handleOpenEdit = (item) => {
+    setEditingReview(item);
+    setEditForm({
+      rating: Number(item.rating || 5),
+      comment: item.content || item.comment || "",
+    });
+  };
+
+  const handleUpdateReview = async (event) => {
+    event.preventDefault();
+
+    if (!editingReview?.id || !editForm.comment.trim()) return;
+
+    try {
+      setIsSubmitting(true);
+      await reviewService.updateReview(editingReview.id, {
+        rating: Number(editForm.rating),
+        comment: editForm.comment.trim(),
+      });
+      toast.success("Review updated successfully");
+      setEditingReview(null);
+      await handleGetReviews();
+    } catch (updateError) {
+      toast.error(updateError.message || "Cannot update review");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDeleteReview = async () => {
+    if (!deleteTarget?.id) return;
+
+    try {
+      setIsSubmitting(true);
+      await reviewService.deleteReview(deleteTarget.id);
+      toast.success("Review deleted successfully");
+      setDeleteTarget(null);
+      await handleGetReviews();
+    } catch (deleteError) {
+      toast.error(deleteError.message || "Cannot delete review");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const reviewItems = Array.isArray(reviews) ? reviews : [];
   const averageRating = Number(reviewsData?.averageRating ?? 0).toFixed(1);
@@ -186,9 +240,71 @@ function ProductReview({ productId }) {
               </div>
 
               <p className="comment">{item.content || "No review content."}</p>
+
+              {isOwnerReview(item) && (
+                <div className="review-item__actions">
+                  <button type="button" onClick={() => handleOpenEdit(item)}>
+                    Edit
+                  </button>
+                  <button type="button" onClick={() => setDeleteTarget(item)}>
+                    Delete
+                  </button>
+                </div>
+              )}
             </div>
           ))}
       </div>
+
+      {editingReview && (
+        <div className="review-modal-backdrop" role="presentation">
+          <form className="review-modal" onSubmit={handleUpdateReview} role="dialog" aria-modal="true">
+            <h3>Edit review</h3>
+            <div className="rating-select">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <span
+                  key={star}
+                  onClick={() => setEditForm((prev) => ({ ...prev, rating: star }))}
+                  className={star <= editForm.rating ? "active" : ""}
+                >
+                  ★
+                </span>
+              ))}
+            </div>
+            <textarea
+              value={editForm.comment}
+              required
+              onChange={(event) =>
+                setEditForm((prev) => ({ ...prev, comment: event.target.value }))
+              }
+            />
+            <div className="review-modal__actions">
+              <button type="button" disabled={isSubmitting} onClick={() => setEditingReview(null)}>
+                Cancel
+              </button>
+              <button type="submit" disabled={isSubmitting || !editForm.comment.trim()}>
+                Save
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {deleteTarget && (
+        <div className="review-modal-backdrop" role="presentation">
+          <div className="review-modal" role="dialog" aria-modal="true">
+            <h3>Delete review?</h3>
+            <p>This action cannot be undone.</p>
+            <div className="review-modal__actions">
+              <button type="button" disabled={isSubmitting} onClick={() => setDeleteTarget(null)}>
+                Cancel
+              </button>
+              <button type="button" disabled={isSubmitting} onClick={handleDeleteReview}>
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

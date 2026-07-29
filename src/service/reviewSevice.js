@@ -68,4 +68,32 @@ export const reviewService = {
       });
     }
   },
+
+  async updateReview(reviewId, data) {
+    try {
+      const res = await axiosClient.put(`/reviews/${reviewId}`, data, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      return res.data?.data ?? res.data;
+    } catch (e) {
+      throw new Error(e?.response?.data?.message || "Update review failed", {
+        cause: e,
+      });
+    }
+  },
+
+  async deleteReview(reviewId) {
+    try {
+      const res = await axiosClient.delete(`/reviews/${reviewId}`);
+
+      return res.data?.data ?? res.data;
+    } catch (e) {
+      throw new Error(e?.response?.data?.message || "Delete review failed", {
+        cause: e,
+      });
+    }
+  },
 };

@@ -511,3 +511,77 @@ $soft-bg: #fffafa;
     }
   }
 }
+
+.review-item__actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+
+  button {
+    min-height: 34px;
+    padding: 0 12px;
+    border: 1px solid #fecdd3;
+    border-radius: 8px;
+    background: #fff1f2;
+    color: #dc2626;
+    font-weight: 700;
+    cursor: pointer;
+  }
+}
+
+.review-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(15, 23, 42, 0.55);
+}
+
+.review-modal {
+  display: grid;
+  gap: 14px;
+  width: min(100%, 460px);
+  padding: 22px;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.22);
+
+  h3,
+  p {
+    margin: 0;
+  }
+
+  textarea {
+    min-height: 120px;
+    padding: 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    font: inherit;
+    resize: vertical;
+  }
+}
+
+.review-modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+
+  button {
+    min-height: 38px;
+    padding: 0 14px;
+    border: 1px solid #e5e7eb;
+    border-radius: 9px;
+    background: #ffffff;
+    font-weight: 800;
+    cursor: pointer;
+
+    &:last-child {
+      border-color: #dc2626;
+      background: #dc2626;
+      color: #ffffff;
+    }
+  }
+}

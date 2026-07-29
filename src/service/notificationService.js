@@ -16,7 +16,9 @@ export const notificationService = {
 
       return result.data;
     } catch (e) {
-      throw new Error(e?.response?.data);
+      throw new Error(e?.response?.data?.message || "Mark notification failed", {
+        cause: e,
+      });
     }
   },
 
@@ -25,7 +27,9 @@ export const notificationService = {
       const result = await axiosClient.delete(`/notifications/${id}`);
       return result.data;
     } catch (e) {
-      throw new Error(e?.response?.data);
+      throw new Error(e?.response?.data?.message || "Delete notification failed", {
+        cause: e,
+      });
     }
   },
 };

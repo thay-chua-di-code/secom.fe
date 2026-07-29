@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
 import {
   Search,
   Users,
@@ -11,8 +10,13 @@ import {
   Check,
   X,
 } from "lucide-react";
+import toast from "react-hot-toast";
 
-import { fetchAdminUsers } from "../../../redux/slice/admin/users/userThunk";
+import {
+  banUser,
+  fetchAdminUsers,
+  unBanUser,
+} from "../../../redux/slice/admin/users/userThunk";
 import { fetchAdminSellers } from "../../../redux/slice/admin/seller/thunk";
 
 import SellerDetailModal from "../Seller/Detail";
@@ -28,6 +32,7 @@ export default function UsersPage() {
 
   const [openDetail, setOpenDetail] = useState(false);
   const [sellerId, setSellerId] = useState(null);
+  const [accountAction, setAccountAction] = useState(null);
 
   const usersState = useSelector((state) => state?.usersAdmin);
 
@@ -45,11 +50,33 @@ export default function UsersPage() {
     sellers = [],
     loading: sellersLoading,
     pageNumber: sellerPageNumber = 1,
-    pageSize: sellerPageSize = 10,
     totalPages: sellerTotalPages = 1,
   } = sellersState;
 
-  const loading = activeTab === "users" ? usersLoading : sellersLoading;
+  const isUserLocked = (user) =>
+    user.isLocked ||
+    user.locked ||
+    user.status === "Locked" ||
+    user.isActive === false;
+
+  const handleAccountStatus = async () => {
+    if (!accountAction?.user?.id) return;
+
+    try {
+      if (accountAction.type === "lock") {
+        await dispatch(banUser(accountAction.user.id)).unwrap();
+        toast.success("User account locked");
+      } else {
+        await dispatch(unBanUser(accountAction.user.id)).unwrap();
+        toast.success("User account unlocked");
+      }
+
+      setAccountAction(null);
+      dispatch(fetchAdminUsers({ pageNumber, pageSize }));
+    } catch (error) {
+      toast.error(error || "Update user account status failed");
+    }
+  };
 
   // ============================================
   // FETCH USERS
@@ -235,12 +262,12 @@ export default function UsersPage() {
                         <td>
                           <span
                             className={`status-badge ${
-                              user.isActive ? "active" : "inactive"
+                              isUserLocked(user) ? "inactive" : "active"
                             }`}
                           >
                             <span />
 
-                            {user.isActive ? "Active" : "Inactive"}
+                            {isUserLocked(user) ? "Locked" : "Active"}
                           </span>
                         </td>
 
@@ -256,6 +283,28 @@ export default function UsersPage() {
                           <div className="user-actions">
                             <button className="action-btn edit">
                               <Eye size={14} />
+                            </button>
+                            <button
+                              type="button"
+                              className={`action-btn ${
+                                isUserLocked(user) ? "approve" : "reject"
+                              }`}
+                              disabled={usersLoading}
+                              onClick={() =>
+                                setAccountAction({
+                                  type: isUserLocked(user) ? "unlock" : "lock",
+                                  user,
+                                })
+                              }
+                              title={
+                                isUserLocked(user) ? "Unlock user" : "Lock user"
+                              }
+                            >
+                              {isUserLocked(user) ? (
+                                <Check size={14} />
+                              ) : (
+                                <X size={14} />
+                              )}
                             </button>
                           </div>
                         </td>
@@ -430,6 +479,38 @@ export default function UsersPage() {
           setSellerId(null);
         }}
       />
+
+      {accountAction && (
+        <div className="users-page__modal-backdrop" role="presentation">
+          <div className="users-page__confirm" role="dialog" aria-modal="true">
+            <h3>
+              {accountAction.type === "lock" ? "Lock user?" : "Unlock user?"}
+            </h3>
+            <p>
+              {accountAction.type === "lock"
+                ? "This user will not be able to access protected features."
+                : "This user will regain access according to their role."}
+            </p>
+            <strong>{accountAction.user.email}</strong>
+            <div className="users-page__modal-actions">
+              <button
+                type="button"
+                disabled={usersLoading}
+                onClick={() => setAccountAction(null)}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={usersLoading}
+                onClick={handleAccountStatus}
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,8 +1,10 @@
 import { Clock3, PackageCheck, Search, Truck } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { orderApi, unwrapApiData } from "../../../api/orderApi";
 import { paymentApi } from "../../../api/paymentApi";
 import { formatCurrencyVN } from "../../../utils/fncUtils";
+import { uploadImageToCloudinary } from "../../../services/cloudinaryService";
 import "./style.scss";
 
 const orderStatuses = [
@@ -73,9 +75,20 @@ const canCancel = (order) => {
   return status === "pending" || status === "paid";
 };
 
+const canConfirmReceived = (order) => {
+  const status = normalizeStatus(order?.status);
+  return status === "delivered" || status === "shipping";
+};
+
+const canRequestReturn = (order) => {
+  const status = normalizeStatus(order?.status);
+  return status === "delivered" || status === "completed";
+};
+
 const getOrderId = (order) => order?.orderId || order?.id;
 const getFinalTotal = (order) => order?.finalTotal ?? order?.finalTotalAmount ?? 0;
 const getOrderItems = (order) => order?.items || order?.orderItems || order?.products || [];
+const getOrderItemId = (item) => item?.orderItemId || item?.id;
 
 const loadOmiseScript = () => {
   return new Promise((resolve, reject) => {
@@ -210,6 +223,113 @@ function OrderDetailModal({ order, payment, loading, onClose, onRefresh }) {
   );
 }
 
+function OrderActionModal({ type, order, actionLoading, onClose, onConfirm }) {
+  const [reason, setReason] = useState("");
+  const [description, setDescription] = useState("");
+  const [evidenceFiles, setEvidenceFiles] = useState([]);
+
+  if (!order) return null;
+
+  const isReturn = type === "return";
+  const isCancel = type === "cancel";
+  const title = isReturn
+    ? "Request return/refund"
+    : isCancel
+      ? "Cancel order"
+      : "Confirm received";
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    if (isReturn && !description.trim()) {
+      return;
+    }
+
+    onConfirm({
+      reason: reason.trim(),
+      description: description.trim(),
+      evidenceFiles,
+    });
+  };
+
+  return (
+    <div className="order-detail-backdrop">
+      <form className="order-action-panel" onSubmit={handleSubmit} role="dialog" aria-modal="true">
+        <div className="order-detail-panel__header">
+          <h2>{title}</h2>
+          <button type="button" onClick={onClose} disabled={actionLoading}>×</button>
+        </div>
+
+        <p className="order-muted">Order #{getOrderId(order)}</p>
+
+        {isCancel && (
+          <label className="order-action-field">
+            Reason
+            <textarea
+              value={reason}
+              maxLength={500}
+              placeholder="Optional cancellation reason"
+              onChange={(event) => setReason(event.target.value)}
+            />
+          </label>
+        )}
+
+        {isReturn && (
+          <>
+            <label className="order-action-field">
+              Reason code
+              <input
+                value={reason}
+                maxLength={100}
+                placeholder="DAMAGED, WRONG_ITEM, OTHER..."
+                onChange={(event) => setReason(event.target.value)}
+              />
+            </label>
+            <label className="order-action-field">
+              Description <span>*</span>
+              <textarea
+                value={description}
+                maxLength={1000}
+                placeholder="Describe the return/refund reason"
+                required
+                onChange={(event) => setDescription(event.target.value)}
+              />
+            </label>
+            <label className="order-action-field">
+              Evidence images
+              <input
+                type="file"
+                accept="image/png,image/jpeg,image/webp"
+                multiple
+                onChange={(event) =>
+                  setEvidenceFiles(Array.from(event.target.files || []))
+                }
+              />
+              {evidenceFiles.length > 0 && (
+                <small>{evidenceFiles.length} image(s) selected</small>
+              )}
+            </label>
+          </>
+        )}
+
+        {!isCancel && !isReturn && (
+          <p className="order-muted">
+            Confirm that you have received this order. This action will be sent
+            to backend and cannot be duplicated after success.
+          </p>
+        )}
+
+        <div className="order-detail-panel__footer">
+          <button type="button" onClick={onClose} disabled={actionLoading}>Cancel</button>
+          <button type="submit" className="primary-btn" disabled={actionLoading || (isReturn && !description.trim())}>
+            {actionLoading ? "Processing..." : "Confirm"}
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+}
+
 export default function OrderHistory() {
   const [activeStatus, setActiveStatus] = useState("all");
   const [orders, setOrders] = useState([]);
@@ -221,6 +341,7 @@ export default function OrderHistory() {
   const [selectedPayment, setSelectedPayment] = useState(null);
   const [detailLoading, setDetailLoading] = useState(false);
   const [cardInfo, setCardInfo] = useState(defaultCardInfo);
+  const [orderAction, setOrderAction] = useState(null);
 
   const handleCardInfoChange = (field, value) => {
     setCardInfo((prev) => ({
@@ -325,20 +446,115 @@ export default function OrderHistory() {
     }
   };
 
-  const handleCancel = async (order) => {
+  const refreshAfterOrderAction = async (orderId) => {
+    await loadOrders({ page: pagination.page });
+
+    if (selectedOrder && getOrderId(selectedOrder) === orderId) {
+      await loadDetail(orderId);
+    }
+  };
+
+  const handleCancel = async (order, values = {}) => {
     if (!canCancel(order)) return;
 
     const orderId = getOrderId(order);
 
     try {
       setActionLoading(orderId);
-      await orderApi.cancelOrder(orderId);
-      await loadOrders({ page: pagination.page });
+      await orderApi.cancelOrder(orderId, { reason: values.reason || null });
+      toast.success("Order cancelled successfully");
+      setOrderAction(null);
+      await refreshAfterOrderAction(orderId);
     } catch (cancelError) {
       setError(getApiErrorMessage(cancelError));
+      toast.error(getApiErrorMessage(cancelError));
     } finally {
       setActionLoading("");
     }
+  };
+
+  const handleConfirmReceived = async (order) => {
+    if (!canConfirmReceived(order)) return;
+
+    const orderId = getOrderId(order);
+
+    try {
+      setActionLoading(orderId);
+      await orderApi.confirmReceived(orderId);
+      toast.success("Order receipt confirmed");
+      setOrderAction(null);
+      await refreshAfterOrderAction(orderId);
+    } catch (confirmError) {
+      setError(getApiErrorMessage(confirmError));
+      toast.error(getApiErrorMessage(confirmError));
+    } finally {
+      setActionLoading("");
+    }
+  };
+
+  const handleReturnRequest = async (order, values) => {
+    if (!canRequestReturn(order)) return;
+
+    const orderId = getOrderId(order);
+    const items = getOrderItems(order)
+      .map((item) => ({
+        orderItemId: getOrderItemId(item),
+        quantity: Number(item.quantity || 1),
+        reason: values.reason || null,
+      }))
+      .filter((item) => item.orderItemId && item.quantity > 0);
+
+    if (items.length === 0) {
+      toast.error("No valid order items for return request");
+      return;
+    }
+
+    try {
+      setActionLoading(orderId);
+      const evidenceImages = await Promise.all(
+        (values.evidenceFiles || []).map(async (file) => {
+          const uploadedImage = await uploadImageToCloudinary(file, {
+            folder: "secom/returns",
+          });
+
+          return {
+            imageUrl: uploadedImage.secure_url,
+            publicId: uploadedImage.public_id,
+          };
+        }),
+      );
+
+      await orderApi.createReturnRequest(orderId, {
+        reasonCode: values.reason || null,
+        description: values.description,
+        items,
+        evidenceImages,
+      });
+      toast.success("Return/refund request created");
+      setOrderAction(null);
+      await refreshAfterOrderAction(orderId);
+    } catch (returnError) {
+      setError(getApiErrorMessage(returnError));
+      toast.error(getApiErrorMessage(returnError));
+    } finally {
+      setActionLoading("");
+    }
+  };
+
+  const handleConfirmOrderAction = (values) => {
+    if (!orderAction?.order) return;
+
+    if (orderAction.type === "cancel") {
+      handleCancel(orderAction.order, values);
+      return;
+    }
+
+    if (orderAction.type === "confirm") {
+      handleConfirmReceived(orderAction.order);
+      return;
+    }
+
+    handleReturnRequest(orderAction.order, values);
   };
 
   return (
@@ -466,8 +682,20 @@ export default function OrderHistory() {
                   )}
 
                   {canCancel(order) && (
-                    <button className="outline-btn danger" type="button" disabled={isLoading} onClick={() => handleCancel(order)}>
+                    <button className="outline-btn danger" type="button" disabled={isLoading} onClick={() => setOrderAction({ type: "cancel", order })}>
                       Cancel
+                    </button>
+                  )}
+
+                  {canConfirmReceived(order) && (
+                    <button className="primary-btn" type="button" disabled={isLoading} onClick={() => setOrderAction({ type: "confirm", order })}>
+                      Confirm Received
+                    </button>
+                  )}
+
+                  {canRequestReturn(order) && (
+                    <button className="outline-btn" type="button" disabled={isLoading} onClick={() => setOrderAction({ type: "return", order })}>
+                      Return/Refund
                     </button>
                   )}
                 </div>
@@ -487,6 +715,16 @@ export default function OrderHistory() {
             setSelectedPayment(null);
           }}
           onRefresh={() => loadDetail(getOrderId(selectedOrder))}
+        />
+      )}
+
+      {orderAction && (
+        <OrderActionModal
+          type={orderAction.type}
+          order={orderAction.order}
+          actionLoading={actionLoading === getOrderId(orderAction.order)}
+          onClose={() => setOrderAction(null)}
+          onConfirm={handleConfirmOrderAction}
         />
       )}
     </div>

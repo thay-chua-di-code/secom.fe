@@ -34,6 +34,9 @@ export const API_ENDPOINTS = {
     ORDER_DETAIL: (id) => `/orders/${id}`,
     CREATE: "/orders",
     DELETE: (id) => `/orders/${id}`,
+    CANCEL: (id) => `/orders/${id}/cancel`,
+    CONFIRM_RECEIVED: (id) => `/orders/${id}/confirm-received`,
+    RETURN_REQUESTS: (id) => `/orders/${id}/return-requests`,
   },
 
   CATEGORY: {
@@ -75,6 +78,8 @@ export const API_ENDPOINTS = {
     MY_FOLLOWED: "/users/me/followed-sellers",
     PRODUCT: (id) =>
       id || id === 0 ? `/seller/products/${id}` : "/seller/products",
+    PRODUCT_INVENTORY: (id) => `/seller/products/${id}/inventory`,
+    ORDER_STATUS: (id) => `/seller/orders/${id}/status`,
     BANK: {
       GP: "/seller/bank-accounts",
       DELETE: (id) => `/seller/bank-accounts/${id}`,
@@ -140,12 +145,15 @@ export const API_ENDPOINTS = {
       GET: "/admin/products",
       APPROVE: (id) => `/admin/products/${id}/approve`,
       REJECT: (id) => `/admin/products/${id}/reject`,
+      MODERATION_HISTORY: (id) => `/admin/products/${id}/moderation-history`,
     },
     ADMIN_CATEGORIES: {
       GET: "/admin/categories",
       POST: "/admin/categories",
       PUT: (id) => `/admin/categories/${id}`,
       DELETE: (id) => `/admin/categories/${id}`,
+      STATUS: (id) => `/admin/categories/${id}/status`,
+      STATUS_HISTORY: (id) => `/admin/categories/${id}/status-history`,
     },
     ORDERS: {
       GET: "/admin/orders",
@@ -154,6 +162,7 @@ export const API_ENDPOINTS = {
     VOUCHER: {
       GP: "/admin/vouchers",
       PUT: (id) => `/admin/vouchers/${id}`,
+      DELETE: (id) => `/admin/vouchers/${id}`,
     },
     FINANCE: {
       SUMMARY: "/admin/finance/money-flow",

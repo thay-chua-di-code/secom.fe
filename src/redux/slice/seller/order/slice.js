@@ -30,6 +30,24 @@ export const confirmOrderThunk = createAsyncThunk(
   },
 );
 
+export const updateSellerOrderStatusThunk = createAsyncThunk(
+  "sellerOrder/updateStatus",
+  async ({ orderId, status }, thunkAPI) => {
+    try {
+      const res = await sellerService.updateOrderStatus(orderId, status);
+      return {
+        orderId,
+        status,
+        ...res,
+      };
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || error.message,
+      );
+    }
+  },
+);
+
 const initialState = {
   orders: [],
   loading: false,
@@ -39,6 +57,8 @@ const initialState = {
   confirmSuccess: false,
   confirmMessage: "",
   confirmError: "",
+  statusLoading: false,
+  statusError: "",
 };
 
 const sellerOrderSlice = createSlice({
@@ -107,6 +127,27 @@ const sellerOrderSlice = createSlice({
         state.confirmLoading = false;
         state.confirmSuccess = false;
         state.confirmError = action.payload;
+      })
+
+      // ===== Update Status =====
+      .addCase(updateSellerOrderStatusThunk.pending, (state) => {
+        state.statusLoading = true;
+        state.statusError = "";
+      })
+      .addCase(updateSellerOrderStatusThunk.fulfilled, (state, action) => {
+        state.statusLoading = false;
+
+        const order = state.orders.find(
+          (x) => (x.orderId || x.id) === action.payload.orderId,
+        );
+
+        if (order) {
+          order.status = action.payload.status;
+        }
+      })
+      .addCase(updateSellerOrderStatusThunk.rejected, (state, action) => {
+        state.statusLoading = false;
+        state.statusError = action.payload;
       });
   },
 });

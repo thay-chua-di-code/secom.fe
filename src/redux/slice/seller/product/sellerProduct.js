@@ -107,11 +107,20 @@ const sellerProductSlice = createSlice({
       });
 
     // DELETE
-    builder.addCase(deleteSellerProduct.fulfilled, (state, action) => {
-      state.products = state.products.filter(
-        (p) => p.productId !== action.payload,
-      );
-    });
+    builder
+      .addCase(deleteSellerProduct.pending, (state) => {
+        state.actionLoading = true;
+      })
+      .addCase(deleteSellerProduct.fulfilled, (state, action) => {
+        state.actionLoading = false;
+        state.products = state.products.filter(
+          (p) => (p.productId || p.id) !== action.payload,
+        );
+      })
+      .addCase(deleteSellerProduct.rejected, (state, action) => {
+        state.actionLoading = false;
+        state.error = action.payload;
+      });
 
     // INACTIVE
     builder.addCase(inactiveSellerProduct.fulfilled, (state, action) => {
@@ -132,19 +141,32 @@ const sellerProductSlice = createSlice({
     });
 
     // UPDATE INVENTORY
-    builder.addCase(updateInventory.fulfilled, (state, action) => {
-      const { productId, quantity } = action.payload;
+    builder
+      .addCase(updateInventory.pending, (state) => {
+        state.actionLoading = true;
+      })
+      .addCase(updateInventory.fulfilled, (state, action) => {
+        state.actionLoading = false;
+        const { productId, stockQuantity, lowStockThreshold } = action.payload;
 
-      const product = state.products.find((p) => p.productId === productId);
+        const product = state.products.find((p) => (p.productId || p.id) === productId);
 
-      if (product) {
-        product.stock = quantity;
-      }
+        if (product) {
+          product.stock = stockQuantity;
+          product.stockQuantity = stockQuantity;
+          product.lowStockThreshold = lowStockThreshold;
+        }
 
-      if (state.productDetail && state.productDetail.productId === productId) {
-        state.productDetail.stock = quantity;
-      }
-    });
+        if (state.productDetail && (state.productDetail.productId || state.productDetail.id) === productId) {
+          state.productDetail.stock = stockQuantity;
+          state.productDetail.stockQuantity = stockQuantity;
+          state.productDetail.lowStockThreshold = lowStockThreshold;
+        }
+      })
+      .addCase(updateInventory.rejected, (state, action) => {
+        state.actionLoading = false;
+        state.error = action.payload;
+      });
   },
 });
 

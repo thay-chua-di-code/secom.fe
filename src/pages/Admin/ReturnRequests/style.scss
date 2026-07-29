@@ -1,0 +1,274 @@
+.admin-return-requests {
+  display: grid;
+  gap: 18px;
+  color: #f8fafc;
+
+  &__header,
+  &__toolbar,
+  &__pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 800;
+  }
+
+  p {
+    margin: 6px 0 0;
+    color: #94a3b8;
+  }
+
+  button,
+  select,
+  &__view {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    min-height: 38px;
+    padding: 0 14px;
+    border: 1px solid #334155;
+    border-radius: 10px;
+    background: #1e293b;
+    color: #f8fafc;
+    font: inherit;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+
+  &__toolbar,
+  &__table-wrap {
+    padding: 16px;
+    border: 1px solid #263247;
+    border-radius: 16px;
+    background: #111827;
+  }
+
+  &__search {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #94a3b8;
+  }
+
+  &__table-wrap {
+    overflow-x: auto;
+  }
+
+  &__table {
+    width: 100%;
+    min-width: 980px;
+    border-collapse: collapse;
+
+    th,
+    td {
+      padding: 14px 12px;
+      border-bottom: 1px solid #263247;
+      text-align: left;
+    }
+
+    th {
+      color: #94a3b8;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+  }
+
+  &__badge {
+    display: inline-flex;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: #334155;
+    color: #f8fafc;
+    font-size: 12px;
+    font-weight: 800;
+
+    &.approved,
+    &.refunded,
+    &.closed {
+      background: #064e3b;
+      color: #a7f3d0;
+    }
+
+    &.rejected {
+      background: #7f1d1d;
+      color: #fecaca;
+    }
+  }
+
+  &__state,
+  &__error {
+    padding: 16px;
+    border-radius: 12px;
+    background: #1e293b;
+    color: #cbd5e1;
+  }
+
+  &__error {
+    background: #7f1d1d;
+    color: #fecaca;
+  }
+}
+
+.admin-return-detail__summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+
+  article {
+    padding: 16px;
+    border: 1px solid #263247;
+    border-radius: 14px;
+    background: #111827;
+  }
+
+  span {
+    display: block;
+    color: #94a3b8;
+    font-size: 12px;
+  }
+
+  strong {
+    display: block;
+    margin-top: 6px;
+    color: #f8fafc;
+    word-break: break-word;
+  }
+}
+
+.admin-return-detail__card {
+  display: grid;
+  gap: 12px;
+  padding: 18px;
+  border: 1px solid #263247;
+  border-radius: 16px;
+  background: #111827;
+
+  h2 {
+    margin: 0;
+    font-size: 18px;
+  }
+
+  p {
+    margin: 0;
+  }
+}
+
+.admin-return-detail__item {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 12px;
+  background: #0f172a;
+
+  span {
+    display: block;
+    margin-top: 4px;
+    color: #94a3b8;
+  }
+}
+
+.admin-return-detail__danger {
+  color: #fecaca !important;
+}
+
+.admin-return-detail__evidence {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+
+  img {
+    width: 120px;
+    height: 120px;
+    border-radius: 12px;
+    object-fit: cover;
+  }
+}
+
+.admin-return-detail__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+
+  button {
+    min-height: 40px;
+    padding: 0 14px;
+    border: 1px solid #334155;
+    border-radius: 10px;
+    background: #1e293b;
+    color: #f8fafc;
+    font: inherit;
+    font-weight: 800;
+    cursor: pointer;
+  }
+
+  button.danger {
+    border-color: #ef4444;
+    background: #7f1d1d;
+  }
+}
+
+.admin-return-detail__modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(15, 23, 42, 0.6);
+}
+
+.admin-return-detail__modal {
+  display: grid;
+  gap: 14px;
+  width: min(100%, 480px);
+  padding: 22px;
+  border-radius: 18px;
+  background: #111827;
+
+  h3 {
+    margin: 0;
+  }
+
+  label {
+    display: grid;
+    gap: 8px;
+    color: #cbd5e1;
+    font-weight: 700;
+  }
+
+  textarea {
+    min-height: 96px;
+    padding: 12px;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    background: #0f172a;
+    color: #f8fafc;
+    font: inherit;
+    resize: vertical;
+  }
+}
+
+@media (max-width: 900px) {
+  .admin-return-detail__summary {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .admin-return-detail__summary {
+    grid-template-columns: 1fr;
+  }
+}

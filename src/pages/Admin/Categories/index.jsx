@@ -14,8 +14,9 @@ import {
   fetchCategories,
   createCategory,
   updateCategory,
-  deleteCategory,
+  updateCategoryStatus,
 } from "../../../redux/slice/admin/categories/categoriesThunk";
+import toast from "react-hot-toast";
 
 import "./style.scss";
 
@@ -29,6 +30,7 @@ export default function Categories() {
     loading,
     createLoading,
     updateLoading,
+    statusLoading,
   } = useSelector((state) => state.categoriesAdmin);
 
   // ==============================
@@ -49,6 +51,8 @@ export default function Categories() {
   });
 
   const [editingId, setEditingId] = useState(null);
+  const [statusTarget, setStatusTarget] = useState(null);
+  const [statusReason, setStatusReason] = useState("");
 
   // ==============================
   // FETCH ALL CATEGORIES
@@ -109,14 +113,6 @@ export default function Categories() {
 
     return items;
   }, [paginatedCategories]);
-
-  // ==============================
-  // RESET PAGE WHEN FILTER CHANGES
-  // ==============================
-
-  useEffect(() => {
-    setPage(1);
-  }, [search, statusFilter]);
 
   // ==============================
   // STATISTICS
@@ -197,27 +193,47 @@ export default function Categories() {
     }
   };
 
-  // ==============================
-  // DELETE
-  // ==============================
+  const handleOpenStatusModal = (item) => {
+    setStatusTarget(item);
+    setStatusReason("");
+  };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this category?")) {
+  const handleCloseStatusModal = () => {
+    if (statusLoading) return;
+    setStatusTarget(null);
+    setStatusReason("");
+  };
+
+  const handleSubmitStatus = async (event) => {
+    event.preventDefault();
+
+    if (!statusTarget?.id) {
+      toast.error("Category id is missing");
       return;
     }
 
+    const nextIsActive = !statusTarget.isActive;
+
     try {
-      await dispatch(deleteCategory(id)).unwrap();
+      await dispatch(
+        updateCategoryStatus({
+          id: statusTarget.id,
+          payload: {
+            isActive: nextIsActive,
+            reason: statusReason.trim() || null,
+          },
+        }),
+      ).unwrap();
 
+      toast.success(
+        nextIsActive
+          ? "Category activated successfully"
+          : "Category disabled successfully",
+      );
       await dispatch(fetchCategories());
-
-      // Nếu xóa item cuối cùng của page hiện tại
-      // thì quay về page trước
-      if (currentPage > 1 && paginatedCategories.length === 1) {
-        setPage((prev) => prev - 1);
-      }
+      handleCloseStatusModal();
     } catch (error) {
-      console.error(error);
+      toast.error(error || "Update category status failed");
     }
   };
 
@@ -270,7 +286,10 @@ export default function Categories() {
           <div className="categories__tabs">
             <button
               className={statusFilter === "all" ? "active" : ""}
-              onClick={() => setStatusFilter("all")}
+              onClick={() => {
+                setStatusFilter("all");
+                setPage(1);
+              }}
             >
               All
               <span>{totalCategories}</span>
@@ -278,7 +297,10 @@ export default function Categories() {
 
             <button
               className={statusFilter === "active" ? "active" : ""}
-              onClick={() => setStatusFilter("active")}
+              onClick={() => {
+                setStatusFilter("active");
+                setPage(1);
+              }}
             >
               Active
               <span>{activeCategories}</span>
@@ -286,7 +308,10 @@ export default function Categories() {
 
             <button
               className={statusFilter === "inactive" ? "active" : ""}
-              onClick={() => setStatusFilter("inactive")}
+              onClick={() => {
+                setStatusFilter("inactive");
+                setPage(1);
+              }}
             >
               Inactive
               <span>{inactiveCategories}</span>
@@ -300,7 +325,10 @@ export default function Categories() {
               type="text"
               placeholder="Search categories..."
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setPage(1);
+              }}
             />
           </div>
         </div>
@@ -394,18 +422,25 @@ export default function Categories() {
                               <Pencil size={15} />
                             </button>
 
-                            {/* DELETE */}
-
-                            {/* 
-                              <button
-                                className="action-btn delete"
-                                onClick={() =>
-                                  handleDelete(item.id)
-                                }
-                              >
-                                <Trash2 size={15} />
-                              </button>
-                              */}
+                            <button
+                              type="button"
+                              className={`action-btn ${
+                                item.isActive ? "delete" : "activate"
+                              }`}
+                              onClick={() => handleOpenStatusModal(item)}
+                              title={
+                                item.isActive
+                                  ? "Disable category"
+                                  : "Activate category"
+                              }
+                              disabled={statusLoading}
+                            >
+                              {item.isActive ? (
+                                <X size={15} />
+                              ) : (
+                                <Check size={15} />
+                              )}
+                            </button>
                           </div>
                         </td>
                       </tr>
@@ -546,6 +581,67 @@ export default function Categories() {
               </div>
             </form>
           </div>
+        </div>
+      )}
+
+      {statusTarget && (
+        <div className="category-modal-overlay" onClick={handleCloseStatusModal}>
+          <form
+            className="category-modal category-modal--compact"
+            onClick={(event) => event.stopPropagation()}
+            onSubmit={handleSubmitStatus}
+          >
+            <div className="category-modal__header">
+              <div className="category-modal__title">
+                <div className="category-modal__icon">
+                  {statusTarget.isActive ? <X size={16} /> : <Check size={16} />}
+                </div>
+
+                <div>
+                  <h2>
+                    {statusTarget.isActive
+                      ? "Disable Category"
+                      : "Activate Category"}
+                  </h2>
+
+                  <p>{statusTarget.name}</p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                className="category-modal__close"
+                onClick={handleCloseStatusModal}
+              >
+                <X size={17} />
+              </button>
+            </div>
+
+            <label className="category-status-reason">
+              Reason
+              <textarea
+                value={statusReason}
+                maxLength={500}
+                placeholder="Optional reason for status change"
+                onChange={(event) => setStatusReason(event.target.value)}
+              />
+            </label>
+
+            <div className="category-modal__footer">
+              <button
+                type="button"
+                className="cancel-btn"
+                onClick={handleCloseStatusModal}
+                disabled={statusLoading}
+              >
+                Cancel
+              </button>
+
+              <button type="submit" className="submit-btn" disabled={statusLoading}>
+                {statusLoading ? "Saving..." : "Confirm"}
+              </button>
+            </div>
+          </form>
         </div>
       )}
     </div>

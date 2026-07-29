@@ -3,6 +3,7 @@ import {
   fetchAdminVouchers,
   createAdminVoucher,
   updateAdminVoucher,
+  deleteAdminVoucher,
 } from "./voucherThunk";
 
 const initialState = {
@@ -16,6 +17,7 @@ const initialState = {
   loading: false,
   creating: false,
   updating: false,
+  deleting: false,
   success: false,
   error: null,
 };
@@ -101,6 +103,25 @@ const voucherAdminSlice = createSlice({
       })
       .addCase(updateAdminVoucher.rejected, (state, action) => {
         state.updating = false;
+        state.error = action.payload;
+      })
+      .addCase(deleteAdminVoucher.pending, (state) => {
+        state.deleting = true;
+        state.success = false;
+        state.error = null;
+      })
+      .addCase(deleteAdminVoucher.fulfilled, (state, action) => {
+        const voucherId = action.payload;
+        const vouchers = Array.isArray(state.vouchers) ? state.vouchers : [];
+
+        state.deleting = false;
+        state.success = true;
+        state.vouchers = vouchers.filter(
+          (item) => String(item.id ?? item.voucherId) !== String(voucherId),
+        );
+      })
+      .addCase(deleteAdminVoucher.rejected, (state, action) => {
+        state.deleting = false;
         state.error = action.payload;
       });
   },

@@ -15,12 +15,22 @@ import { formatCurrencyVN, formatDate } from "../../../../utils/fncUtils";
 import {
   confirmOrderThunk,
   resetConfirmState,
+  updateSellerOrderStatusThunk,
 } from "../../../../redux/slice/seller/order/slice";
+
+const sellerOrderTransitions = {
+  pending: ["Confirmed"],
+  paid: ["Confirmed", "Processing"],
+  confirmed: ["Processing"],
+  processing: ["Packed", "Shipped"],
+  packed: ["Shipped"],
+  shipped: ["Delivered"],
+};
 
 const OrderDetail = ({ open, onClose, order }) => {
   const dispatch = useDispatch();
 
-  const { confirmLoading, confirmSuccess, confirmMessage, confirmError } =
+  const { confirmLoading, confirmSuccess, confirmMessage, confirmError, statusLoading } =
     useSelector((state) => state.sellerOrder);
 
   useEffect(() => {
@@ -49,6 +59,9 @@ const OrderDetail = ({ open, onClose, order }) => {
     .toLowerCase()
     .replace(/\s+/g, "-");
 
+  const nextStatuses =
+    sellerOrderTransitions[String(order.status || "").toLowerCase()] || [];
+
   const handleConfirm = async () => {
     const result = await dispatch(confirmOrderThunk(order.orderId));
 
@@ -58,6 +71,26 @@ const OrderDetail = ({ open, onClose, order }) => {
       onClose();
     } else {
       toast.error(result.payload || "Confirm order failed.");
+    }
+  };
+
+  const handleUpdateStatus = async (event) => {
+    const status = event.target.value;
+
+    if (!status) return;
+
+    const result = await dispatch(
+      updateSellerOrderStatusThunk({
+        orderId: order.orderId,
+        status,
+      }),
+    );
+
+    if (updateSellerOrderStatusThunk.fulfilled.match(result)) {
+      toast.success("Order status updated successfully.");
+      onClose();
+    } else {
+      toast.error(result.payload || "Update order status failed.");
     }
   };
 
@@ -215,6 +248,25 @@ const OrderDetail = ({ open, onClose, order }) => {
           </div>
 
           <div className="seller-order-detail-actions">
+            {nextStatuses.length > 0 && (
+              <label className="seller-order-detail-status-action">
+                <span>Next status</span>
+                <select
+                  defaultValue=""
+                  disabled={statusLoading || confirmLoading}
+                  onChange={handleUpdateStatus}
+                >
+                  <option value="" disabled>
+                    Select status
+                  </option>
+                  {nextStatuses.map((status) => (
+                    <option key={status} value={status}>
+                      {status}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            )}
             <button
               type="button"
               className="seller-order-detail-cancel-btn"
@@ -227,7 +279,7 @@ const OrderDetail = ({ open, onClose, order }) => {
               type="button"
               className="seller-order-detail-confirm-btn"
               onClick={handleConfirm}
-              disabled={confirmLoading}
+              disabled={confirmLoading || statusLoading}
             >
               {confirmLoading ? "Confirming..." : "Confirm Order"}
             </button>

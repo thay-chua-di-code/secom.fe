@@ -25,5 +25,16 @@ export const orderApi = {
 
   getOrderDetail: (orderId) => axiosClient.get(API_ENDPOINTS.ORDER.ORDER_DETAIL(orderId)),
 
-  cancelOrder: (orderId) => axiosClient.delete(API_ENDPOINTS.ORDER.DELETE(orderId)),
+  cancelOrder: (orderId, payload = {}) =>
+    axiosClient.patch(API_ENDPOINTS.ORDER.CANCEL(orderId), payload, {
+      headers: { "Content-Type": "application/json" },
+    }),
+
+  confirmReceived: (orderId) =>
+    axiosClient.patch(API_ENDPOINTS.ORDER.CONFIRM_RECEIVED(orderId)),
+
+  createReturnRequest: (orderId, payload) =>
+    axiosClient.post(API_ENDPOINTS.ORDER.RETURN_REQUESTS(orderId), payload, {
+      headers: { "Content-Type": "application/json" },
+    }),
 };

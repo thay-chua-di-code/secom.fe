@@ -775,3 +775,33 @@
     transform: translateY(0) scale(1);
   }
 }
+
+.category-actions .action-btn.activate {
+  border-color: #bbf7d0;
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.category-modal--compact {
+  width: min(420px, calc(100vw - 32px));
+}
+
+.category-status-reason {
+  display: grid;
+  gap: 8px;
+  color: #a6b4c8;
+  font-size: 12px;
+  font-weight: 700;
+
+  textarea {
+    min-height: 110px;
+    padding: 12px 13px;
+    border: 1px solid #29364c;
+    border-radius: 9px;
+    outline: none;
+    background: #171f31;
+    color: #e5e7eb;
+    font: inherit;
+    resize: vertical;
+  }
+}

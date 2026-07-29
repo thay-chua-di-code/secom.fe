@@ -110,6 +110,36 @@ export const adminService = {
     }
   },
 
+  approveProduct: async (productId) => {
+    const result = await axiosClient.patch(
+      API_ENDPOINTS.ADMIN.PRODUCT.APPROVE(productId),
+    );
+
+    return result.data;
+  },
+
+  rejectProduct: async (productId, reason) => {
+    const result = await axiosClient.patch(
+      API_ENDPOINTS.ADMIN.PRODUCT.REJECT(productId),
+      { reason },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      },
+    );
+
+    return result.data;
+  },
+
+  getProductModerationHistory: async (productId) => {
+    const result = await axiosClient.get(
+      API_ENDPOINTS.ADMIN.PRODUCT.MODERATION_HISTORY(productId),
+    );
+
+    return result.data;
+  },
+
   // [CATEGORIES]
   getCategories: async (params) => {
     const response = await axiosClient.get(
@@ -144,6 +174,20 @@ export const adminService = {
   deleteCategory: async (id) => {
     const response = await axiosClient.delete(
       API_ENDPOINTS.ADMIN.ADMIN_CATEGORIES.DELETE(id),
+    );
+
+    return response.data;
+  },
+
+  updateCategoryStatus: async (id, payload) => {
+    const response = await axiosClient.patch(
+      API_ENDPOINTS.ADMIN.ADMIN_CATEGORIES.STATUS(id),
+      payload,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      },
     );
 
     return response.data;

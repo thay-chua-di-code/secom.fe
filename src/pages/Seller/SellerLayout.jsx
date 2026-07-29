@@ -16,9 +16,11 @@ const SellerLayout = () => {
 
           <NavLink to="/seller/products">Products</NavLink>
 
-          {/* <NavLink to="/seller/vouchers">Voucher</NavLink> */}
+          <NavLink to="/seller/vouchers">Vouchers</NavLink>
 
           <NavLink to="/seller/orders">Orders</NavLink>
+
+          <NavLink to="/seller/wallet">Wallet</NavLink>
 
           {/* <NavLink to="/seller/customers">Customers</NavLink>
 

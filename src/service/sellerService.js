@@ -133,12 +133,15 @@ export const sellerService = {
     }
   },
 
-  updateInventory: async (productId, quantity) => {
+  updateInventory: async (productId, payload) => {
     try {
       const result = await axiosClient.put(
-        API_ENDPOINTS.SELLER.PRODUCT(productId),
+        API_ENDPOINTS.SELLER.PRODUCT_INVENTORY(productId),
+        payload,
         {
-          quantity,
+          headers: {
+            "Content-Type": "application/json",
+          },
         },
       );
 
@@ -181,7 +184,15 @@ export const sellerService = {
   // [WALLET]
   getWalletSeller: async () => {
     const response = await axiosClient.get("/seller/wallet");
-    return response.data;
+    return response.data.data ?? response.data;
+  },
+
+  getWalletTransactionsSeller: async (params = {}) => {
+    const response = await axiosClient.get("/seller/wallet/transactions", {
+      params,
+    });
+
+    return response.data.data ?? response.data;
   },
 
   // [VOUCHERS]
@@ -207,6 +218,34 @@ export const sellerService = {
     }
   },
 
+  updateVoucher: async (voucherId, data) => {
+    try {
+      const res = await axiosClient.put(`/seller/vouchers/${voucherId}`, data, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      return res.data?.data ?? res.data;
+    } catch (e) {
+      throw new Error(e?.response?.data?.message || "Update seller voucher failed", {
+        cause: e,
+      });
+    }
+  },
+
+  deleteVoucher: async (voucherId) => {
+    try {
+      const res = await axiosClient.delete(`/seller/vouchers/${voucherId}`);
+
+      return res.data?.data ?? res.data;
+    } catch (e) {
+      throw new Error(e?.response?.data?.message || "Delete seller voucher failed", {
+        cause: e,
+      });
+    }
+  },
+
   // [ORDERS]
   getOrdersSeller: async (params) => {
     try {
@@ -225,6 +264,24 @@ export const sellerService = {
       );
 
       console.log(res);
+      return res.data;
+    } catch (e) {
+      throw new Error(e?.response?.data?.message || e.message);
+    }
+  },
+
+  updateOrderStatus: async (orderId, status) => {
+    try {
+      const res = await axiosClient.patch(
+        API_ENDPOINTS.SELLER.ORDER_STATUS(orderId),
+        { status },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      );
+
       return res.data;
     } catch (e) {
       throw new Error(e?.response?.data?.message || e.message);

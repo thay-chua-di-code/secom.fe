@@ -47,3 +47,16 @@ export const updateAdminVoucher = createAsyncThunk(
     }
   },
 );
+
+export const deleteAdminVoucher = createAsyncThunk(
+  "adminVoucher/deleteAdminVoucher",
+  async (voucherId, { rejectWithValue }) => {
+    try {
+      await voucherApi.deleteVoucher(voucherId);
+
+      return voucherId;
+    } catch (error) {
+      return rejectWithValue(getApiErrorMessage(error));
+    }
+  },
+);

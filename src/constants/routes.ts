@@ -47,4 +47,6 @@ export const ADMIN_ROUTES = {
   ADMIN_SELLER: "seller",
   ADMIN_VOUCHER: "vouchers",
   ADMIN_FINANCE: "finance",
+  ADMIN_RETURN_REQUESTS: "return-requests",
+  ADMIN_RETURN_REQUEST_DETAIL: "return-requests/:id",
 };

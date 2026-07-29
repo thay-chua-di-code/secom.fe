@@ -77,6 +77,10 @@ export const voucherApi = {
       },
     });
   },
+
+  deleteVoucher(voucherId) {
+    return axiosClient.delete(API_ENDPOINTS.ADMIN.VOUCHER.DELETE(voucherId));
+  },
 };
 
 export const getPublicVouchers = voucherApi.getPublicVouchers;
@@ -85,5 +89,6 @@ export const getCheckoutCalculate = voucherApi.getCheckoutCalculate;
 export const getAdminVouchers = voucherApi.getAdminVouchers;
 export const createVoucher = voucherApi.createVoucher;
 export const updateVoucher = voucherApi.updateVoucher;
+export const deleteVoucher = voucherApi.deleteVoucher;
 
 export default voucherApi;

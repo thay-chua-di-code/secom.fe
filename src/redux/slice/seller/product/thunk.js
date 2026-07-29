@@ -90,14 +90,14 @@ export const inactiveSellerProduct = createAsyncThunk(
 
 export const updateInventory = createAsyncThunk(
   "sellerProduct/updateInventory",
-  async ({ productId, quantity }, { rejectWithValue }) => {
+  async ({ productId, stockQuantity, lowStockThreshold }, { rejectWithValue }) => {
     try {
-      await sellerService.updateInventory(productId, quantity);
+      const response = await sellerService.updateInventory(productId, {
+        stockQuantity,
+        lowStockThreshold,
+      });
 
-      return {
-        productId,
-        quantity,
-      };
+      return response || { productId, stockQuantity, lowStockThreshold };
     } catch (err) {
       return rejectWithValue(err.message);
     }

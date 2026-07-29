@@ -11,10 +11,15 @@ import {
   ChevronRight,
   Percent,
   Users,
+  Trash2,
 } from "lucide-react";
+import toast from "react-hot-toast";
 import { formatCurrencyVN } from "../../../utils/fncUtils";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchAdminVouchers } from "../../../redux/slice/admin/vouchers/voucherThunk";
+import {
+  deleteAdminVoucher,
+  fetchAdminVouchers,
+} from "../../../redux/slice/admin/vouchers/voucherThunk";
 import Button from "../../../components/common/Button/Button";
 import AddVoucher from "./Form/AddVoucher";
 
@@ -25,10 +30,9 @@ const isVoucherActive = (voucher) => voucher?.isActive ?? voucher?.active ?? fal
 const VoucherAdmin = () => {
   const dispatch = useDispatch();
 
-  const { vouchers, loading, pagination } = useSelector(
+  const { vouchers, loading, deleting, pagination } = useSelector(
     (state) => state.vouchersAdmin,
   );
-  console.log(vouchers);
   const voucherItems = Array.isArray(vouchers)
     ? vouchers
     : vouchers?.items || [];
@@ -36,6 +40,7 @@ const VoucherAdmin = () => {
   const [keyword, setKeyword] = useState("");
   const [activeTab, setActiveTab] = useState("all");
   const [openAddModal, setOpenAddModal] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState(null);
 
   useEffect(() => {
     dispatch(
@@ -72,6 +77,25 @@ const VoucherAdmin = () => {
     if (!date) return "-";
 
     return new Date(date).toLocaleDateString("vi-VN");
+  };
+
+  const getVoucherId = (voucher) => voucher?.id ?? voucher?.voucherId;
+
+  const handleDeleteVoucher = async () => {
+    const voucherId = getVoucherId(deleteTarget);
+
+    if (!voucherId) {
+      toast.error("Voucher id is missing");
+      return;
+    }
+
+    try {
+      await dispatch(deleteAdminVoucher(voucherId)).unwrap();
+      toast.success("Voucher deleted successfully");
+      setDeleteTarget(null);
+    } catch (error) {
+      toast.error(error || "Delete voucher failed");
+    }
   };
 
   return (
@@ -296,9 +320,20 @@ const VoucherAdmin = () => {
                     {/* ACTION */}
 
                     <td>
-                      <button className="action-btn edit">
-                        <Pencil size={14} />
-                      </button>
+                      <div className="voucher-admin__actions">
+                        <button type="button" className="action-btn edit">
+                          <Pencil size={14} />
+                        </button>
+                        <button
+                          type="button"
+                          className="action-btn delete"
+                          disabled={deleting}
+                          onClick={() => setDeleteTarget(voucher)}
+                          aria-label={`Delete voucher ${voucher.code}`}
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -340,6 +375,36 @@ const VoucherAdmin = () => {
           open={openAddModal}
           onClose={() => setOpenAddModal(false)}
         />
+      )}
+
+      {deleteTarget && (
+        <div className="voucher-admin__modal-backdrop" role="presentation">
+          <div className="voucher-admin__confirm" role="dialog" aria-modal="true">
+            <h3>Delete voucher?</h3>
+            <p>
+              This will delete voucher <strong>{deleteTarget.code}</strong> from
+              the system.
+            </p>
+            <div className="voucher-admin__modal-actions">
+              <button
+                type="button"
+                className="voucher-admin__modal-btn"
+                disabled={deleting}
+                onClick={() => setDeleteTarget(null)}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="voucher-admin__modal-btn voucher-admin__modal-btn--danger"
+                disabled={deleting}
+                onClick={handleDeleteVoucher}
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

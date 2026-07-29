@@ -9,10 +9,12 @@ import Categories from "../pages/Admin/Categories";
 import SellerManage from "../pages/Admin/Seller";
 import VoucherAdmin from "../pages/Admin/Vouchers";
 import FinanceAdmin from "../pages/Admin/Finance";
+import AdminReturnRequests from "../pages/Admin/ReturnRequests";
+import AdminReturnRequestDetail from "../pages/Admin/ReturnRequests/Detail";
 
 export const privateRoutes = [
   {
-    elemnt: <PrivateRoute />,
+    element: <PrivateRoute />,
     path: "/admin",
     children: [
       {
@@ -41,6 +43,14 @@ export const privateRoutes = [
           {
             path: ADMIN_ROUTES.ADMIN_FINANCE,
             element: <FinanceAdmin />,
+          },
+          {
+            path: ADMIN_ROUTES.ADMIN_RETURN_REQUESTS,
+            element: <AdminReturnRequests />,
+          },
+          {
+            path: ADMIN_ROUTES.ADMIN_RETURN_REQUEST_DETAIL,
+            element: <AdminReturnRequestDetail />,
           },
           {
             path: ADMIN_ROUTES.ADMIN_CATEGORIES,

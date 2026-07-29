@@ -1,9 +1,11 @@
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import "./style.scss";
 import Button from "../../../components/common/Button/Button";
 import { formatCurrencyVN } from "../../../utils/fncUtils";
 import { fetchProducts } from "../../../redux/slice/admin/products/productAdminSlice";
+import { adminService } from "../../../service/adminService";
+import toast from "react-hot-toast";
 import {
   Package,
   Search,
@@ -17,16 +19,27 @@ import {
 
 const ITEMS_PER_PAGE = 7;
 
+const getProductId = (product) => product?.productId || product?.id;
+const getStatus = (product) => String(product?.status || "").toLowerCase();
+const canModerate = (product) => ["pending", "submitted"].includes(getStatus(product));
+const unwrapApiData = (response) => response?.data ?? response;
+
 const Products = () => {
   const dispatch = useDispatch();
 
-  const { products, pagination, loading, error } = useSelector(
+  const { products, loading, error } = useSelector(
     (state) => state.productsAdmin,
   );
 
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");
   const [page, setPage] = useState(1);
+  const [actionLoading, setActionLoading] = useState("");
+  const [rejectTarget, setRejectTarget] = useState(null);
+  const [rejectReason, setRejectReason] = useState("");
+  const [historyTarget, setHistoryTarget] = useState(null);
+  const [historyItems, setHistoryItems] = useState([]);
+  const [historyLoading, setHistoryLoading] = useState(false);
 
   // ========================================
   // FETCH PRODUCTS
@@ -94,6 +107,94 @@ const Products = () => {
 
     return filteredProducts.slice(startIndex, endIndex);
   }, [filteredProducts, currentPage]);
+
+  const refreshProducts = () => {
+    dispatch(
+      fetchProducts({
+        pageNumber: 1,
+        pageSize: 1000,
+      }),
+    );
+  };
+
+  const handleApprove = async (product) => {
+    const productId = getProductId(product);
+
+    if (!productId) {
+      toast.error("Product id is missing");
+      return;
+    }
+
+    try {
+      setActionLoading(productId);
+      await adminService.approveProduct(productId);
+      toast.success("Product approved successfully");
+      refreshProducts();
+    } catch (approveError) {
+      toast.error(
+        approveError?.response?.data?.message ||
+          approveError?.message ||
+          "Approve product failed",
+      );
+    } finally {
+      setActionLoading("");
+    }
+  };
+
+  const handleReject = async (event) => {
+    event.preventDefault();
+
+    const productId = getProductId(rejectTarget);
+    const reason = rejectReason.trim();
+
+    if (!productId || !reason) {
+      toast.error("Reject reason is required");
+      return;
+    }
+
+    try {
+      setActionLoading(productId);
+      await adminService.rejectProduct(productId, reason);
+      toast.success("Product rejected successfully");
+      setRejectTarget(null);
+      setRejectReason("");
+      refreshProducts();
+    } catch (rejectError) {
+      toast.error(
+        rejectError?.response?.data?.message ||
+          rejectError?.message ||
+          "Reject product failed",
+      );
+    } finally {
+      setActionLoading("");
+    }
+  };
+
+  const handleViewHistory = async (product) => {
+    const productId = getProductId(product);
+
+    if (!productId) {
+      toast.error("Product id is missing");
+      return;
+    }
+
+    try {
+      setHistoryTarget(product);
+      setHistoryLoading(true);
+      const response = await adminService.getProductModerationHistory(productId);
+      const data = unwrapApiData(response);
+      setHistoryItems(Array.isArray(data) ? data : []);
+    } catch (historyError) {
+      toast.error(
+        historyError?.response?.data?.message ||
+          historyError?.message ||
+          "Load moderation history failed",
+      );
+      setHistoryItems([]);
+    } finally {
+      setHistoryLoading(false);
+    }
+  };
 
   // ========================================
   // LOADING
@@ -256,24 +357,33 @@ const Products = () => {
 
                         <Button
                           className="action-btn view-btn"
-                          title="View product"
+                          title="View moderation history"
+                          onClick={() => handleViewHistory(product)}
                         >
                           <Eye size={16} />
                         </Button>
 
-                        <Button
-                          className="action-btn approve-btn"
-                          title="Approve product"
-                        >
-                          <Check size={16} />
-                        </Button>
+                        {canModerate(product) && (
+                          <Button
+                            className="action-btn approve-btn"
+                            title="Approve product"
+                            disabled={actionLoading === getProductId(product)}
+                            onClick={() => handleApprove(product)}
+                          >
+                            <Check size={16} />
+                          </Button>
+                        )}
 
-                        <Button
-                          className="action-btn reject-btn"
-                          title="Reject product"
-                        >
-                          <X size={16} />
-                        </Button>
+                        {canModerate(product) && (
+                          <Button
+                            className="action-btn reject-btn"
+                            title="Reject product"
+                            disabled={actionLoading === getProductId(product)}
+                            onClick={() => setRejectTarget(product)}
+                          >
+                            <X size={16} />
+                          </Button>
+                        )}
                       </div>
                     </td>
                   </tr>
@@ -313,6 +423,55 @@ const Products = () => {
           </div>
         </div>
       </div>
+
+      {rejectTarget && (
+        <div className="admin-products__modal-backdrop" role="presentation">
+          <form className="admin-products__modal" role="dialog" aria-modal="true" onSubmit={handleReject}>
+            <h3>Reject product</h3>
+            <p>Product: <strong>{rejectTarget.name}</strong></p>
+            <label>
+              Reason
+              <textarea
+                value={rejectReason}
+                required
+                maxLength={500}
+                onChange={(event) => setRejectReason(event.target.value)}
+              />
+            </label>
+            <div className="admin-products__modal-actions">
+              <button type="button" disabled={!!actionLoading} onClick={() => setRejectTarget(null)}>Cancel</button>
+              <button type="submit" disabled={!!actionLoading || !rejectReason.trim()}>Reject</button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {historyTarget && (
+        <div className="admin-products__modal-backdrop" role="presentation">
+          <div className="admin-products__modal admin-products__modal--wide" role="dialog" aria-modal="true">
+            <h3>Moderation history</h3>
+            <p>Product: <strong>{historyTarget.name}</strong></p>
+            {historyLoading ? (
+              <div className="products-state">Loading history...</div>
+            ) : historyItems.length === 0 ? (
+              <div className="products-state">No moderation history.</div>
+            ) : (
+              <div className="admin-products__history-list">
+                {historyItems.map((item) => (
+                  <article key={item.id}>
+                    <strong>{item.action || `${item.previousStatus || "--"} → ${item.newStatus || "--"}`}</strong>
+                    <span>{item.createdAtUtc ? new Date(item.createdAtUtc).toLocaleString("vi-VN") : "--"}</span>
+                    <p>{item.reason || "No reason provided"}</p>
+                  </article>
+                ))}
+              </div>
+            )}
+            <div className="admin-products__modal-actions">
+              <button type="button" onClick={() => setHistoryTarget(null)}>Close</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

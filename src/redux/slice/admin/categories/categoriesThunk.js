@@ -56,3 +56,16 @@ export const deleteCategory = createAsyncThunk(
     }
   },
 );
+
+export const updateCategoryStatus = createAsyncThunk(
+  "adminCategory/updateCategoryStatus",
+  async ({ id, payload }, { rejectWithValue }) => {
+    try {
+      return await adminService.updateCategoryStatus(id, payload);
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to update category status",
+      );
+    }
+  },
+);

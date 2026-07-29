@@ -4,6 +4,7 @@ import {
   createCategory,
   updateCategory,
   deleteCategory,
+  updateCategoryStatus,
 } from "./categoriesThunk";
 
 const initialState = {
@@ -20,6 +21,7 @@ const initialState = {
   createLoading: false,
   updateLoading: false,
   deleteLoading: false,
+  statusLoading: false,
 
   success: false,
   error: null,
@@ -120,6 +122,36 @@ const categorySlice = createSlice({
 
       .addCase(deleteCategory.rejected, (state, action) => {
         state.deleteLoading = false;
+        state.error = action.payload;
+      })
+
+      // =====================
+      // UPDATE STATUS
+      // =====================
+
+      .addCase(updateCategoryStatus.pending, (state) => {
+        state.statusLoading = true;
+        state.error = null;
+      })
+      .addCase(updateCategoryStatus.fulfilled, (state, action) => {
+        const updatedCategory = action.payload?.data ?? action.payload;
+        const categoryId = updatedCategory?.id ?? updatedCategory?.categoryId;
+        const index = state.categories.findIndex(
+          (item) => String(item.id ?? item.categoryId) === String(categoryId),
+        );
+
+        state.statusLoading = false;
+        state.success = true;
+
+        if (index !== -1) {
+          state.categories[index] = {
+            ...state.categories[index],
+            ...updatedCategory,
+          };
+        }
+      })
+      .addCase(updateCategoryStatus.rejected, (state, action) => {
+        state.statusLoading = false;
         state.error = action.payload;
       });
   },

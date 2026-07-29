@@ -1,7 +1,6 @@
 import { useMemo, useState } from "react";
-import { FaTrash, FaHeart, FaRegHeart, FaEye } from "react-icons/fa";
+import { FaHeart, FaRegHeart, FaEye } from "react-icons/fa";
 import toast from "react-hot-toast";
-import Button from "../Button/Button";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addCartItem } from "../../../redux/slice/cartSlice";
@@ -11,6 +10,7 @@ import {
 } from "../../../redux/slice/userSlice";
 import "./style.scss";
 import { formatCurrencyVN } from "../../../utils/fncUtils";
+import { addCompareProductId } from "../../../utils/compareProducts";
 const getApiErrorMessage = (error) =>
   error?.response?.data?.message ||
   error?.response?.data?.error ||
@@ -54,15 +54,6 @@ export default function Card({ item }) {
     return false;
   };
 
-  const handleAddCart = (event) => {
-    event.preventDefault();
-    if (!isAuthenticated) {
-      navigate("/login");
-      return;
-    }
-    dispatch(addCartItem({ productId, quantity: 1 }));
-  };
-
   const handleToggleWishlist = async (event) => {
     event.preventDefault();
     event.stopPropagation();
@@ -81,24 +72,6 @@ export default function Card({ item }) {
         await dispatch(addWishlistThunk(productId)).unwrap();
         toast.success("Added to wishlist");
       }
-    } catch (error) {
-      toast.error(getApiErrorMessage(error));
-    } finally {
-      setWishlistLoading(false);
-    }
-  };
-
-  const handleRemoveWishlist = async (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-    if (wishlistLoading) {
-      return;
-    }
-
-    try {
-      setWishlistLoading(true);
-      await dispatch(deleteWishlistThunk(productId)).unwrap();
-      toast.success("Removed from wishlist");
     } catch (error) {
       toast.error(getApiErrorMessage(error));
     } finally {
@@ -127,8 +100,20 @@ export default function Card({ item }) {
           autoSelectProductId: productId,
         },
       });
-    } catch (err) {
+    } catch {
       toast.error("Cannot buy product");
+    }
+  };
+
+  const handleAddCompare = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    try {
+      addCompareProductId(String(productId));
+      toast.success("Added to compare");
+    } catch (compareError) {
+      toast.error(compareError.message || "Cannot add to compare");
     }
   };
   return (
@@ -158,6 +143,9 @@ export default function Card({ item }) {
 
         <button className="quick-buy-btn" onClick={handleBuyNow}>
           Buy Now
+        </button>
+        <button className="quick-buy-btn compare-btn" onClick={handleAddCompare}>
+          Compare
         </button>
       </div>
 

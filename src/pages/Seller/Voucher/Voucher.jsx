@@ -6,16 +6,7 @@ import "./style.scss";
 const Vouchers = () => {
   const [openAdd, setOpenAdd] = useState(false);
 
-  // const dispatch = useDispatch();
-  // const { vouchers, loading } = useSelector(
-  //   (state) => state.sellerVoucher,
-  // );
-
-  // useEffect(() => {
-  //   dispatch(fetchSellerVouchers());
-  // }, [dispatch]);
-
-  const vouchers = []; // Demo
+  const vouchers = [];
 
   return (
     <div className="seller-vouchers">
@@ -138,8 +129,10 @@ const Vouchers = () => {
                       <h3>No vouchers found</h3>
 
                       <p>
-                        Create your first voucher to start attracting more
-                        customers.
+                        Seller voucher list endpoint is not available in the
+                        current API contract. Create works; update and delete
+                        require a backend list/get endpoint to provide voucher
+                        IDs safely.
                       </p>
 
                       <button

@@ -1,0 +1,130 @@
+import { useCallback, useEffect, useState } from "react";
+import { RefreshCw, Wallet as WalletIcon } from "lucide-react";
+import { sellerService } from "../../../service/sellerService";
+import { formatCurrencyVN } from "../../../utils/fncUtils";
+import "./style.scss";
+
+const getApiErrorMessage = (error) =>
+  error?.response?.data?.message || error?.message || "Load wallet failed";
+
+const normalizeTransactions = (payload) => ({
+  items: Array.isArray(payload?.items) ? payload.items : Array.isArray(payload) ? payload : [],
+  totalCount: payload?.totalCount ?? payload?.items?.length ?? 0,
+  totalPages: payload?.totalPages ?? 1,
+});
+
+export default function SellerWallet() {
+  const [wallet, setWallet] = useState(null);
+  const [transactions, setTransactions] = useState([]);
+  const [page, setPage] = useState(1);
+  const [pagination, setPagination] = useState({ totalCount: 0, totalPages: 1 });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const loadWallet = useCallback(async () => {
+    try {
+      setLoading(true);
+      const [walletResponse, transactionResponse] = await Promise.all([
+        sellerService.getWalletSeller(),
+        sellerService.getWalletTransactionsSeller({ page, pageSize: 20 }),
+      ]);
+      const transactionPayload = normalizeTransactions(transactionResponse);
+
+      setWallet(walletResponse);
+      setTransactions(transactionPayload.items);
+      setPagination({
+        totalCount: transactionPayload.totalCount,
+        totalPages: transactionPayload.totalPages,
+      });
+      setError("");
+    } catch (loadError) {
+      setError(getApiErrorMessage(loadError));
+    } finally {
+      setLoading(false);
+    }
+  }, [page]);
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(loadWallet, 0);
+    return () => window.clearTimeout(timeoutId);
+  }, [loadWallet]);
+
+  return (
+    <div className="seller-wallet-page">
+      <div className="seller-wallet-page__header">
+        <div>
+          <span>Seller Finance</span>
+          <h1>Wallet</h1>
+          <p>Balances and transaction history from backend.</p>
+        </div>
+        <button type="button" disabled={loading} onClick={loadWallet}>
+          <RefreshCw size={16} /> Refresh
+        </button>
+      </div>
+
+      {error && <div className="seller-wallet-page__error">{error}</div>}
+
+      <div className="seller-wallet-page__cards">
+        <article>
+          <WalletIcon size={22} />
+          <span>Available</span>
+          <strong>{formatCurrencyVN(wallet?.availableBalance ?? 0)}</strong>
+        </article>
+        <article>
+          <WalletIcon size={22} />
+          <span>Pending</span>
+          <strong>{formatCurrencyVN(wallet?.pendingBalance ?? 0)}</strong>
+        </article>
+        <article>
+          <WalletIcon size={22} />
+          <span>Withdrawn</span>
+          <strong>{formatCurrencyVN(wallet?.withdrawnBalance ?? 0)}</strong>
+        </article>
+      </div>
+
+      <div className="seller-wallet-page__table-card">
+        <div className="seller-wallet-page__table-header">
+          <h2>Transactions</h2>
+          <span>{pagination.totalCount} records</span>
+        </div>
+
+        {loading ? (
+          <div className="seller-wallet-page__state">Loading wallet...</div>
+        ) : transactions.length === 0 ? (
+          <div className="seller-wallet-page__state">No transactions found.</div>
+        ) : (
+          <div className="seller-wallet-page__table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Type</th>
+                  <th>Status</th>
+                  <th>Description</th>
+                  <th>Amount</th>
+                  <th>Created</th>
+                </tr>
+              </thead>
+              <tbody>
+                {transactions.map((item) => (
+                  <tr key={item.id}>
+                    <td>{item.type || "--"}</td>
+                    <td><span className="seller-wallet-page__badge">{item.status || "--"}</span></td>
+                    <td>{item.description || "--"}</td>
+                    <td><strong>{formatCurrencyVN(item.amount || 0)}</strong></td>
+                    <td>{item.createdAtUtc ? new Date(item.createdAtUtc).toLocaleString("vi-VN") : "--"}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        <div className="seller-wallet-page__pagination">
+          <button type="button" disabled={page <= 1 || loading} onClick={() => setPage((prev) => Math.max(prev - 1, 1))}>Previous</button>
+          <span>Page {page} of {pagination.totalPages || 1}</span>
+          <button type="button" disabled={page >= pagination.totalPages || loading} onClick={() => setPage((prev) => prev + 1)}>Next</button>
+        </div>
+      </div>
+    </div>
+  );
+}

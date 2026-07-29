@@ -1,9 +1,11 @@
 import { useSelector } from "react-redux";
 import { useState } from "react";
+import toast from "react-hot-toast";
 import "./style.scss";
 import { sellerService } from "../../../../service/sellerService";
 const AddVoucherModal = ({ open, onClose }) => {
   const userInfo = useSelector((state) => state.user.userInfo);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [form, setForm] = useState({
     code: "",
     name: "",
@@ -30,23 +32,68 @@ const AddVoucherModal = ({ open, onClose }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!form.code.trim() || !form.name.trim()) {
+      toast.error("Voucher code and name are required");
+      return;
+    }
+
+    if (Number(form.discountValue) <= 0) {
+      toast.error("Discount value must be greater than 0");
+      return;
+    }
+
+    if (
+      form.discountType === "percentage" &&
+      Number(form.discountValue) > 100
+    ) {
+      toast.error("Percentage discount cannot exceed 100%");
+      return;
+    }
+
+    if (Number(form.quantity) <= 0) {
+      toast.error("Quantity must be greater than 0");
+      return;
+    }
+
+    if (!form.startAtUtc) {
+      toast.error("Start date is required");
+      return;
+    }
+
+    if (form.endAtUtc && new Date(form.endAtUtc) <= new Date(form.startAtUtc)) {
+      toast.error("End date must be after start date");
+      return;
+    }
+
     const payload = {
       ...form,
-      sellerId: userInfo.userId,
+      sellerId: userInfo?.sellerId || userInfo?.userId || userInfo?.id || null,
+      code: form.code.trim(),
+      name: form.name.trim(),
+      description: form.description.trim() || null,
       discountValue: Number(form.discountValue),
       minOrderAmount: Number(form.minOrderAmount),
-      maxDiscountAmount: Number(form.maxDiscountAmount),
+      maxDiscountAmount: form.maxDiscountAmount
+        ? Number(form.maxDiscountAmount)
+        : null,
       quantity: Number(form.quantity),
       startAtUtc: new Date(form.startAtUtc).toISOString(),
-      endAtUtc: new Date(form.endAtUtc).toISOString(),
+      endAtUtc: form.endAtUtc ? new Date(form.endAtUtc).toISOString() : null,
       isActive: form.isActive ?? true,
     };
 
     console.debug("[CreateSellerVoucher] payload", payload);
 
-    await sellerService.createVoucher(payload);
-
-    onClose();
+    try {
+      setIsSubmitting(true);
+      await sellerService.createVoucher(payload);
+      toast.success("Seller voucher created successfully");
+      onClose();
+    } catch (error) {
+      toast.error(error.message || "Create seller voucher failed");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (!open) return null;
@@ -197,12 +244,17 @@ const AddVoucherModal = ({ open, onClose }) => {
           </div>
 
           <div className="actions">
-            <button type="button" className="cancel-btn" onClick={onClose}>
+            <button
+              type="button"
+              className="cancel-btn"
+              onClick={onClose}
+              disabled={isSubmitting}
+            >
               Cancel
             </button>
 
-            <button className="create-btn" type="submit">
-              Create Voucher
+            <button className="create-btn" type="submit" disabled={isSubmitting}>
+              {isSubmitting ? "Creating..." : "Create Voucher"}
             </button>
           </div>
         </form>
