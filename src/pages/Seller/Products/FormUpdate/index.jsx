@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { categoriesService } from "../../../../service/categoriesService";
-import { fetchSellerProducts, updateSellerProduct } from "../../../../redux/slice/seller/product/thunk";
+import {
+  fetchSellerProducts,
+  updateSellerProduct,
+} from "../../../../redux/slice/seller/product/thunk";
 import {
   deleteProductImage,
   getProductImages,
@@ -14,7 +17,10 @@ import { PackageCheck, X } from "lucide-react";
 import "./style.scss";
 
 const getErrorMessage = (error, fallback) =>
-  error?.response?.data?.message || error?.data?.message || error?.message || fallback;
+  error?.response?.data?.message ||
+  error?.data?.message ||
+  error?.message ||
+  fallback;
 
 const mapProductToForm = (product) => ({
   name: product?.name || "",
@@ -39,10 +45,11 @@ const extractPublicIdFromUrl = (imageUrl) => {
 };
 
 const normalizeExistingImage = (image, index, isPrimary) => {
-  const publicId = image.publicId || image.public_id || extractPublicIdFromUrl(image.imageUrl);
+  const publicId =
+    image.publicId || image.public_id || extractPublicIdFromUrl(image.imageUrl);
 
   if (!image.imageUrl || !publicId) {
-    throw new Error("Ảnh hiện có thiếu imageUrl hoặc publicId.");
+    throw new Error("Image may lack of imageUrl or publicId.");
   }
 
   return {
@@ -80,7 +87,9 @@ const UpdateProductModal = ({ open, product, onClose }) => {
 
   const pendingPrimaryIndex = useMemo(() => {
     if (selectedPrimary?.type !== "pending") return undefined;
-    const index = pendingImages.findIndex((image) => image.clientId === selectedPrimary.clientId);
+    const index = pendingImages.findIndex(
+      (image) => image.clientId === selectedPrimary.clientId,
+    );
     return index >= 0 ? index : undefined;
   }, [pendingImages, selectedPrimary]);
 
@@ -99,7 +108,7 @@ const UpdateProductModal = ({ open, product, onClose }) => {
       });
     } catch (error) {
       setImagesError(true);
-      toast.error(getErrorMessage(error, "Không tải được ảnh sản phẩm."));
+      toast.error(getErrorMessage(error, "Item image is not uploaded."));
     } finally {
       setImagesLoading(false);
     }
@@ -117,11 +126,13 @@ const UpdateProductModal = ({ open, product, onClose }) => {
       .then((images) => {
         setExistingImages(images);
         const primary = images.find((image) => image.isPrimary) ?? images[0];
-        setSelectedPrimary(primary ? { type: "existing", imageId: primary.id } : null);
+        setSelectedPrimary(
+          primary ? { type: "existing", imageId: primary.id } : null,
+        );
       })
       .catch((error) => {
         setImagesError(true);
-        toast.error(getErrorMessage(error, "Không tải được ảnh sản phẩm."));
+        toast.error(getErrorMessage(error, "Item image is not uploaded."));
       })
       .finally(() => {
         setImagesLoading(false);
@@ -153,8 +164,8 @@ const UpdateProductModal = ({ open, product, onClose }) => {
 
     const confirmed = window.confirm(
       image.isPrimary
-        ? "Đây là ảnh chính. Sau khi xóa, hệ thống sẽ tự chọn ảnh khác làm ảnh chính. Bạn có chắc muốn xóa?"
-        : "Bạn có chắc muốn xóa ảnh sản phẩm này không?",
+        ? "This is main image. After deletion, the system will automatically select another photo as the main photo. Are you sure you want to delete it?"
+        : "Are you sure you want to delete this product image?",
     );
 
     if (!confirmed) return;
@@ -163,13 +174,16 @@ const UpdateProductModal = ({ open, product, onClose }) => {
     try {
       await deleteProductImage(productId, image.id);
       toast.success("Đã xóa ảnh sản phẩm");
-      if (selectedPrimary?.type === "existing" && selectedPrimary.imageId === image.id) {
+      if (
+        selectedPrimary?.type === "existing" &&
+        selectedPrimary.imageId === image.id
+      ) {
         setSelectedPrimary(null);
       }
       await refetchImages();
       await dispatch(fetchSellerProducts({ pageNumber: 1, pageSize: 10 }));
     } catch (error) {
-      toast.error(getErrorMessage(error, "Xóa ảnh sản phẩm thất bại."));
+      toast.error(getErrorMessage(error, "Delete item image was failed."));
     } finally {
       setImageActionLoading(false);
     }
@@ -181,11 +195,11 @@ const UpdateProductModal = ({ open, product, onClose }) => {
     setImageActionLoading(true);
     try {
       await setPrimaryProductImage(productId, imageId);
-      toast.success("Đã cập nhật ảnh chính");
+      toast.success("Main image was updated.");
       await refetchImages();
       await dispatch(fetchSellerProducts({ pageNumber: 1, pageSize: 10 }));
     } catch (error) {
-      toast.error(getErrorMessage(error, "Cập nhật ảnh chính thất bại."));
+      toast.error(getErrorMessage(error, "Update main image was failed."));
     } finally {
       setImageActionLoading(false);
     }
@@ -209,7 +223,11 @@ const UpdateProductModal = ({ open, product, onClose }) => {
       selectedPrimary?.type === "existing" ? selectedPrimary.imageId : null;
 
     const existingPayload = orderedExistingImages.map((image, index) =>
-      normalizeExistingImage(image, index, selectedExistingPrimaryId === image.id),
+      normalizeExistingImage(
+        image,
+        index,
+        selectedExistingPrimaryId === image.id,
+      ),
     );
 
     const uploadedPayload = await uploadPendingImages();
@@ -265,9 +283,9 @@ const UpdateProductModal = ({ open, product, onClose }) => {
         images,
       };
 
-      console.debug("Product payload:", payload);
-
-      await dispatch(updateSellerProduct({ productId, data: payload })).unwrap();
+      await dispatch(
+        updateSellerProduct({ productId, data: payload }),
+      ).unwrap();
       metadataUpdated = true;
 
       if (
@@ -278,7 +296,12 @@ const UpdateProductModal = ({ open, product, onClose }) => {
         try {
           await setPrimaryProductImage(productId, selectedPrimary.imageId);
         } catch (primaryError) {
-          toast.error(getErrorMessage(primaryError, "Ảnh đã được tải lên nhưng chưa đặt được ảnh chính."));
+          toast.error(
+            getErrorMessage(
+              primaryError,
+              "The image has been uploaded, but the main image has not yet been set.",
+            ),
+          );
           await refetchImages();
           return;
         }
@@ -293,8 +316,14 @@ const UpdateProductModal = ({ open, product, onClose }) => {
       console.error("Update product failed:", error);
       toast.error(
         metadataUpdated
-          ? getErrorMessage(error, "Thông tin sản phẩm đã được cập nhật nhưng xử lý ảnh thất bại.")
-          : getErrorMessage(error, "Failed to update product. Please try again."),
+          ? getErrorMessage(
+              error,
+              "Product information has been updated, but image processing failed.",
+            )
+          : getErrorMessage(
+              error,
+              "Failed to update product. Please try again.",
+            ),
         { duration: 3000 },
       );
     } finally {
@@ -307,17 +336,25 @@ const UpdateProductModal = ({ open, product, onClose }) => {
   const isBusy = submitting || imageActionLoading;
 
   return (
-    <div className="modal-overlay">
-      <div className="product-modal">
-        <div className="modal-header">
-          <div className="modal-title">
-            <div className="modal-icon"><PackageCheck size={22} /></div>
+    <div className="add-product-modal__overlay">
+      <div className="add-product-modal">
+        <div className="add-product-modal__header">
+          <div className="add-product-modal__title">
+            <div className="add-product-modal__icon">
+              <PackageCheck size={22} />
+            </div>
             <div>
               <h2>Update Product</h2>
               <p>Update your product information</p>
             </div>
           </div>
-          <button type="button" className="close-btn" onClick={handleClose} disabled={isBusy} aria-label="Close update product modal">
+          <button
+            type="button"
+            className="add-product-modal__close"
+            onClick={handleClose}
+            disabled={isBusy}
+            aria-label="Close update product modal"
+          >
             <X size={18} />
           </button>
         </div>
@@ -325,25 +362,58 @@ const UpdateProductModal = ({ open, product, onClose }) => {
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label>Product Name</label>
-            <input name="name" placeholder="Nike Air Force" value={form.name} onChange={handleChange} required disabled={isBusy} />
+            <input
+              name="name"
+              placeholder="Nike Air Force"
+              value={form.name}
+              onChange={handleChange}
+              required
+              disabled={isBusy}
+            />
           </div>
 
           <div className="form-group">
             <label>Description</label>
-            <textarea name="description" placeholder="Product description..." value={form.description} onChange={handleChange} required disabled={isBusy} />
+            <textarea
+              name="description"
+              placeholder="Product description..."
+              value={form.description}
+              onChange={handleChange}
+              required
+              disabled={isBusy}
+            />
           </div>
 
           <div className="row">
             <div className="form-group">
               <label>Price</label>
-              <input type="number" name="price" min="0" placeholder="100" value={form.price} onChange={handleChange} required disabled={isBusy} />
+              <input
+                type="number"
+                name="price"
+                min="0"
+                placeholder="100"
+                value={form.price}
+                onChange={handleChange}
+                required
+                disabled={isBusy}
+              />
             </div>
 
             <div className="form-group">
               <label>Category</label>
-              <select name="categoryId" value={form.categoryId} onChange={handleChange} required disabled={isBusy}>
+              <select
+                name="categoryId"
+                value={form.categoryId}
+                onChange={handleChange}
+                required
+                disabled={isBusy}
+              >
                 <option value="">-- Select Category --</option>
-                {categories.map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}
+                {categories.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
@@ -351,7 +421,13 @@ const UpdateProductModal = ({ open, product, onClose }) => {
           <div className="row">
             <div className="form-group">
               <label>Condition</label>
-              <select name="condition" value={form.condition} onChange={handleChange} required disabled={isBusy}>
+              <select
+                name="condition"
+                value={form.condition}
+                onChange={handleChange}
+                required
+                disabled={isBusy}
+              >
                 <option value="">-- Select Condition --</option>
                 <option value="new">New</option>
                 <option value="used">Used</option>
@@ -360,21 +436,45 @@ const UpdateProductModal = ({ open, product, onClose }) => {
 
             <div className="form-group">
               <label>Location</label>
-              <input name="location" placeholder="Ha Noi" value={form.location} onChange={handleChange} disabled={isBusy} />
+              <input
+                name="location"
+                placeholder="Ha Noi"
+                value={form.location}
+                onChange={handleChange}
+                disabled={isBusy}
+              />
             </div>
           </div>
 
-          <div className="switch-group">
-            <label className="switch-item">
-              <input type="checkbox" name="isActive" checked={form.isActive} onChange={handleChange} disabled={isBusy} />
-              <span className="switch" />
-              <span className="switch-label"><strong>Active Product</strong><small>Product is available for customers</small></span>
+          <div className="product-switch-group">
+            <label className="product-switch-item">
+              <input
+                type="checkbox"
+                name="isActive"
+                checked={form.isActive}
+                onChange={handleChange}
+                disabled={isBusy}
+              />
+              <span className="product-switch" />
+              <span className="product-switch-label">
+                <strong>Active Product</strong>
+                <small>Product is available for customers</small>
+              </span>
             </label>
 
-            <label className="switch-item">
-              <input type="checkbox" name="isPublic" checked={form.isPublic} onChange={handleChange} disabled={isBusy} />
-              <span className="switch" />
-              <span className="switch-label"><strong>Public Product</strong><small>Allow this product to be visible publicly</small></span>
+            <label className="product-switch">
+              <input
+                type="checkbox"
+                name="isPublic"
+                checked={form.isPublic}
+                onChange={handleChange}
+                disabled={isBusy}
+              />
+              <span className="product-switch" />
+              <span className="product-switch-label">
+                <strong>Public Product</strong>
+                <small>Allow this product to be visible publicly</small>
+              </span>
             </label>
           </div>
 
@@ -394,9 +494,20 @@ const UpdateProductModal = ({ open, product, onClose }) => {
           />
 
           <div className="actions">
-            <button type="button" className="cancel-btn" onClick={handleClose} disabled={isBusy}>Cancel</button>
+            <button
+              type="button"
+              className="cancel-btn"
+              onClick={handleClose}
+              disabled={isBusy}
+            >
+              Cancel
+            </button>
             <button type="submit" className="create-btn" disabled={isBusy}>
-              {imageActionLoading ? "Đang xử lý ảnh..." : submitting ? "Đang lưu thay đổi..." : "Update Product"}
+              {imageActionLoading
+                ? "Is executing image..."
+                : submitting
+                  ? "Is saving..."
+                  : "Update Product"}
             </button>
           </div>
         </form>

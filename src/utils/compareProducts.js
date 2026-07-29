@@ -16,7 +16,10 @@ export const saveCompareProductIds = (productIds) => {
     0,
     MAX_COMPARE_PRODUCTS,
   );
-  window.localStorage.setItem(COMPARE_STORAGE_KEY, JSON.stringify(normalizedIds));
+  window.localStorage.setItem(
+    COMPARE_STORAGE_KEY,
+    JSON.stringify(normalizedIds),
+  );
   window.dispatchEvent(new Event("compare-products-change"));
   return normalizedIds;
 };

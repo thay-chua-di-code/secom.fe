@@ -8,7 +8,11 @@ const getApiErrorMessage = (error) =>
   error?.response?.data?.message || error?.message || "Load wallet failed";
 
 const normalizeTransactions = (payload) => ({
-  items: Array.isArray(payload?.items) ? payload.items : Array.isArray(payload) ? payload : [],
+  items: Array.isArray(payload?.items)
+    ? payload.items
+    : Array.isArray(payload)
+      ? payload
+      : [],
   totalCount: payload?.totalCount ?? payload?.items?.length ?? 0,
   totalPages: payload?.totalPages ?? 1,
 });
@@ -17,7 +21,10 @@ export default function SellerWallet() {
   const [wallet, setWallet] = useState(null);
   const [transactions, setTransactions] = useState([]);
   const [page, setPage] = useState(1);
-  const [pagination, setPagination] = useState({ totalCount: 0, totalPages: 1 });
+  const [pagination, setPagination] = useState({
+    totalCount: 0,
+    totalPages: 1,
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -65,18 +72,29 @@ export default function SellerWallet() {
       {error && <div className="seller-wallet-page__error">{error}</div>}
 
       <div className="seller-wallet-page__cards">
-        <article>
-          <WalletIcon size={22} />
-          <span>Available</span>
+        <article className="wallet-card">
+          <div className="wallet-card__icon">
+            <WalletIcon size={26} />
+          </div>
+
+          <span>Available Balance</span>
           <strong>{formatCurrencyVN(wallet?.availableBalance ?? 0)}</strong>
         </article>
-        <article>
-          <WalletIcon size={22} />
-          <span>Pending</span>
+
+        <article className="wallet-card">
+          <div className="wallet-card__icon">
+            <WalletIcon size={26} />
+          </div>
+
+          <span>Pending Balance</span>
           <strong>{formatCurrencyVN(wallet?.pendingBalance ?? 0)}</strong>
         </article>
-        <article>
-          <WalletIcon size={22} />
+
+        <article className="wallet-card">
+          <div className="wallet-card__icon">
+            <WalletIcon size={26} />
+          </div>
+
           <span>Withdrawn</span>
           <strong>{formatCurrencyVN(wallet?.withdrawnBalance ?? 0)}</strong>
         </article>
@@ -91,7 +109,9 @@ export default function SellerWallet() {
         {loading ? (
           <div className="seller-wallet-page__state">Loading wallet...</div>
         ) : transactions.length === 0 ? (
-          <div className="seller-wallet-page__state">No transactions found.</div>
+          <div className="seller-wallet-page__state">
+            No transactions found.
+          </div>
         ) : (
           <div className="seller-wallet-page__table-wrap">
             <table>
@@ -108,10 +128,20 @@ export default function SellerWallet() {
                 {transactions.map((item) => (
                   <tr key={item.id}>
                     <td>{item.type || "--"}</td>
-                    <td><span className="seller-wallet-page__badge">{item.status || "--"}</span></td>
+                    <td>
+                      <span className="seller-wallet-page__badge">
+                        {item.status || "--"}
+                      </span>
+                    </td>
                     <td>{item.description || "--"}</td>
-                    <td><strong>{formatCurrencyVN(item.amount || 0)}</strong></td>
-                    <td>{item.createdAtUtc ? new Date(item.createdAtUtc).toLocaleString("vi-VN") : "--"}</td>
+                    <td>
+                      <strong>{formatCurrencyVN(item.amount || 0)}</strong>
+                    </td>
+                    <td>
+                      {item.createdAtUtc
+                        ? new Date(item.createdAtUtc).toLocaleString("vi-VN")
+                        : "--"}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -120,9 +150,23 @@ export default function SellerWallet() {
         )}
 
         <div className="seller-wallet-page__pagination">
-          <button type="button" disabled={page <= 1 || loading} onClick={() => setPage((prev) => Math.max(prev - 1, 1))}>Previous</button>
-          <span>Page {page} of {pagination.totalPages || 1}</span>
-          <button type="button" disabled={page >= pagination.totalPages || loading} onClick={() => setPage((prev) => prev + 1)}>Next</button>
+          <button
+            type="button"
+            disabled={page <= 1 || loading}
+            onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+          >
+            Previous
+          </button>
+          <span>
+            Page {page} of {pagination.totalPages || 1}
+          </span>
+          <button
+            type="button"
+            disabled={page >= pagination.totalPages || loading}
+            onClick={() => setPage((prev) => prev + 1)}
+          >
+            Next
+          </button>
         </div>
       </div>
     </div>

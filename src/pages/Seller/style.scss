@@ -10,19 +10,16 @@ $border: #e5e7eb;
 
 .seller {
   display: flex;
-
   width: 100%;
   height: 100dvh;
-
+  margin-top: 2px;
   overflow: hidden;
 
   // ===== SIDEBAR =====
 
   &__sidebar {
     width: 280px;
-
     flex-shrink: 0;
-
     height: 100dvh;
 
     overflow-y: auto;
@@ -100,8 +97,6 @@ $border: #e5e7eb;
   justify-content: space-between;
   align-items: center;
 
-  margin-bottom: 24px;
-
   h1 {
     color: $text;
     font-size: 32px;
@@ -112,13 +107,10 @@ $border: #e5e7eb;
     border: none;
     background: $primary;
     color: white;
-
     height: 48px;
     padding: 0 24px;
-
     border-radius: 8px;
     cursor: pointer;
-
     transition: 0.3s;
 
     &:hover {

@@ -76,7 +76,10 @@ const ProductImageManager = ({
       }
 
       const fileKey = getFileKey(file);
-      if (currentKeys.has(fileKey) || validFiles.some((item) => getFileKey(item) === fileKey)) {
+      if (
+        currentKeys.has(fileKey) ||
+        validFiles.some((item) => getFileKey(item) === fileKey)
+      ) {
         nextErrors.push(`${file.name}: Ảnh đã được chọn.`);
         return;
       }
@@ -95,7 +98,10 @@ const ProductImageManager = ({
 
     if (!validFiles.length) return;
 
-    const shouldSelectFirst = !selectedPrimary && existingImages.length === 0 && pendingImages.length === 0;
+    const shouldSelectFirst =
+      !selectedPrimary &&
+      existingImages.length === 0 &&
+      pendingImages.length === 0;
     const nextImages = validFiles.map((file, index) => ({
       clientId: createClientId(),
       file,
@@ -107,7 +113,10 @@ const ProductImageManager = ({
     onPendingImagesChange([...pendingImages, ...nextImages]);
 
     if (shouldSelectFirst) {
-      onSelectedPrimaryChange({ type: "pending", clientId: nextImages[0].clientId });
+      onSelectedPrimaryChange({
+        type: "pending",
+        clientId: nextImages[0].clientId,
+      });
     }
   };
 
@@ -120,11 +129,17 @@ const ProductImageManager = ({
     const removed = pendingImages.find((image) => image.clientId === clientId);
     if (removed) URL.revokeObjectURL(removed.previewUrl);
 
-    const nextImages = pendingImages.filter((image) => image.clientId !== clientId);
+    const nextImages = pendingImages.filter(
+      (image) => image.clientId !== clientId,
+    );
     onPendingImagesChange(nextImages);
 
-    if (selectedPrimary?.type === "pending" && selectedPrimary.clientId === clientId) {
-      const serverPrimary = existingImages.find((image) => image.isPrimary) ?? existingImages[0];
+    if (
+      selectedPrimary?.type === "pending" &&
+      selectedPrimary.clientId === clientId
+    ) {
+      const serverPrimary =
+        existingImages.find((image) => image.isPrimary) ?? existingImages[0];
       const nextPending = nextImages[0];
       onSelectedPrimaryChange(
         serverPrimary
@@ -137,24 +152,34 @@ const ProductImageManager = ({
   };
 
   const isImagePrimary = (image) => {
-    if (selectedPrimary?.type === "existing") return selectedPrimary.imageId === image.id;
+    if (selectedPrimary?.type === "existing")
+      return selectedPrimary.imageId === image.id;
     if (selectedPrimary?.type === "pending") return false;
     return image.isPrimary;
   };
 
-  const isPendingPrimary = (image) => selectedPrimary?.type === "pending" && selectedPrimary.clientId === image.clientId;
+  const isPendingPrimary = (image) =>
+    selectedPrimary?.type === "pending" &&
+    selectedPrimary.clientId === image.clientId;
 
   return (
     <section className="product-image-manager">
       <div className="product-image-manager__header">
         <div>
           <h3>Product images</h3>
-          <p>JPG, PNG, WebP. Maximum {maxImages} images, {formatMb(PRODUCT_IMAGE_LIMITS.maxSizeBytes)} MB each.</p>
+          <p>
+            JPG, PNG, WebP. Maximum {maxImages} images,{" "}
+            {formatMb(PRODUCT_IMAGE_LIMITS.maxSizeBytes)} MB each.
+          </p>
         </div>
-        <span>{visibleCount}/{maxImages} ảnh</span>
+        <span>
+          {visibleCount}/{maxImages} image
+        </span>
       </div>
 
-      <label className={`product-image-manager__dropzone ${isBusy ? "is-disabled" : ""}`}>
+      <label
+        className={`product-image-manager__dropzone ${isBusy ? "is-disabled" : ""}`}
+      >
         <input
           ref={inputRef}
           type="file"
@@ -164,8 +189,11 @@ const ProductImageManager = ({
           onChange={handleInputChange}
         />
         <ImagePlus size={22} />
-        <strong>Chọn ảnh sản phẩm</strong>
-        <small>Ảnh được giữ tạm trên máy cho đến khi lưu sản phẩm.</small>
+        <strong>Selected image item</strong>
+        <small>
+          The image is temporarily stored on the device until the product is
+          saved.
+        </small>
       </label>
 
       {errors.length > 0 && (
@@ -176,9 +204,19 @@ const ProductImageManager = ({
         </div>
       )}
 
-      {isLoadingExisting && <p className="product-image-manager__state">Đang tải ảnh...</p>}
-      {isErrorExisting && <p className="product-image-manager__state is-error">Không tải được ảnh sản phẩm.</p>}
-      {!isLoadingExisting && visibleCount === 0 && <p className="product-image-manager__state">Chưa chọn ảnh sản phẩm.</p>}
+      {isLoadingExisting && (
+        <p className="product-image-manager__state">Uploading image...</p>
+      )}
+      {isErrorExisting && (
+        <p className="product-image-manager__state is-error">
+          Item image cannot uploading.
+        </p>
+      )}
+      {!isLoadingExisting && visibleCount === 0 && (
+        <p className="product-image-manager__state">
+          Item image need to selected.
+        </p>
+      )}
 
       <div className="product-image-manager__grid">
         {existingImages.map((image) => {
@@ -193,28 +231,33 @@ const ProductImageManager = ({
                   event.currentTarget.src = "/placeholder-image.svg";
                 }}
               />
-              {primary && <span className="product-image-card__badge">Ảnh chính</span>}
+              {primary && (
+                <span className="product-image-card__badge">Main Image</span>
+              )}
               <div className="product-image-card__actions">
                 <button
                   type="button"
                   disabled={isBusy || primary}
                   aria-label="Đặt ảnh này làm ảnh chính"
                   onClick={() => {
-                    onSelectedPrimaryChange({ type: "existing", imageId: image.id });
+                    onSelectedPrimaryChange({
+                      type: "existing",
+                      imageId: image.id,
+                    });
                     onSetExistingPrimary?.(image.id);
                   }}
                 >
                   <Star size={15} />
-                  Đặt chính
+                  Set main
                 </button>
                 <button
                   type="button"
                   disabled={isBusy}
-                  aria-label="Xóa ảnh sản phẩm"
+                  aria-label="Delete image"
                   onClick={() => onDeleteExistingImage?.(image)}
                 >
                   <Trash2 size={15} />
-                  Xóa
+                  Delete
                 </button>
               </div>
             </article>
@@ -224,28 +267,41 @@ const ProductImageManager = ({
         {pendingImages.map((image) => {
           const primary = isPendingPrimary(image);
           return (
-            <article className="product-image-card is-pending" key={image.clientId}>
-              <img src={image.previewUrl} alt={image.file.name || productName || "Product image preview"} />
-              {primary && <span className="product-image-card__badge">Ảnh chính</span>}
-              <span className="product-image-card__pending">Chưa tải lên</span>
+            <article
+              className="product-image-card is-pending"
+              key={image.clientId}
+            >
+              <img
+                src={image.previewUrl}
+                alt={image.file.name || productName || "Product image preview"}
+              />
+              {primary && (
+                <span className="product-image-card__badge">Main image</span>
+              )}
+              <span className="product-image-card__pending">Not uploading</span>
               <div className="product-image-card__actions">
                 <button
                   type="button"
                   disabled={isBusy || primary}
-                  aria-label="Đặt ảnh này làm ảnh chính"
-                  onClick={() => onSelectedPrimaryChange({ type: "pending", clientId: image.clientId })}
+                  aria-label="Set this image is main"
+                  onClick={() =>
+                    onSelectedPrimaryChange({
+                      type: "pending",
+                      clientId: image.clientId,
+                    })
+                  }
                 >
                   <Star size={15} />
-                  Đặt chính
+                  Set main
                 </button>
                 <button
                   type="button"
                   disabled={isBusy}
-                  aria-label="Xóa ảnh chưa tải lên"
+                  aria-label="Delete the image that hasn't been uploaded yet."
                   onClick={() => removePendingImage(image.clientId)}
                 >
                   <Trash2 size={15} />
-                  Xóa
+                  Delete
                 </button>
               </div>
             </article>
@@ -261,7 +317,7 @@ const ProductImageManager = ({
           onClick={onRetryImages}
         >
           <RefreshCcw size={16} />
-          Thử tải ảnh lại
+          Try to upload again
         </button>
       )}
     </section>

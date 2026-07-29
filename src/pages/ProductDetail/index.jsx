@@ -46,6 +46,7 @@ export default function ProductDetail() {
     return Array.isArray(items) ? items : [];
   });
   const { productDetail, loading } = useSelector((state) => state.products);
+  console.log(productDetail);
   // const [productDetail, setProductDetail] = useState(null);
   const [selectedImage, setSelectedImage] = useState("");
   const [quantity, setQuantity] = useState(1);
@@ -73,8 +74,22 @@ export default function ProductDetail() {
   }, [id, dispatch]);
 
   useEffect(() => {
-    queueMicrotask(() => setSelectedImage(images[0] || ""));
-  }, [images]);
+    if (!productDetail) {
+      setSelectedImage(null);
+      return;
+    }
+
+    const images = productDetail.images ?? [];
+
+    if (images.length === 0) {
+      setSelectedImage(null);
+      return;
+    }
+
+    const primary = images.find((item) => item.isPrimary) || images[0];
+
+    setSelectedImage(primary);
+  }, [productDetail]);
 
   const requireLogin = () => {
     if (isAuthenticated) {
@@ -214,14 +229,20 @@ export default function ProductDetail() {
                 className={`thumbnail ${selectedImage === img ? "active" : ""}`}
                 onClick={() => setSelectedImage(img)}
               >
-                <img src={img} alt={productDetail.name || "Product"} />
+                <img
+                  src={img?.imageUrl}
+                  alt={productDetail.name || "Product"}
+                />
               </div>
             ))}
           </div>
 
           <div className="main-image" data-testid="product-detail-image">
             {selectedImage ? (
-              <img src={selectedImage} alt={productDetail.name || "Product"} />
+              <img
+                src={selectedImage?.imageUrl}
+                alt={productDetail?.productId || "Product"}
+              />
             ) : (
               <span>No image available</span>
             )}

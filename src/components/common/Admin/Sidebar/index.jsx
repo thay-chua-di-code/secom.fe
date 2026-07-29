@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import {
   LayoutDashboard,
@@ -15,10 +15,22 @@ import {
 } from "lucide-react";
 
 import "./style.scss";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchAdminUsers } from "../../../../redux/slice/admin/users/userThunk";
 
 const Sidebar = () => {
+  const dispatch = useDispatch();
   const [isOpen, setIsOpen] = useState(false);
+  const usersState = useSelector((state) => state?.usersAdmin);
 
+  useEffect(() => {
+    dispatch(
+      fetchAdminUsers({
+        pageNumber: 1,
+        pageSize: 10,
+      }),
+    );
+  }, [dispatch]);
   const menus = [
     {
       title: "Dashboard",
@@ -34,7 +46,7 @@ const Sidebar = () => {
       title: "Users",
       icon: <Users size={17} />,
       path: "/admin/users",
-      badge: 2,
+      badge: usersState.users.length,
     },
     {
       title: "Products",

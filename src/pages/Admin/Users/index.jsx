@@ -82,14 +82,14 @@ export default function UsersPage() {
   // FETCH USERS
   // ============================================
 
-  useEffect(() => {
-    dispatch(
-      fetchAdminUsers({
-        pageNumber: 1,
-        pageSize: 10,
-      }),
-    );
-  }, [dispatch]);
+  // useEffect(() => {
+  //   dispatch(
+  //     fetchAdminUsers({
+  //       pageNumber: 1,
+  //       pageSize: 10,
+  //     }),
+  //   );
+  // }, [dispatch]);
 
   // ============================================
   // FETCH SELLERS
@@ -174,7 +174,7 @@ export default function UsersPage() {
             >
               <Store size={14} />
 
-              <span>Sellers</span>
+              <span>Sellers request</span>
 
               <b>{pendingSellers}</b>
             </button>

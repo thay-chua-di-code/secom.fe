@@ -37,20 +37,18 @@
     position: relative;
     width: 100%;
     aspect-ratio: 1 / 1;
-    background-color: #f5f5f5;
-    border-radius: 4px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     overflow: hidden;
+    background: #f8f8f8;
   }
 
   &__image {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-    padding: 16px; // Giữ khoảng cách an toàn cho ảnh sản phẩm ở giữa
-    transition: transform 0.3s ease;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    padding: 0;
+    display: block;
+    transition: transform 0.35s ease;
   }
 
   &__badge {
@@ -58,7 +56,7 @@
     top: 12px;
     left: 12px;
     padding: 4px 10px;
-    background: #db4444; // Đồng bộ màu đỏ nhấn thương hiệu
+    background: #db4444; 
     color: white;
     border-radius: 4px;
     font-size: 12px;

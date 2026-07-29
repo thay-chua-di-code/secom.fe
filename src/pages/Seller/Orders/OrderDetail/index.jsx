@@ -29,9 +29,14 @@ const sellerOrderTransitions = {
 
 const OrderDetail = ({ open, onClose, order }) => {
   const dispatch = useDispatch();
-
-  const { confirmLoading, confirmSuccess, confirmMessage, confirmError, statusLoading } =
-    useSelector((state) => state.sellerOrder);
+  console.log(order);
+  const {
+    confirmLoading,
+    confirmSuccess,
+    confirmMessage,
+    confirmError,
+    statusLoading,
+  } = useSelector((state) => state.sellerOrder);
 
   useEffect(() => {
     if (!confirmSuccess) return;
