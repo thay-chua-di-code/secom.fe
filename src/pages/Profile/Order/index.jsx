@@ -6,7 +6,6 @@ import { paymentApi } from "../../../api/paymentApi";
 import { formatCurrencyVN } from "../../../utils/fncUtils";
 import { uploadImageToCloudinary } from "../../../services/cloudinaryService";
 import "./style.scss";
-import { userService } from "../../../service/userService";
 
 const orderStatuses = [
   "all",
@@ -98,6 +97,31 @@ const getFinalTotal = (order) =>
 const getOrderItems = (order) =>
   order?.items || order?.orderItems || order?.products || [];
 const getOrderItemId = (item) => item?.orderItemId || item?.id;
+const getReturnableItems = (order) =>
+  getOrderItems(order).filter((item) => {
+    if (typeof item?.canReturn === "boolean") return item.canReturn;
+    if (typeof item?.isReturnable === "boolean") return item.isReturnable;
+
+    const itemStatus = normalizeStatus(item?.status || item?.itemStatus);
+
+    if (!itemStatus) return true;
+
+    return ["delivered", "received", "completed"].includes(itemStatus);
+  });
+const getPurchasedQuantity = (item) =>
+  Number(item?.quantity ?? item?.purchasedQuantity ?? item?.qty ?? 0);
+const getMaxReturnQuantity = (item) =>
+  Number(
+    item?.remainingReturnQuantity ?? item?.returnableQuantity ?? getPurchasedQuantity(item),
+  );
+const getItemUnitPrice = (item) => Number(item?.unitPrice ?? item?.price ?? 0);
+const getItemSubtotal = (item) =>
+  Number(
+    item?.subtotal ??
+      item?.totalPrice ??
+      getItemUnitPrice(item) * getPurchasedQuantity(item),
+  );
+const getProductImageUrl = (item) => item?.productImageUrl || item?.imageUrl;
 
 const loadOmiseScript = () => {
   return new Promise((resolve, reject) => {
@@ -170,7 +194,7 @@ function StatusBadge({ status }) {
   );
 }
 
-function OrderDetailModal({ order, payment, loading, onClose, onRefresh }) {
+function OrderDetailModal({ order, payment, loading, onClose }) {
   if (!order) return null;
   const items = getOrderItems(order);
   return (
@@ -306,11 +330,16 @@ function OrderActionModal({ type, order, actionLoading, onClose, onConfirm }) {
   const [reason, setReason] = useState("");
   const [description, setDescription] = useState("");
   const [evidenceFiles, setEvidenceFiles] = useState([]);
+  const [selectedItems, setSelectedItems] = useState({});
 
   if (!order) return null;
 
   const isReturn = type === "return";
   const isCancel = type === "cancel";
+  const returnableItems = isReturn ? getReturnableItems(order) : [];
+  const hasSelectedReturnItem = Object.values(selectedItems).some(
+    (item) => item.selected && item.quantity > 0,
+  );
   const title = isReturn
     ? "Request return/refund"
     : isCancel
@@ -324,11 +353,53 @@ function OrderActionModal({ type, order, actionLoading, onClose, onConfirm }) {
       return;
     }
 
+    if (isReturn && !hasSelectedReturnItem) {
+      toast.error("Please select at least one order item.");
+      return;
+    }
+
     onConfirm({
       reason: reason.trim(),
       description: description.trim(),
       evidenceFiles,
+      items: Object.entries(selectedItems)
+        .filter(([, item]) => item.selected && item.quantity > 0)
+        .map(([orderItemId, item]) => ({
+          orderItemId,
+          quantity: item.quantity,
+        })),
     });
+  };
+
+  const handleReturnItemToggle = (item, checked) => {
+    const orderItemId = getOrderItemId(item);
+    const maxQuantity = Math.max(getMaxReturnQuantity(item), 0);
+
+    if (!orderItemId || maxQuantity < 1) return;
+
+    setSelectedItems((prev) => ({
+      ...prev,
+      [orderItemId]: {
+        selected: checked,
+        quantity: prev[orderItemId]?.quantity || 1,
+      },
+    }));
+  };
+
+  const handleReturnQuantityChange = (item, value) => {
+    const orderItemId = getOrderItemId(item);
+    const maxQuantity = Math.max(getMaxReturnQuantity(item), 1);
+    const quantity = Math.min(Math.max(Number(value || 1), 1), maxQuantity);
+
+    if (!orderItemId) return;
+
+    setSelectedItems((prev) => ({
+      ...prev,
+      [orderItemId]: {
+        selected: prev[orderItemId]?.selected ?? true,
+        quantity,
+      },
+    }));
   };
 
   return (
@@ -381,6 +452,62 @@ function OrderActionModal({ type, order, actionLoading, onClose, onConfirm }) {
                 onChange={(event) => setDescription(event.target.value)}
               />
             </label>
+            <div className="order-action-field">
+              <span>Return items *</span>
+              {returnableItems.length === 0 ? (
+                <p className="order-muted">
+                  No order items are available for this return request.
+                </p>
+              ) : (
+                <div className="return-item-list">
+                  {returnableItems.map((item) => {
+                    const orderItemId = getOrderItemId(item);
+                    const maxQuantity = getMaxReturnQuantity(item);
+                    const selectedItem = selectedItems[orderItemId] || {};
+
+                    return (
+                      <article className="return-item" key={orderItemId}>
+                        <label className="return-item__check">
+                          <input
+                            type="checkbox"
+                            checked={!!selectedItem.selected}
+                            disabled={!orderItemId || maxQuantity < 1}
+                            onChange={(event) =>
+                              handleReturnItemToggle(item, event.target.checked)
+                            }
+                          />
+                          {getProductImageUrl(item) && (
+                            <img
+                              src={getProductImageUrl(item)}
+                              alt={item.productName || "Order item"}
+                            />
+                          )}
+                          <span>
+                            <strong>{item.productName || "Order item"}</strong>
+                            <small>
+                              Bought: {getPurchasedQuantity(item)} · Unit: {formatCurrencyVN(getItemUnitPrice(item))} · Subtotal: {formatCurrencyVN(getItemSubtotal(item))}
+                            </small>
+                          </span>
+                        </label>
+                        <label className="return-item__quantity">
+                          Qty
+                          <input
+                            type="number"
+                            min="1"
+                            max={maxQuantity}
+                            value={selectedItem.quantity || 1}
+                            disabled={!selectedItem.selected}
+                            onChange={(event) =>
+                              handleReturnQuantityChange(item, event.target.value)
+                            }
+                          />
+                        </label>
+                      </article>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
             <label className="order-action-field">
               Evidence images
               <input
@@ -412,7 +539,10 @@ function OrderActionModal({ type, order, actionLoading, onClose, onConfirm }) {
           <button
             type="submit"
             className="primary-btn"
-            disabled={actionLoading || (isReturn && !description.trim())}
+            disabled={
+              actionLoading ||
+              (isReturn && (!description.trim() || !hasSelectedReturnItem))
+            }
           >
             {actionLoading ? "Processing..." : "Confirm"}
           </button>
@@ -580,7 +710,7 @@ export default function OrderHistory() {
 
     try {
       setActionLoading(orderId);
-      const result = await orderApi.confirmReceived(orderId);
+      await orderApi.confirmReceived(orderId);
       toast.success("Order receipt confirmed");
       setOrderAction(null);
       await refreshAfterOrderAction(orderId);
@@ -596,10 +726,10 @@ export default function OrderHistory() {
     if (!canRequestReturn(order)) return;
 
     const orderId = getOrderId(order);
-    const items = getOrderItems(order)
+    const items = (values.items || [])
       .map((item) => ({
-        orderItemId: getOrderItemId(item),
-        quantity: Number(item.quantity || 1),
+        orderItemId: item.orderItemId,
+        quantity: Number(item.quantity || 0),
         reason: values.reason || null,
       }))
       .filter((item) => item.orderItemId && item.quantity > 0);
@@ -636,6 +766,29 @@ export default function OrderHistory() {
     } catch (returnError) {
       setError(getApiErrorMessage(returnError));
       toast.error(getApiErrorMessage(returnError));
+    } finally {
+      setActionLoading("");
+    }
+  };
+
+  const handleOpenReturnRequest = async (order) => {
+    if (!canRequestReturn(order)) return;
+
+    const orderId = getOrderId(order);
+
+    if (!orderId) {
+      toast.error("Order id is missing");
+      return;
+    }
+
+    try {
+      setActionLoading(orderId);
+      const response = await orderApi.getOrderDetail(orderId);
+      const detailOrder = unwrapOrder(response);
+      setOrderAction({ type: "return", order: detailOrder });
+    } catch (detailError) {
+      setError(getApiErrorMessage(detailError));
+      toast.error(getApiErrorMessage(detailError));
     } finally {
       setActionLoading("");
     }
@@ -687,6 +840,8 @@ export default function OrderHistory() {
           </button>
         ))}
       </div>
+
+      {error && <p className="order-error">{error}</p>}
 
       <div className="order-card-form">
         <h3>Card Information</h3>
@@ -838,9 +993,9 @@ export default function OrderHistory() {
                       className="outline-btn"
                       type="button"
                       disabled={isLoading}
-                      onClick={() => setOrderAction({ type: "return", order })}
+                      onClick={() => handleOpenReturnRequest(order)}
                     >
-                      Return/Refund
+                      {isLoading ? "Loading..." : "Return/Refund"}
                     </button>
                   )}
                 </div>
@@ -859,7 +1014,6 @@ export default function OrderHistory() {
             setSelectedOrder(null);
             setSelectedPayment(null);
           }}
-          onRefresh={() => loadDetail(getOrderId(selectedOrder))}
         />
       )}
 

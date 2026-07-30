@@ -229,6 +229,29 @@ export const sellerService = {
     }
   },
 
+  getVouchers: async (params = {}) => {
+    try {
+      const cleanParams = Object.fromEntries(
+        Object.entries(params).filter(
+          ([, value]) =>
+            value !== undefined &&
+            value !== null &&
+            value !== "" &&
+            value !== "all" &&
+            value !== "default",
+        ),
+      );
+
+      const res = await axiosClient.get(API_ENDPOINTS.SELLER.VOUCHERS, {
+        params: cleanParams,
+      });
+
+      return res.data;
+    } catch (e) {
+      throw new Error(e?.response?.data?.message || "Get seller vouchers failed");
+    }
+  },
+
   updateVoucher: async (voucherId, data) => {
     try {
       const res = await axiosClient.put(`/seller/vouchers/${voucherId}`, data, {

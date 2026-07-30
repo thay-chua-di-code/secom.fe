@@ -76,6 +76,7 @@ export const API_ENDPOINTS = {
     FOLLOW_STATUS: (id) => `/sellers/${id}/follow-status`,
     FOLLOWED: "/followed",
     MY_FOLLOWED: "/users/me/followed-sellers",
+    VOUCHERS: "/seller/vouchers",
     PRODUCT: (id) =>
       id || id === 0 ? `/seller/products/${id}` : "/seller/products",
     PRODUCT_INVENTORY: (id) => `/seller/products/${id}/inventory`,
@@ -166,8 +167,9 @@ export const API_ENDPOINTS = {
     },
     FINANCE: {
       SUMMARY: "/admin/finance/money-flow",
-      APR: (id) => `/admin/finance/${id}/approve`,
-      REJ: (id) => `/admin/finance/${id}/reject`,
+      PAYOUTS: "/admin/payouts",
+      APPROVE: (id) => `/admin/payouts/${id}/approve`,
+      REJECT: (id) => `/admin/payouts/${id}/reject`,
     },
   },
 };

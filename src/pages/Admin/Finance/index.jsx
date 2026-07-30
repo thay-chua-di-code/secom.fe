@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   DollarSign,
@@ -16,19 +16,88 @@ import "./style.scss";
 
 import {
   fetchFinanceSummary,
+  fetchAdminPayouts,
   approvePayout,
   rejectPayout,
 } from "../../../redux/slice/admin/finance/financeThunk";
 import FinanceCharts from "./Chart";
+import toast from "react-hot-toast";
+
+const DEFAULT_PAGE_SIZE = 20;
+
+const normalizePayoutStatus = (status) =>
+  status?.trim().toLowerCase() || "unknown";
+
+const payoutStatusLabels = {
+  pending: "Pending",
+  approved: "Approved",
+  rejected: "Rejected",
+  processing: "Processing",
+  completed: "Completed",
+  failed: "Failed",
+  unknown: "Unknown",
+};
+
+const getPayoutId = (item) =>
+  item?.payoutRequestId || item?.payoutId || item?.id || item?.withdrawalRequestId;
+
+const getSellerName = (item) =>
+  item?.shopName || item?.sellerFullName || item?.sellerName || "Unknown seller";
+
+const getBankName = (item) =>
+  item?.bankName || item?.bank?.name || item?.bankAccount?.bankName || "-";
+
+const getRequestedDate = (item) =>
+  item?.requestedAtUtc || item?.createdAtUtc || item?.createdAt;
+
+const formatCurrency = (value) => `${Number(value || 0).toLocaleString()} đ`;
+
+const formatDate = (value) => {
+  if (!value) {
+    return "-";
+  }
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return value;
+  }
+
+  return date.toLocaleDateString("vi-VN");
+};
 
 export default function Finance() {
   const dispatch = useDispatch();
 
-  const { summary, loading } = useSelector((state) => state.financeAdmin);
+  const {
+    summary,
+    loading,
+    payouts,
+    payoutsPagination,
+    payoutsLoading,
+    payoutsError,
+    payoutLoading,
+  } = useSelector((state) => state.financeAdmin);
+
+  const [status, setStatus] = useState("");
+  const [page, setPage] = useState(1);
+
+  const payoutParams = useMemo(
+    () => ({
+      status,
+      page,
+      pageSize: DEFAULT_PAGE_SIZE,
+    }),
+    [page, status],
+  );
 
   useEffect(() => {
     dispatch(fetchFinanceSummary());
   }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(fetchAdminPayouts(payoutParams));
+  }, [dispatch, payoutParams]);
 
   const cards = [
     {
@@ -78,49 +147,51 @@ export default function Finance() {
     },
   ];
 
-  // Temporary
-  const withdrawals = [
-    {
-      id: 1,
-      sellerName: "Apple Store",
-      amount: 12500000,
-      bankName: "Vietcombank",
-      createdAt: "2026-06-29",
-      status: "Pending",
-    },
-    {
-      id: 2,
-      sellerName: "Samsung Official",
-      amount: 8200000,
-      bankName: "BIDV",
-      createdAt: "2026-06-29",
-      status: "Pending",
-    },
-    {
-      id: 3,
-      sellerName: "Asus Shop",
-      amount: 14300000,
-      bankName: "ACB",
-      createdAt: "2026-06-28",
-      status: "Approved",
-    },
-    {
-      id: 4,
-      sellerName: "Dell VN",
-      amount: 7200000,
-      bankName: "MB Bank",
-      createdAt: "2026-06-28",
-      status: "Rejected",
-    },
-    {
-      id: 5,
-      sellerName: "Lenovo Mall",
-      amount: 9300000,
-      bankName: "Techcombank",
-      createdAt: "2026-06-27",
-      status: "Pending",
-    },
-  ];
+  const refreshPayouts = () => dispatch(fetchAdminPayouts(payoutParams));
+
+  const handleRefresh = () => {
+    dispatch(fetchFinanceSummary());
+    refreshPayouts();
+  };
+
+  const handleStatusChange = (event) => {
+    setStatus(event.target.value);
+    setPage(1);
+  };
+
+  const handleApprovePayout = async (id) => {
+    if (!id || payoutLoading) {
+      return;
+    }
+
+    const result = await dispatch(approvePayout(id));
+
+    if (approvePayout.fulfilled.match(result)) {
+      toast.success("Payout approved successfully");
+      refreshPayouts();
+      dispatch(fetchFinanceSummary());
+      return;
+    }
+
+    toast.error(result.payload || "Unable to approve payout request.");
+  };
+
+  const handleRejectPayout = async (id) => {
+    if (!id || payoutLoading) {
+      return;
+    }
+
+    const result = await dispatch(rejectPayout(id));
+
+    if (rejectPayout.fulfilled.match(result)) {
+      toast.success("Payout rejected successfully");
+      refreshPayouts();
+      dispatch(fetchFinanceSummary());
+      return;
+    }
+
+    toast.error(result.payload || "Unable to reject payout request.");
+  };
 
   return (
     <div className="finance-page">
@@ -130,7 +201,7 @@ export default function Finance() {
           <p>Platform Financial Overview</p>
         </div>
 
-        <button onClick={() => dispatch(fetchFinanceSummary())}>
+        <button onClick={handleRefresh}>
           <RefreshCw size={18} />
           Refresh
         </button>
@@ -172,6 +243,15 @@ export default function Finance() {
           <div className="withdraw-section">
             <div className="section-header">
               <h3>Withdrawal Requests</h3>
+              <select value={status} onChange={handleStatusChange}>
+                <option value="">All Statuses</option>
+                <option value="pending">Pending</option>
+                <option value="approved">Approved</option>
+                <option value="rejected">Rejected</option>
+                <option value="processing">Processing</option>
+                <option value="completed">Completed</option>
+                <option value="failed">Failed</option>
+              </select>
             </div>
 
             <div className="table-wrapper">
@@ -188,43 +268,60 @@ export default function Finance() {
                 </thead>
 
                 <tbody>
-                  {withdrawals.map((item) => (
-                    <tr key={item.id}>
-                      <td>{item.sellerName}</td>
+                  {payoutsLoading ? (
+                    <tr>
+                      <td colSpan={6}>Loading withdrawal requests...</td>
+                    </tr>
+                  ) : payoutsError ? (
+                    <tr>
+                      <td colSpan={6}>
+                        {payoutsError.includes("403")
+                          ? "You do not have permission to view payout requests."
+                          : payoutsError || "Unable to load withdrawal requests."}
+                      </td>
+                    </tr>
+                  ) : payouts.length === 0 ? (
+                    <tr>
+                      <td colSpan={6}>No withdrawal requests found.</td>
+                    </tr>
+                  ) : (
+                    payouts.map((item) => {
+                      const itemStatus = normalizePayoutStatus(item.status);
+                      const itemId = getPayoutId(item);
 
-                      <td>{item.amount.toLocaleString()} đ</td>
+                      return (
+                    <tr key={itemId}>
+                      <td>{getSellerName(item)}</td>
 
-                      <td>{item.bankName}</td>
+                      <td>{formatCurrency(item.amount)}</td>
 
-                      <td>{item.createdAt}</td>
+                      <td>{getBankName(item)}</td>
+
+                      <td>{formatDate(getRequestedDate(item))}</td>
 
                       <td>
                         <span
-                          className={
-                            item.status === "Pending"
-                              ? "pending"
-                              : item.status === "Approved"
-                                ? "approved"
-                                : "rejected"
-                          }
+                          className={payoutStatusLabels[itemStatus] ? itemStatus : "unknown"}
                         >
-                          {item.status}
+                          {payoutStatusLabels[itemStatus] || payoutStatusLabels.unknown}
                         </span>
                       </td>
 
                       <td>
-                        {item.status === "Pending" ? (
+                        {itemStatus === "pending" ? (
                           <>
                             <button
                               className="approve"
-                              onClick={() => dispatch(approvePayout(item.id))}
+                              disabled={payoutLoading}
+                              onClick={() => handleApprovePayout(itemId)}
                             >
                               Approve
                             </button>
 
                             <button
                               className="reject"
-                              onClick={() => dispatch(rejectPayout(item.id))}
+                              disabled={payoutLoading}
+                              onClick={() => handleRejectPayout(itemId)}
                             >
                               Reject
                             </button>
@@ -234,9 +331,39 @@ export default function Finance() {
                         )}
                       </td>
                     </tr>
-                  ))}
+                      );
+                    })
+                  )}
                 </tbody>
               </table>
+            </div>
+
+            <div className="withdraw-pagination">
+              <span>
+                Page {payoutsPagination.pageNumber || page} of{" "}
+                {payoutsPagination.totalPages || 1} · {payoutsPagination.totalCount || 0} requests
+              </span>
+              <div>
+                <button
+                  disabled={payoutsLoading || page <= 1}
+                  onClick={() => setPage((current) => Math.max(current - 1, 1))}
+                >
+                  Previous
+                </button>
+                <button
+                  disabled={
+                    payoutsLoading ||
+                    page >= (payoutsPagination.totalPages || 1)
+                  }
+                  onClick={() =>
+                    setPage((current) =>
+                      Math.min(current + 1, payoutsPagination.totalPages || 1),
+                    )
+                  }
+                >
+                  Next
+                </button>
+              </div>
             </div>
           </div>
         </>

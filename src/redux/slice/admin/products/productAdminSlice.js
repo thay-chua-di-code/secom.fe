@@ -19,7 +19,7 @@ export const fetchProducts = createAsyncThunk(
     try {
       const response = await adminService.getProducts(params);
 
-      return response.data;
+      return response?.data ?? response;
     } catch (error) {
       return thunkAPI.rejectWithValue(
         error.response?.data?.message || "Load products failed",
@@ -42,14 +42,15 @@ const productAdminSlice = createSlice({
 
       .addCase(fetchProducts.fulfilled, (state, action) => {
         state.loading = false;
+        const payload = action.payload?.data ?? action.payload ?? {};
 
-        state.products = action.payload.items;
+        state.products = Array.isArray(payload.items) ? payload.items : [];
 
         state.pagination = {
-          pageNumber: action.payload.pageNumber,
-          pageSize: action.payload.pageSize,
-          totalCount: action.payload.totalCount,
-          totalPages: action.payload.totalPages,
+          pageNumber: payload.pageNumber ?? initialState.pagination.pageNumber,
+          pageSize: payload.pageSize ?? initialState.pagination.pageSize,
+          totalCount: payload.totalCount ?? initialState.pagination.totalCount,
+          totalPages: payload.totalPages ?? initialState.pagination.totalPages,
         };
       })
 

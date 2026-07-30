@@ -99,14 +99,11 @@ export const adminService = {
   },
   // [PRODUCT]
   getProducts: async (params) => {
-    try {
-      const result = await axiosClient.get(API_ENDPOINTS.ADMIN.PRODUCT.GET, {
-        params,
-      });
-      return result.data;
-    } catch (e) {
-      throw new Error(e?.response.message);
-    }
+    const result = await axiosClient.get(API_ENDPOINTS.ADMIN.PRODUCT.GET, {
+      params,
+    });
+
+    return result.data;
   },
 
   approveProduct: async (productId) => {
@@ -264,6 +261,20 @@ export const adminService = {
         e.response?.data?.message || e.message || "Something went wrong",
       );
     }
+  },
+
+  getAdminPayouts: async (params) => {
+    const cleanParams = Object.fromEntries(
+      Object.entries(params || {}).filter(
+        ([, value]) => value !== undefined && value !== null && value !== "",
+      ),
+    );
+
+    const res = await axiosClient.get(API_ENDPOINTS.ADMIN.FINANCE.PAYOUTS, {
+      params: cleanParams,
+    });
+
+    return res.data;
   },
 
   // Approve

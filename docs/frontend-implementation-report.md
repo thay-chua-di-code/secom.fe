@@ -188,3 +188,12 @@ Implemented thêm:
 
 Validation batch 8:
 - `npx eslint src/service/sellerService.js src/pages/Seller/Voucher/Voucher.jsx`: pass.
+
+## Admin Products Approve/Reject Verification
+
+- Page `/admin/products` đã có Approve/Reject cho product trạng thái `pending` hoặc `submitted`.
+- Approve dùng confirmation dialog và gọi `PATCH /api/admin/products/{productId}/approve` không gửi body.
+- Reject dùng reason modal và gọi `PATCH /api/admin/products/{productId}/reject` với body `{ reason }`.
+- Sau success, FE refetch list qua `fetchProducts` nhưng giữ nguyên state `search`, `status`, `page` hiện tại.
+- Admin route vẫn qua `PrivateRoute` tại `/admin`.
+- Validation: `npx eslint src/pages/Admin/Products/index.jsx src/api/endPoint.js src/routes/private.routes.jsx src/guards/PrivateRoute.jsx` pass; `npm run build` pass.

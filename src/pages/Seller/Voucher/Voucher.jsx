@@ -1,12 +1,137 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Button from "../../../components/common/Button/Button";
 import AddVoucherModal from "./FormAdd";
 import "./style.scss";
+import { sellerService } from "../../../service/sellerService";
+import { formatCurrencyVN } from "../../../utils/fncUtils";
+
+const DEFAULT_PAGE_SIZE = 20;
+
+const unwrapPagedResult = (response) => {
+  const payload = response?.data ?? response;
+  return payload?.data ?? payload ?? {};
+};
+
+const normalizeVoucherStatus = (status) =>
+  status?.trim().toLowerCase() || "unknown";
+
+const getVoucherStatus = (voucher) => {
+  const normalized = normalizeVoucherStatus(voucher?.status);
+
+  if (normalized !== "unknown") return normalized;
+
+  if (voucher?.isActive === false) return "inactive";
+
+  if (voucher?.endAtUtc && new Date(voucher.endAtUtc).getTime() < Date.now()) {
+    return "expired";
+  }
+
+  if (voucher?.quantity > 0 && voucher?.usedQuantity >= voucher.quantity) {
+    return "exhausted";
+  }
+
+  return "active";
+};
+
+const getStatusLabel = (status) =>
+  ({
+    active: "Active",
+    inactive: "Inactive",
+    expired: "Expired",
+    exhausted: "Exhausted",
+    pending: "Pending",
+  })[status] || status.charAt(0).toUpperCase() + status.slice(1);
+
+const formatDiscount = (voucher) => {
+  const type = normalizeVoucherStatus(voucher?.discountType);
+  const value = Number(voucher?.discountValue || 0);
+
+  if (["percent", "percentage", "percentile"].includes(type)) {
+    return `${value}%`;
+  }
+
+  return formatCurrencyVN(value);
+};
+
+const formatDate = (value) => {
+  if (!value) return "-";
+
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? "-" : date.toLocaleDateString("vi-VN");
+};
 
 const Vouchers = () => {
   const [openAdd, setOpenAdd] = useState(false);
+  const [vouchers, setVouchers] = useState([]);
+  const [pagination, setPagination] = useState({
+    pageNumber: 1,
+    pageSize: DEFAULT_PAGE_SIZE,
+    totalCount: 0,
+    totalPages: 0,
+  });
+  const [filters, setFilters] = useState({
+    keyword: "",
+    discountType: "all",
+    status: "all",
+    sortBy: "default",
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const vouchers = [];
+  const loadVouchers = useCallback(
+    async ({ page = 1, nextFilters = filters } = {}) => {
+      try {
+        setLoading(true);
+        setError("");
+        const response = await sellerService.getVouchers({
+          keyword: nextFilters.keyword?.trim(),
+          discountType: nextFilters.discountType,
+          status: nextFilters.status,
+          sortBy: nextFilters.sortBy,
+          page,
+          pageSize: pagination.pageSize,
+        });
+        const pagedResult = unwrapPagedResult(response);
+
+        setVouchers(Array.isArray(pagedResult.items) ? pagedResult.items : []);
+        setPagination((prev) => ({
+          ...prev,
+          pageNumber: pagedResult.pageNumber ?? page,
+          pageSize: pagedResult.pageSize ?? prev.pageSize,
+          totalCount: pagedResult.totalCount ?? 0,
+          totalPages: pagedResult.totalPages ?? 0,
+        }));
+      } catch (loadError) {
+        setVouchers([]);
+        setError(loadError.message || "Unable to load vouchers.");
+      } finally {
+        setLoading(false);
+      }
+    },
+    [filters, pagination.pageSize],
+  );
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      loadVouchers({ page: 1 });
+    }, 300);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [filters, loadVouchers]);
+
+  const handleFilterChange = (name, value) => {
+    setFilters((prev) => ({ ...prev, [name]: value }));
+    setPagination((prev) => ({ ...prev, pageNumber: 1 }));
+  };
+
+  const handlePageChange = (nextPage) => {
+    loadVouchers({ page: nextPage });
+  };
+
+  const handleCloseAdd = () => {
+    setOpenAdd(false);
+    loadVouchers({ page: pagination.pageNumber });
+  };
 
   return (
     <div className="seller-vouchers">
@@ -30,6 +155,41 @@ const Vouchers = () => {
 
       {/* Table */}
       <div className="seller-vouchers__table-card">
+        <div className="seller-vouchers__toolbar">
+          <input
+            type="search"
+            placeholder="Search voucher code or name..."
+            value={filters.keyword}
+            onChange={(event) => handleFilterChange("keyword", event.target.value)}
+          />
+          <select
+            value={filters.discountType}
+            onChange={(event) => handleFilterChange("discountType", event.target.value)}
+          >
+            <option value="all">All discount types</option>
+            <option value="percentage">Percentage</option>
+            <option value="fixed">Fixed amount</option>
+          </select>
+          <select
+            value={filters.status}
+            onChange={(event) => handleFilterChange("status", event.target.value)}
+          >
+            <option value="all">All statuses</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+            <option value="expired">Expired</option>
+            <option value="exhausted">Exhausted</option>
+          </select>
+          <select
+            value={filters.sortBy}
+            onChange={(event) => handleFilterChange("sortBy", event.target.value)}
+          >
+            <option value="default">Default sort</option>
+            <option value="createdAtUtc_desc">Newest</option>
+            <option value="createdAtUtc_asc">Oldest</option>
+            <option value="endAtUtc_asc">Ending soon</option>
+          </select>
+        </div>
         <div className="seller-vouchers__table-wrapper">
           <table className="seller-vouchers__table">
             <thead>
@@ -47,8 +207,23 @@ const Vouchers = () => {
             </thead>
 
             <tbody>
-              {vouchers?.map((item) => {
-                const isActive = new Date(item.endAtUtc) > new Date();
+              {loading && (
+                <tr className="seller-vouchers__empty-row">
+                  <td colSpan={9}>Loading vouchers...</td>
+                </tr>
+              )}
+
+              {!loading && error && (
+                <tr className="seller-vouchers__empty-row">
+                  <td colSpan={9}>{error}</td>
+                </tr>
+              )}
+
+              {!loading && !error && vouchers?.map((item) => {
+                const status = getVoucherStatus(item);
+                const statusClass = ["active", "pending"].includes(status)
+                  ? "seller-vouchers__status--active"
+                  : "seller-vouchers__status--expired";
 
                 return (
                   <tr key={item.id}>
@@ -62,40 +237,34 @@ const Vouchers = () => {
 
                     <td data-label="Discount">
                       <strong className="seller-vouchers__discount">
-                        {item.discountType === "PERCENT"
-                          ? `${item.discountValue}%`
-                          : `${item.discountValue.toLocaleString()} VNĐ`}
+                        {formatDiscount(item)}
                       </strong>
                     </td>
 
                     <td data-label="Min Order">
-                      {item.minOrderAmount.toLocaleString()} VNĐ
+                      {formatCurrencyVN(item.minOrderAmount || 0)}
                     </td>
 
                     <td data-label="Quantity">
                       <span className="seller-vouchers__quantity">
-                        {item.quantity}
+                        {item.usedQuantity ?? 0}/{item.quantity ?? 0}
                       </span>
                     </td>
 
                     <td data-label="Start Date">
-                      {new Date(item.startAtUtc).toLocaleDateString("vi-VN")}
+                      {formatDate(item.startAtUtc)}
                     </td>
 
                     <td data-label="End Date">
-                      {new Date(item.endAtUtc).toLocaleDateString("vi-VN")}
+                      {formatDate(item.endAtUtc)}
                     </td>
 
                     <td data-label="Status">
                       <span
-                        className={`seller-vouchers__status ${
-                          isActive
-                            ? "seller-vouchers__status--active"
-                            : "seller-vouchers__status--expired"
-                        }`}
+                        className={`seller-vouchers__status ${statusClass}`}
                       >
                         <span className="seller-vouchers__status-dot" />
-                        {isActive ? "Active" : "Expired"}
+                        {getStatusLabel(status)}
                       </span>
                     </td>
 
@@ -120,7 +289,7 @@ const Vouchers = () => {
                 );
               })}
 
-              {vouchers?.length === 0 && (
+              {!loading && !error && vouchers?.length === 0 && (
                 <tr className="seller-vouchers__empty-row">
                   <td colSpan={9}>
                     <div className="seller-vouchers__empty">
@@ -129,10 +298,8 @@ const Vouchers = () => {
                       <h3>No vouchers found</h3>
 
                       <p>
-                        Seller voucher list endpoint is not available in the
-                        current API contract. Create works; update and delete
-                        require a backend list/get endpoint to provide voucher
-                        IDs safely.
+                        Create a new voucher or change filters to find existing
+                        seller vouchers.
                       </p>
 
                       <button
@@ -149,10 +316,38 @@ const Vouchers = () => {
             </tbody>
           </table>
         </div>
+        <div className="seller-vouchers__pagination">
+          <span>
+            Page {pagination.pageNumber || 1} of {pagination.totalPages || 1} ·{" "}
+            {pagination.totalCount || 0} vouchers
+          </span>
+          <div>
+            <button
+              type="button"
+              disabled={loading || pagination.pageNumber <= 1}
+              onClick={() => handlePageChange(Math.max(pagination.pageNumber - 1, 1))}
+            >
+              Previous
+            </button>
+            <button
+              type="button"
+              disabled={
+                loading || pagination.pageNumber >= (pagination.totalPages || 1)
+              }
+              onClick={() =>
+                handlePageChange(
+                  Math.min(pagination.pageNumber + 1, pagination.totalPages || 1),
+                )
+              }
+            >
+              Next
+            </button>
+          </div>
+        </div>
       </div>
 
       {openAdd && (
-        <AddVoucherModal open={openAdd} onClose={() => setOpenAdd(false)} />
+        <AddVoucherModal open={openAdd} onClose={handleCloseAdd} />
       )}
     </div>
   );

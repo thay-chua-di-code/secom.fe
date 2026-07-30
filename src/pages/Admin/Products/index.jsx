@@ -20,8 +20,31 @@ import {
 const ITEMS_PER_PAGE = 7;
 
 const getProductId = (product) => product?.productId || product?.id;
-const getStatus = (product) => String(product?.status || "").toLowerCase();
-const canModerate = (product) => ["pending", "submitted"].includes(getStatus(product));
+const getProductModerationStatus = (product) => {
+  if (product?.isApproved && product?.isRejected) {
+    return "invalid";
+  }
+
+  if (product?.isApproved) {
+    return "approved";
+  }
+
+  if (product?.isRejected) {
+    return "rejected";
+  }
+
+  return "pending";
+};
+
+const moderationStatusLabels = {
+  pending: "Pending",
+  approved: "Approved",
+  rejected: "Rejected",
+  invalid: "Invalid state",
+};
+
+const canModerate = (product) =>
+  getProductModerationStatus(product) === "pending";
 const unwrapApiData = (response) => response?.data ?? response;
 
 const Products = () => {
@@ -35,6 +58,7 @@ const Products = () => {
   const [status, setStatus] = useState("");
   const [page, setPage] = useState(1);
   const [actionLoading, setActionLoading] = useState("");
+  const [approveTarget, setApproveTarget] = useState(null);
   const [rejectTarget, setRejectTarget] = useState(null);
   const [rejectReason, setRejectReason] = useState("");
   const [historyTarget, setHistoryTarget] = useState(null);
@@ -68,7 +92,7 @@ const Products = () => {
         product.sellerFullName?.toLowerCase().includes(keyword);
 
       const matchesStatus =
-        !status || product.status?.toLowerCase() === status.toLowerCase();
+        !status || getProductModerationStatus(product) === status.toLowerCase();
 
       return matchesSearch && matchesStatus;
     });
@@ -117,10 +141,14 @@ const Products = () => {
     );
   };
 
-  const handleApprove = async (product) => {
-    const productId = getProductId(product);
+  const handleApprove = async () => {
+    const productId = getProductId(approveTarget);
 
-    if (!productId) {
+    if (actionLoading) {
+      return;
+    }
+
+    if (!productId || !canModerate(approveTarget)) {
       toast.error("Product id is missing");
       return;
     }
@@ -129,6 +157,7 @@ const Products = () => {
       setActionLoading(productId);
       await adminService.approveProduct(productId);
       toast.success("Product approved successfully");
+      setApproveTarget(null);
       refreshProducts();
     } catch (approveError) {
       toast.error(
@@ -147,7 +176,16 @@ const Products = () => {
     const productId = getProductId(rejectTarget);
     const reason = rejectReason.trim();
 
-    if (!productId || !reason) {
+    if (actionLoading) {
+      return;
+    }
+
+    if (!productId || !canModerate(rejectTarget)) {
+      toast.error("Product id is missing");
+      return;
+    }
+
+    if (!reason) {
       toast.error("Reject reason is required");
       return;
     }
@@ -246,12 +284,13 @@ const Products = () => {
             />
           </div>
 
-          {/* CATEGORY */}
+          {/* STATUS */}
           <select value={status} onChange={handleStatusChange}>
-            <option value="">All Categories</option>
+            <option value="">All Statuses</option>
             <option value="PENDING">Pending</option>
             <option value="APPROVED">Approved</option>
             <option value="REJECTED">Rejected</option>
+            <option value="INVALID">Invalid state</option>
           </select>
         </div>
 
@@ -264,8 +303,8 @@ const Products = () => {
                 <th>Category</th>
                 <th>Seller</th>
                 <th>Price</th>
-                <th>Stock</th>
-                <th>Rating</th>
+                <th>Views</th>
+                <th>Visibility</th>
                 <th>Status</th>
                 <th>Actions</th>
               </tr>
@@ -273,8 +312,13 @@ const Products = () => {
 
             <tbody>
               {paginatedProducts.length > 0 ? (
-                paginatedProducts.map((product) => (
-                  <tr key={product.id}>
+                paginatedProducts.map((product) => {
+                  const moderationStatus = getProductModerationStatus(product);
+                  const productId = getProductId(product);
+                  const isActionLoading = actionLoading === productId;
+
+                  return (
+                    <tr key={productId}>
                     {/* PRODUCT */}
                     <td>
                       <div className="product-info">
@@ -286,7 +330,9 @@ const Products = () => {
                           <span className="product-name">{product.name}</span>
 
                           <span className="product-sold">
-                            {product.sold || 0} sold
+                            {product.description ||
+                              product.location ||
+                              "No description"}
                           </span>
                         </div>
                       </div>
@@ -309,39 +355,37 @@ const Products = () => {
                     {/* PRICE */}
                     <td>
                       <span className="price">
-                        ${formatCurrencyVN(product.price)}
+                        {formatCurrencyVN(product.price)}
                       </span>
                     </td>
 
-                    {/* STOCK */}
+                    {/* VIEWS */}
                     <td>
-                      <span
-                        className={`stock ${
-                          product.stock === 0
-                            ? "stock--empty"
-                            : product.stock < 20
-                              ? "stock--low"
-                              : ""
-                        }`}
-                      >
-                        {product.stock || 0}
+                      <span className="stock">
+                        {product.viewCount ?? 0}
                       </span>
                     </td>
 
-                    {/* RATING */}
+                    {/* VISIBILITY */}
                     <td>
                       <span className="rating">
-                        <span>★</span>
-                        {product.rating || "-"}
+                        {product.isActive ? "Active" : "Inactive"}
+                        {" / "}
+                        {product.isPublic ? "Public" : "Private"}
                       </span>
                     </td>
 
                     {/* STATUS */}
                     <td>
                       <span
-                        className={`status status--${product.status?.toLowerCase()}`}
+                        className={`status status--${moderationStatus}`}
+                        title={
+                          moderationStatus === "invalid"
+                            ? "Product is marked as both approved and rejected."
+                            : undefined
+                        }
                       >
-                        {product.status}
+                        {moderationStatusLabels[moderationStatus]}
                       </span>
                     </td>
 
@@ -367,8 +411,8 @@ const Products = () => {
                           <Button
                             className="action-btn approve-btn"
                             title="Approve product"
-                            disabled={actionLoading === getProductId(product)}
-                            onClick={() => handleApprove(product)}
+                            disabled={isActionLoading}
+                            onClick={() => setApproveTarget(product)}
                           >
                             <Check size={16} />
                           </Button>
@@ -378,7 +422,7 @@ const Products = () => {
                           <Button
                             className="action-btn reject-btn"
                             title="Reject product"
-                            disabled={actionLoading === getProductId(product)}
+                            disabled={isActionLoading}
                             onClick={() => setRejectTarget(product)}
                           >
                             <X size={16} />
@@ -386,8 +430,9 @@ const Products = () => {
                         )}
                       </div>
                     </td>
-                  </tr>
-                ))
+                    </tr>
+                  );
+                })
               ) : (
                 <tr>
                   <td colSpan={8} className="empty-state">
@@ -423,6 +468,34 @@ const Products = () => {
           </div>
         </div>
       </div>
+
+      {approveTarget && (
+        <div className="admin-products__modal-backdrop" role="presentation">
+          <div className="admin-products__modal" role="dialog" aria-modal="true">
+            <h3>Approve product?</h3>
+            <p>
+              Product: <strong>{approveTarget.name}</strong>
+            </p>
+            <p>This product will become visible according to backend rules.</p>
+            <div className="admin-products__modal-actions">
+              <button
+                type="button"
+                disabled={!!actionLoading}
+                onClick={() => setApproveTarget(null)}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={!!actionLoading}
+                onClick={handleApprove}
+              >
+                {actionLoading ? "Approving..." : "Approve"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {rejectTarget && (
         <div className="admin-products__modal-backdrop" role="presentation">

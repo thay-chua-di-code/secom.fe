@@ -15,6 +15,21 @@ export const fetchFinanceSummary = createAsyncThunk(
   },
 );
 
+export const fetchAdminPayouts = createAsyncThunk(
+  "finance/fetchAdminPayouts",
+  async (params, thunkAPI) => {
+    try {
+      const response = await adminService.getAdminPayouts(params);
+
+      return response?.data ?? response;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(
+        err?.response?.data?.message || err.message || "Unable to load withdrawal requests.",
+      );
+    }
+  },
+);
+
 // Approve
 export const approvePayout = createAsyncThunk(
   "finance/approvePayout",

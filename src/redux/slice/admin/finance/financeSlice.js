@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import {
   fetchFinanceSummary,
+  fetchAdminPayouts,
   approvePayout,
   rejectPayout,
 } from "./financeThunk";
@@ -18,6 +19,15 @@ const initialState = {
     netRevenue: 0,
   },
   loading: false,
+  payouts: [],
+  payoutsPagination: {
+    pageNumber: 1,
+    pageSize: 20,
+    totalCount: 0,
+    totalPages: 0,
+  },
+  payoutsLoading: false,
+  payoutsError: null,
   payoutLoading: false,
   error: null,
 };
@@ -44,6 +54,32 @@ const financeSlice = createSlice({
       .addCase(fetchFinanceSummary.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+
+      // ================= Payouts =================
+
+      .addCase(fetchAdminPayouts.pending, (state) => {
+        state.payoutsLoading = true;
+        state.payoutsError = null;
+      })
+
+      .addCase(fetchAdminPayouts.fulfilled, (state, action) => {
+        state.payoutsLoading = false;
+        const payload = action.payload?.data ?? action.payload ?? {};
+
+        state.payouts = Array.isArray(payload.items) ? payload.items : [];
+        state.payoutsPagination = {
+          pageNumber: payload.pageNumber ?? initialState.payoutsPagination.pageNumber,
+          pageSize: payload.pageSize ?? initialState.payoutsPagination.pageSize,
+          totalCount: payload.totalCount ?? initialState.payoutsPagination.totalCount,
+          totalPages: payload.totalPages ?? initialState.payoutsPagination.totalPages,
+        };
+      })
+
+      .addCase(fetchAdminPayouts.rejected, (state, action) => {
+        state.payoutsLoading = false;
+        state.payouts = [];
+        state.payoutsError = action.payload;
       })
 
       // ================= Approve =================
