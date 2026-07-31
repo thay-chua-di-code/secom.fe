@@ -1,4 +1,5 @@
 import { Search, X } from "lucide-react";
+import { useMemo, useState } from "react";
 
 import ChatConversationItem from "./ChatConversationItem";
 
@@ -8,9 +9,27 @@ const ChatSidebar = ({
   onSelectConversation,
   setOpen,
 }) => {
+  const [searchTerm, setSearchTerm] = useState("");
+
   const sellerConversations = conversations.filter(
     (item) => item?.type !== "ai",
   );
+
+  const filteredConversations = useMemo(() => {
+    const keyword = searchTerm.trim().toLowerCase();
+
+    if (!keyword) return conversations.filter(Boolean);
+
+    return conversations.filter((item) => {
+      if (!item) return false;
+
+      return (
+        item.name?.toLowerCase().includes(keyword) ||
+        item.lastMessage?.toLowerCase().includes(keyword) ||
+        item.text?.toLowerCase().includes(keyword)
+      );
+    });
+  }, [conversations, searchTerm]);
 
   return (
     <div className="chat-sidebar">
@@ -27,22 +46,27 @@ const ChatSidebar = ({
 
       <div className="chat-sidebar__search">
         <Search size={18} />
-        <input type="text" placeholder="Tìm kiếm..." />
+        <input
+          type="text"
+          placeholder="Search..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
       </div>
 
       <div className="chat-sidebar__list">
-        {conversations.filter(Boolean).length === 0 && (
-          <div className="chat-empty">No conversations yet.</div>
+        {filteredConversations.length === 0 ? (
+          <div className="chat-empty">Cannot find chat conversation.</div>
+        ) : (
+          filteredConversations.map((item, index) => (
+            <ChatConversationItem
+              key={item.id ?? `conversation-${index}`}
+              item={item}
+              active={selectedConversation?.id === item.id}
+              onClick={() => onSelectConversation(item)}
+            />
+          ))
         )}
-
-        {conversations.filter(Boolean).map((item, index) => (
-          <ChatConversationItem
-            key={item.id ?? `conversation-${index}`}
-            item={item}
-            active={selectedConversation?.id === item.id}
-            onClick={() => onSelectConversation(item)}
-          />
-        ))}
       </div>
     </div>
   );
