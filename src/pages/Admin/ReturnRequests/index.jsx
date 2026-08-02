@@ -6,9 +6,23 @@ import {
   normalizeReturnRequestList,
 } from "../../../api/adminReturnRequestApi";
 import { formatCurrencyVN } from "../../../utils/fncUtils";
+import {
+  getReturnStatusBadgeClass,
+  getReturnStatusLabel,
+  RETURN_REQUEST_STATUSES,
+} from "../../../utils/returnRequestUtils";
 import "./style.scss";
 
-const statusOptions = ["all", "Pending", "Approved", "Rejected", "ItemReturned", "Refunding", "Refunded", "Closed"];
+const statusOptions = [
+  { value: "all", label: "All" },
+  { value: RETURN_REQUEST_STATUSES.PENDING, label: "Pending" },
+  { value: RETURN_REQUEST_STATUSES.APPROVED, label: "Approved" },
+  { value: RETURN_REQUEST_STATUSES.REJECTED, label: "Rejected" },
+  { value: RETURN_REQUEST_STATUSES.ITEM_RETURNED, label: "Item Returned" },
+  { value: RETURN_REQUEST_STATUSES.REFUND_PROCESSING, label: "Refund Processing" },
+  { value: RETURN_REQUEST_STATUSES.REFUNDED, label: "Refunded" },
+  { value: RETURN_REQUEST_STATUSES.CLOSED, label: "Closed" },
+];
 
 const getApiErrorMessage = (error) =>
   error?.response?.data?.message || error?.message || "Load return requests failed";
@@ -74,7 +88,7 @@ export default function AdminReturnRequests() {
           }}
         >
           {statusOptions.map((option) => (
-            <option key={option} value={option}>{option}</option>
+            <option key={option.value} value={option.value}>{option.label}</option>
           ))}
         </select>
       </div>
@@ -106,7 +120,7 @@ export default function AdminReturnRequests() {
                   <td>{String(item.orderId).slice(0, 8)}</td>
                   <td>{String(item.buyerId || "--").slice(0, 8)}</td>
                   <td>{String(item.sellerId || "--").slice(0, 8)}</td>
-                  <td><span className={`admin-return-requests__badge ${String(item.status || "").toLowerCase()}`}>{item.status || "--"}</span></td>
+                  <td><span className={`admin-return-requests__badge ${getReturnStatusBadgeClass(item.status)}`}>{getReturnStatusLabel(item.status)}</span></td>
                   <td>{formatCurrencyVN(item.refundAmount || 0)}</td>
                   <td>{item.requestedAtUtc ? new Date(item.requestedAtUtc).toLocaleString("vi-VN") : "--"}</td>
                   <td>

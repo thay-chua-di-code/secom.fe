@@ -3,10 +3,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { getSellerOrdersThunk } from "../../../redux/slice/seller/order/slice";
 import { formatDate, formatCurrencyVN } from "../../../utils/fncUtils";
 import OrderDetail from "./OrderDetail";
+import {
+  getSellerOrderStatusLabel,
+  normalizeOrderStatus,
+} from "./sellerOrderActions";
 const Orders = () => {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const dispatch = useDispatch();
-  const { orders, loading, loaded } = useSelector((state) => state.sellerOrder);
+  const { orders, loaded } = useSelector((state) => state.sellerOrder);
 
   useEffect(() => {
     if (!loaded) {
@@ -29,9 +33,9 @@ const Orders = () => {
             </div>
 
             <span
-              className={`order-card__status order-card__status--${order.status.toLowerCase()}`}
+              className={`order-card__status order-card__status--${normalizeOrderStatus(order.status)}`}
             >
-              {order.status}
+              {getSellerOrderStatusLabel(order.status)}
             </span>
           </div>
 

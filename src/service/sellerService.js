@@ -297,13 +297,22 @@ export const sellerService = {
     }
   },
 
-  confirmOrder: async (orderId) => {
+  confirmOrderShipping: async (orderId) => {
     try {
-      const res = await axiosClient.put(
-        `/seller/orders/${orderId}/confirm-packing`,
+      const res = await axiosClient.patch(
+        API_ENDPOINTS.SELLER.ORDER_SHIPPING(orderId),
       );
+      return res.data;
+    } catch (e) {
+      throw new Error(e?.response?.data?.message || e.message);
+    }
+  },
 
-      console.log(res);
+  confirmOrderDelivered: async (orderId) => {
+    try {
+      const res = await axiosClient.patch(
+        API_ENDPOINTS.SELLER.ORDER_DELIVERED(orderId),
+      );
       return res.data;
     } catch (e) {
       throw new Error(e?.response?.data?.message || e.message);
@@ -320,6 +329,84 @@ export const sellerService = {
             "Content-Type": "application/json",
           },
         },
+      );
+
+      return res.data;
+    } catch (e) {
+      throw new Error(e?.response?.data?.message || e.message);
+    }
+  },
+
+  // [RETURN REQUESTS]
+  getReturnRequests: async (params = {}) => {
+    try {
+      const cleanParams = Object.fromEntries(
+        Object.entries(params).filter(
+          ([, value]) =>
+            value !== undefined &&
+            value !== null &&
+            value !== "" &&
+            value !== "all" &&
+            value !== "default",
+        ),
+      );
+
+      const res = await axiosClient.get(API_ENDPOINTS.SELLER.RETURN_REQUESTS, {
+        params: cleanParams,
+      });
+
+      return res.data;
+    } catch (e) {
+      throw new Error(e?.response?.data?.message || e.message);
+    }
+  },
+
+  getReturnRequestDetail: async (requestId) => {
+    try {
+      const res = await axiosClient.get(
+        API_ENDPOINTS.SELLER.RETURN_REQUEST_DETAIL(requestId),
+      );
+
+      return res.data;
+    } catch (e) {
+      throw new Error(e?.response?.data?.message || e.message);
+    }
+  },
+
+  approveReturnRequest: async (requestId, payload = {}) => {
+    try {
+      const res = await axiosClient.patch(
+        API_ENDPOINTS.SELLER.RETURN_REQUEST_APPROVE(requestId),
+        payload,
+        { headers: { "Content-Type": "application/json" } },
+      );
+
+      return res.data;
+    } catch (e) {
+      throw new Error(e?.response?.data?.message || e.message);
+    }
+  },
+
+  rejectReturnRequest: async (requestId, payload = {}) => {
+    try {
+      const res = await axiosClient.patch(
+        API_ENDPOINTS.SELLER.RETURN_REQUEST_REJECT(requestId),
+        payload,
+        { headers: { "Content-Type": "application/json" } },
+      );
+
+      return res.data;
+    } catch (e) {
+      throw new Error(e?.response?.data?.message || e.message);
+    }
+  },
+
+  confirmReturnReceived: async (requestId, payload = {}) => {
+    try {
+      const res = await axiosClient.patch(
+        API_ENDPOINTS.SELLER.RETURN_REQUEST_CONFIRM_RECEIVED(requestId),
+        payload,
+        { headers: { "Content-Type": "application/json" } },
       );
 
       return res.data;

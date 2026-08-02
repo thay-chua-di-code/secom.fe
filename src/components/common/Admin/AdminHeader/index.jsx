@@ -1,4 +1,3 @@
-import React from "react";
 import { Bell, Search } from "lucide-react";
 
 import "./style.scss";
@@ -18,11 +17,16 @@ const AdminHeader = ({
     "/admin/users": "User Management",
     "/admin/products": "Product Management",
     "/admin/orders": "Order Management",
+    "/admin/return-requests": "Return / Refund Management",
     "/admin/vouchers": "Voucher Management",
     "/admin/finance": "Finance Management",
   };
 
-  const title = pageTitles[location.pathname] || "Admin Management";
+  const title =
+    pageTitles[location.pathname] ||
+    (location.pathname.startsWith("/admin/return-requests/")
+      ? "Return / Refund Management"
+      : "Admin Management");
 
   return (
     <header className="admin-header">

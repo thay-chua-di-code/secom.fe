@@ -122,6 +122,7 @@ const getItemSubtotal = (item) =>
       getItemUnitPrice(item) * getPurchasedQuantity(item),
   );
 const getProductImageUrl = (item) => item?.productImageUrl || item?.imageUrl;
+const DEFAULT_RETURN_REASON_CODE = "OTHER";
 
 const loadOmiseScript = () => {
   return new Promise((resolve, reject) => {
@@ -349,6 +350,11 @@ function OrderActionModal({ type, order, actionLoading, onClose, onConfirm }) {
   const handleSubmit = (event) => {
     event.preventDefault();
 
+    if (isReturn && reason.trim().length > 50) {
+      toast.error("Reason code must not exceed 50 characters.");
+      return;
+    }
+
     if (isReturn && !description.trim()) {
       return;
     }
@@ -437,7 +443,7 @@ function OrderActionModal({ type, order, actionLoading, onClose, onConfirm }) {
               Reason code
               <input
                 value={reason}
-                maxLength={100}
+                maxLength={50}
                 placeholder="DAMAGED, WRONG_ITEM, OTHER..."
                 onChange={(event) => setReason(event.target.value)}
               />
@@ -514,8 +520,11 @@ function OrderActionModal({ type, order, actionLoading, onClose, onConfirm }) {
                 type="file"
                 accept="image/png,image/jpeg,image/webp"
                 multiple
+                disabled={evidenceFiles.length >= 10}
                 onChange={(event) =>
-                  setEvidenceFiles(Array.from(event.target.files || []))
+                  setEvidenceFiles(
+                    Array.from(event.target.files || []).slice(0, 10),
+                  )
                 }
               />
               {evidenceFiles.length > 0 && (
@@ -755,7 +764,7 @@ export default function OrderHistory() {
       );
 
       await orderApi.createReturnRequest(orderId, {
-        reasonCode: values.reason || null,
+        reasonCode: values.reason || DEFAULT_RETURN_REASON_CODE,
         description: values.description,
         items,
         evidenceImages,

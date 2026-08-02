@@ -7,6 +7,12 @@ import {
   normalizeReturnRequest,
 } from "../../../api/adminReturnRequestApi";
 import { formatCurrencyVN } from "../../../utils/fncUtils";
+import {
+  getReturnStatusBadgeClass,
+  getReturnStatusLabel,
+  normalizeReturnStatus,
+  RETURN_REQUEST_STATUSES,
+} from "../../../utils/returnRequestUtils";
 import "./style.scss";
 
 const actionLabels = {
@@ -19,17 +25,15 @@ const actionLabels = {
 };
 
 const statusActions = {
-  pending: ["approve", "reject"],
-  approved: ["mark-item-returned", "reject"],
-  itemreturned: ["start-refund"],
-  refunding: ["complete-refund"],
-  refunded: ["close"],
+  [RETURN_REQUEST_STATUSES.PENDING]: ["approve", "reject"],
+  [RETURN_REQUEST_STATUSES.APPROVED]: ["mark-item-returned", "reject"],
+  [RETURN_REQUEST_STATUSES.ITEM_RETURNED]: ["start-refund"],
+  [RETURN_REQUEST_STATUSES.REFUND_PROCESSING]: ["complete-refund"],
+  [RETURN_REQUEST_STATUSES.REFUNDED]: ["close"],
 };
 
 const getApiErrorMessage = (error) =>
   error?.response?.data?.message || error?.message || "Return request action failed";
-
-const normalizeStatus = (status) => String(status || "").replace(/\s+/g, "").toLowerCase();
 
 export default function AdminReturnRequestDetail() {
   const { id } = useParams();
@@ -59,7 +63,7 @@ export default function AdminReturnRequestDetail() {
     return () => window.clearTimeout(timeoutId);
   }, [loadRequest]);
 
-  const availableActions = statusActions[normalizeStatus(request?.status)] || [];
+  const availableActions = statusActions[normalizeReturnStatus(request?.status)] || [];
 
   const handleOpenAction = (action) => {
     setReviewAction(action);
@@ -71,16 +75,24 @@ export default function AdminReturnRequestDetail() {
 
     if (!reviewAction) return;
 
-    if (reviewAction === "reject" && !reviewForm.reason.trim()) {
+    const reason = reviewForm.reason.trim();
+    const note = reviewForm.note.trim();
+
+    if (reviewAction === "reject" && !reason) {
       toast.error("Reject reason is required");
+      return;
+    }
+
+    if (reason.length > 500 || note.length > 500) {
+      toast.error("Reason and note must not exceed 500 characters");
       return;
     }
 
     try {
       setActionLoading(reviewAction);
       await adminReturnRequestApi.reviewReturnRequest(id, reviewAction, {
-        note: reviewForm.note.trim() || null,
-        reason: reviewForm.reason.trim() || null,
+        note: note || null,
+        reason: reason || null,
       });
       toast.success(`${actionLabels[reviewAction]} successfully`);
       setReviewAction(null);
@@ -113,7 +125,7 @@ export default function AdminReturnRequestDetail() {
       {request && !loading && (
         <>
           <section className="admin-return-detail__summary">
-            <article><span>Status</span><strong>{request.status || "--"}</strong></article>
+            <article><span>Status</span><strong className={`admin-return-requests__badge ${getReturnStatusBadgeClass(request.status)}`}>{getReturnStatusLabel(request.status)}</strong></article>
             <article><span>Refund Amount</span><strong>{formatCurrencyVN(request.refundAmount || 0)}</strong></article>
             <article><span>Order</span><strong>{request.orderId}</strong></article>
             <article><span>Requested</span><strong>{request.requestedAtUtc ? new Date(request.requestedAtUtc).toLocaleString("vi-VN") : "--"}</strong></article>
@@ -187,11 +199,11 @@ export default function AdminReturnRequestDetail() {
             <h3>{actionLabels[reviewAction]}</h3>
             <label>
               Note
-              <textarea value={reviewForm.note} onChange={(event) => setReviewForm((prev) => ({ ...prev, note: event.target.value }))} />
+              <textarea maxLength={500} value={reviewForm.note} onChange={(event) => setReviewForm((prev) => ({ ...prev, note: event.target.value }))} />
             </label>
             <label>
               Reason {reviewAction === "reject" ? "*" : ""}
-              <textarea required={reviewAction === "reject"} value={reviewForm.reason} onChange={(event) => setReviewForm((prev) => ({ ...prev, reason: event.target.value }))} />
+              <textarea maxLength={500} required={reviewAction === "reject"} value={reviewForm.reason} onChange={(event) => setReviewForm((prev) => ({ ...prev, reason: event.target.value }))} />
             </label>
             <div className="admin-return-detail__actions">
               <button type="button" onClick={() => setReviewAction(null)} disabled={!!actionLoading}>Cancel</button>

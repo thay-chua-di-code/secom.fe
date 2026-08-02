@@ -10,6 +10,7 @@ import {
   X,
   Tags,
   Ticket,
+  RotateCcw,
   Zap,
   Settings,
 } from "lucide-react";
@@ -57,6 +58,11 @@ const Sidebar = () => {
       title: "Orders",
       icon: <ShoppingCart size={17} />,
       path: "/admin/orders",
+    },
+    {
+      title: "Return / Refund",
+      icon: <RotateCcw size={17} />,
+      path: "/admin/return-requests",
     },
     {
       title: "Vouchers",

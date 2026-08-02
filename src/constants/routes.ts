@@ -31,6 +31,7 @@ export const ROUTES = {
     DASHBOARD: "/seller/dashboard",
     PRODUCTS: "/seller/products",
     ORDERS: "/seller/orders",
+    RETURNS: "/seller/return-requests",
     CUSTOMERS: "/seller/customers",
     REVENUE: "/seller/revenue",
     SETTINGS: "/seller/settings",
