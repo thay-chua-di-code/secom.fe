@@ -20,6 +20,8 @@ const SellerLayout = () => {
 
           <NavLink to="/seller/orders">Orders</NavLink>
 
+          <NavLink to="/seller/return-requests">Return / Refund</NavLink>
+
           <NavLink to="/seller/wallet">Wallet</NavLink>
 
           {/* <NavLink to="/seller/customers">Customers</NavLink>

@@ -81,6 +81,14 @@ export const API_ENDPOINTS = {
       id || id === 0 ? `/seller/products/${id}` : "/seller/products",
     PRODUCT_INVENTORY: (id) => `/seller/products/${id}/inventory`,
     ORDER_STATUS: (id) => `/seller/orders/${id}/status`,
+    ORDER_SHIPPING: (id) => `/seller/orders/${id}/shipping`,
+    ORDER_DELIVERED: (id) => `/seller/orders/${id}/delivered`,
+    RETURN_REQUESTS: "/seller/return-requests",
+    RETURN_REQUEST_DETAIL: (id) => `/seller/return-requests/${id}`,
+    RETURN_REQUEST_APPROVE: (id) => `/seller/return-requests/${id}/approve`,
+    RETURN_REQUEST_REJECT: (id) => `/seller/return-requests/${id}/reject`,
+    RETURN_REQUEST_CONFIRM_RECEIVED: (id) =>
+      `/seller/return-requests/${id}/confirm-received`,
     BANK: {
       GP: "/seller/bank-accounts",
       DELETE: (id) => `/seller/bank-accounts/${id}`,

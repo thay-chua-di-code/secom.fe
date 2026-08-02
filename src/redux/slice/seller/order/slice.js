@@ -14,10 +14,27 @@ export const getSellerOrdersThunk = createAsyncThunk(
 );
 
 export const confirmOrderThunk = createAsyncThunk(
-  "sellerOrder/confirm",
+  "sellerOrder/confirmShipping",
   async (orderId, thunkAPI) => {
     try {
-      const res = await sellerService.confirmOrder(orderId);
+      const res = await sellerService.confirmOrderShipping(orderId);
+      return {
+        orderId,
+        ...res,
+      };
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || error.message,
+      );
+    }
+  },
+);
+
+export const confirmOrderDeliveredThunk = createAsyncThunk(
+  "sellerOrder/confirmDelivered",
+  async (orderId, thunkAPI) => {
+    try {
+      const res = await sellerService.confirmOrderDelivered(orderId);
       return {
         orderId,
         ...res,
@@ -115,15 +132,26 @@ const sellerOrderSlice = createSlice({
         state.confirmLoading = false;
         state.confirmSuccess = action.payload.success;
         state.confirmMessage = action.payload.message;
-
-        const order = state.orders.find((x) => x.id === action.payload.orderId);
-
-        if (order) {
-          order.status = "Confirmed";
-        }
       })
 
       .addCase(confirmOrderThunk.rejected, (state, action) => {
+        state.confirmLoading = false;
+        state.confirmSuccess = false;
+        state.confirmError = action.payload;
+      })
+
+      .addCase(confirmOrderDeliveredThunk.pending, (state) => {
+        state.confirmLoading = true;
+        state.confirmSuccess = false;
+        state.confirmError = "";
+        state.confirmMessage = "";
+      })
+      .addCase(confirmOrderDeliveredThunk.fulfilled, (state, action) => {
+        state.confirmLoading = false;
+        state.confirmSuccess = action.payload.success;
+        state.confirmMessage = action.payload.message;
+      })
+      .addCase(confirmOrderDeliveredThunk.rejected, (state, action) => {
         state.confirmLoading = false;
         state.confirmSuccess = false;
         state.confirmError = action.payload;

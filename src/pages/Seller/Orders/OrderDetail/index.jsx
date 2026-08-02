@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   X,
@@ -14,85 +14,49 @@ import "./style.scss";
 import { formatCurrencyVN, formatDate } from "../../../../utils/fncUtils";
 import {
   confirmOrderThunk,
+  confirmOrderDeliveredThunk,
+  getSellerOrdersThunk,
   resetConfirmState,
-  updateSellerOrderStatusThunk,
 } from "../../../../redux/slice/seller/order/slice";
-
-const sellerOrderTransitions = {
-  pending: ["Confirmed"],
-  paid: ["Confirmed", "Processing"],
-  confirmed: ["Processing"],
-  processing: ["Packed", "Shipping"],
-  packed: ["Shipping"],
-  shipping: ["Delivered"],
-};
+import {
+  getSellerOrderAction,
+  getSellerOrderStatusLabel,
+  normalizeOrderStatus,
+} from "../sellerOrderActions";
 
 const OrderDetail = ({ open, onClose, order }) => {
   const dispatch = useDispatch();
-  console.log(order);
-  const {
-    confirmLoading,
-    confirmSuccess,
-    confirmMessage,
-    confirmError,
-    statusLoading,
-  } = useSelector((state) => state.sellerOrder);
-
-  useEffect(() => {
-    if (!confirmSuccess) return;
-
-    toast.success(confirmMessage || "Order confirmed successfully.");
-
-    dispatch(resetConfirmState());
-
-    onClose();
-  }, [confirmSuccess, confirmMessage, dispatch, onClose]);
-
-  useEffect(() => {
-    if (!confirmError) return;
-
-    toast.error(confirmError);
-
-    dispatch(resetConfirmState());
-  }, [confirmError, dispatch]);
+  const [pendingAction, setPendingAction] = useState(null);
+  const { confirmLoading } = useSelector((state) => state.sellerOrder);
 
   if (!open || !order) {
     return null;
   }
 
-  const statusClass = String(order.status || "")
-    .toLowerCase()
-    .replace(/\s+/g, "-");
+  const statusClass = normalizeOrderStatus(order.status).replace(/\s+/g, "-");
+  const sellerAction = getSellerOrderAction(order.status);
 
-  const nextStatuses =
-    sellerOrderTransitions[String(order.status || "").toLowerCase()] || [];
-
-  const handleConfirm = async () => {
-    const result = await dispatch(confirmOrderThunk(order.orderId));
-
-    if (confirmOrderThunk.fulfilled.match(result)) {
-      toast.success(result.payload?.message || "Order confirmed successfully.");
-
-      onClose();
-    } else {
-      toast.error(result.payload || "Confirm order failed.");
-    }
+  const handleClose = () => {
+    if (confirmLoading) return;
+    setPendingAction(null);
+    dispatch(resetConfirmState());
+    onClose();
   };
 
-  const handleUpdateStatus = async (event) => {
-    const status = event.target.value;
+  const handleConfirmAction = async () => {
+    if (!pendingAction || confirmLoading) return;
 
-    if (!status) return;
+    const thunk =
+      pendingAction.type === "ship"
+        ? confirmOrderThunk
+        : confirmOrderDeliveredThunk;
+    const result = await dispatch(thunk(order.orderId));
 
-    const result = await dispatch(
-      updateSellerOrderStatusThunk({
-        orderId: order.orderId,
-        status,
-      }),
-    );
+    if (thunk.fulfilled.match(result)) {
+      toast.success(result.payload?.message || pendingAction.successMessage);
+      await dispatch(getSellerOrdersThunk());
+      setPendingAction(null);
 
-    if (updateSellerOrderStatusThunk.fulfilled.match(result)) {
-      toast.success("Order status updated successfully.");
       onClose();
     } else {
       toast.error(result.payload || "Update order status failed.");
@@ -100,7 +64,7 @@ const OrderDetail = ({ open, onClose, order }) => {
   };
 
   return (
-    <div className="seller-order-detail-overlay" onClick={onClose}>
+    <div className="seller-order-detail-overlay" onClick={handleClose}>
       <div
         className="seller-order-detail-modal"
         onClick={(event) => event.stopPropagation()}
@@ -126,8 +90,9 @@ const OrderDetail = ({ open, onClose, order }) => {
           <button
             type="button"
             className="seller-order-detail-close"
-            onClick={onClose}
+            onClick={handleClose}
             aria-label="Close order detail"
+            disabled={confirmLoading}
           >
             <X size={20} />
           </button>
@@ -144,7 +109,7 @@ const OrderDetail = ({ open, onClose, order }) => {
               <span>Status</span>
 
               <strong className={`seller-order-detail-status ${statusClass}`}>
-                {order.status}
+                {getSellerOrderStatusLabel(order.status)}
               </strong>
             </div>
           </div>
@@ -253,43 +218,58 @@ const OrderDetail = ({ open, onClose, order }) => {
           </div>
 
           <div className="seller-order-detail-actions">
-            {nextStatuses.length > 0 && (
-              <label className="seller-order-detail-status-action">
-                <span>Next status</span>
-                <select
-                  defaultValue=""
-                  disabled={statusLoading || confirmLoading}
-                  onChange={handleUpdateStatus}
-                >
-                  <option value="" disabled>
-                    Select status
-                  </option>
-                  {nextStatuses.map((status) => (
-                    <option key={status} value={status}>
-                      {status}
-                    </option>
-                  ))}
-                </select>
-              </label>
-            )}
             <button
               type="button"
               className="seller-order-detail-cancel-btn"
-              onClick={onClose}
+              onClick={handleClose}
+              disabled={confirmLoading}
             >
               Close
             </button>
 
-            <button
-              type="button"
-              className="seller-order-detail-confirm-btn"
-              onClick={handleConfirm}
-              disabled={confirmLoading || statusLoading}
-            >
-              {confirmLoading ? "Confirming..." : "Confirm Order"}
-            </button>
+            {sellerAction && (
+              <button
+                type="button"
+                className="seller-order-detail-confirm-btn"
+                onClick={() => setPendingAction(sellerAction)}
+                disabled={confirmLoading}
+              >
+                {confirmLoading ? sellerAction.loadingLabel : sellerAction.label}
+              </button>
+            )}
           </div>
         </footer>
+
+        {pendingAction && (
+          <div
+            className="seller-order-detail-confirm-overlay"
+            role="dialog"
+            aria-modal="true"
+          >
+            <div className="seller-order-detail-confirm-dialog">
+              <h3>{pendingAction.label}</h3>
+              <p>{pendingAction.confirmMessage}</p>
+              <div className="seller-order-detail-confirm-actions">
+                <button
+                  type="button"
+                  className="seller-order-detail-cancel-btn"
+                  onClick={() => setPendingAction(null)}
+                  disabled={confirmLoading}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  className="seller-order-detail-confirm-btn"
+                  onClick={handleConfirmAction}
+                  disabled={confirmLoading}
+                >
+                  {confirmLoading ? pendingAction.loadingLabel : "Confirm"}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

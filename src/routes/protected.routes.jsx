@@ -17,6 +17,7 @@ import Revenue from "../pages/Seller/Revenue/Revenue";
 import Settings from "../pages/Seller/Settings/Settings";
 import Vouchers from "../pages/Seller/Voucher/Voucher";
 import SellerWallet from "../pages/Seller/Wallet/Wallet";
+import SellerReturnRequests from "../pages/Seller/ReturnRequests";
 
 export const protectedRoutes = [
   {
@@ -55,6 +56,10 @@ export const protectedRoutes = [
                   {
                     path: "orders",
                     element: <Orders />,
+                  },
+                  {
+                    path: "return-requests",
+                    element: <SellerReturnRequests />,
                   },
                   {
                     path: "customers",
