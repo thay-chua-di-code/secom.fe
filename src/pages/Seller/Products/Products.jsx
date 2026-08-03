@@ -89,6 +89,9 @@
         await dispatch(deleteSellerProduct(productId)).unwrap();
         toast.success("Product deleted successfully");
         setDeleteTarget(null);
+        const nextTotal = Math.max(products.length - 1, 0);
+        const nextTotalPages = Math.max(Math.ceil(nextTotal / ITEMS_PER_PAGE), 1);
+        setCurrentPage((page) => Math.min(page, nextTotalPages));
       } catch (err) {
         toast.error(err || "Delete product failed");
       }

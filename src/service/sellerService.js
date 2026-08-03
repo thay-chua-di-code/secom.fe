@@ -2,6 +2,7 @@
 import axiosClient from "../api/axiosClient";
 import { API_ENDPOINTS } from "../api/endPoint";
 import {
+  resetSellerStatus,
   setError,
   setLoading,
   setStatus,
@@ -14,8 +15,6 @@ export const sellerService = {
         payload,
       );
 
-      console.log(result);
-
       return result;
     } catch (e) {
       throw new Error(
@@ -27,29 +26,39 @@ export const sellerService = {
 
   sellerShopStatus: async (dispatch) => {
     try {
-      setLoading(true);
+      dispatch(setLoading(true));
       const res = await axiosClient.get("/seller/shop/status");
-      console.log(res);
-      if (res.data.success === true) {
+      const application = res.data?.data ?? res.data?.Data ?? null;
+
+      if (res.data?.success === true && application) {
         dispatch(
           setStatus({
-            status: res.data.data.status,
-            statusText: res.data.data.statusText,
-            sellerId: res.data.data.userId,
-            rejectReason: res.data.data?.rejectReason,
+            status: application.status,
+            statusText: application.statusText,
+            sellerId: application.userId || application.buyerId,
+            rejectReason: application?.rejectReason || application?.rejectionReason,
           }),
         );
+      } else {
+        dispatch(resetSellerStatus());
       }
     } catch (e) {
-      dispatch(setError(e?.response?.data?.message || e.message));
-      throw new Error(e?.response?.data?.message || e.message);
+      if (e?.response?.status === 404 || e?.response?.status === 204) {
+        dispatch(resetSellerStatus());
+        return null;
+      }
+
+      const message = e?.response?.data?.message || e.message;
+      dispatch(setError(message));
+      const error = new Error(message);
+      error.response = e.response;
+      throw error;
     }
   },
 
   // [PRODUCT]
   getProducts: async (pageNumber = 1, pageSize = 10) => {
     try {
-      console.log("Call me service");
       const result = await axiosClient.get(`/seller/products`, {
         params: {
           pageNumber,
@@ -57,7 +66,6 @@ export const sellerService = {
         },
       });
 
-      console.log("result: ", result);
       return result.data.data;
     } catch (e) {
       throw new Error(e?.response?.data?.message || "Get products failed");
@@ -114,7 +122,6 @@ export const sellerService = {
         API_ENDPOINTS.SELLER.PRODUCT(productId),
       );
 
-      console.log(result);
       return result.data.data;
     } catch (e) {
       throw new Error(e?.response?.data?.message || "Delete product failed");
@@ -184,7 +191,6 @@ export const sellerService = {
   // [WALLET]
   getWalletSeller: async () => {
     const response = await axiosClient.get("/seller/wallet");
-    console.log("re:", response);
     return response.data.data ?? response.data;
   },
 
@@ -357,7 +363,9 @@ export const sellerService = {
 
       return res.data;
     } catch (e) {
-      throw new Error(e?.response?.data?.message || e.message);
+      const error = new Error(e?.response?.data?.message || e.message);
+      error.response = e.response;
+      throw error;
     }
   },
 
@@ -369,7 +377,9 @@ export const sellerService = {
 
       return res.data;
     } catch (e) {
-      throw new Error(e?.response?.data?.message || e.message);
+      const error = new Error(e?.response?.data?.message || e.message);
+      error.response = e.response;
+      throw error;
     }
   },
 
@@ -383,7 +393,9 @@ export const sellerService = {
 
       return res.data;
     } catch (e) {
-      throw new Error(e?.response?.data?.message || e.message);
+      const error = new Error(e?.response?.data?.message || e.message);
+      error.response = e.response;
+      throw error;
     }
   },
 
@@ -397,7 +409,9 @@ export const sellerService = {
 
       return res.data;
     } catch (e) {
-      throw new Error(e?.response?.data?.message || e.message);
+      const error = new Error(e?.response?.data?.message || e.message);
+      error.response = e.response;
+      throw error;
     }
   },
 
@@ -411,7 +425,9 @@ export const sellerService = {
 
       return res.data;
     } catch (e) {
-      throw new Error(e?.response?.data?.message || e.message);
+      const error = new Error(e?.response?.data?.message || e.message);
+      error.response = e.response;
+      throw error;
     }
   },
 };

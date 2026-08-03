@@ -76,6 +76,9 @@ export default function CartItem({
           <button
             type="button"
             onClick={handleRemove}
+            disabled={disabled}
+            aria-label={`Remove ${item.productName || "product"} from cart`}
+            title="Remove from cart"
             className="flex h-9 w-9 items-center justify-center rounded-lg text-gray-400 transition hover:bg-red-50 hover:text-red-600"
           >
             <Trash2 size={16} />
@@ -125,8 +128,10 @@ export default function CartItem({
           </div>
           <button
             type="button"
-            disabled
-            title="Remove API is not available"
+            onClick={handleRemove}
+            disabled={disabled}
+            aria-label={`Remove ${item.productName || "product"} from cart`}
+            title="Remove from cart"
             className="flex h-8 w-8 items-center justify-center rounded text-gray-400 disabled:opacity-50"
           >
             <Trash2 size={15} />

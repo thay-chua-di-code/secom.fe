@@ -60,3 +60,29 @@ export const deleteAdminVoucher = createAsyncThunk(
     }
   },
 );
+
+export const approveAdminVoucher = createAsyncThunk(
+  "adminVoucher/approveAdminVoucher",
+  async (voucherId, { rejectWithValue }) => {
+    try {
+      const response = await voucherApi.approveVoucher(voucherId);
+
+      return unwrapApiData(response);
+    } catch (error) {
+      return rejectWithValue(getApiErrorMessage(error));
+    }
+  },
+);
+
+export const rejectAdminVoucher = createAsyncThunk(
+  "adminVoucher/rejectAdminVoucher",
+  async ({ voucherId, reason }, { rejectWithValue }) => {
+    try {
+      const response = await voucherApi.rejectVoucher(voucherId, reason);
+
+      return unwrapApiData(response);
+    } catch (error) {
+      return rejectWithValue(getApiErrorMessage(error));
+    }
+  },
+);

@@ -115,6 +115,19 @@ export const applyCartVoucher = createAsyncThunk(
   },
 );
 
+export const removeCartVoucher = createAsyncThunk(
+  "cart/removeCartVoucher",
+  async (_, thunkAPI) => {
+    try {
+      return await cartService.removeVoucher();
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        getErrorMessage(error, "Cannot remove voucher. Please try again."),
+      );
+    }
+  },
+);
+
 // CHECKOUT
 export const calculateCheckoutSummary = createAsyncThunk(
   "cart/calculateCheckoutSummary",
@@ -133,9 +146,8 @@ export const removeCartItem = createAsyncThunk(
   "cart/removeCartItem",
   async (cartItemId, thunkAPI) => {
     try {
-      const res = await cartService.deleteCartItem(cartItemId);
-      console.log("res cart: ", res);
-      return res;
+      await cartService.deleteCartItem(cartItemId);
+      return await cartService.getCart();
     } catch (error) {
       return thunkAPI.rejectWithValue(
         getErrorMessage(error, "Failed to remove item"),
@@ -251,6 +263,31 @@ const cartSlice = createSlice({
         }
       })
       .addCase(applyCartVoucher.rejected, (state, action) => {
+        state.actionLoading = false;
+        state.error = action.payload;
+      })
+
+      .addCase(removeCartVoucher.pending, (state) => {
+        state.actionLoading = true;
+        state.error = null;
+      })
+      .addCase(removeCartVoucher.fulfilled, (state, action) => {
+        const summary = unwrapResponseData(action.payload);
+
+        state.actionLoading = false;
+        state.voucherCode = null;
+        state.discountAmount = 0;
+
+        if (summary?.items || summary?.subtotal !== undefined || summary?.finalTotal !== undefined) {
+          state.checkoutSummary = summary;
+          state.subtotal = summary?.subtotal ?? state.subtotal;
+          state.finalTotal = summary?.finalTotal ?? state.subtotal;
+          if (Array.isArray(summary?.items)) {
+            state.items = summary.items;
+          }
+        }
+      })
+      .addCase(removeCartVoucher.rejected, (state, action) => {
         state.actionLoading = false;
         state.error = action.payload;
       })

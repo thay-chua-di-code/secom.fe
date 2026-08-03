@@ -11,6 +11,7 @@ export default function CartList({
   onQuantityChange,
   allSelected,
   headerCheckboxRef,
+  disabled,
 }) {
   const dispatch = useDispatch();
 
@@ -45,6 +46,7 @@ export default function CartList({
                 <button
                   data-testid="quantity-decrease-btn"
                   type="button"
+                  disabled={disabled}
                   onClick={() => onQuantityChange(item.cartItemId, Math.max(1, item.quantity - 1))}
                 >
                   -
@@ -52,6 +54,7 @@ export default function CartList({
                 <button
                   data-testid="quantity-increase-btn"
                   type="button"
+                  disabled={disabled}
                   onClick={() => onQuantityChange(item.cartItemId, item.quantity + 1)}
                 >
                   +
@@ -59,6 +62,8 @@ export default function CartList({
                 <button
                   data-testid="remove-cart-item-btn"
                   type="button"
+                  disabled={disabled}
+                  aria-label={`Remove ${item.productName || "product"} from cart`}
                   onClick={() => dispatch(removeCartItem(item.cartItemId))}
                 >
                   Remove

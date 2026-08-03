@@ -10,6 +10,8 @@ import { formatCurrencyVN } from "../../../utils/fncUtils";
 import {
   getReturnStatusBadgeClass,
   getReturnStatusLabel,
+  getReturnRequestApiErrorMessage,
+  logReturnRequestApiError,
   normalizeReturnStatus,
   RETURN_REQUEST_STATUSES,
 } from "../../../utils/returnRequestUtils";
@@ -33,7 +35,16 @@ const statusActions = {
 };
 
 const getApiErrorMessage = (error) =>
-  error?.response?.data?.message || error?.message || "Return request action failed";
+  getReturnRequestApiErrorMessage(error, "Return request action failed");
+
+const buildReviewPayload = (action, { note, reason }) => {
+  const payload = {};
+
+  if (note) payload.note = note;
+  if (action === "reject") payload.reason = reason;
+
+  return payload;
+};
 
 export default function AdminReturnRequestDetail() {
   const { id } = useParams();
@@ -75,6 +86,11 @@ export default function AdminReturnRequestDetail() {
 
     if (!reviewAction) return;
 
+    if (!id) {
+      toast.error("Return request id is missing");
+      return;
+    }
+
     const reason = reviewForm.reason.trim();
     const note = reviewForm.note.trim();
 
@@ -90,14 +106,29 @@ export default function AdminReturnRequestDetail() {
 
     try {
       setActionLoading(reviewAction);
-      await adminReturnRequestApi.reviewReturnRequest(id, reviewAction, {
-        note: note || null,
-        reason: reason || null,
-      });
+      const payload = buildReviewPayload(reviewAction, { note, reason });
+
+      if (import.meta.env.DEV) {
+        console.info("[ReturnRequest] admin review request", {
+          method: "PATCH",
+          url: `/admin/return-requests/${id}/${reviewAction}`,
+          returnRequestId: id,
+          action: reviewAction,
+          payload,
+        });
+      }
+
+      await adminReturnRequestApi.reviewReturnRequest(id, reviewAction, payload);
       toast.success(`${actionLabels[reviewAction]} successfully`);
       setReviewAction(null);
       await loadRequest();
     } catch (actionError) {
+      logReturnRequestApiError("admin review failed", actionError, {
+        method: "PATCH",
+        url: `/admin/return-requests/${id}/${reviewAction}`,
+        returnRequestId: id,
+        action: reviewAction,
+      });
       toast.error(getApiErrorMessage(actionError));
     } finally {
       setActionLoading("");

@@ -15,10 +15,10 @@ const initialForm = {
   name: "",
   description: "",
   price: "",
+  stockQuantity: "",
   categoryId: "",
   condition: "",
   location: "",
-  isPublic: true,
 };
 
 const getErrorMessage = (error, fallback) =>
@@ -98,14 +98,18 @@ const AddProductModal = ({ open, onClose }) => {
       const payload = {
         ...form,
         price: Number(form.price),
+        stockQuantity: Number(form.stockQuantity),
         images,
       };
 
-      console.debug("Product payload:", payload);
+      if (!Number.isInteger(payload.stockQuantity) || payload.stockQuantity < 0) {
+        toast.error("Stock quantity must be a non-negative integer");
+        return;
+      }
 
       await dispatch(createSellerProduct(payload)).unwrap();
 
-      toast.success("Product created successfully!", { duration: 2500 });
+      toast.success("Sản phẩm đã được gửi và đang chờ quản trị viên phê duyệt.", { duration: 2500 });
       await dispatch(fetchSellerProducts({ pageNumber: 1, pageSize: 10 }));
       resetModalState();
       onClose();
@@ -214,6 +218,21 @@ const AddProductModal = ({ open, onClose }) => {
 
           <div className="row">
             <div className="form-group">
+              <label>Stock Quantity</label>
+              <input
+                type="number"
+                name="stockQuantity"
+                min="0"
+                step="1"
+                placeholder="0"
+                value={form.stockQuantity}
+                onChange={handleChange}
+                required
+                disabled={isBusy}
+              />
+            </div>
+
+            <div className="form-group">
               <label>Condition</label>
               <select
                 name="condition"
@@ -238,17 +257,6 @@ const AddProductModal = ({ open, onClose }) => {
                 disabled={isBusy}
               />
             </div>
-          </div>
-
-          <div className="checkbox-group">
-            <input
-              type="checkbox"
-              name="isPublic"
-              checked={form.isPublic}
-              onChange={handleChange}
-              disabled={isBusy}
-            />
-            <span>Public Product</span>
           </div>
 
           <ProductImageManager

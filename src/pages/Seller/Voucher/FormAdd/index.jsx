@@ -82,8 +82,6 @@ const AddVoucherModal = ({ open, onClose }) => {
       isActive: form.isActive ?? true,
     };
 
-    console.debug("[CreateSellerVoucher] payload", payload);
-
     try {
       setIsSubmitting(true);
       await sellerService.createVoucher(payload);

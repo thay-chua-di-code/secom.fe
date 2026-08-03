@@ -27,7 +27,7 @@ export default function UserDropdown({ open }) {
   if (!open) return null;
 
   const handleLogout = async () => {
-    await authService.logout(auth.refreshToken, dispatch);
+    await authService.logout(dispatch);
   };
   return (
     <div className={`user-dropdown ${!userInfo ? "guest" : ""}`}>

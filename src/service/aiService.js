@@ -69,7 +69,6 @@ export const aiService = {
 
       return res.data;
     } catch (e) {
-      console.log(e.response?.data);
       throw new Error(e?.response?.data?.message || e.message);
     }
   },

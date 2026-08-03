@@ -50,7 +50,17 @@ const getBankName = (item) =>
 const getRequestedDate = (item) =>
   item?.requestedAtUtc || item?.createdAtUtc || item?.createdAt;
 
-const formatCurrency = (value) => `${Number(value || 0).toLocaleString()} đ`;
+const getMoneyValue = (value) => {
+  const numberValue = Number(value);
+  return Number.isFinite(numberValue) ? numberValue : 0;
+};
+
+const formatCurrency = (value) => `${getMoneyValue(value).toLocaleString()} đ`;
+
+const getField = (item, keys, fallback = 0) => {
+  const value = keys.map((key) => item?.[key]).find((field) => field !== undefined && field !== null);
+  return value ?? fallback;
+};
 
 const formatDate = (value) => {
   if (!value) {
@@ -259,7 +269,12 @@ export default function Finance() {
                 <thead>
                   <tr>
                     <th>Seller</th>
-                    <th>Amount</th>
+                    <th>Gross</th>
+                    <th>Platform Fee</th>
+                    <th>Payment Fee</th>
+                    <th>Shipping Fee</th>
+                    <th>Refund</th>
+                    <th>Seller Net</th>
                     <th>Bank</th>
                     <th>Requested Date</th>
                     <th>Status</th>
@@ -270,11 +285,11 @@ export default function Finance() {
                 <tbody>
                   {payoutsLoading ? (
                     <tr>
-                      <td colSpan={6}>Loading withdrawal requests...</td>
+                      <td colSpan={11}>Loading withdrawal requests...</td>
                     </tr>
                   ) : payoutsError ? (
                     <tr>
-                      <td colSpan={6}>
+                      <td colSpan={11}>
                         {payoutsError.includes("403")
                           ? "You do not have permission to view payout requests."
                           : payoutsError || "Unable to load withdrawal requests."}
@@ -282,7 +297,7 @@ export default function Finance() {
                     </tr>
                   ) : payouts.length === 0 ? (
                     <tr>
-                      <td colSpan={6}>No withdrawal requests found.</td>
+                      <td colSpan={11}>No withdrawal requests found.</td>
                     </tr>
                   ) : (
                     payouts.map((item) => {
@@ -293,7 +308,17 @@ export default function Finance() {
                     <tr key={itemId}>
                       <td>{getSellerName(item)}</td>
 
-                      <td>{formatCurrency(item.amount)}</td>
+                      <td>{formatCurrency(getField(item, ["grossAmount", "amount", "requestedAmount"]))}</td>
+
+                      <td>{formatCurrency(getField(item, ["platformFee", "totalPlatformFee"]))}</td>
+
+                      <td>{formatCurrency(getField(item, ["paymentFee", "transactionFee"]))}</td>
+
+                      <td>{formatCurrency(getField(item, ["shippingFee"]))}</td>
+
+                      <td>{formatCurrency(getField(item, ["refundAmount"]))}</td>
+
+                      <td>{formatCurrency(getField(item, ["sellerNetAmount", "netAmount", "payoutAmount", "amount"]))}</td>
 
                       <td>{getBankName(item)}</td>
 

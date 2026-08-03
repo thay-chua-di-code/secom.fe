@@ -1094,3 +1094,104 @@
     }
   }
 }
+
+.order-detail-item {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr) auto;
+  align-items: center;
+}
+
+.order-detail-item__image {
+  width: 72px;
+  height: 72px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+}
+
+.order-detail-item__info,
+.order-detail-item__price {
+  min-width: 0;
+}
+
+.order-detail-item__info strong {
+  color: #0f172a;
+}
+
+.order-detail-item__price {
+  text-align: right;
+}
+
+.return-item__image {
+  width: 52px;
+  height: 52px;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+}
+
+@media (max-width: 700px) {
+  .order-detail-item {
+    grid-template-columns: 1fr;
+  }
+
+  .order-detail-item__price {
+    text-align: left;
+  }
+}
+
+.order-detail-item__link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.order-detail-item__link:hover strong {
+  color: #db4444;
+  text-decoration: underline;
+}
+
+.return-refund-grid {
+  .return-refund-grid__full {
+    grid-column: 1 / -1;
+  }
+}
+
+.return-refund-badge {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  border-radius: 999px;
+  padding: 6px 10px;
+  background: #f1f5f9;
+  color: #334155;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: capitalize;
+
+  &.pending {
+    background: #fef3c7;
+    color: #92400e;
+  }
+
+  &.approved,
+  &.completed,
+  &.refunded,
+  &.returned,
+  &.closed {
+    background: #dcfce7;
+    color: #166534;
+  }
+
+  &.rejected,
+  &.cancelled {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+
+  &.processing,
+  &.refund-processing,
+  &.item-returned {
+    background: #dbeafe;
+    color: #1d4ed8;
+  }
+}

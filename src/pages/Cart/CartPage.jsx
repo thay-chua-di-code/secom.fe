@@ -8,6 +8,7 @@ import { ArrowRight, ShoppingBag } from "lucide-react";
 import {
   fetchCart,
   calculateCheckoutSummary,
+  setVoucherCode,
 } from "../../redux/slice/cartSlice";
 import { fetchVouchers } from "../../redux/slice/voucherSlice";
 import { useCart } from "../../hooks/useCart";
@@ -79,6 +80,7 @@ export default function CartPage() {
     voucherCode,
     updateQuantity,
     applyVoucher,
+    removeVoucher,
   } = useCart();
 
   useEffect(() => {
@@ -95,9 +97,14 @@ export default function CartPage() {
     }
   }, [dispatch, isAuthenticated]);
 
+  const validSelectedItemIds = useMemo(() => {
+    const availableIds = new Set(items.map((item) => item.cartItemId));
+    return selectedItemIds.filter((id) => availableIds.has(id));
+  }, [items, selectedItemIds]);
+
   const selectedItems = useMemo(
-    () => items.filter((item) => selectedItemIds.includes(item.cartItemId)),
-    [items, selectedItemIds],
+    () => items.filter((item) => validSelectedItemIds.includes(item.cartItemId)),
+    [items, validSelectedItemIds],
   );
 
   const selectedItemCount = selectedItems.reduce(
@@ -197,7 +204,7 @@ export default function CartPage() {
   };
 
   const handleApplyVoucher = async () => {
-    if (!selectedItemIds.length) {
+    if (!validSelectedItemIds.length) {
       toast.error("Please select at least one item before applying a voucher.");
       return;
     }
@@ -218,6 +225,17 @@ export default function CartPage() {
           applyError ||
           "Cannot apply voucher. Please try again.",
       );
+    }
+  };
+
+  const handleRemoveVoucher = async () => {
+    try {
+      await removeVoucher().unwrap();
+      setSelectedVoucher(null);
+      dispatch(setVoucherCode(null));
+      toast.success("Voucher removed.");
+    } catch (removeError) {
+      toast.error(removeError?.message || removeError || "Cannot remove voucher. Please try again.");
     }
   };
 
@@ -255,7 +273,7 @@ export default function CartPage() {
   };
 
   const handleCheckout = async () => {
-    if (!selectedItemIds.length) {
+    if (!validSelectedItemIds.length) {
       toast.error("Please select at least one item before checkout.");
       return;
     }
@@ -267,11 +285,9 @@ export default function CartPage() {
       setCheckoutLoading(true);
 
       const createOrderResponse = await orderApi.createOrder({
-        cartItemIds: selectedItemIds,
+        cartItemIds: validSelectedItemIds,
         voucherCode: selectedVoucher || voucherCode || null,
       });
-
-      console.log("Create order response:", createOrderResponse);
 
       createdOrder = getCreatedOrder(createOrderResponse);
     } catch (orderError) {
@@ -283,8 +299,6 @@ export default function CartPage() {
     try {
       const orderId = getCreatedOrderId(createdOrder);
       const amount = getCreatedOrderAmount(createdOrder);
-
-      console.log("Created order:", createdOrder);
 
       if (!orderId) {
         throw new Error("Missing orderId from create order response");
@@ -318,12 +332,8 @@ export default function CartPage() {
         throw new Error("Missing cancelUri");
       }
 
-      console.log("PayOS payment request:", paymentRequest);
-
       const paymentResponse =
         await paymentApi.createPaymentTransaction(paymentRequest);
-
-      console.log("Payment response:", paymentResponse);
 
       const paymentUrl =
         paymentResponse?.data?.data?.paymentUrl ||
@@ -393,7 +403,7 @@ export default function CartPage() {
               disabled={actionLoading}
               onQuantityChange={updateQuantity}
               voucherCode={voucherCode}
-              selectedItemIds={selectedItemIds}
+              selectedItemIds={validSelectedItemIds}
               onSelectItem={handleSelectItem}
               onSelectAll={handleSelectAll}
               allSelected={allSelected}
@@ -403,12 +413,24 @@ export default function CartPage() {
 
             <div className="voucher-action">
               <button
+                type="button"
                 onClick={handleApplyVoucher}
                 disabled={!selectedVoucher || actionLoading}
               >
                 <TicketPercent size={18} />
                 {actionLoading ? "Applying..." : "Apply Voucher"}
               </button>
+              {activeVoucherCode && (
+                <button
+                  type="button"
+                  onClick={handleRemoveVoucher}
+                  disabled={actionLoading || checkoutLoading}
+                  aria-label="Remove applied voucher"
+                  title="Remove applied voucher"
+                >
+                  Remove Voucher
+                </button>
+              )}
             </div>
 
             <VoucherList
@@ -425,7 +447,7 @@ export default function CartPage() {
             finalTotal={summaryFinalTotal}
             itemCount={selectedItemCount}
             disabled={
-              actionLoading || checkoutLoading || !selectedItemIds.length
+              actionLoading || checkoutLoading || !validSelectedItemIds.length
             }
             checkoutLoading={checkoutLoading}
             onCheckout={handleCheckout}

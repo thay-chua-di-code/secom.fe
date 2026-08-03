@@ -4,6 +4,8 @@ import {
   createAdminVoucher,
   updateAdminVoucher,
   deleteAdminVoucher,
+  approveAdminVoucher,
+  rejectAdminVoucher,
 } from "./voucherThunk";
 
 const initialState = {
@@ -18,6 +20,7 @@ const initialState = {
   creating: false,
   updating: false,
   deleting: false,
+  moderating: false,
   success: false,
   error: null,
 };
@@ -37,6 +40,23 @@ const normalizePagedData = (payload) => {
 };
 
 const normalizeVoucher = (payload) => payload?.voucher ?? payload?.data ?? payload;
+
+const replaceVoucher = (state, payload) => {
+  const updatedVoucher = normalizeVoucher(payload);
+  const voucherId = updatedVoucher?.id ?? updatedVoucher?.voucherId;
+
+  if (!voucherId) return;
+
+  const vouchers = Array.isArray(state.vouchers) ? state.vouchers : [];
+  const index = vouchers.findIndex(
+    (item) => String(item.id ?? item.voucherId) === String(voucherId),
+  );
+
+  if (index !== -1) {
+    vouchers[index] = updatedVoucher;
+    state.vouchers = vouchers;
+  }
+};
 
 const voucherAdminSlice = createSlice({
   name: "vouchersAdmin",
@@ -122,6 +142,32 @@ const voucherAdminSlice = createSlice({
       })
       .addCase(deleteAdminVoucher.rejected, (state, action) => {
         state.deleting = false;
+        state.error = action.payload;
+      })
+      .addCase(approveAdminVoucher.pending, (state) => {
+        state.moderating = true;
+        state.error = null;
+      })
+      .addCase(approveAdminVoucher.fulfilled, (state, action) => {
+        state.moderating = false;
+        state.success = true;
+        replaceVoucher(state, action.payload);
+      })
+      .addCase(approveAdminVoucher.rejected, (state, action) => {
+        state.moderating = false;
+        state.error = action.payload;
+      })
+      .addCase(rejectAdminVoucher.pending, (state) => {
+        state.moderating = true;
+        state.error = null;
+      })
+      .addCase(rejectAdminVoucher.fulfilled, (state, action) => {
+        state.moderating = false;
+        state.success = true;
+        replaceVoucher(state, action.payload);
+      })
+      .addCase(rejectAdminVoucher.rejected, (state, action) => {
+        state.moderating = false;
         state.error = action.payload;
       });
   },

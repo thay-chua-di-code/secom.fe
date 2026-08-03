@@ -274,7 +274,6 @@ const UpdateProductModal = ({ open, product, onClose }) => {
         condition: form.condition,
         location: form.location,
         isActive: form.isActive,
-        isPublic: form.isPublic,
       };
 
       const images = await buildImagePayload();
@@ -462,20 +461,6 @@ const UpdateProductModal = ({ open, product, onClose }) => {
               </span>
             </label>
 
-            <label className="product-switch">
-              <input
-                type="checkbox"
-                name="isPublic"
-                checked={form.isPublic}
-                onChange={handleChange}
-                disabled={isBusy}
-              />
-              <span className="product-switch" />
-              <span className="product-switch-label">
-                <strong>Public Product</strong>
-                <small>Allow this product to be visible publicly</small>
-              </span>
-            </label>
           </div>
 
           <ProductImageManager

@@ -6,7 +6,9 @@ import { formatCurrencyVN, formatDate } from "../../../utils/fncUtils";
 import {
   getReturnStatusBadgeClass,
   getReturnStatusLabel,
+  getReturnRequestApiErrorMessage,
   getSellerReturnActions,
+  logReturnRequestApiError,
   RETURN_REQUEST_STATUSES,
   sellerReturnActionLabels,
 } from "../../../utils/returnRequestUtils";
@@ -25,7 +27,16 @@ const unwrapDetail = (response) => {
 };
 
 const getApiErrorMessage = (error) =>
-  error?.response?.data?.message || error?.message || "Return request action failed";
+  getReturnRequestApiErrorMessage(error, "Return request action failed");
+
+const buildSellerActionPayload = (action, { note, reason }) => {
+  const payload = {};
+
+  if (note) payload.note = note;
+  if (action === "reject") payload.reason = reason;
+
+  return payload;
+};
 
 const getRequestId = (request) => request?.requestId || request?.id;
 
@@ -347,13 +358,30 @@ export default function SellerReturnRequests() {
     setReviewAction({ action, request });
   };
 
-  const handleSubmitAction = async (payload) => {
+  const handleSubmitAction = async (formPayload) => {
     if (!reviewAction) return;
 
     const requestId = reviewAction.request.id || getRequestId(reviewAction.request);
 
+    if (!requestId) {
+      toast.error("Return request id is missing");
+      return;
+    }
+
+    const payload = buildSellerActionPayload(reviewAction.action, formPayload);
+
     try {
       setActionLoading(reviewAction.action);
+
+      if (import.meta.env.DEV) {
+        console.info("[ReturnRequest] seller action request", {
+          method: "PATCH",
+          url: `/seller/return-requests/${requestId}/${reviewAction.action}`,
+          returnRequestId: requestId,
+          action: reviewAction.action,
+          payload,
+        });
+      }
 
       if (reviewAction.action === "approve") {
         await sellerService.approveReturnRequest(requestId, payload);
@@ -367,6 +395,12 @@ export default function SellerReturnRequests() {
       setReviewAction(null);
       await refreshAfterMutation(requestId);
     } catch (actionError) {
+      logReturnRequestApiError("seller action failed", actionError, {
+        method: "PATCH",
+        url: `/seller/return-requests/${requestId}/${reviewAction.action}`,
+        returnRequestId: requestId,
+        action: reviewAction.action,
+      });
       toast.error(getApiErrorMessage(actionError));
     } finally {
       setActionLoading("");

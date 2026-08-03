@@ -1,8 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import {
   Search,
-  Plus,
-  Pencil,
   TicketPercent,
   CalendarDays,
   CircleDollarSign,
@@ -11,36 +9,43 @@ import {
   ChevronRight,
   Percent,
   Users,
-  Trash2,
+  Check,
+  X,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { formatCurrencyVN } from "../../../utils/fncUtils";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  deleteAdminVoucher,
+  approveAdminVoucher,
   fetchAdminVouchers,
+  rejectAdminVoucher,
 } from "../../../redux/slice/admin/vouchers/voucherThunk";
-import Button from "../../../components/common/Button/Button";
-import AddVoucher from "./Form/AddVoucher";
 
 import "./style.scss";
 
 const isVoucherActive = (voucher) => voucher?.isActive ?? voucher?.active ?? false;
 
+const getVoucherStatus = (voucher) =>
+  String(voucher?.approvalStatus || voucher?.status || "pending").toLowerCase();
+
+const canModerateVoucher = (voucher) => getVoucherStatus(voucher) === "pending";
+
 const VoucherAdmin = () => {
   const dispatch = useDispatch();
 
-  const { vouchers, loading, deleting, pagination } = useSelector(
+  const { vouchers, loading, moderating, pagination } = useSelector(
     (state) => state.vouchersAdmin,
   );
-  const voucherItems = Array.isArray(vouchers)
-    ? vouchers
-    : vouchers?.items || [];
+  const voucherItems = useMemo(
+    () => (Array.isArray(vouchers) ? vouchers : vouchers?.items || []),
+    [vouchers],
+  );
 
   const [keyword, setKeyword] = useState("");
   const [activeTab, setActiveTab] = useState("all");
-  const [openAddModal, setOpenAddModal] = useState(false);
-  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [approveTarget, setApproveTarget] = useState(null);
+  const [rejectTarget, setRejectTarget] = useState(null);
+  const [rejectReason, setRejectReason] = useState("");
 
   useEffect(() => {
     dispatch(
@@ -81,36 +86,60 @@ const VoucherAdmin = () => {
 
   const getVoucherId = (voucher) => voucher?.id ?? voucher?.voucherId;
 
-  const handleDeleteVoucher = async () => {
-    const voucherId = getVoucherId(deleteTarget);
+  const refreshVouchers = () => {
+    dispatch(fetchAdminVouchers({ page: pagination?.pageNumber || 1, pageSize: pagination?.pageSize || 10 }));
+  };
+
+  const handleApproveVoucher = async () => {
+    const voucherId = getVoucherId(approveTarget);
 
     if (!voucherId) {
       toast.error("Voucher id is missing");
       return;
     }
 
-    try {
-      await dispatch(deleteAdminVoucher(voucherId)).unwrap();
-      toast.success("Voucher deleted successfully");
-      setDeleteTarget(null);
-    } catch (error) {
-      toast.error(error || "Delete voucher failed");
+    const result = await dispatch(approveAdminVoucher(voucherId));
+
+    if (approveAdminVoucher.fulfilled.match(result)) {
+      toast.success("Voucher approved successfully");
+      setApproveTarget(null);
+      refreshVouchers();
+      return;
     }
+
+    toast.error(result.payload || "Approve voucher failed");
+  };
+
+  const handleRejectVoucher = async (event) => {
+    event.preventDefault();
+    const voucherId = getVoucherId(rejectTarget);
+    const reason = rejectReason.trim();
+
+    if (!voucherId) {
+      toast.error("Voucher id is missing");
+      return;
+    }
+
+    if (!reason) {
+      toast.error("Reject reason is required");
+      return;
+    }
+
+    const result = await dispatch(rejectAdminVoucher({ voucherId, reason }));
+
+    if (rejectAdminVoucher.fulfilled.match(result)) {
+      toast.success("Voucher rejected successfully");
+      setRejectTarget(null);
+      setRejectReason("");
+      refreshVouchers();
+      return;
+    }
+
+    toast.error(result.payload || "Reject voucher failed");
   };
 
   return (
     <div className="voucher-admin">
-      <div className="voucher-admin__heading">
-        <Button
-          className="voucher-admin__add-btn"
-          onClick={() => setOpenAddModal(true)}
-        >
-          <Plus size={15} />
-
-          <span>Create Voucher</span>
-        </Button>
-      </div>
-
       <div className="voucher-admin__card">
         {/* =========================================
             TOOLBAR
@@ -204,7 +233,7 @@ const VoucherAdmin = () => {
                 </tr>
               ) : (
                 filteredVouchers.map((voucher) => (
-                  <tr key={voucher.id}>
+                  <tr key={voucher.id ?? voucher.voucherId}>
                     {/* VOUCHER */}
 
                     <td>
@@ -306,33 +335,50 @@ const VoucherAdmin = () => {
                     {/* STATUS */}
 
                     <td>
+                      {(() => {
+                        const voucherStatus = getVoucherStatus(voucher);
+                        return (
                       <span
-                        className={`status-badge ${
-                          isVoucherActive(voucher) ? "active" : "inactive"
-                        }`}
+                        className={`status-badge ${voucherStatus}`}
                       >
                         <span />
 
-                        {isVoucherActive(voucher) ? "Active" : "Inactive"}
+                        {voucherStatus.charAt(0).toUpperCase() + voucherStatus.slice(1)}
                       </span>
+                        );
+                      })()}
                     </td>
 
                     {/* ACTION */}
 
                     <td>
                       <div className="voucher-admin__actions">
-                        <button type="button" className="action-btn edit">
-                          <Pencil size={14} />
-                        </button>
-                        <button
-                          type="button"
-                          className="action-btn delete"
-                          disabled={deleting}
-                          onClick={() => setDeleteTarget(voucher)}
-                          aria-label={`Delete voucher ${voucher.code}`}
-                        >
-                          <Trash2 size={14} />
-                        </button>
+                        {canModerateVoucher(voucher) ? (
+                          <>
+                            <button
+                              type="button"
+                              className="action-btn approve"
+                              disabled={moderating}
+                              onClick={() => setApproveTarget(voucher)}
+                              aria-label={`Approve voucher ${voucher.code}`}
+                              title="Approve voucher"
+                            >
+                              <Check size={14} />
+                            </button>
+                            <button
+                              type="button"
+                              className="action-btn reject"
+                              disabled={moderating}
+                              onClick={() => setRejectTarget(voucher)}
+                              aria-label={`Reject voucher ${voucher.code}`}
+                              title="Reject voucher"
+                            >
+                              <X size={14} />
+                            </button>
+                          </>
+                        ) : (
+                          <span className="voucher-admin__no-action">Reviewed</span>
+                        )}
                       </div>
                     </td>
                   </tr>
@@ -366,44 +412,65 @@ const VoucherAdmin = () => {
         </div>
       </div>
 
-      {/* =========================================
-          ADD MODAL
-      ========================================== */}
-
-      {openAddModal && (
-        <AddVoucher
-          open={openAddModal}
-          onClose={() => setOpenAddModal(false)}
-        />
-      )}
-
-      {deleteTarget && (
+      {approveTarget && (
         <div className="voucher-admin__modal-backdrop" role="presentation">
           <div className="voucher-admin__confirm" role="dialog" aria-modal="true">
-            <h3>Delete voucher?</h3>
+            <h3>Approve voucher?</h3>
             <p>
-              This will delete voucher <strong>{deleteTarget.code}</strong> from
-              the system.
+              Voucher: <strong>{approveTarget.code}</strong>
             </p>
             <div className="voucher-admin__modal-actions">
               <button
                 type="button"
                 className="voucher-admin__modal-btn"
-                disabled={deleting}
-                onClick={() => setDeleteTarget(null)}
+                disabled={moderating}
+                onClick={() => setApproveTarget(null)}
               >
                 Cancel
               </button>
               <button
                 type="button"
-                className="voucher-admin__modal-btn voucher-admin__modal-btn--danger"
-                disabled={deleting}
-                onClick={handleDeleteVoucher}
+                className="voucher-admin__modal-btn voucher-admin__modal-btn--primary"
+                disabled={moderating}
+                onClick={handleApproveVoucher}
               >
-                Delete
+                {moderating ? "Approving..." : "Approve"}
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {rejectTarget && (
+        <div className="voucher-admin__modal-backdrop" role="presentation">
+          <form className="voucher-admin__confirm" role="dialog" aria-modal="true" onSubmit={handleRejectVoucher}>
+            <h3>Reject voucher</h3>
+            <p>Voucher: <strong>{rejectTarget.code}</strong></p>
+            <textarea
+              value={rejectReason}
+              onChange={(event) => setRejectReason(event.target.value)}
+              placeholder="Enter rejection reason"
+              rows={4}
+              required
+            />
+            <div className="voucher-admin__modal-actions">
+              <button
+                type="button"
+                className="voucher-admin__modal-btn"
+                disabled={moderating}
+                onClick={() => setRejectTarget(null)}
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="voucher-admin__modal-btn voucher-admin__modal-btn--danger"
+                disabled={moderating || !rejectReason.trim()}
+              >
+                {moderating ? "Rejecting..." : "Reject"}
+              </button>
+            </div>
+          </form>
         </div>
       )}
     </div>

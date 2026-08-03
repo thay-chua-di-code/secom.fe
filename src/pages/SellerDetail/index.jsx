@@ -20,6 +20,7 @@ import sellerRatingApi, {
   normalizeSellerRatings,
   normalizeSellerRatingSummary,
 } from "../../api/sellerRatingApi";
+import productApi from "../../api/productApi";
 
 function formatCompactNumber(value) {
   const numericValue = Number(value);
@@ -53,6 +54,36 @@ function formatRating(value) {
   return numericValue.toFixed(1);
 }
 
+const unwrapProductItems = (payload) => {
+  const data = payload?.data ?? payload ?? {};
+  const items = Array.isArray(data)
+    ? data
+    : Array.isArray(data.items)
+      ? data.items
+      : Array.isArray(data.data)
+        ? data.data
+        : [];
+
+  return items;
+};
+
+const getProductId = (product) => product?.id || product?.productId;
+
+const getProductName = (product) =>
+  product?.name || product?.productName || "Unnamed product";
+
+const getProductImageUrl = (product) =>
+  product?.imageUrl ||
+  product?.thumbnailUrl ||
+  product?.primaryImageUrl ||
+  product?.image ||
+  product?.images?.find?.((image) => image?.isPrimary)?.imageUrl ||
+  product?.images?.[0]?.imageUrl ||
+  "/favicon.svg";
+
+const getProductSellerId = (product) =>
+  product?.sellerId || product?.shopId || product?.seller?.id || product?.seller?.sellerId;
+
 export default function SellerDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -74,6 +105,9 @@ export default function SellerDetail() {
     comment: "",
   });
   const [ratingSubmitting, setRatingSubmitting] = useState(false);
+  const [sellerProducts, setSellerProducts] = useState([]);
+  const [sellerProductsLoading, setSellerProductsLoading] = useState(false);
+  const [sellerProductsError, setSellerProductsError] = useState("");
   const productDetail = useSelector((state) => state.products.productDetail);
   const seller = productDetail?.seller;
 
@@ -116,6 +150,53 @@ export default function SellerDetail() {
     return () => {
       isMounted = false;
       controller.abort();
+    };
+  }, [id]);
+
+  useEffect(() => {
+    if (!id) return;
+
+    let isMounted = true;
+
+    const loadSellerProducts = async () => {
+      try {
+        setSellerProductsLoading(true);
+        setSellerProductsError("");
+
+        const response = await productApi.searchProducts({
+          SellerId: id,
+          Page: 1,
+          PageSize: 12,
+        });
+        const items = unwrapProductItems(response);
+        const filteredItems = items.filter((product) => {
+          const productSellerId = getProductSellerId(product);
+          return !productSellerId || String(productSellerId) === String(id);
+        });
+
+        if (isMounted) {
+          setSellerProducts(filteredItems);
+        }
+      } catch (error) {
+        if (isMounted) {
+          setSellerProducts([]);
+          setSellerProductsError(
+            error?.response?.data?.message ||
+              error?.message ||
+              "Unable to load shop products.",
+          );
+        }
+      } finally {
+        if (isMounted) {
+          setSellerProductsLoading(false);
+        }
+      }
+    };
+
+    loadSellerProducts();
+
+    return () => {
+      isMounted = false;
     };
   }, [id]);
 
@@ -360,50 +441,6 @@ export default function SellerDetail() {
   //   );
   // }
 
-  const sellerProducts = [
-    {
-      id: 1,
-      name: "iPhone 15 Pro Max",
-      price: 25500000,
-      image:
-        "https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=500",
-    },
-    {
-      id: 2,
-      name: "MacBook Pro M4",
-      price: 45990000,
-      image:
-        "https://images.unsplash.com/photo-1517336714739-489689fd1ca8?w=500",
-    },
-    {
-      id: 3,
-      name: "AirPods Pro",
-      price: 6900000,
-      image:
-        "https://images.unsplash.com/photo-1606220588913-b3aacb4d2f37?w=500",
-    },
-    {
-      id: 4,
-      name: "iPad Pro M4",
-      price: 26990000,
-      image: "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=500",
-    },
-    {
-      id: 5,
-      name: "Apple Watch Ultra",
-      price: 18990000,
-      image:
-        "https://images.unsplash.com/photo-1579586337278-3f436f25d4d6?w=500",
-    },
-    {
-      id: 6,
-      name: "Samsung S26 Ultra",
-      price: 31990000,
-      image:
-        "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=500",
-    },
-  ];
-
   return (
     <div className="seller-detail">
       {/* =========================
@@ -627,27 +664,54 @@ export default function SellerDetail() {
             </span>
           </div>
 
-          <div className="product-grid">
-            {sellerProducts.map((item) => (
-              <div className="product-card" key={item.id}>
-                <div className="product-card__image">
-                  <img src={item.image} alt={item.name} />
+          {sellerProductsLoading ? (
+            <div className="seller-products__state">Loading shop products...</div>
+          ) : sellerProductsError ? (
+            <div className="seller-products__state seller-products__state--error">
+              {sellerProductsError}
+            </div>
+          ) : sellerProducts.length === 0 ? (
+            <div className="seller-products__state">No products from this shop yet.</div>
+          ) : (
+            <div className="product-grid">
+              {sellerProducts.map((item) => {
+                const productId = getProductId(item);
+                const productName = getProductName(item);
 
-                  <span className="product-card__badge">Official</span>
-                </div>
+                return (
+                  <div className="product-card" key={productId || productName}>
+                    <button
+                      type="button"
+                      className="product-card__image"
+                      onClick={() => productId && navigate(`/product-detail/${productId}`)}
+                      disabled={!productId}
+                      aria-label={`View product ${productName}`}
+                    >
+                      <img src={getProductImageUrl(item)} alt={productName} />
 
-                <div className="product-card__body">
-                  <h3>{item.name}</h3>
+                      <span className="product-card__badge">Official</span>
+                    </button>
 
-                  <div className="product-card__bottom">
-                    <strong>{formatCurrencyVN(item.price)} ₫</strong>
+                    <div className="product-card__body">
+                      <h3>{productName}</h3>
 
-                    <button>View</button>
+                      <div className="product-card__bottom">
+                        <strong>{formatCurrencyVN(item.price || item.unitPrice || 0)} ₫</strong>
+
+                        <button
+                          type="button"
+                          onClick={() => productId && navigate(`/product-detail/${productId}`)}
+                          disabled={!productId}
+                        >
+                          View
+                        </button>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-            ))}
-          </div>
+                );
+              })}
+            </div>
+          )}
         </section>
       </main>
     </div>

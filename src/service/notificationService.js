@@ -6,7 +6,6 @@ import { API_ENDPOINTS } from "../api/endPoint";
 export const notificationService = {
   getNotifications: async () => {
     const result = await axiosClient.get(API_ENDPOINTS.NOTIFICATION.GET);
-    console.log(result);
     return result.data;
   },
 

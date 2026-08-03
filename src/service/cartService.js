@@ -32,6 +32,12 @@ export const cartService = {
     return response.data;
   },
 
+  removeVoucher: async () => {
+    const response = await axiosClient.delete(API_ENDPOINTS.CART.APPLY_VOUCHER);
+
+    return response.data;
+  },
+
   deleteCartItem: async (cartItemId) => {
     const response = await axiosClient.delete(API_ENDPOINTS.CART.UPDATE_ITEM(cartItemId));
     return response.data;

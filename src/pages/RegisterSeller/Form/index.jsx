@@ -1,43 +1,54 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import "./style.scss";
 import StoreInformation from "./Step1/StoreInformation";
 import SellerStatus from "./Step2/index";
-import Button from "../../../components/common/Button/Button";
 import { useDispatch, useSelector } from "react-redux";
 import { sellerService } from "../../../service/sellerService";
+import { resetSellerStatus } from "../../../redux/slice/sellerStatusSlice";
 const steps = ["Store Information", "Approve by Admin"];
 
 export default function SellerRegistration() {
-  const [currentStep, setCurrentStep] = useState(0);
-  const [statusStep, setStatusStep] = useState("");
-  const { status, statusText, sellerId, rejectReason } = useSelector(
+  const [submittedStatus, setSubmittedStatus] = useState(null);
+  const { statusText, rejectReason, loading } = useSelector(
     (state) => state.sellerStatus,
   );
+  const token = useSelector((state) => state.auth.token);
+  const userInfo = useSelector((state) => state.user.userInfo);
+  const currentUserId = userInfo?.userId || userInfo?.id || "anonymous";
 
   const dispatch = useDispatch();
 
-  const getStatusSeller = async () => {
-    const res = await sellerService.sellerShopStatus(dispatch);
-  };
-
-
   useEffect(() => {
-    getStatusSeller();
-  }, []);
+    dispatch(resetSellerStatus());
 
-  useEffect(() => {
-    if (!statusText) return;
-
-    setCurrentStep(1);
-
-    if (statusText.toLowerCase().includes("pending")) {
-      setStatusStep("PENDING");
-    } else if (statusText.toLowerCase().includes("approved")) {
-      setStatusStep("APPROVED");
-    } else {
-      setStatusStep("REJECTED");
+    if (token) {
+      sellerService.sellerShopStatus(dispatch).catch((error) => {
+        if (import.meta.env.DEV) {
+          console.error("[SellerRegistration] Load current status failed", {
+            status: error?.response?.status,
+            message: error?.message,
+          });
+        }
+      });
     }
-  }, [statusText]);
+  }, [currentUserId, dispatch, token]);
+
+  const statusStep = useMemo(() => {
+    if (submittedStatus?.userId === currentUserId) return submittedStatus.status;
+    if (!statusText) return "";
+
+    const normalizedStatus = statusText.toLowerCase();
+
+    if (normalizedStatus.includes("pending")) return "PENDING";
+    if (normalizedStatus.includes("approved")) return "APPROVED";
+    return "REJECTED";
+  }, [currentUserId, statusText, submittedStatus]);
+
+  const currentStep = statusStep ? 1 : 0;
+
+  const handleApplicationSubmitted = () => {
+    setSubmittedStatus({ userId: currentUserId, status: "PENDING" });
+  };
 
   return (
     <div className="seller-step">
@@ -55,10 +66,12 @@ export default function SellerRegistration() {
       </div>
 
       <div className="step-content">
-        {statusStep ? (
+        {loading ? (
+          <p>Loading seller registration status...</p>
+        ) : statusStep ? (
           <SellerStatus status={statusStep} rejectReason={rejectReason} />
         ) : (
-          <StoreInformation />
+          <StoreInformation onSubmitted={handleApplicationSubmitted} />
         )}
       </div>
     </div>

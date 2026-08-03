@@ -45,9 +45,9 @@ const sellerProductSlice = createSlice({
       .addCase(fetchSellerProducts.fulfilled, (state, action) => {
         state.loading = false;
 
-        state.products = action.payload.items;
+        state.products = action.payload.items || [];
 
-        state.pagination = action.payload.pagination;
+        state.pagination = action.payload.pagination || initialState.pagination;
       })
       .addCase(fetchSellerProducts.rejected, (state, action) => {
         state.loading = false;
@@ -115,6 +115,10 @@ const sellerProductSlice = createSlice({
         state.actionLoading = false;
         state.products = state.products.filter(
           (p) => (p.productId || p.id) !== action.payload,
+        );
+        state.pagination.totalCount = Math.max(
+          Number(state.pagination.totalCount || 0) - 1,
+          0,
         );
       })
       .addCase(deleteSellerProduct.rejected, (state, action) => {

@@ -52,8 +52,10 @@ export const API_ENDPOINTS = {
   },
 
   PRODUCT: {
+    SEARCH: "/products/search",
     LIST: "/products",
     DETAIL: (id) => `/products/${id}`,
+    COMPARE_DESCRIPTIONS: "/products/compare-descriptions",
     CREATE_RV: (id) => `/products/${id}/reviews`,
     IMAGES: {
       LIST: (productId) => `/products/${productId}/images`,
@@ -172,6 +174,8 @@ export const API_ENDPOINTS = {
       GP: "/admin/vouchers",
       PUT: (id) => `/admin/vouchers/${id}`,
       DELETE: (id) => `/admin/vouchers/${id}`,
+      APPROVE: (id) => `/admin/vouchers/${id}/approve`,
+      REJECT: (id) => `/admin/vouchers/${id}/reject`,
     },
     FINANCE: {
       SUMMARY: "/admin/finance/money-flow",

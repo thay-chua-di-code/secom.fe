@@ -188,6 +188,8 @@
   // =========================
 
   &__user {
+    position: relative;
+
     display: flex;
     align-items: center;
 
@@ -260,6 +262,39 @@
     transition: color 0.2s ease;
     &:hover {
       color: #cbd5e1;
+    }
+  }
+
+  &__settings-menu {
+    position: absolute;
+    right: 10px;
+    bottom: 54px;
+    z-index: 10;
+    min-width: 150px;
+    padding: 8px;
+    border: 1px solid #273149;
+    border-radius: 12px;
+    background: #111827;
+    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.35);
+
+    button {
+      display: flex;
+      width: 100%;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 10px;
+      border: 0;
+      border-radius: 9px;
+      background: transparent;
+      color: #e5e7eb;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 700;
+
+      &:hover {
+        background: #1f2937;
+        color: #fca5a5;
+      }
     }
   }
 }

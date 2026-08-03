@@ -1,7 +1,7 @@
-import { useSelector } from "react-redux";
 import axiosClient from "../api/axiosClient";
 import { API_ENDPOINTS } from "../api/endPoint";
 import { logout } from "../redux/slice/authSlice";
+import { resetSellerStatus } from "../redux/slice/sellerStatusSlice";
 import { clearUserInfo } from "../redux/slice/userSlice";
 
 export const authService = {
@@ -28,7 +28,7 @@ export const authService = {
       console.log(e?.response?.data);
     }
   },
-  logout: async (payload, dispatch) => {
+  logout: async (dispatch) => {
     try {
       const refreshToken = localStorage.getItem("refreshToken");
 
@@ -42,15 +42,18 @@ export const authService = {
         },
       );
 
+      return result.data;
+    } catch (e) {
+      if (import.meta.env.DEV) {
+        console.error("[Auth] Logout API failed", e?.response?.data || e.message);
+      }
+      return null;
+    } finally {
       dispatch(clearUserInfo());
+      dispatch(resetSellerStatus());
       dispatch(logout());
       localStorage.removeItem("token");
       localStorage.removeItem("refreshToken");
-
-      return result.data;
-    } catch (e) {
-      console.error(e?.response?.data);
-      throw e;
     }
   },
   register: async (payload) => {
@@ -62,7 +65,7 @@ export const authService = {
 
       return result;
     } catch (e) {
-      throw new Error(e?.response?.data);
+      throw new Error(e?.response?.data?.message || e.message, { cause: e });
     }
   },
   reset_pwd: async (payload) => {

@@ -81,6 +81,18 @@ export const voucherApi = {
   deleteVoucher(voucherId) {
     return axiosClient.delete(API_ENDPOINTS.ADMIN.VOUCHER.DELETE(voucherId));
   },
+
+  approveVoucher(voucherId) {
+    return axiosClient.post(API_ENDPOINTS.ADMIN.VOUCHER.APPROVE(voucherId));
+  },
+
+  rejectVoucher(voucherId, reason) {
+    return axiosClient.post(
+      API_ENDPOINTS.ADMIN.VOUCHER.REJECT(voucherId),
+      { reason },
+      { headers: { "Content-Type": "application/json" } },
+    );
+  },
 };
 
 export const getPublicVouchers = voucherApi.getPublicVouchers;

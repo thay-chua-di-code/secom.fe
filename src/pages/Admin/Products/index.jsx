@@ -10,7 +10,6 @@ import {
   Package,
   Search,
   Eye,
-  Pencil,
   Check,
   X,
   ChevronLeft,
@@ -392,13 +391,6 @@ const Products = () => {
                     {/* ACTIONS */}
                     <td>
                       <div className="action-buttons">
-                        <Button
-                          className="action-btn edit-btn"
-                          title="Edit product"
-                        >
-                          <Pencil size={16} />
-                        </Button>
-
                         <Button
                           className="action-btn view-btn"
                           title="View moderation history"

@@ -13,15 +13,23 @@ import {
   RotateCcw,
   Zap,
   Settings,
+  LogOut,
 } from "lucide-react";
 
 import "./style.scss";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { fetchAdminUsers } from "../../../../redux/slice/admin/users/userThunk";
+import { logout } from "../../../../redux/slice/authSlice";
+import { resetSellerStatus } from "../../../../redux/slice/sellerStatusSlice";
+import { clearUserInfo } from "../../../../redux/slice/userSlice";
+import toast from "react-hot-toast";
 
 const Sidebar = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const usersState = useSelector((state) => state?.usersAdmin);
 
   useEffect(() => {
@@ -32,6 +40,14 @@ const Sidebar = () => {
       }),
     );
   }, [dispatch]);
+
+  const handleLogout = () => {
+    dispatch(clearUserInfo());
+    dispatch(resetSellerStatus());
+    dispatch(logout());
+    toast.success("Đã đăng xuất");
+    navigate("/auth", { replace: true });
+  };
   const menus = [
     {
       title: "Dashboard",
@@ -142,9 +158,25 @@ const Sidebar = () => {
             <span>admin@aidr.vn</span>
           </div>
 
-          <button className="sidebar__settings">
+          <button
+            type="button"
+            className="sidebar__settings"
+            onClick={() => setIsSettingsOpen((current) => !current)}
+            aria-label="Admin settings"
+            aria-expanded={isSettingsOpen}
+            title="Settings"
+          >
             <Settings size={15} />
           </button>
+
+          {isSettingsOpen && (
+            <div className="sidebar__settings-menu">
+              <button type="button" onClick={handleLogout}>
+                <LogOut size={14} />
+                <span>Đăng xuất</span>
+              </button>
+            </div>
+          )}
         </div>
       </aside>
     </>

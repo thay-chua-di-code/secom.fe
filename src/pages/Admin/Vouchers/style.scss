@@ -721,3 +721,44 @@
   background: #e11d48;
   color: #ffffff;
 }
+
+.action-btn.approve {
+  border-color: #bbf7d0;
+  background: #f0fdf4;
+  color: #16a34a;
+
+  &:hover {
+    background: #dcfce7;
+  }
+}
+
+.action-btn.reject {
+  border-color: #fecdd3;
+  background: #fff1f2;
+  color: #e11d48;
+
+  &:hover {
+    background: #ffe4e6;
+  }
+}
+
+.voucher-admin__no-action {
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.voucher-admin__confirm textarea {
+  width: 100%;
+  margin-bottom: 16px;
+  padding: 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  color: #0f172a;
+  resize: vertical;
+}
+
+.voucher-admin__modal-btn--primary {
+  background: #16a34a;
+  color: #ffffff;
+}

@@ -5,7 +5,7 @@ import { sellerService } from "../../../../service/sellerService";
 import "./style.scss";
 import Button from "../../../../components/common/Button/Button";
 
-export default function StoreInformation() {
+export default function StoreInformation({ onSubmitted }) {
   const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -34,28 +34,22 @@ export default function StoreInformation() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (loading) return;
+
+    if (!formData.shopName.trim()) return toast.error("Shop name is required");
+    if (!formData.phoneNumber.trim()) return toast.error("Phone number is required");
+    if (!formData.address.trim()) return toast.error("Address is required");
+    if (!formData.verificationImage) {
+      return toast.error("Verification document is required");
+    }
+
+    const toastId = "seller-register";
 
     try {
-      // if (!formData.shopName.trim()) {
-      //   return toast.error("Shop name is required");
-      // }
-
-      // if (!formData.phoneNumber.trim()) {
-      //   return toast.error("Phone number is required");
-      // }
-
-      // if (!formData.address.trim()) {
-      //   return toast.error("Address is required");
-      // }
-
-      // if (!formData.verificationImage) {
-      //   return toast.error("Verification image is required");
-      // }
-
       setLoading(true);
 
-      toast.loading("Waiting for minutes...", {
-        id: "seller-register",
+      toast.loading("Uploading image...", {
+        id: toastId,
       });
 
       const verificationImageUrl = await uploadImageToCloudinary(
@@ -63,7 +57,7 @@ export default function StoreInformation() {
       );
 
       toast.loading("Submitting application...", {
-        id: "seller-register",
+        id: toastId,
       });
 
       const payload = {
@@ -76,9 +70,10 @@ export default function StoreInformation() {
 
       await sellerService.becomeSeller(payload);
 
-      toast.success("Seller application submitted successfully!", {
-        id: "seller-register",
-      });
+      toast.success(
+        "Đơn đăng ký người bán đã được gửi thành công và đang chờ quản trị viên phê duyệt.",
+        { id: toastId },
+      );
 
       setFormData({
         shopName: "",
@@ -87,9 +82,14 @@ export default function StoreInformation() {
         address: "",
         verificationImage: null,
       });
+
+      setTimeout(() => {
+        toast.dismiss(toastId);
+        onSubmitted?.();
+      }, 2500);
     } catch (error) {
       toast.error(error.message || "Failed to submit application", {
-        id: "seller-register",
+        id: toastId,
       });
     } finally {
       setLoading(false);

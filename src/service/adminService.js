@@ -284,8 +284,6 @@ export const adminService = {
         API_ENDPOINTS.ADMIN.FINANCE.APPROVE(id),
       );
 
-      console.log("Approve Payout:", res);
-
       return res.data.data;
     } catch (e) {
       throw new Error(
@@ -300,8 +298,6 @@ export const adminService = {
       const res = await axiosClient.post(
         API_ENDPOINTS.ADMIN.FINANCE.REJECT(id),
       );
-
-      console.log("Reject Payout:", res);
 
       return res.data.data;
     } catch (e) {

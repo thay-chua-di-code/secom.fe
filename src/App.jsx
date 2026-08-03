@@ -3,7 +3,8 @@ import AppRoutes from "./routes";
 import { useEffect } from "react";
 import { setAuthToken, setLogoutHandler } from "./api/axiosClient";
 import { logout } from "./redux/slice/authSlice";
-import { getMyInfoThunk } from "./redux/slice/userSlice";
+import { resetSellerStatus } from "./redux/slice/sellerStatusSlice";
+import { clearUserInfo, getMyInfoThunk } from "./redux/slice/userSlice";
 function App() {
   const dispatch = useDispatch();
 
@@ -12,6 +13,8 @@ function App() {
 
   useEffect(() => {
     setLogoutHandler(() => {
+      dispatch(clearUserInfo());
+      dispatch(resetSellerStatus());
       dispatch(logout());
     });
   }, [dispatch]);

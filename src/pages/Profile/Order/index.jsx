@@ -1,10 +1,27 @@
 import { Clock3, PackageCheck, Search, Truck } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import { orderApi, unwrapApiData } from "../../../api/orderApi";
 import { paymentApi } from "../../../api/paymentApi";
 import { formatCurrencyVN } from "../../../utils/fncUtils";
 import { uploadImageToCloudinary } from "../../../services/cloudinaryService";
+import OrderProductImage from "../../../components/order/OrderProductImage";
+import {
+  getOrderItemId as getAdapterOrderItemId,
+  getOrderItemName,
+  getOrderItemProductId,
+  getOrderItemProductPath,
+  getOrderItemQuantity,
+  getOrderItems as getAdapterOrderItems,
+  getOrderItemTotalPrice,
+  getOrderItemUnitPrice,
+} from "../../../components/order/orderItemAdapter";
+import {
+  getReturnStatusBadgeClass,
+  getReturnStatusLabel,
+  normalizeReturnStatus,
+} from "../../../utils/returnRequestUtils";
 import "./style.scss";
 
 const orderStatuses = [
@@ -95,7 +112,7 @@ const getOrderId = (order) => order?.orderId || order?.id;
 const getFinalTotal = (order) =>
   order?.finalTotal ?? order?.finalTotalAmount ?? 0;
 const getOrderItems = (order) =>
-  order?.items || order?.orderItems || order?.products || [];
+  getAdapterOrderItems(order);
 const getOrderItemId = (item) => item?.orderItemId || item?.id;
 const getReturnableItems = (order) =>
   getOrderItems(order).filter((item) => {
@@ -108,21 +125,98 @@ const getReturnableItems = (order) =>
 
     return ["delivered", "received", "completed"].includes(itemStatus);
   });
-const getPurchasedQuantity = (item) =>
-  Number(item?.quantity ?? item?.purchasedQuantity ?? item?.qty ?? 0);
+const getPurchasedQuantity = (item) => getOrderItemQuantity(item);
 const getMaxReturnQuantity = (item) =>
   Number(
     item?.remainingReturnQuantity ?? item?.returnableQuantity ?? getPurchasedQuantity(item),
   );
-const getItemUnitPrice = (item) => Number(item?.unitPrice ?? item?.price ?? 0);
-const getItemSubtotal = (item) =>
-  Number(
-    item?.subtotal ??
-      item?.totalPrice ??
-      getItemUnitPrice(item) * getPurchasedQuantity(item),
-  );
-const getProductImageUrl = (item) => item?.productImageUrl || item?.imageUrl;
+const getItemUnitPrice = (item) => getOrderItemUnitPrice(item);
+const getItemSubtotal = (item) => getOrderItemTotalPrice(item);
 const DEFAULT_RETURN_REASON_CODE = "OTHER";
+
+const getField = (source, ...keys) => {
+  if (!source || typeof source !== "object") return undefined;
+
+  return keys.find((key) => source[key] !== undefined) !== undefined
+    ? source[keys.find((key) => source[key] !== undefined)]
+    : undefined;
+};
+
+const getReturnRequestId = (request) =>
+  getField(request, "requestId", "RequestId", "returnRequestId", "ReturnRequestId", "id", "Id");
+
+const getReturnRequestCreatedAt = (request) =>
+  getField(
+    request,
+    "requestedAtUtc",
+    "RequestedAtUtc",
+    "createdAtUtc",
+    "CreatedAtUtc",
+    "createdAt",
+    "CreatedAt",
+  );
+
+const getReturnRequestReviewedAt = (request) =>
+  getField(request, "reviewedAtUtc", "ReviewedAtUtc", "reviewedAt", "ReviewedAt");
+
+const getLatestReturnRefundRequest = (order) => {
+  const directRequest = getField(
+    order,
+    "returnRefund",
+    "ReturnRefund",
+    "returnRefundRequest",
+    "ReturnRefundRequest",
+    "returnRequest",
+    "ReturnRequest",
+    "refundRequest",
+    "RefundRequest",
+  );
+
+  if (directRequest) return directRequest;
+
+  const requests = getField(
+    order,
+    "returnRefundRequests",
+    "ReturnRefundRequests",
+    "returnRequests",
+    "ReturnRequests",
+    "refundRequests",
+    "RefundRequests",
+    "afterSalesRequests",
+    "AfterSalesRequests",
+  ) || [];
+
+  if (!Array.isArray(requests) || requests.length === 0) return null;
+
+  return [...requests].sort((left, right) => {
+    const rightTime = new Date(getReturnRequestCreatedAt(right) || 0).getTime();
+    const leftTime = new Date(getReturnRequestCreatedAt(left) || 0).getTime();
+
+    return rightTime - leftTime;
+  })[0];
+};
+
+const getReturnRequestRejectReason = (request) =>
+  getField(
+    request,
+    "rejectReason",
+    "RejectReason",
+    "rejectionReason",
+    "RejectionReason",
+    "reviewReason",
+    "ReviewReason",
+  ) || null;
+
+const getReturnRequestType = (request) =>
+  getField(request, "type", "Type", "requestType", "RequestType", "returnType", "ReturnType") ||
+  "Return/Refund";
+
+const getReturnRequestStatus = (request, order) =>
+  getField(request, "status", "Status") ||
+  getField(order, "returnRefundStatus", "ReturnRefundStatus");
+
+const getReturnRequestReason = (request) =>
+  getField(request, "reason", "Reason", "reasonCode", "ReasonCode") || "--";
 
 const loadOmiseScript = () => {
   return new Promise((resolve, reject) => {
@@ -198,6 +292,8 @@ function StatusBadge({ status }) {
 function OrderDetailModal({ order, payment, loading, onClose }) {
   if (!order) return null;
   const items = getOrderItems(order);
+  const returnRefundRequest = getLatestReturnRefundRequest(order);
+  const returnRefundStatus = getReturnRequestStatus(returnRefundRequest, order);
   return (
     <div className="order-detail-backdrop">
       <div className="order-detail-panel">
@@ -259,26 +355,98 @@ function OrderDetailModal({ order, payment, loading, onClose }) {
         </section>
 
         <section>
+          <h3>Return / Refund</h3>
+          {returnRefundStatus || returnRefundRequest ? (
+            <div className="detail-grid return-refund-grid">
+              <div>
+                <span>Request ID</span>
+                <strong>{getReturnRequestId(returnRefundRequest) || "--"}</strong>
+              </div>
+              <div>
+                <span>Type</span>
+                <strong>{getReturnRequestType(returnRefundRequest)}</strong>
+              </div>
+              <div>
+                <span>Return/Refund Status</span>
+                <span className={`return-refund-badge ${getReturnStatusBadgeClass(returnRefundStatus)}`}>
+                  {getReturnStatusLabel(returnRefundStatus)}
+                </span>
+              </div>
+              <div>
+                <span>Requested At</span>
+                <strong>
+                  {getReturnRequestCreatedAt(returnRefundRequest)
+                    ? new Date(getReturnRequestCreatedAt(returnRefundRequest)).toLocaleString()
+                    : "--"}
+                </strong>
+              </div>
+              <div>
+                <span>Reviewed At</span>
+                <strong>
+                  {getReturnRequestReviewedAt(returnRefundRequest)
+                    ? new Date(getReturnRequestReviewedAt(returnRefundRequest)).toLocaleString()
+                    : "--"}
+                </strong>
+              </div>
+              <div>
+                <span>Reason</span>
+                <strong>{getReturnRequestReason(returnRefundRequest)}</strong>
+              </div>
+              {normalizeReturnStatus(returnRefundStatus) === "rejected" && (
+                <div className="return-refund-grid__full">
+                  <span>Reject Reason</span>
+                  <strong>{getReturnRequestRejectReason(returnRefundRequest) || "Không có lý do từ chối."}</strong>
+                </div>
+              )}
+            </div>
+          ) : (
+            <p className="order-muted">No return/refund request for this order.</p>
+          )}
+        </section>
+
+        <section>
           <h3>Items</h3>
           <div className="order-detail-items">
             {items.length === 0 && <p className="order-muted">No items.</p>}
             {items.map((item) => {
-              const quantity = item.quantity || 0;
-              const unitPrice = item.unitPrice || item.price || 0;
-              const subtotal = item.subtotal || unitPrice * quantity;
+              const quantity = getOrderItemQuantity(item);
+              const unitPrice = getOrderItemUnitPrice(item);
+              const subtotal = getOrderItemTotalPrice(item);
+              const productPath = getOrderItemProductPath(item);
+              const productName = getOrderItemName(item);
+              const productImage = (
+                <OrderProductImage
+                  item={item}
+                  className="order-detail-item__image"
+                  alt={productName}
+                />
+              );
+              const productTitle = <strong>{productName}</strong>;
 
               return (
                 <div
                   className="order-detail-item"
-                  key={item.id || item.orderItemId || item.productId}
+                  key={getAdapterOrderItemId(item)}
                 >
-                  <div>
-                    <strong>
-                      {item.productName || item.name || "Product"}
-                    </strong>
-                    <span>Status: {item.status || "--"}</span>
+                  {productPath ? (
+                    <Link to={productPath} aria-label={`View product ${productName}`}>
+                      {productImage}
+                    </Link>
+                  ) : (
+                    productImage
+                  )}
+                  <div className="order-detail-item__info">
+                    {productPath ? (
+                      <Link to={productPath} className="order-detail-item__link">
+                        {productTitle}
+                      </Link>
+                    ) : (
+                      productTitle
+                    )}
+                    <span>Product ID: {getOrderItemProductId(item)}</span>
+                    <span>Status: {item.status || item.itemStatus || "--"}</span>
                   </div>
-                  <div>
+                  <div className="order-detail-item__price">
                     <span>Qty: {quantity}</span>
                     <span>Unit: {formatCurrencyVN(unitPrice)}</span>
                     <strong>{formatCurrencyVN(subtotal)}</strong>
@@ -482,14 +650,13 @@ function OrderActionModal({ type, order, actionLoading, onClose, onConfirm }) {
                               handleReturnItemToggle(item, event.target.checked)
                             }
                           />
-                          {getProductImageUrl(item) && (
-                            <img
-                              src={getProductImageUrl(item)}
-                              alt={item.productName || "Order item"}
-                            />
-                          )}
+                          <OrderProductImage
+                            item={item}
+                            alt={getOrderItemName(item)}
+                            className="return-item__image"
+                          />
                           <span>
-                            <strong>{item.productName || "Order item"}</strong>
+                            <strong>{getOrderItemName(item)}</strong>
                             <small>
                               Bought: {getPurchasedQuantity(item)} · Unit: {formatCurrencyVN(getItemUnitPrice(item))} · Subtotal: {formatCurrencyVN(getItemSubtotal(item))}
                             </small>

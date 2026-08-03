@@ -88,7 +88,6 @@ const persistConfig = {
     "auth",
     "user",
     "categories",
-    "sellerStatus",
     "home",
     "order",
     "notification",

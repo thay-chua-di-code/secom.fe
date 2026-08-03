@@ -6,9 +6,10 @@ import {
   deleteWishlistThunk,
 } from "../../../redux/slice/userSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import Title from "../../../components/common/Title/index";
+import { aiService } from "../../../service/aiService";
 import "./style.scss";
 
 const getApiErrorMessage = (error) =>
@@ -17,11 +18,14 @@ const getApiErrorMessage = (error) =>
   error?.message ||
   "Something went wrong. Please try again.";
 
-export default function RelatedProducts({ products = [] }) {
+export default function RelatedProducts({ productId, products = [] }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const [loadingId, setLoadingId] = useState(null);
+  const [relatedProducts, setRelatedProducts] = useState([]);
+  const [isLoadingRelated, setIsLoadingRelated] = useState(false);
+  const [relatedError, setRelatedError] = useState("");
 
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
@@ -38,7 +42,70 @@ export default function RelatedProducts({ products = [] }) {
     );
   }, [wishlist]);
 
-  if (!products.length) return null;
+  const normalizedProducts = useMemo(() => {
+    const sourceProducts = products.length ? products : relatedProducts;
+
+    return sourceProducts
+      .map((product) => ({
+        id: product.id || product.productId,
+        name: product.name || product.productName || "Unnamed product",
+        price: Number(product.price || product.currentPrice || 0),
+        image:
+          product.thumbnailUrl ||
+          product.imageUrl ||
+          product.primaryImageUrl ||
+          product.images?.find?.((image) => image?.isPrimary)?.imageUrl ||
+          product.images?.[0]?.imageUrl ||
+          product.images?.[0] ||
+          "/favicon.svg",
+        condition: product.condition || "--",
+        location: product.location || "--",
+        categoryName: product.category?.name || product.categoryName || "Uncategorized",
+      }))
+      .filter((product) => product.id);
+  }, [products, relatedProducts]);
+
+  useEffect(() => {
+    if (products.length || !productId) return;
+
+    let isMounted = true;
+
+    const loadRelatedProducts = async () => {
+      try {
+        setIsLoadingRelated(true);
+        setRelatedError("");
+
+        const response = await aiService.similarProduct(productId);
+        const payload = response?.data ?? response ?? {};
+        const items = Array.isArray(payload.items)
+          ? payload.items
+          : Array.isArray(payload.data?.items)
+            ? payload.data.items
+            : Array.isArray(payload)
+              ? payload
+              : [];
+
+        if (isMounted) {
+          setRelatedProducts(items);
+        }
+      } catch (error) {
+        if (isMounted) {
+          setRelatedProducts([]);
+          setRelatedError(getApiErrorMessage(error));
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoadingRelated(false);
+        }
+      }
+    };
+
+    loadRelatedProducts();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [productId, products.length]);
 
   const handleWishlist = async (e, productId) => {
     e.preventDefault();
@@ -73,8 +140,22 @@ export default function RelatedProducts({ products = [] }) {
     <section className="related-products">
       <Title title="Related Products" />
 
+      {isLoadingRelated && (
+        <div className="related-products__state">Loading related products...</div>
+      )}
+
+      {!isLoadingRelated && relatedError && (
+        <div className="related-products__state related-products__state--error">
+          {relatedError}
+        </div>
+      )}
+
+      {!isLoadingRelated && !relatedError && normalizedProducts.length === 0 && (
+        <div className="related-products__state">No related products found.</div>
+      )}
+
       <div className="related-products__grid">
-        {products.map((product) => {
+        {normalizedProducts.map((product) => {
           const isWishlisted = wishlistIds.has(String(product.id));
 
           return (
@@ -85,10 +166,7 @@ export default function RelatedProducts({ products = [] }) {
             >
               <div className="related-card__image">
                 <img
-                  src={
-                    product.images?.[0] ||
-                    "https://placehold.co/400x400?text=No+Image"
-                  }
+                  src={product.image}
                   alt={product.name}
                 />
 
@@ -120,7 +198,7 @@ export default function RelatedProducts({ products = [] }) {
                   </span>
                 </div>
 
-                <span className="category">{product.category?.name}</span>
+                <span className="category">{product.categoryName}</span>
               </div>
             </Link>
           );

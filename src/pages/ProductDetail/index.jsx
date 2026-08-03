@@ -19,7 +19,6 @@ import {
   deleteWishlistThunk,
 } from "../../redux/slice/userSlice";
 import { fetchProductDetailThunk } from "../../redux/slice/productSlice";
-import productApi from "../../api/productApi";
 import ProductSuggestion from "./AiSuggest/ProductSuggestion";
 
 const getApiErrorMessage = (error) =>
@@ -27,9 +26,6 @@ const getApiErrorMessage = (error) =>
   error?.response?.data?.error ||
   error?.message ||
   "Something went wrong. Please try again.";
-
-const unwrapProductDetail = (response) =>
-  response?.data?.data ?? response?.data ?? response;
 
 export default function ProductDetail() {
   const { id } = useParams();
@@ -46,15 +42,18 @@ export default function ProductDetail() {
     return Array.isArray(items) ? items : [];
   });
   const { productDetail, loading } = useSelector((state) => state.products);
-  console.log(productDetail);
   // const [productDetail, setProductDetail] = useState(null);
-  const [selectedImage, setSelectedImage] = useState("");
+  const [selectedImage, setSelectedImage] = useState(null);
   const [quantity, setQuantity] = useState(1);
-  // const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
   const [wishlistLoading, setWishlistLoading] = useState(false);
   const productId = productDetail?.id;
   const images = useMemo(() => productDetail?.images ?? [], [productDetail]);
+  const activeImage = useMemo(() => {
+    if (!images.length) return null;
+
+    const clickedImage = images.find((image) => image.id === selectedImage?.id);
+    return clickedImage || images.find((item) => item.isPrimary) || images[0];
+  }, [images, selectedImage]);
   const isWishlisted = useMemo(
     () =>
       !!productId &&
@@ -72,24 +71,6 @@ export default function ProductDetail() {
       dispatch(fetchProductDetailThunk(id));
     }
   }, [id, dispatch]);
-
-  useEffect(() => {
-    if (!productDetail) {
-      setSelectedImage(null);
-      return;
-    }
-
-    const images = productDetail.images ?? [];
-
-    if (images.length === 0) {
-      setSelectedImage(null);
-      return;
-    }
-
-    const primary = images.find((item) => item.isPrimary) || images[0];
-
-    setSelectedImage(primary);
-  }, [productDetail]);
 
   const requireLogin = () => {
     if (isAuthenticated) {
@@ -152,7 +133,7 @@ export default function ProductDetail() {
           autoSelectProductId: productId,
         },
       });
-    } catch (err) {
+    } catch {
       toast.error("Cannot buy product");
     }
   };
@@ -194,17 +175,6 @@ export default function ProductDetail() {
     );
   }
 
-  if (error) {
-    return (
-      <div className="product-detail" data-testid="product-detail">
-        <div className="product-detail__info">
-          <h1>Load product failed</h1>
-          <p>{error}</p>
-        </div>
-      </div>
-    );
-  }
-
   if (!productDetail) {
     return (
       <div className="product-detail" data-testid="product-detail">
@@ -226,7 +196,7 @@ export default function ProductDetail() {
             {images.map((img, index) => (
               <div
                 key={`${img}-${index}`}
-                className={`thumbnail ${selectedImage === img ? "active" : ""}`}
+                className={`thumbnail ${activeImage?.id === img.id ? "active" : ""}`}
                 onClick={() => setSelectedImage(img)}
               >
                 <img
@@ -238,9 +208,9 @@ export default function ProductDetail() {
           </div>
 
           <div className="main-image" data-testid="product-detail-image">
-            {selectedImage ? (
+            {activeImage ? (
               <img
-                src={selectedImage?.imageUrl}
+                src={activeImage?.imageUrl}
                 alt={productDetail?.productId || "Product"}
               />
             ) : (
@@ -354,7 +324,7 @@ export default function ProductDetail() {
         <ProductReview productId={productDetail.id} />
       </div>
       <ProductSuggestion productId={id} />
-      <RelatedProducts products={productDetail.relatedProducts} />
+      <RelatedProducts productId={id} products={productDetail.relatedProducts || []} />
     </>
   );
 }

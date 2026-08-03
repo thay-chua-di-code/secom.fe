@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Heart, Eye, Star } from "lucide-react";
+import { Eye, Heart, Scale, Star } from "lucide-react";
 import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -15,6 +15,7 @@ import {
   deleteWishlistThunk,
 } from "../../../../redux/slice/userSlice";
 import { formatCurrencyVN } from "../../../../utils/fncUtils";
+import useCompare from "../../../../hooks/useCompare";
 
 const getApiErrorMessage = (error) =>
   error?.response?.data?.message ||
@@ -37,8 +38,11 @@ export default function Card({ product }) {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const navigate = useNavigate();
   const [wishlistLoading, setWishlistLoading] = useState(false);
+  const { toggle, isCompared } = useCompare();
   const productImage =
     product.primaryImageUrl || product.images?.[0] || placeholderImage;
+  const productId = product.id || product.productId;
+  const compared = isCompared(productId);
   const isWishlisted = useMemo(
     () =>
       (wishlist ?? []).some(
@@ -146,8 +150,20 @@ export default function Card({ product }) {
           autoSelectProductId: product.id,
         },
       });
-    } catch (err) {
+    } catch {
       toast.error("Cannot buy product");
+    }
+  };
+
+  const handleToggleCompare = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    try {
+      toggle(productId);
+      toast.success(compared ? "Removed from compare" : "Added to compare");
+    } catch (error) {
+      toast.error(error.message);
     }
   };
 
@@ -170,11 +186,22 @@ export default function Card({ product }) {
           </button>
 
           <Link
-            to={`/product-detail/${product.id}`}
+            to={`/product-detail/${productId}`}
             onClick={(e) => e.stopPropagation()}
+            aria-label="View product detail"
           >
             <Eye size={18} />
           </Link>
+
+          <button
+            type="button"
+            onClick={handleToggleCompare}
+            className={compared ? "active" : ""}
+            aria-label={compared ? "Remove from compare" : "Add to compare"}
+            title={compared ? "Remove from compare" : "Compare product"}
+          >
+            <Scale size={18} />
+          </button>
         </div>
 
         <img
@@ -182,7 +209,7 @@ export default function Card({ product }) {
           alt={product.name}
           className="product-card__image"
           onClick={() => {
-            navigate(`/product-detail/${product.id}`);
+            navigate(`/product-detail/${productId}`);
           }}
         />
 

@@ -3,6 +3,7 @@ import {
   addCartItem,
   updateCartItemQuantity,
   applyCartVoucher,
+  removeCartVoucher,
   calculateCheckoutSummary,
 } from "../redux/slice/cartSlice";
 
@@ -33,6 +34,7 @@ export const useCart = () => {
   const updateQuantity = (cartItemId, quantity) =>
     dispatch(updateCartItemQuantity({ cartItemId, quantity }));
   const applyVoucher = (code) => dispatch(applyCartVoucher(code));
+  const removeVoucher = () => dispatch(removeCartVoucher());
   const calculateCheckout = () => dispatch(calculateCheckoutSummary());
 
   return {
@@ -51,6 +53,7 @@ export const useCart = () => {
     addItem,
     updateQuantity,
     applyVoucher,
+    removeVoucher,
     calculateCheckout,
   };
 };

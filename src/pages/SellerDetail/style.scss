@@ -978,3 +978,31 @@ $border: #e5e7eb;
     grid-template-columns: 1fr;
   }
 }
+
+button.product-card__image {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  cursor: pointer;
+}
+
+button.product-card__image:disabled {
+  cursor: default;
+}
+
+.seller-products__state {
+  padding: 28px;
+  border: 1px dashed #fecaca;
+  border-radius: 16px;
+  background: #fff7f7;
+  color: #737373;
+  text-align: center;
+  font-weight: 700;
+}
+
+.seller-products__state--error {
+  border-color: #fecaca;
+  background: #fef2f2;
+  color: #dc2626;
+}

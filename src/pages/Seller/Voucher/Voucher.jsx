@@ -4,6 +4,7 @@ import AddVoucherModal from "./FormAdd";
 import "./style.scss";
 import { sellerService } from "../../../service/sellerService";
 import { formatCurrencyVN } from "../../../utils/fncUtils";
+import toast from "react-hot-toast";
 
 const DEFAULT_PAGE_SIZE = 20;
 
@@ -77,6 +78,7 @@ const Vouchers = () => {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [deletingId, setDeletingId] = useState(null);
 
   const loadVouchers = useCallback(
     async ({ page = 1, nextFilters = filters } = {}) => {
@@ -126,6 +128,39 @@ const Vouchers = () => {
 
   const handlePageChange = (nextPage) => {
     loadVouchers({ page: nextPage });
+  };
+
+  const getVoucherId = (voucher) => voucher?.id ?? voucher?.voucherId;
+
+  const handleDeleteVoucher = async (voucher) => {
+    const voucherId = getVoucherId(voucher);
+
+    if (!voucherId) {
+      toast.error("Voucher id is missing");
+      return;
+    }
+
+    const confirmed = window.confirm(
+      `Delete voucher ${voucher?.code || voucherId}?`,
+    );
+
+    if (!confirmed) return;
+
+    try {
+      setDeletingId(voucherId);
+      await sellerService.deleteVoucher(voucherId);
+      setVouchers((prev) => prev.filter((item) => getVoucherId(item) !== voucherId));
+      setPagination((prev) => ({
+        ...prev,
+        totalCount: Math.max(Number(prev.totalCount || 0) - 1, 0),
+      }));
+      await loadVouchers({ page: pagination.pageNumber });
+      toast.success("Voucher deleted successfully");
+    } catch (deleteError) {
+      toast.error(deleteError.message || "Delete seller voucher failed");
+    } finally {
+      setDeletingId(null);
+    }
   };
 
   const handleCloseAdd = () => {
@@ -273,6 +308,8 @@ const Vouchers = () => {
                         <button
                           type="button"
                           className="seller-vouchers__action-btn seller-vouchers__action-btn--edit"
+                          disabled
+                          title="Edit voucher is not available in current API contract"
                         >
                           Edit
                         </button>
@@ -280,8 +317,10 @@ const Vouchers = () => {
                         <button
                           type="button"
                           className="seller-vouchers__action-btn seller-vouchers__action-btn--delete"
+                          onClick={() => handleDeleteVoucher(item)}
+                          disabled={deletingId === getVoucherId(item)}
                         >
-                          Delete
+                          {deletingId === getVoucherId(item) ? "Deleting..." : "Delete"}
                         </button>
                       </div>
                     </td>

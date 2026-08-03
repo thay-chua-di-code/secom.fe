@@ -1616,6 +1616,126 @@
         }
       }
     },
+    "/api/admin/payouts": {
+      "get": {
+        "tags": [
+          "AdminFinance"
+        ],
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sellerId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "fromDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "toDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Shared.Pagination.PagedResult`1[[SECOM.Modules.Admin.Application.DTOs.PayoutRequestDto, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], SECOM.Shared, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Shared.Pagination.PagedResult`1[[SECOM.Modules.Admin.Application.DTOs.PayoutRequestDto, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], SECOM.Shared, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Shared.Pagination.PagedResult`1[[SECOM.Modules.Admin.Application.DTOs.PayoutRequestDto, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], SECOM.Shared, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/admin/payouts/{payoutId}/approve": {
       "post": {
         "tags": [
@@ -4604,6 +4724,323 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "AdminVouchers"
+        ],
+        "parameters": [
+          {
+            "name": "voucherId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Modules.Voucher.Application.DTOs.VoucherDetailResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Modules.Voucher.Application.DTOs.VoucherDetailResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Modules.Voucher.Application.DTOs.VoucherDetailResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/vouchers/{voucherId}/approve": {
+      "patch": {
+        "tags": [
+          "AdminVouchers"
+        ],
+        "parameters": [
+          {
+            "name": "voucherId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Modules.Voucher.Application.DTOs.VoucherDetailResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Modules.Voucher.Application.DTOs.VoucherDetailResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Modules.Voucher.Application.DTOs.VoucherDetailResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/vouchers/{voucherId}/reject": {
+      "patch": {
+        "tags": [
+          "AdminVouchers"
+        ],
+        "parameters": [
+          {
+            "name": "voucherId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SECOM.Modules.Voucher.Application.DTOs.RejectVoucherRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SECOM.Modules.Voucher.Application.DTOs.RejectVoucherRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/SECOM.Modules.Voucher.Application.DTOs.RejectVoucherRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Modules.Voucher.Application.DTOs.VoucherDetailResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Modules.Voucher.Application.DTOs.VoucherDetailResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Modules.Voucher.Application.DTOs.VoucherDetailResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/api/ai/product-price-predict": {
@@ -5835,17 +6272,95 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Modules.Shipping.Application.DTOs.ShippingInfoResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Modules.Order.Application.DTOs.OrderStatusChangeResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Modules.Shipping.Application.DTOs.ShippingInfoResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Modules.Order.Application.DTOs.OrderStatusChangeResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Modules.Shipping.Application.DTOs.ShippingInfoResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Modules.Order.Application.DTOs.OrderStatusChangeResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/buyer/shipping/orders/{orderId}/confirm-received": {
+      "patch": {
+        "tags": [
+          "BuyerShipping"
+        ],
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Modules.Order.Application.DTOs.OrderStatusChangeResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Modules.Order.Application.DTOs.OrderStatusChangeResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Modules.Order.Application.DTOs.OrderStatusChangeResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "BuyerShipping"
+        ],
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Modules.Order.Application.DTOs.OrderStatusChangeResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Modules.Order.Application.DTOs.OrderStatusChangeResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Modules.Order.Application.DTOs.OrderStatusChangeResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
                 }
               }
             }
@@ -6094,6 +6609,33 @@
             }
           }
         },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Modules.Order.Application.DTOs.CheckoutSummaryResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Modules.Order.Application.DTOs.CheckoutSummaryResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Modules.Order.Application.DTOs.CheckoutSummaryResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Cart"
+        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -6723,6 +7265,154 @@
           },
           "400": {
             "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/seller-shops/{sellerShopId}/products": {
+      "get": {
+        "tags": [
+          "Discovery"
+        ],
+        "parameters": [
+          {
+            "name": "sellerShopId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Keyword",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "CategoryId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "MinPrice",
+            "in": "query",
+            "schema": {
+              "type": "number",
+              "format": "double"
+            }
+          },
+          {
+            "name": "MaxPrice",
+            "in": "query",
+            "schema": {
+              "type": "number",
+              "format": "double"
+            }
+          },
+          {
+            "name": "Condition",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Location",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Sort",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Shared.Pagination.PagedResult`1[[SECOM.Modules.Discovery.Application.DTOs.ProductListItemResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], SECOM.Shared, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Shared.Pagination.PagedResult`1[[SECOM.Modules.Discovery.Application.DTOs.ProductListItemResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], SECOM.Shared, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Shared.Pagination.PagedResult`1[[SECOM.Modules.Discovery.Application.DTOs.ProductListItemResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], SECOM.Shared, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
             "content": {
               "text/plain": {
                 "schema": {
@@ -9805,6 +10495,143 @@
         }
       }
     },
+    "/api/seller/orders/{orderId}/shipping": {
+      "patch": {
+        "tags": [
+          "SellerOrder"
+        ],
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Modules.Order.Application.DTOs.OrderStatusChangeResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Modules.Order.Application.DTOs.OrderStatusChangeResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Modules.Order.Application.DTOs.OrderStatusChangeResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "SellerShipping"
+        ],
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SECOM.Modules.Shipping.Application.DTOs.CreateShippingInfoRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SECOM.Modules.Shipping.Application.DTOs.CreateShippingInfoRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/SECOM.Modules.Shipping.Application.DTOs.CreateShippingInfoRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Modules.Shipping.Application.DTOs.ShippingInfoResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Modules.Shipping.Application.DTOs.ShippingInfoResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Modules.Shipping.Application.DTOs.ShippingInfoResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/seller/orders/{orderId}/delivered": {
+      "patch": {
+        "tags": [
+          "SellerOrder"
+        ],
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Modules.Order.Application.DTOs.OrderStatusChangeResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Modules.Order.Application.DTOs.OrderStatusChangeResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Modules.Order.Application.DTOs.OrderStatusChangeResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/seller/products": {
       "get": {
         "tags": [
@@ -11491,6 +12318,141 @@
       }
     },
     "/api/seller/vouchers": {
+      "get": {
+        "tags": [
+          "SellerProducts"
+        ],
+        "parameters": [
+          {
+            "name": "keyword",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "discountType",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Shared.Pagination.PagedResult`1[[SECOM.Modules.Voucher.Application.DTOs.VoucherListItemResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], SECOM.Shared, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Shared.Pagination.PagedResult`1[[SECOM.Modules.Voucher.Application.DTOs.VoucherListItemResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], SECOM.Shared, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Shared.Pagination.PagedResult`1[[SECOM.Modules.Voucher.Application.DTOs.VoucherListItemResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], SECOM.Shared, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
       "post": {
         "tags": [
           "SellerProducts"
@@ -11579,6 +12541,124 @@
       }
     },
     "/api/seller/vouchers/{voucherId}": {
+      "get": {
+        "tags": [
+          "SellerProducts"
+        ],
+        "parameters": [
+          {
+            "name": "voucherId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Modules.Voucher.Application.DTOs.VoucherDetailResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Modules.Voucher.Application.DTOs.VoucherDetailResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Modules.Voucher.Application.DTOs.VoucherDetailResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
       "put": {
         "tags": [
           "SellerProducts"
@@ -11775,14 +12855,273 @@
         }
       }
     },
-    "/api/seller/orders/{orderId}/shipping": {
-      "post": {
+    "/api/seller/return-requests": {
+      "get": {
         "tags": [
-          "SellerShipping"
+          "SellerReturnRequests"
         ],
         "parameters": [
           {
-            "name": "orderId",
+            "name": "Type",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Status",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Keyword",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "OrderId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "DateFrom",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "DateTo",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "SortBy",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Shared.Pagination.PagedResult`1[[SECOM.Modules.Order.Application.DTOs.SellerReturnRequestListItemResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], SECOM.Shared, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Shared.Pagination.PagedResult`1[[SECOM.Modules.Order.Application.DTOs.SellerReturnRequestListItemResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], SECOM.Shared, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Shared.Pagination.PagedResult`1[[SECOM.Modules.Order.Application.DTOs.SellerReturnRequestListItemResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], SECOM.Shared, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/seller/return-requests/{id}": {
+      "get": {
+        "tags": [
+          "SellerReturnRequests"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Modules.Order.Application.DTOs.ReturnRequestResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Modules.Order.Application.DTOs.ReturnRequestResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Modules.Order.Application.DTOs.ReturnRequestResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/seller/return-requests/{id}/approve": {
+      "patch": {
+        "tags": [
+          "SellerReturnRequests"
+        ],
+        "parameters": [
+          {
+            "name": "id",
             "in": "path",
             "required": true,
             "schema": {
@@ -11795,17 +13134,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/SECOM.Modules.Shipping.Application.DTOs.CreateShippingInfoRequest"
+                "$ref": "#/components/schemas/SECOM.Modules.Order.Application.DTOs.ReviewReturnRequest"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/SECOM.Modules.Shipping.Application.DTOs.CreateShippingInfoRequest"
+                "$ref": "#/components/schemas/SECOM.Modules.Order.Application.DTOs.ReviewReturnRequest"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/SECOM.Modules.Shipping.Application.DTOs.CreateShippingInfoRequest"
+                "$ref": "#/components/schemas/SECOM.Modules.Order.Application.DTOs.ReviewReturnRequest"
               }
             }
           }
@@ -11816,17 +13155,435 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Modules.Shipping.Application.DTOs.ShippingInfoResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Modules.Order.Application.DTOs.ReturnRequestResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Modules.Shipping.Application.DTOs.ShippingInfoResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Modules.Order.Application.DTOs.ReturnRequestResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Modules.Shipping.Application.DTOs.ShippingInfoResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Modules.Order.Application.DTOs.ReturnRequestResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/seller/return-requests/{id}/reject": {
+      "patch": {
+        "tags": [
+          "SellerReturnRequests"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SECOM.Modules.Order.Application.DTOs.ReviewReturnRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SECOM.Modules.Order.Application.DTOs.ReviewReturnRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/SECOM.Modules.Order.Application.DTOs.ReviewReturnRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Modules.Order.Application.DTOs.ReturnRequestResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Modules.Order.Application.DTOs.ReturnRequestResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Modules.Order.Application.DTOs.ReturnRequestResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/seller/return-requests/{id}/confirm-received": {
+      "patch": {
+        "tags": [
+          "SellerReturnRequests"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SECOM.Modules.Order.Application.DTOs.ReviewReturnRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SECOM.Modules.Order.Application.DTOs.ReviewReturnRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/SECOM.Modules.Order.Application.DTOs.ReviewReturnRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Modules.Order.Application.DTOs.ReturnRequestResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Modules.Order.Application.DTOs.ReturnRequestResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ApiResponse`1[[SECOM.Modules.Order.Application.DTOs.ReturnRequestResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SECOM.Shared.Responses.ErrorResponse"
                 }
               }
             }
@@ -13324,6 +15081,87 @@
         },
         "additionalProperties": false
       },
+      "SECOM.Modules.Admin.Application.DTOs.PayoutRequestDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sellerId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sellerFullName": {
+            "type": "string",
+            "nullable": true
+          },
+          "sellerEmail": {
+            "type": "string",
+            "nullable": true
+          },
+          "walletId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "bankAccountId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "bankName": {
+            "type": "string",
+            "nullable": true
+          },
+          "accountNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "accountHolderName": {
+            "type": "string",
+            "nullable": true
+          },
+          "amount": {
+            "type": "number",
+            "format": "double"
+          },
+          "fee": {
+            "type": "number",
+            "format": "double"
+          },
+          "netAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "reason": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAtUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "processedAtUtc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "completedAtUtc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "rejectedAtUtc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "SECOM.Modules.Admin.Application.DTOs.ProductDto": {
         "type": "object",
         "properties": {
@@ -13639,6 +15477,24 @@
           "usedCount": {
             "type": "integer",
             "format": "int32"
+          },
+          "approvalStatus": {
+            "type": "string",
+            "nullable": true
+          },
+          "approvedAtUtc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "rejectedAtUtc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "rejectionReason": {
+            "type": "string",
+            "nullable": true
           },
           "createdAtUtc": {
             "type": "string",
@@ -15197,6 +17053,64 @@
         },
         "additionalProperties": false
       },
+      "SECOM.Modules.Order.Application.DTOs.SellerReturnRequestListItemResponse": {
+        "type": "object",
+        "properties": {
+          "requestId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "requestType": {
+            "type": "string",
+            "nullable": true
+          },
+          "orderId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "buyerId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "buyerName": {
+            "type": "string",
+            "nullable": true
+          },
+          "reasonCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "requestedAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAtUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAtUtc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SECOM.Modules.Order.Application.DTOs.ReturnRequestItemResponse"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "SECOM.Modules.Order.Application.DTOs.SellerUpdateOrderStatusRequest": {
         "type": "object",
         "properties": {
@@ -15511,11 +17425,31 @@
             "type": "string",
             "format": "uuid"
           },
+          "requestType": {
+            "type": "string",
+            "nullable": true
+          },
+          "sellerId": {
+            "type": "string",
+            "format": "uuid"
+          },
           "bankAccountId": {
             "type": "string",
             "format": "uuid"
           },
           "amount": {
+            "type": "number",
+            "format": "double"
+          },
+          "requestedAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "fee": {
+            "type": "number",
+            "format": "double"
+          },
+          "netAmount": {
             "type": "number",
             "format": "double"
           },
@@ -15526,6 +17460,15 @@
           "createdAtUtc": {
             "type": "string",
             "format": "date-time"
+          },
+          "processedAtUtc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -16679,6 +18622,27 @@
             "type": "string",
             "nullable": true
           },
+          "approvalStatus": {
+            "type": "string",
+            "nullable": true
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "approvedAtUtc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "rejectedAtUtc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "rejectionReason": {
+            "type": "string",
+            "nullable": true
+          },
           "userVoucherId": {
             "type": "string",
             "format": "uuid"
@@ -16755,11 +18719,6 @@
       "SECOM.Modules.Voucher.Application.DTOs.CreateSellerVoucherRequest": {
         "type": "object",
         "properties": {
-          "sellerId": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          },
           "code": {
             "type": "string",
             "nullable": true
@@ -16805,14 +18764,19 @@
         },
         "additionalProperties": false
       },
+      "SECOM.Modules.Voucher.Application.DTOs.RejectVoucherRequest": {
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "SECOM.Modules.Voucher.Application.DTOs.UpdateSellerVoucherRequest": {
         "type": "object",
         "properties": {
-          "sellerId": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          },
           "code": {
             "type": "string",
             "nullable": true
@@ -16918,6 +18882,27 @@
           "status": {
             "type": "string",
             "nullable": true
+          },
+          "approvalStatus": {
+            "type": "string",
+            "nullable": true
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "approvedAtUtc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "rejectedAtUtc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "rejectionReason": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -16982,6 +18967,27 @@
           "status": {
             "type": "string",
             "nullable": true
+          },
+          "approvalStatus": {
+            "type": "string",
+            "nullable": true
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "approvedAtUtc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "rejectedAtUtc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "rejectionReason": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -17023,6 +19029,36 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/SECOM.Modules.Admin.Application.DTOs.OrderDto"
+            },
+            "nullable": true
+          },
+          "pageNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SECOM.Shared.Pagination.PagedResult`1[[SECOM.Modules.Admin.Application.DTOs.PayoutRequestDto, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SECOM.Modules.Admin.Application.DTOs.PayoutRequestDto"
             },
             "nullable": true
           },
@@ -17293,6 +19329,36 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/SECOM.Modules.Order.Application.DTOs.ReturnRequestResponse"
+            },
+            "nullable": true
+          },
+          "pageNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SECOM.Shared.Pagination.PagedResult`1[[SECOM.Modules.Order.Application.DTOs.SellerReturnRequestListItemResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SECOM.Modules.Order.Application.DTOs.SellerReturnRequestListItemResponse"
             },
             "nullable": true
           },
@@ -18330,6 +20396,22 @@
         },
         "additionalProperties": false
       },
+      "SECOM.Shared.Responses.ApiResponse`1[[SECOM.Shared.Pagination.PagedResult`1[[SECOM.Modules.Admin.Application.DTOs.PayoutRequestDto, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], SECOM.Shared, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/SECOM.Shared.Pagination.PagedResult`1[[SECOM.Modules.Admin.Application.DTOs.PayoutRequestDto, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+          }
+        },
+        "additionalProperties": false
+      },
       "SECOM.Shared.Responses.ApiResponse`1[[SECOM.Shared.Pagination.PagedResult`1[[SECOM.Modules.Admin.Application.DTOs.ProductDto, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], SECOM.Shared, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]": {
         "type": "object",
         "properties": {
@@ -18470,6 +20552,22 @@
           },
           "data": {
             "$ref": "#/components/schemas/SECOM.Shared.Pagination.PagedResult`1[[SECOM.Modules.Order.Application.DTOs.ReturnRequestResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SECOM.Shared.Responses.ApiResponse`1[[SECOM.Shared.Pagination.PagedResult`1[[SECOM.Modules.Order.Application.DTOs.SellerReturnRequestListItemResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], SECOM.Shared, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/SECOM.Shared.Pagination.PagedResult`1[[SECOM.Modules.Order.Application.DTOs.SellerReturnRequestListItemResponse, SECOM.Modules, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
           }
         },
         "additionalProperties": false

@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import "./style.scss";
 import { fetchOrders } from "../../../redux/slice/admin/orders/orderThunk";
 import { formatCurrencyVN, formatDate } from "../../../utils/fncUtils";
 import { Eye, Search, ShoppingCart, Calendar, DollarSign } from "lucide-react";
 import OrderDetailModal from "./Detail";
+import { getOrderItems, getOrderItemName } from "../../../components/order/orderItemAdapter";
 
 const Orders = () => {
   const { orders, loading, pagination } = useSelector(
@@ -13,6 +14,13 @@ const Orders = () => {
   const [openDetail, setOpenDetail] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const dispatch = useDispatch();
+
+  const getProductsSummary = (order) => {
+    const items = getOrderItems(order);
+    if (!items.length) return order.productName || "Missing product data";
+    const firstName = getOrderItemName(items[0]);
+    return items.length > 1 ? `${firstName} +${items.length - 1}` : firstName;
+  };
 
   const handleView = (order) => {
     setSelectedOrder(order);
@@ -39,7 +47,13 @@ const Orders = () => {
             <p>Manage all customer orders</p>
           </div>
 
-          <button className="refresh-btn">Refresh</button>
+          <button
+            type="button"
+            className="refresh-btn"
+            onClick={() => dispatch(fetchOrders({ page: 1, pageSize: 10 }))}
+          >
+            Refresh
+          </button>
         </div>
 
         <div className="toolbar">
@@ -54,6 +68,7 @@ const Orders = () => {
             <thead>
               <tr>
                 <th>Buyer</th>
+                <th>Product</th>
                 <th>Status</th>
                 <th>Total</th>
                 <th>Voucher</th>
@@ -65,7 +80,7 @@ const Orders = () => {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={6}>Loading...</td>
+                  <td colSpan={7}>Loading...</td>
                 </tr>
               ) : (
                 orders.map((order) => (
@@ -76,6 +91,8 @@ const Orders = () => {
                         <span>{order.id.slice(0, 8)}</span>
                       </div>
                     </td>
+
+                    <td title={getProductsSummary(order)}>{getProductsSummary(order)}</td>
 
                     <td>
                       <span className={`status ${order.status.toLowerCase()}`}>
@@ -103,8 +120,11 @@ const Orders = () => {
 
                     <td>
                       <button
+                        type="button"
                         className="view-btn"
                         onClick={() => handleView(order)}
+                        aria-label={`View order ${order.id}`}
+                        title="View order"
                       >
                         <Eye size={18} />
                       </button>
