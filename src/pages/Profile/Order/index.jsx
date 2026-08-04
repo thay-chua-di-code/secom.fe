@@ -89,7 +89,47 @@ const unwrapPayment = (response) => {
   );
 };
 
-const normalizeStatus = (status) => String(status || "").toLowerCase();
+const normalizeStatus = (status) => String(status || "").trim().toLowerCase().replace(/\s+/g, "_");
+
+const RETURN_LOCKED_ORDER_STATUSES = new Set([
+  "waiting_return_approval",
+  "return_approved",
+  "partially_returned",
+  "returned",
+  "refunded",
+]);
+
+const ACTIVE_RETURN_STATUSES = new Set([
+  "pending",
+  "approved",
+  "item_returned",
+  "refund_processing",
+]);
+
+const ORDER_STATUS_LABELS = {
+  pending: "Pending",
+  paid: "Paid",
+  packed: "Packed",
+  shipping: "Shipping",
+  delivered: "Delivered",
+  received: "Received",
+  completed: "Completed",
+  cancelled: "Cancelled",
+  waiting_return_approval: "Return request pending approval",
+  return_approved: "Return request approved",
+  return_rejected: "Return request rejected",
+  partially_returned: "Partially returned",
+  returned: "Item returned",
+  refunded: "Refunded",
+};
+
+const hasActiveReturnRequest = (order) => {
+  const request = getLatestReturnRefundRequest(order);
+  const returnStatus = normalizeReturnStatus(getReturnRequestStatus(request, order));
+  return ACTIVE_RETURN_STATUSES.has(returnStatus);
+};
+
+const isReturnLockedOrder = (order) => RETURN_LOCKED_ORDER_STATUSES.has(normalizeStatus(order?.status));
 
 const canPay = (order) => normalizeStatus(order?.status) === "pending";
 
@@ -99,11 +139,13 @@ const canCancel = (order) => {
 };
 
 const canConfirmReceived = (order) => {
+  if (isReturnLockedOrder(order) || hasActiveReturnRequest(order)) return false;
   const status = normalizeStatus(order?.status);
   return status === "delivered" || status === "shipping";
 };
 
 const canRequestReturn = (order) => {
+  if (isReturnLockedOrder(order) || hasActiveReturnRequest(order)) return false;
   const status = normalizeStatus(order?.status);
   return status === "delivered" || status === "completed";
 };
@@ -273,7 +315,7 @@ const createOmiseToken = async (cardInfo) => {
         }
 
         reject(
-          new Error(response?.message || "Không thể tạo token thanh toán."),
+          new Error(response?.message || "Unable to create payment token."),
         );
       },
     );
@@ -284,7 +326,7 @@ function StatusBadge({ status }) {
   const normalized = normalizeStatus(status);
   return (
     <span className={`status-badge status-badge--${normalized}`}>
-      {status || "--"}
+      {ORDER_STATUS_LABELS[normalized] || status || "--"}
     </span>
   );
 }
@@ -395,7 +437,7 @@ function OrderDetailModal({ order, payment, loading, onClose }) {
               {normalizeReturnStatus(returnRefundStatus) === "rejected" && (
                 <div className="return-refund-grid__full">
                   <span>Reject Reason</span>
-                  <strong>{getReturnRequestRejectReason(returnRefundRequest) || "Không có lý do từ chối."}</strong>
+                  <strong>{getReturnRequestRejectReason(returnRefundRequest) || "No rejection reason provided."}</strong>
                 </div>
               )}
             </div>
@@ -814,7 +856,7 @@ export default function OrderHistory() {
 
   const handlePay = async (order) => {
     if (!canPay(order)) {
-      setError("Chỉ có thể thanh toán đơn hàng pending.");
+      setError("Only pending orders can be paid.");
       return;
     }
 
@@ -899,7 +941,10 @@ export default function OrderHistory() {
   };
 
   const handleReturnRequest = async (order, values) => {
-    if (!canRequestReturn(order)) return;
+    if (!canRequestReturn(order)) {
+      toast.error("Order already has an active return/refund request.");
+      return;
+    }
 
     const orderId = getOrderId(order);
     const items = (values.items || [])
@@ -948,7 +993,10 @@ export default function OrderHistory() {
   };
 
   const handleOpenReturnRequest = async (order) => {
-    if (!canRequestReturn(order)) return;
+    if (!canRequestReturn(order)) {
+      toast.error("Order already has an active return/refund request.");
+      return;
+    }
 
     const orderId = getOrderId(order);
 
@@ -991,7 +1039,7 @@ export default function OrderHistory() {
       <div className="order-header">
         <div className="search-box">
           <Search size={18} />
-          <input type="text" placeholder="Tìm theo ID đơn hàng..." />
+          <input type="text" placeholder="Search by order ID..." />
         </div>
 
         <button

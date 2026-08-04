@@ -16,7 +16,7 @@ export default function OrderDetailModal({ open, onClose, order }) {
   if (!open || !order) return null;
 
   const formatMoney = (value) =>
-    new Intl.NumberFormat("vi-VN", {
+    new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "VND",
     }).format(value);

@@ -58,6 +58,8 @@
         }
 
         .input_wrapper {
+          display: flex;
+          align-items: center;
           height: auto;
           background: transparent;
           border: none;
@@ -75,12 +77,30 @@
           }
 
           input {
+            flex: 1;
             padding: 0;
             border: none;
             height: auto;
             font-size: 16px;
             &::placeholder {
               color: rgba(0, 0, 0, 0.4);
+            }
+          }
+
+          .password-toggle-btn {
+            width: 32px;
+            height: 32px;
+            padding: 0;
+            border: none;
+            background: transparent;
+            color: rgba(0, 0, 0, 0.55);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+
+            &:hover {
+              color: #df0000;
             }
           }
         }

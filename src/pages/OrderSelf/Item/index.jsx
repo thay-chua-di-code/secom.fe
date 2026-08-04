@@ -15,7 +15,7 @@ export default function OrderBody({ products }) {
             <span>x{product.quantity}</span>
           </div>
 
-          <div className="price">{product.price.toLocaleString()}đ</div>
+          <div className="price">{product.price.toLocaleString()} VND</div>
         </div>
       ))}
     </div>

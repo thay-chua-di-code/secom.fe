@@ -177,7 +177,7 @@ const AddVoucher = ({ open, onClose }) => {
                 <div className="input-wrapper">
                   <input
                     id="expiresAtUtc"
-                    type="date" // Chuyển thành date cho giống mm/dd/yyyy trong ảnh
+                    type="date" // Convert to date to match mm/dd/yyyy in the image
                     name="expiresAtUtc"
                     value={formData.expiresAtUtc}
                     onChange={handleChange}
@@ -187,7 +187,7 @@ const AddVoucher = ({ open, onClose }) => {
               </div>
             </div>
 
-            {/* ROW 4: STATUS & BUTTONS (Xếp hàng theo đúng UI) */}
+            {/* ROW 4: STATUS & BUTTONS (Align according to the UI) */}
             {/* STATUS */}
             <div className="form-group status-group">
               <label htmlFor="isActive">STATUS</label>

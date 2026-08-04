@@ -81,7 +81,7 @@ const VoucherAdmin = () => {
   const formatDate = (date) => {
     if (!date) return "-";
 
-    return new Date(date).toLocaleDateString("vi-VN");
+    return new Date(date).toLocaleDateString("en-US");
   };
 
   const getVoucherId = (voucher) => voucher?.id ?? voucher?.voucherId;

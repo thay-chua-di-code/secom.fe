@@ -3,15 +3,15 @@ import { PRODUCT_IMAGE_LIMITS } from "../constants/productImage";
 
 export const validateProductImage = (file) => {
   if (!file || file.size <= 0) {
-    throw new Error("File ảnh không hợp lệ");
+    throw new Error("Invalid image file");
   }
 
   if (!PRODUCT_IMAGE_LIMITS.allowedTypes.includes(file.type)) {
-    throw new Error("Chỉ hỗ trợ ảnh JPG, PNG và WebP");
+    throw new Error("Only JPG, PNG, and WebP images are supported");
   }
 
   if (file.size > PRODUCT_IMAGE_LIMITS.maxSizeBytes) {
-    throw new Error("Ảnh không được vượt quá 5 MB");
+    throw new Error("Image must not exceed 5 MB");
   }
 };
 
@@ -32,12 +32,12 @@ export const uploadImageToCloudinary = async (file, options = {}) => {
 
   if (!response.ok) {
     throw new Error(
-      responseBody?.error?.message || "Tải ảnh lên Cloudinary thất bại",
+      responseBody?.error?.message || "Failed to upload image to Cloudinary",
     );
   }
 
   if (!responseBody?.secure_url || !responseBody?.public_id) {
-    throw new Error("Cloudinary response thiếu secure_url hoặc public_id");
+    throw new Error("Cloudinary response is missing secure_url or public_id");
   }
 
   console.debug("Cloudinary response:", {

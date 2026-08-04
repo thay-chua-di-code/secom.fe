@@ -159,7 +159,7 @@ export default function AdminReturnRequestDetail() {
             <article><span>Status</span><strong className={`admin-return-requests__badge ${getReturnStatusBadgeClass(request.status)}`}>{getReturnStatusLabel(request.status)}</strong></article>
             <article><span>Refund Amount</span><strong>{formatCurrencyVN(request.refundAmount || 0)}</strong></article>
             <article><span>Order</span><strong>{request.orderId}</strong></article>
-            <article><span>Requested</span><strong>{request.requestedAtUtc ? new Date(request.requestedAtUtc).toLocaleString("vi-VN") : "--"}</strong></article>
+            <article><span>Requested</span><strong>{request.requestedAtUtc ? new Date(request.requestedAtUtc).toLocaleString("en-US") : "--"}</strong></article>
           </section>
 
           <section className="admin-return-detail__card">

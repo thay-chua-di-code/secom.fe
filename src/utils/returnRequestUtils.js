@@ -19,15 +19,15 @@ export function normalizeReturnStatus(status) {
 export function getReturnStatusLabel(status) {
   switch (normalizeReturnStatus(status)) {
     case RETURN_REQUEST_STATUSES.PENDING:
-      return "Pending";
+      return "Return request pending approval";
     case RETURN_REQUEST_STATUSES.APPROVED:
-      return "Approved";
+      return "Return request approved";
     case RETURN_REQUEST_STATUSES.REJECTED:
-      return "Rejected";
+      return "Return request rejected";
     case RETURN_REQUEST_STATUSES.ITEM_RETURNED:
-      return "Item Returned";
+      return "Item returned";
     case RETURN_REQUEST_STATUSES.REFUND_PROCESSING:
-      return "Refund Processing";
+      return "Refund processing";
     case RETURN_REQUEST_STATUSES.PROCESSING:
       return "Processing";
     case RETURN_REQUEST_STATUSES.COMPLETED:
@@ -63,10 +63,10 @@ export function getSellerReturnActions(status) {
 export const sellerReturnActionLabels = {
   approve: "Approve",
   reject: "Reject",
-  "confirm-received": "Confirm Received",
+  "confirm-received": "Confirm returned item received",
 };
 
-export const getReturnRequestApiErrorMessage = (error, fallback = "Return request action failed") => {
+export const getReturnRequestApiErrorMessage = (error, fallback = "Return/refund request action failed") => {
   const data = error?.response?.data;
   const message =
     data?.message ||
@@ -80,17 +80,17 @@ export const getReturnRequestApiErrorMessage = (error, fallback = "Return reques
 
   switch (error?.response?.status) {
     case 400:
-      return "Dữ liệu xử lý yêu cầu trả hàng/hoàn tiền không hợp lệ.";
+      return "Invalid return/refund request data.";
     case 401:
-      return "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.";
+      return "Your session has expired. Please log in again.";
     case 403:
-      return "Bạn không có quyền xử lý yêu cầu trả hàng/hoàn tiền này.";
+      return "You do not have permission to process this return/refund request.";
     case 404:
-      return "Không tìm thấy yêu cầu trả hàng/hoàn tiền.";
+      return "Return/refund request not found.";
     case 409:
-      return "Yêu cầu này đã được xử lý hoặc trạng thái không còn hợp lệ.";
+      return "This request has already been processed or its status is no longer valid.";
     case 422:
-      return "Yêu cầu không đáp ứng điều kiện nghiệp vụ để xử lý.";
+      return "The request does not meet the business requirements for processing.";
     default:
       return error?.message || fallback;
   }

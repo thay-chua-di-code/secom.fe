@@ -9,7 +9,7 @@ export default function VoucherCard({ voucher }) {
     toast.success("Voucher copied");
   };
 
-  const formatMoney = (value) => value.toLocaleString("vi-VN") + "đ";
+  const formatMoney = (value) => value.toLocaleString("en-US") + " VND";
 
   return (
     <div className="voucher-card">
@@ -50,7 +50,7 @@ export default function VoucherCard({ voucher }) {
           <p>
             Expired:
             <strong>
-              {new Date(voucher.endAtUtc).toLocaleDateString("vi-VN")}
+              {new Date(voucher.endAtUtc).toLocaleDateString("en-US")}
             </strong>
           </p>
         </div>

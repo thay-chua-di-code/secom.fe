@@ -3,14 +3,14 @@ export const formatCurrencyVN = (value) => {
     return "0 ₫";
   }
 
-  // Loại bỏ dấu phẩy nếu có và ép sang number
+  // Remove commas if present and cast to number
   const amount = Number(String(value).replace(/,/g, ""));
 
   if (Number.isNaN(amount)) {
     return "0 ₫";
   }
 
-  return new Intl.NumberFormat("vi-VN", {
+  return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "VND",
     maximumFractionDigits: 0,
@@ -22,7 +22,7 @@ export const formatDate = (dateString) => {
 
   const date = new Date(dateString);
 
-  return date.toLocaleString("vi-VN", {
+  return date.toLocaleString("en-US", {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",

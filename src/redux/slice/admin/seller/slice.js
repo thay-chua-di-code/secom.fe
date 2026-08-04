@@ -104,7 +104,7 @@ const sellerAdminSlice = createSlice({
           seller.approvedAtUtc = new Date().toISOString();
         }
 
-        // Update detail nếu đang mở modal
+        // Update detail if the modal is open
         if (state.sellerDetail && state.sellerDetail.id === sellerId) {
           state.sellerDetail.status = 1;
           state.sellerDetail.statusText = "Approved";

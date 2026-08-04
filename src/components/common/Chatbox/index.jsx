@@ -16,7 +16,7 @@ import "./style.scss";
 const formatChatTime = (dateString) => {
   if (!dateString) return "";
 
-  return new Date(dateString).toLocaleString("vi-VN", {
+  return new Date(dateString).toLocaleString("en-US", {
     hour: "2-digit",
     minute: "2-digit",
     day: "2-digit",
@@ -48,7 +48,7 @@ const createMessageId = () => {
 };
 
 const formatAiTime = (dateString) =>
-  new Date(dateString).toLocaleTimeString("vi-VN", {
+  new Date(dateString).toLocaleTimeString("en-US", {
     hour: "2-digit",
     minute: "2-digit",
   });
@@ -325,7 +325,7 @@ const ChatBox = () => {
       const failedMessage = {
         id: loadingMessage.id,
         role: "assistant",
-        content: error.message || "Không gửi được tin nhắn AI.",
+        content: error.message || "Unable to send AI message.",
         createdAt: new Date().toISOString(),
         status: "failed",
         retryText: content,

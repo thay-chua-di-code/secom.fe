@@ -40,11 +40,11 @@ const AdminDashboardCharts = ({ statistics }) => {
   // =========================
 
   /*
-   * API hiện tại chưa có revenue theo tháng.
-   * Vì vậy chart này biểu diễn platform activity.
+   * The current API does not provide monthly revenue yet.
+   * Therefore this chart represents platform activity.
    *
-   * Khi backend có revenueByMonth,
-   * chỉ cần thay data này bằng API thật.
+   * When the backend provides revenueByMonth,
+   * replace this data with the real API.
    */
   const overviewData = [
     {
@@ -447,7 +447,7 @@ const LegendItem = ({ icon, label, value, color }) => {
 };
 
 const formatMoney = (value = 0) => {
-  return new Intl.NumberFormat("vi-VN", {
+  return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "VND",
   }).format(value);

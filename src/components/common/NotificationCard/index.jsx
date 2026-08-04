@@ -39,7 +39,7 @@ export default function NotificationCard({ notification }) {
         <p>{notification.message}</p>
 
         <span className="time">
-          {new Date(notification.createdAtUtc).toLocaleString("vi-VN")}
+          {new Date(notification.createdAtUtc).toLocaleString("en-US")}
         </span>
       </div>
     </div>

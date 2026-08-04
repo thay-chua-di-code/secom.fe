@@ -9,6 +9,7 @@ import banner from "../../../../assets/images/SideImage.png";
 import toast from "react-hot-toast";
 import "./LoginForm.scss";
 import Button from "../../../../components/common/Button/Button";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function LoginForm() {
   const dispatch = useDispatch();
@@ -18,6 +19,7 @@ export default function LoginForm() {
     email: "",
     password: "",
   });
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmitLogin = async (e) => {
     e.preventDefault();
@@ -82,7 +84,7 @@ export default function LoginForm() {
             <div className="form_group">
               <div className="input_wrapper">
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   placeholder="Password"
                   value={loginData.password}
                   onChange={(e) =>
@@ -92,6 +94,16 @@ export default function LoginForm() {
                     }))
                   }
                 />
+
+                <button
+                  type="button"
+                  className="password-toggle-btn"
+                  onClick={() => setShowPassword((current) => !current)}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  title={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
               </div>
 
               <div className="forgot_password">

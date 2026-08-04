@@ -86,7 +86,7 @@ const SellerManage = () => {
 
                   <td>
                     {new Date(seller.submittedAtUtc).toLocaleDateString(
-                      "vi-VN",
+                      "en-US",
                     )}
                   </td>
 

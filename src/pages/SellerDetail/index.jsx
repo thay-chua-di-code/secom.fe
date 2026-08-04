@@ -387,7 +387,7 @@ export default function SellerDetail() {
       );
 
       toast.success(
-        confirmedFollowing ? "Đã theo dõi cửa hàng" : "Đã bỏ theo dõi cửa hàng",
+        confirmedFollowing ? "Followed shop" : "Unfollowed shop",
       );
     } catch (error) {
       toast.error(error.message || "Cannot update follow status");
@@ -495,12 +495,12 @@ export default function SellerDetail() {
                 >
                   <Users size={17} />
                   {followLoading
-                    ? "Đang xử lý..."
+                    ? "Processing..."
                     : followStatusLoading
-                      ? "Đang tải..."
+                      ? "Loading..."
                       : isFollowing
-                        ? "Đang theo dõi"
-                        : "Theo dõi"}
+                        ? "Following"
+                        : "Follow"}
                 </button>
 
                 <button
@@ -639,7 +639,7 @@ export default function SellerDetail() {
                       <span>{"★".repeat(Number(item.rating || 0))}</span>
                     </div>
                     <p>{item.comment || "No comment."}</p>
-                    <small>{item.createdAtUtc ? new Date(item.createdAtUtc).toLocaleString("vi-VN") : "--"}</small>
+                    <small>{item.createdAtUtc ? new Date(item.createdAtUtc).toLocaleString("en-US") : "--"}</small>
                   </article>
                 ))
               )}

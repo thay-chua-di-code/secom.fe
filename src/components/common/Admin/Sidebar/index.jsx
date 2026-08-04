@@ -45,7 +45,7 @@ const Sidebar = () => {
     dispatch(clearUserInfo());
     dispatch(resetSellerStatus());
     dispatch(logout());
-    toast.success("Đã đăng xuất");
+    toast.success("Logged out");
     navigate("/auth", { replace: true });
   };
   const menus = [
@@ -173,7 +173,7 @@ const Sidebar = () => {
             <div className="sidebar__settings-menu">
               <button type="button" onClick={handleLogout}>
                 <LogOut size={14} />
-                <span>Đăng xuất</span>
+                <span>Log out</span>
               </button>
             </div>
           )}

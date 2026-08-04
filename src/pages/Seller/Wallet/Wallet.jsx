@@ -181,7 +181,7 @@ export default function SellerWallet() {
                     </td>
                     <td>
                       {item.createdAtUtc
-                        ? new Date(item.createdAtUtc).toLocaleString("vi-VN")
+                        ? new Date(item.createdAtUtc).toLocaleString("en-US")
                         : "--"}
                     </td>
                   </tr>

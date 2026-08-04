@@ -5,17 +5,17 @@
   &__list {
     display: flex;
     flex-wrap: wrap;
-    margin: 0 -10px; // Offset cho padding của các item con
+    margin: 0 -10px; // Offset for child item padding
   }
 }
 
 .ai-product-card-wrapper {
-  // Chia đều thành 4 cột trên 1 hàng (25%)
+  // Split evenly into 4 columns per row (25%)
   width: 25%;
   padding: 10px;
   box-sizing: border-box;
 
-  // Responsive: Trên máy tính bảng hiện 2 sản phẩm/hàng, điện thoại hiện 1 sản phẩm/hàng
+  // Responsive: tablets show 2 products per row, phones show 1 product per row
   @media (max-width: 992px) {
     width: 50%;
   }
@@ -42,7 +42,7 @@
     width: 100%;
     background-color: #f5f5f5;
     border-radius: 4px;
-    aspect-ratio: 1 / 1; // Giữ ảnh luôn vuông tỉ lệ 1:1
+    aspect-ratio: 1 / 1; // Keep the image square at a 1:1 ratio
     display: flex;
     align-items: center;
     justify-content: center;
@@ -55,7 +55,7 @@
     }
   }
 
-  // Floating Actions (Nút tim và mắt) ở góc phải
+  // Floating actions (heart and eye buttons) on the right
   &__actions {
     position: absolute;
     top: 12px;
@@ -109,7 +109,7 @@
       margin-bottom: 8px;
 
       .current-price {
-        color: #db4444; // Màu đỏ giá khuyến mãi
+        color: #db4444; // Red color for the sale price
         font-weight: 600;
         font-size: 16px;
       }

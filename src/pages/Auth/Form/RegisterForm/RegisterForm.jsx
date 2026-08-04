@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import logo from "../../../../assets/icons/logo.jpg";
 import "./RegisterForm.scss";
 import banner from "../../../../assets/images/SideImage.png";
 import Button from "../../../../components/common/Button/Button";
@@ -7,6 +6,7 @@ import { authService } from "../../../../service/authService";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function RegisterForm() {
   const [registerData, setRegisterData] = useState({
@@ -15,6 +15,10 @@ export default function RegisterForm() {
     fullName: "",
     confirmPassword: "",
     role: "Customer",
+  });
+  const [showPassword, setShowPassword] = useState({
+    password: false,
+    confirmPassword: false,
   });
 
   const handleSubmitRegister = async (e) => {
@@ -117,7 +121,7 @@ export default function RegisterForm() {
     }
   };
 
-  const handleRegisterGoogle = (credentialResponse) => {
+  const handleRegisterGoogle = () => {
     alert("Handle register with Google successfully!");
   };
 
@@ -163,31 +167,73 @@ export default function RegisterForm() {
           </div>
 
           <div className="form_group">
-            <input
-              type="password"
-              placeholder="Password"
-              value={registerData.password}
-              onChange={(e) =>
-                setRegisterData((prev) => ({
-                  ...prev,
-                  password: e.target.value,
-                }))
-              }
-            />
+            <div className="password-input-wrapper">
+              <input
+                type={showPassword.password ? "text" : "password"}
+                placeholder="Password"
+                value={registerData.password}
+                onChange={(e) =>
+                  setRegisterData((prev) => ({
+                    ...prev,
+                    password: e.target.value,
+                  }))
+                }
+              />
+
+              <button
+                type="button"
+                className="password-toggle-btn"
+                onClick={() =>
+                  setShowPassword((prev) => ({
+                    ...prev,
+                    password: !prev.password,
+                  }))
+                }
+                aria-label={showPassword.password ? "Hide password" : "Show password"}
+                title={showPassword.password ? "Hide password" : "Show password"}
+              >
+                {showPassword.password ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
           </div>
 
           <div className="form_group">
-            <input
-              type="password"
-              placeholder="Confirm Password"
-              value={registerData.confirmPassword}
-              onChange={(e) =>
-                setRegisterData((prev) => ({
-                  ...prev,
-                  confirmPassword: e.target.value,
-                }))
-              }
-            />
+            <div className="password-input-wrapper">
+              <input
+                type={showPassword.confirmPassword ? "text" : "password"}
+                placeholder="Confirm Password"
+                value={registerData.confirmPassword}
+                onChange={(e) =>
+                  setRegisterData((prev) => ({
+                    ...prev,
+                    confirmPassword: e.target.value,
+                  }))
+                }
+              />
+
+              <button
+                type="button"
+                className="password-toggle-btn"
+                onClick={() =>
+                  setShowPassword((prev) => ({
+                    ...prev,
+                    confirmPassword: !prev.confirmPassword,
+                  }))
+                }
+                aria-label={
+                  showPassword.confirmPassword
+                    ? "Hide confirm password"
+                    : "Show confirm password"
+                }
+                title={
+                  showPassword.confirmPassword
+                    ? "Hide confirm password"
+                    : "Show confirm password"
+                }
+              >
+                {showPassword.confirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
           </div>
 
           <div className="form_actions">

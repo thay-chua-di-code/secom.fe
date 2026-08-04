@@ -14,7 +14,7 @@ const formatVnd = (value) => {
   const numberValue = toNumber(value);
   if (numberValue === null) return null;
 
-  return new Intl.NumberFormat("vi-VN", {
+  return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "VND",
   }).format(numberValue);
@@ -22,7 +22,7 @@ const formatVnd = (value) => {
 
 const ProductRecommendationCard = ({ product }) => {
   const productId = product.productId || product.id;
-  const name = product.name || product.productName || "Sản phẩm được gợi ý";
+  const name = product.name || product.productName || "Suggested product";
   const originalPrice = formatVnd(product.originalPrice ?? product.price);
   const discountedPrice = formatVnd(product.discountedPrice ?? product.salePrice);
   const stock = toNumber(product.stock ?? product.stockQuantity);
@@ -55,10 +55,10 @@ const ProductRecommendationCard = ({ product }) => {
               <Star size={13} fill="currentColor" /> {product.rating}
             </span>
           )}
-          {product.soldCount !== undefined && <span>Đã bán {product.soldCount}</span>}
+          {product.soldCount !== undefined && <span>Sold {product.soldCount}</span>}
           {stock !== null && (
             <span className={`ai-stock-badge ${isOutOfStock ? "is-out" : "is-in"}`}>
-              {isOutOfStock ? "Hết hàng" : "Còn hàng"}
+              {isOutOfStock ? "Out of stock" : "In stock"}
             </span>
           )}
         </div>

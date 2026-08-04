@@ -6,7 +6,7 @@ import { userService } from "../../../service/userService";
 import { useEffect, useState } from "react";
 
 function formatCurrency(price) {
-  return new Intl.NumberFormat("vi-VN").format(price);
+  return new Intl.NumberFormat("en-US").format(price);
 }
 
 function formatViewedTime(date) {

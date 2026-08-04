@@ -53,6 +53,17 @@
 }
 
 .form_group {
+  .password-input-wrapper {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+
+    &:focus-within {
+      border-bottom-color: #0284c7;
+    }
+  }
+
   input {
     width: 100%;
 
@@ -71,6 +82,28 @@
 
     &::placeholder {
       color: rgba(0, 0, 0, 0.4);
+    }
+  }
+
+  .password-input-wrapper input {
+    flex: 1;
+    border-bottom: none;
+  }
+
+  .password-toggle-btn {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: rgba(0, 0, 0, 0.55);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+
+    &:hover {
+      color: #df0000;
     }
   }
 }

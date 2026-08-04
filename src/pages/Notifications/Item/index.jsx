@@ -64,7 +64,7 @@ export default function NotificationItem({ notification, showDelete = false }) {
           <span>{notification.referenceType}</span>
 
           <span>
-            {new Date(notification.createdAtUtc).toLocaleString("vi-VN")}
+            {new Date(notification.createdAtUtc).toLocaleString("en-US")}
           </span>
         </div>
       </div>

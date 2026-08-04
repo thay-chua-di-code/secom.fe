@@ -258,7 +258,7 @@ export default function CartPage() {
       error?.response?.data?.message ||
       error?.response?.data?.Message ||
       error?.message ||
-      "Không thể tạo đơn hàng. Vui lòng thử lại."
+      "Unable to create order. Please try again."
     );
   };
 
@@ -268,7 +268,7 @@ export default function CartPage() {
       error?.response?.data?.error ||
       error?.response?.data?.errors?.[0] ||
       error?.message ||
-      "Không thể tạo giao dịch thanh toán. Vui lòng thử lại."
+      "Unable to create payment transaction. Please try again."
     );
   };
 

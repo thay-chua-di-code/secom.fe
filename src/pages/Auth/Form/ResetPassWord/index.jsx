@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { Mail } from "lucide-react";
+import { Eye, EyeOff, Mail } from "lucide-react";
 import logo from "../../../../assets/icons/logo.jpg";
 import { authService } from "../../../../service/authService";
 import Button from "../../../../components/common/Button/Button";
@@ -11,10 +11,11 @@ const ResetPassWord = () => {
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
   const [newPwd, setPwd] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmitResetPassword = async (e) => {
     e.preventDefault();
-    const result = await authService.reset_pwd({ token, newPassword: newPwd });
+    await authService.reset_pwd({ token, newPassword: newPwd });
   };
 
   return (
@@ -45,12 +46,22 @@ const ResetPassWord = () => {
             <Mail size={18} />
 
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               placeholder="Enter your new password"
               required
               value={newPwd}
               onChange={(e) => setPwd(e.target.value)}
             />
+
+            <button
+              type="button"
+              className="password-toggle-btn"
+              onClick={() => setShowPassword((current) => !current)}
+              aria-label={showPassword ? "Hide password" : "Show password"}
+              title={showPassword ? "Hide password" : "Show password"}
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
           </div>
         </div>
 

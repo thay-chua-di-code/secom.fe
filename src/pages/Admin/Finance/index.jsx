@@ -55,7 +55,7 @@ const getMoneyValue = (value) => {
   return Number.isFinite(numberValue) ? numberValue : 0;
 };
 
-const formatCurrency = (value) => `${getMoneyValue(value).toLocaleString()} đ`;
+const formatCurrency = (value) => `${getMoneyValue(value).toLocaleString()} VND`;
 
 const getField = (item, keys, fallback = 0) => {
   const value = keys.map((key) => item?.[key]).find((field) => field !== undefined && field !== null);
@@ -73,7 +73,7 @@ const formatDate = (value) => {
     return value;
   }
 
-  return date.toLocaleDateString("vi-VN");
+  return date.toLocaleDateString("en-US");
 };
 
 export default function Finance() {
@@ -236,7 +236,7 @@ export default function Finance() {
                   <div className="content">
                     <span>{item.title}</span>
 
-                    <h3>{Number(item.value || 0).toLocaleString()} đ</h3>
+                    <h3>{Number(item.value || 0).toLocaleString()} VND</h3>
                   </div>
                 </div>
               );

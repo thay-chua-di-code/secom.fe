@@ -71,7 +71,7 @@ export default function StoreInformation({ onSubmitted }) {
       await sellerService.becomeSeller(payload);
 
       toast.success(
-        "Đơn đăng ký người bán đã được gửi thành công và đang chờ quản trị viên phê duyệt.",
+        "Your seller application has been submitted successfully and is pending admin approval.",
         { id: toastId },
       );
 

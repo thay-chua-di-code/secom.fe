@@ -18,7 +18,7 @@ const formatDate = (value) => {
     return "N/A";
   }
 
-  return new Date(value).toLocaleDateString("vi-VN");
+  return new Date(value).toLocaleDateString("en-US");
 };
 
 export default function VoucherList({

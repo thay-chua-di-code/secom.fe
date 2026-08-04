@@ -74,62 +74,62 @@ const getResultConfig = (state) => {
       return {
         className: "pending",
         icon: <LoaderCircle className="payment-return__spinner" size={64} />,
-        title: "Đang xác minh thanh toán",
+        title: "Verifying payment",
         message:
-          "Hệ thống đang kiểm tra giao dịch và cập nhật trạng thái đơn hàng. Vui lòng không đóng trang.",
+          "The system is checking the transaction and updating the order status. Please do not close this page.",
       };
     case "success":
       return {
         className: "success",
         icon: <CheckCircle size={64} />,
-        title: "Thanh toán thành công",
-        message: "Đơn hàng của bạn đã được cập nhật thành công.",
+        title: "Payment successful",
+        message: "Your order has been updated successfully.",
       };
     case "pending":
       return {
         className: "pending",
         icon: <Clock3 size={64} />,
-        title: "Thanh toán đang được xử lý",
+        title: "Payment is processing",
         message:
-          "Hệ thống chưa nhận được xác nhận cuối cùng từ cổng thanh toán. Bạn có thể chờ thêm hoặc kiểm tra lại trong danh sách đơn hàng.",
+          "The system has not received the final confirmation from the payment gateway. You can wait a bit longer or check again in your order list.",
       };
     case "cancelled":
       return {
         className: "failed",
         icon: <RotateCcw size={64} />,
-        title: "Thanh toán đã bị hủy",
-        message: "Giao dịch chưa được hoàn tất. Đơn hàng chưa được đánh dấu đã thanh toán.",
+        title: "Payment cancelled",
+        message: "The transaction was not completed. The order has not been marked as paid.",
       };
     case "failed":
       return {
         className: "failed",
         icon: <XCircle size={64} />,
-        title: "Thanh toán không thành công",
-        message: "Cổng thanh toán không xác nhận giao dịch thành công.",
+        title: "Payment failed",
+        message: "The payment gateway did not confirm a successful transaction.",
       };
     case "not_found":
       return {
         className: "failed",
         icon: <AlertTriangle size={64} />,
-        title: "Không tìm thấy giao dịch",
+        title: "Transaction not found",
         message:
-          "Không thể xác định giao dịch từ thông tin PayOS trả về hoặc giao dịch không thuộc tài khoản hiện tại.",
+          "Unable to identify the transaction from the PayOS response, or the transaction does not belong to the current account.",
       };
     case "unauthorized":
       return {
         className: "failed",
         icon: <LogIn size={64} />,
-        title: "Phiên đăng nhập đã hết hạn",
-        message: "Vui lòng đăng nhập lại để kiểm tra trạng thái thanh toán.",
+        title: "Your session has expired",
+        message: "Please sign in again to check the payment status.",
       };
     case "error":
     default:
       return {
         className: "failed",
         icon: <XCircle size={64} />,
-        title: "Không thể xác minh thanh toán",
+        title: "Unable to verify payment",
         message:
-          "Đã xảy ra lỗi khi kết nối với hệ thống. Trạng thái đơn hàng chưa được xác nhận.",
+          "An error occurred while connecting to the system. The order status has not been confirmed.",
       };
   }
 };
@@ -164,7 +164,7 @@ export default function PaymentReturn() {
       return {
         state: "not_found",
         result: {
-          message: "Không tìm thấy mã giao dịch thanh toán.",
+          message: "Payment transaction code not found.",
         },
       };
     }
@@ -191,7 +191,7 @@ export default function PaymentReturn() {
       return {
         state: "not_found",
         result: {
-          message: "Không tìm thấy mã giao dịch thanh toán.",
+          message: "Payment transaction code not found.",
         },
       };
     }
@@ -243,13 +243,13 @@ export default function PaymentReturn() {
 
     if (status === 401) {
       setUiState("unauthorized");
-      setMessage("Vui lòng đăng nhập lại để kiểm tra thanh toán.");
+      setMessage("Please log in again to check payment.");
       return;
     }
 
     if (status === 403) {
       setUiState("unauthorized");
-      setMessage("Tài khoản không có quyền kiểm tra giao dịch này.");
+      setMessage("This account does not have permission to check this transaction.");
       return;
     }
 
@@ -258,7 +258,7 @@ export default function PaymentReturn() {
       setMessage(
         error?.response?.data?.message ||
           error?.response?.data?.data?.message ||
-          "Không tìm thấy giao dịch tương ứng.",
+          "No matching transaction found.",
       );
       return;
     }
@@ -267,7 +267,7 @@ export default function PaymentReturn() {
     setMessage(
       error?.response?.data?.message ||
         error?.response?.data?.data?.message ||
-        "Không thể xác minh trạng thái thanh toán.",
+        "Unable to verify payment status.",
     );
   }, []);
 
@@ -337,62 +337,62 @@ export default function PaymentReturn() {
 
         {message && <p className="payment-return__muted">{message}</p>}
         {uiState === "verifying" && retryCount > 0 && (
-          <p className="payment-return__muted">Đang kiểm tra lần {retryCount}/{RETRY_DELAYS.length}...</p>
+          <p className="payment-return__muted">Checking attempt {retryCount}/{RETRY_DELAYS.length}...</p>
         )}
 
         <div className="payment-return__actions">
           {(uiState === "pending" || uiState === "error") && (
             <button type="button" onClick={handleRetry} disabled={manualChecking}>
               <RefreshCw size={16} />
-              {manualChecking ? "Đang kiểm tra..." : "Kiểm tra lại"}
+              {manualChecking ? "Checking..." : "Check again"}
             </button>
           )}
 
           {uiState === "success" && canOpenOrder && (
             <button type="button" onClick={handleOpenOrder}>
-              Xem chi tiết đơn hàng
+              View order details
             </button>
           )}
 
           {uiState === "success" && !canOpenOrder && (
-            <Link to="/order-self">Xem danh sách đơn hàng</Link>
+            <Link to="/order-self">View order list</Link>
           )}
 
-          {uiState === "pending" && <Link to="/order-self">Xem danh sách đơn hàng</Link>}
+          {uiState === "pending" && <Link to="/order-self">View order list</Link>}
 
           {uiState === "cancelled" && (
             <>
-              {canOpenOrder && <button type="button" onClick={handleOpenOrder}>Xem đơn hàng</button>}
-              <Link to="/cart">Về giỏ hàng</Link>
+              {canOpenOrder && <button type="button" onClick={handleOpenOrder}>View order</button>}
+              <Link to="/cart">Back to cart</Link>
             </>
           )}
 
           {uiState === "failed" && (
             <>
-              {canOpenOrder && <button type="button" onClick={handleOpenOrder}>Xem đơn hàng</button>}
-              <Link to="/order-self">Xem danh sách đơn hàng</Link>
+              {canOpenOrder && <button type="button" onClick={handleOpenOrder}>View order</button>}
+              <Link to="/order-self">View order list</Link>
             </>
           )}
 
-          {uiState === "not_found" && <Link to="/order-self">Xem danh sách đơn hàng</Link>}
+          {uiState === "not_found" && <Link to="/order-self">View order list</Link>}
 
           {uiState === "unauthorized" && (
             <Link to={`/login?returnUrl=${encodeURIComponent(window.location.pathname + window.location.search)}`}>
-              Đăng nhập
+              Log in
             </Link>
           )}
 
-          {uiState === "error" && <Link to="/order-self">Xem đơn hàng</Link>}
+          {uiState === "error" && <Link to="/order-self">View order</Link>}
 
           {uiState !== "unauthorized" && (
             <Link to="/products" className="payment-return__secondary">
-              Tiếp tục mua sắm
+              Continue shopping
             </Link>
           )}
 
           {(uiState === "pending" || uiState === "not_found" || uiState === "error") && (
             <Link to="/" className="payment-return__secondary">
-              Về trang chủ
+              Back to home
             </Link>
           )}
         </div>
@@ -401,10 +401,10 @@ export default function PaymentReturn() {
       {paymentData && (
         <section className="payment-return__details">
           <div className="payment-return__section">
-            <h2>Thông tin xác minh</h2>
+            <h2>Verification information</h2>
             <dl>
               <div>
-                <dt>Mã giao dịch PayOS</dt>
+                <dt>PayOS transaction code</dt>
                 <dd>{paymentData.orderCode || orderCode || "--"}</dd>
               </div>
               <div>
@@ -412,18 +412,18 @@ export default function PaymentReturn() {
                 <dd>{paymentData.orderId || "--"}</dd>
               </div>
               <div>
-                <dt>Trạng thái thanh toán</dt>
+                <dt>Payment status</dt>
                 <dd>{paymentData.paymentStatus || "--"}</dd>
               </div>
               <div>
-                <dt>Trạng thái đơn hàng</dt>
+                <dt>Order status</dt>
                 <dd>{paymentData.orderStatus || "--"}</dd>
               </div>
               <div>
-                <dt>Thời gian thanh toán</dt>
+                <dt>Payment time</dt>
                 <dd>
                   {paymentData.paidAtUtc || paymentData.paidAt
-                    ? new Date(paymentData.paidAtUtc || paymentData.paidAt).toLocaleString("vi-VN")
+                    ? new Date(paymentData.paidAtUtc || paymentData.paidAt).toLocaleString("en-US")
                     : "--"}
                 </dd>
               </div>

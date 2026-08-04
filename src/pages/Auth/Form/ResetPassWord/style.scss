@@ -138,6 +138,31 @@
         color: #9ca3af;
       }
     }
+
+    .password-toggle-btn {
+      width: 40px;
+      height: 40px;
+      margin-right: 8px;
+      border: none;
+      border-radius: 12px;
+      background: transparent;
+      color: #6b7280;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: 0.2s ease;
+
+      svg {
+        margin-left: 0;
+        color: currentColor;
+      }
+
+      &:hover {
+        background: #f3f4f6;
+        color: #df0000;
+      }
+    }
   }
 }
 

@@ -142,7 +142,7 @@ export default function SellerShow({ seller, shop }) {
       );
 
       toast.success(
-        confirmedFollowing ? "Đã theo dõi cửa hàng" : "Đã bỏ theo dõi cửa hàng",
+        confirmedFollowing ? "Followed shop" : "Unfollowed shop",
       );
     } catch (error) {
       toast.error(error.message || "Cannot update follow status");
@@ -224,12 +224,12 @@ export default function SellerShow({ seller, shop }) {
               disabled={followLoading || followStatusLoading}
             >
               {followLoading
-                ? "Đang xử lý..."
+                ? "Processing..."
                 : followStatusLoading
-                  ? "Đang tải..."
+                  ? "Loading..."
                   : isFollowing
-                    ? "Đang theo dõi"
-                    : "Theo dõi"}
+                    ? "Following"
+                    : "Follow"}
             </Button>
           )}
 

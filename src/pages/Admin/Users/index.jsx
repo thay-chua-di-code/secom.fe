@@ -274,7 +274,7 @@ export default function UsersPage() {
                         <td>
                           <span className="created-date">
                             {new Date(user.createdAtUtc).toLocaleDateString(
-                              "vi-VN",
+                              "en-US",
                             )}
                           </span>
                         </td>
@@ -386,7 +386,7 @@ export default function UsersPage() {
                         <td>
                           <span className="created-date">
                             {new Date(seller.submittedAtUtc).toLocaleDateString(
-                              "vi-VN",
+                              "en-US",
                             )}
                           </span>
                         </td>

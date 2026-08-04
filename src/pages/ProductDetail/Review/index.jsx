@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 const formatReviewDate = (dateString) => {
   if (!dateString) return "--";
 
-  return new Date(dateString).toLocaleString("vi-VN");
+  return new Date(dateString).toLocaleString("en-US");
 };
 
 const renderStars = (rating = 0) => {
@@ -234,7 +234,7 @@ function ProductReview({ productId }) {
 
                   <span>{formatReviewDate(item.createdAtUtc)}</span>
                   {item.isVerifiedPurchase && (
-                    <span className="verified-badge">Đã mua hàng</span>
+                    <span className="verified-badge">Verified purchase</span>
                   )}
                 </div>
               </div>

@@ -173,7 +173,7 @@ const UpdateProductModal = ({ open, product, onClose }) => {
     setImageActionLoading(true);
     try {
       await deleteProductImage(productId, image.id);
-      toast.success("Đã xóa ảnh sản phẩm");
+      toast.success("Product image removed");
       if (
         selectedPrimary?.type === "existing" &&
         selectedPrimary.imageId === image.id

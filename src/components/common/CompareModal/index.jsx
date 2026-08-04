@@ -22,15 +22,15 @@ const getApiErrorMessage = (error) => {
   const message = data?.message || data?.Message || data?.error || data?.Error;
 
   if (typeof message === "string") return message;
-  if (error?.response?.status === 404) return "Một hoặc nhiều sản phẩm không còn khả dụng.";
+  if (error?.response?.status === 404) return "One or more products are no longer available.";
   if (error?.response?.status === 400) {
-    return "Các sản phẩm đã chọn không có đủ nội dung mô tả để so sánh.";
+    return "The selected products do not have enough description content to compare.";
   }
   if (error?.response?.status === 401 || error?.response?.status === 403) {
-    return "Bạn không có quyền thực hiện so sánh sản phẩm này.";
+    return "You do not have permission to compare these products.";
   }
 
-  return error?.message || "Không thể so sánh sản phẩm lúc này. Vui lòng thử lại.";
+  return error?.message || "Unable to compare products right now. Please try again.";
 };
 
 const getProductId = (product) => String(product?.id || product?.productId || "");
@@ -38,11 +38,11 @@ const getProductId = (product) => String(product?.id || product?.productId || ""
 const getSimilarityLabel = (score) => {
   const numericScore = Number(score);
 
-  if (!Number.isFinite(numericScore)) return "Chưa có điểm đánh giá";
-  if (numericScore >= 80) return "Rất giống nhau";
-  if (numericScore >= 60) return "Khá giống nhau";
-  if (numericScore >= 40) return "Có một số điểm giống nhau";
-  return "Khác biệt đáng kể";
+  if (!Number.isFinite(numericScore)) return "No similarity score yet";
+  if (numericScore >= 80) return "Very similar";
+  if (numericScore >= 60) return "Quite similar";
+  if (numericScore >= 40) return "Some similarities";
+  return "Significantly different";
 };
 
 const formatSimilarityScore = (score) => {
@@ -55,7 +55,7 @@ const formatSimilarityScore = (score) => {
 const getProductNameById = (products, productId) => {
   const product = products.find((item) => String(item.productId) === String(productId));
 
-  return product?.name || productId || "Sản phẩm không xác định";
+  return product?.name || productId || "Unknown product";
 };
 
 const getLocalComparisonProduct = (product) => ({
@@ -116,7 +116,7 @@ const CompareModal = ({ open, products = [], onClose, onRemove, onClear }) => {
 
   const handleCompareWithAI = async () => {
     if (selectedProductIds.length < 2) {
-      toast.error("Vui lòng chọn ít nhất 2 sản phẩm để so sánh.");
+      toast.error("Please select at least 2 products to compare.");
       return;
     }
 
@@ -134,7 +134,7 @@ const CompareModal = ({ open, products = [], onClose, onRemove, onClear }) => {
       }
 
       setComparisonResult({ selectionKey, data: result });
-      toast.success("So sánh sản phẩm thành công.");
+      toast.success("Products compared successfully.");
     } catch (error) {
       const message = getApiErrorMessage(error);
       setComparisonError(message);
@@ -226,34 +226,34 @@ const CompareModal = ({ open, products = [], onClose, onRemove, onClear }) => {
         <section className="ai-compare-section ai-compare-overview">
           <div>
             <h3>Kết quả Compare with AI</h3>
-            <p>Kết quả được tạo từ nội dung mô tả sản phẩm hiện có.</p>
+            <p>The result is generated from the current product descriptions.</p>
           </div>
 
           <div className="ai-compare-score">
             <strong>{formatSimilarityScore(comparison?.similarityScore)}</strong>
             <span>{getSimilarityLabel(comparison?.similarityScore)}</span>
-            <small>{comparedProducts.length} sản phẩm được so sánh</small>
+            <small>{comparedProducts.length} products compared</small>
           </div>
         </section>
 
         {!hasStructuredResult && (
           <section className="ai-compare-section">
-            <h4>Kết quả trống</h4>
+            <h4>Empty result</h4>
             <p className="ai-compare-empty">
-              Backend đã xử lý yêu cầu nhưng chưa trả nội dung so sánh hợp lệ để hiển thị.
+              The backend processed the request but did not return valid comparison content to display.
             </p>
           </section>
         )}
 
         {summary && (
           <section className="ai-compare-section">
-            <h4>Tóm tắt so sánh</h4>
+            <h4>Comparison summary</h4>
             <p className="ai-compare-summary">{summary}</p>
           </section>
         )}
 
         <section className="ai-compare-section">
-          <h4>Thông tin từng sản phẩm</h4>
+          <h4>Product information</h4>
           <div className="ai-compare-products">
             {comparedProducts.map((product) => (
               <article className="ai-compare-product" key={product.productId}>
@@ -266,7 +266,7 @@ const CompareModal = ({ open, products = [], onClose, onRemove, onClear }) => {
                 />
                 <div>
                   <h5>{product.name}</h5>
-                  <p>{product.description || "Sản phẩm chưa có mô tả."}</p>
+                  <p>{product.description || "This product has no description."}</p>
 
                   {product.warnings?.length > 0 && (
                     <div className="ai-compare-warnings">
@@ -283,11 +283,11 @@ const CompareModal = ({ open, products = [], onClose, onRemove, onClear }) => {
                       Object.entries(product.extractedAttributes).map(([key, value]) => (
                         <div key={key}>
                           <dt>{key}</dt>
-                          <dd>{value || "Không có thông tin"}</dd>
+                          <dd>{value || "No information"}</dd>
                         </div>
                       ))
                     ) : (
-                      <p className="ai-compare-empty">Không có thuộc tính trích xuất.</p>
+                      <p className="ai-compare-empty">No extracted attributes.</p>
                     )}
                   </dl>
                 </div>
@@ -297,39 +297,39 @@ const CompareModal = ({ open, products = [], onClose, onRemove, onClear }) => {
         </section>
 
         <section className="ai-compare-section">
-          <h4>Thuộc tính giống nhau</h4>
+          <h4>Matching attributes</h4>
           {sameAttributes.length > 0 ? (
             <div className="ai-compare-table-wrap">
               <table className="ai-compare-table">
                 <thead>
                   <tr>
-                    <th>Thuộc tính</th>
-                    <th>Giá trị</th>
+                    <th>Attribute</th>
+                    <th>Value</th>
                   </tr>
                 </thead>
                 <tbody>
                   {sameAttributes.map((item) => (
                     <tr key={item.attribute}>
                       <td>{item.attribute}</td>
-                      <td>{item.value || "Không có thông tin"}</td>
+                      <td>{item.value || "No information"}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
           ) : (
-            <p className="ai-compare-empty">Không tìm thấy thuộc tính giống nhau rõ ràng.</p>
+            <p className="ai-compare-empty">No clear matching attributes found.</p>
           )}
         </section>
 
         {criteria.length > 0 && (
           <section className="ai-compare-section">
-            <h4>Bảng tiêu chí AI</h4>
+            <h4>AI criteria table</h4>
             <div className="ai-compare-table-wrap">
               <table className="ai-compare-table ai-compare-table--dynamic">
                 <thead>
                   <tr>
-                    <th>Tiêu chí</th>
+                    <th>Criterion</th>
                     {comparedProducts.map((product) => (
                       <th key={product.productId}>{product.name}</th>
                     ))}
@@ -344,7 +344,7 @@ const CompareModal = ({ open, products = [], onClose, onRemove, onClear }) => {
                           (item) => String(item.productId) === String(product.productId),
                         )?.value;
 
-                        return <td key={product.productId}>{value || "Không có thông tin"}</td>;
+                        return <td key={product.productId}>{value || "No information"}</td>;
                       })}
                     </tr>
                   ))}
@@ -355,13 +355,13 @@ const CompareModal = ({ open, products = [], onClose, onRemove, onClear }) => {
         )}
 
         <section className="ai-compare-section">
-          <h4>Thuộc tính khác nhau</h4>
+          <h4>Different attributes</h4>
           {differentAttributes.length > 0 ? (
             <div className="ai-compare-table-wrap">
               <table className="ai-compare-table ai-compare-table--dynamic">
                 <thead>
                   <tr>
-                    <th>Thuộc tính</th>
+                    <th>Attribute</th>
                     {comparedProducts.map((product) => (
                       <th key={product.productId}>{product.name}</th>
                     ))}
@@ -376,7 +376,7 @@ const CompareModal = ({ open, products = [], onClose, onRemove, onClear }) => {
                           (item) => String(item.productId) === String(product.productId),
                         )?.value;
 
-                        return <td key={product.productId}>{value || "Không có thông tin"}</td>;
+                        return <td key={product.productId}>{value || "No information"}</td>;
                       })}
                     </tr>
                   ))}
@@ -384,57 +384,57 @@ const CompareModal = ({ open, products = [], onClose, onRemove, onClear }) => {
               </table>
             </div>
           ) : (
-            <p className="ai-compare-empty">Không tìm thấy thuộc tính khác nhau rõ ràng.</p>
+            <p className="ai-compare-empty">No clear different attributes found.</p>
           )}
         </section>
 
         <section className="ai-compare-section">
-          <h4>Thuộc tính bị thiếu</h4>
+          <h4>Missing attributes</h4>
           {missingAttributes.length > 0 ? (
             <ul className="ai-compare-list">
               {missingAttributes.map((item) => (
                 <li key={item.attribute}>
-                  <strong>{item.attribute}</strong> có trong {item.availableInProductIds.map((id) => getProductNameById(comparedProducts, id)).join(", ") || "--"} nhưng thiếu ở {item.missingInProductIds.map((id) => getProductNameById(comparedProducts, id)).join(", ") || "--"}.
+                  <strong>{item.attribute}</strong> is available in {item.availableInProductIds.map((id) => getProductNameById(comparedProducts, id)).join(", ") || "--"} but missing in {item.missingInProductIds.map((id) => getProductNameById(comparedProducts, id)).join(", ") || "--"}.
                 </li>
               ))}
             </ul>
           ) : (
-            <p className="ai-compare-empty">Không có thuộc tính bị thiếu đáng chú ý.</p>
+            <p className="ai-compare-empty">No notable missing attributes.</p>
           )}
         </section>
 
         <section className="ai-compare-section">
-          <h4>Nội dung chung</h4>
+          <h4>Common content</h4>
           {renderList(
             commonContent.length ? commonContent : similarities,
-            "Không tìm thấy nội dung chung đáng kể.",
+            "No significant common content found.",
           )}
         </section>
 
         <section className="ai-compare-section">
-          <h4>Điểm khác biệt</h4>
-          {renderList(differences, "Không tìm thấy điểm khác biệt đáng kể.")}
+          <h4>Differences</h4>
+          {renderList(differences, "No significant differences found.")}
         </section>
 
         <section className="ai-compare-section">
-          <h4>Nội dung riêng theo từng sản phẩm</h4>
+          <h4>Unique content by product</h4>
           {uniqueContentByProduct.length > 0 ? (
             <div className="ai-compare-unique-grid">
               {uniqueContentByProduct.map((item) => (
                 <article key={item.productId}>
                   <h5>{getProductNameById(comparedProducts, item.productId)}</h5>
-                  {renderList(item.contents, "Không có nội dung riêng đáng kể.")}
+                  {renderList(item.contents, "No significant unique content.")}
                 </article>
               ))}
             </div>
           ) : (
-            <p className="ai-compare-empty">Không có nội dung riêng đáng kể.</p>
+            <p className="ai-compare-empty">No significant unique content.</p>
           )}
         </section>
 
         {recommendations.length > 0 && (
           <section className="ai-compare-section">
-            <h4>Khuyến nghị theo nhu cầu</h4>
+            <h4>Recommendations by need</h4>
             <div className="ai-compare-unique-grid">
               {recommendations.map((recommendation, index) => (
                 <article key={`${recommendation.productId}-${index}`}>
@@ -450,9 +450,9 @@ const CompareModal = ({ open, products = [], onClose, onRemove, onClear }) => {
         )}
 
         <section className="ai-compare-section">
-          <h4>Ghi chú</h4>
+          <h4>Note</h4>
           <p className="ai-compare-empty">
-            {comparison?.disclaimer || "Kết quả được tạo dựa trên mô tả sản phẩm hiện có trong hệ thống."}
+            {comparison?.disclaimer || "The result is generated based on product descriptions currently available in the system."}
           </p>
         </section>
       </div>
@@ -477,7 +477,7 @@ const CompareModal = ({ open, products = [], onClose, onRemove, onClear }) => {
               aria-label="Compare selected products with AI"
             >
               {isComparing ? <Loader2 className="spin" size={18} /> : <Sparkles size={18} />}
-              {isComparing ? "Đang so sánh..." : "Compare with AI"}
+              {isComparing ? "Comparing..." : "Compare with AI"}
             </button>
 
             {products.length > 0 && (
@@ -528,7 +528,7 @@ const CompareModal = ({ open, products = [], onClose, onRemove, onClear }) => {
         {comparisonError && <div className="ai-compare-error">{comparisonError}</div>}
         {isComparing && (
           <div className="ai-compare-loading" aria-busy="true">
-            <Loader2 className="spin" size={24} /> Đang phân tích mô tả sản phẩm...
+            <Loader2 className="spin" size={24} /> Analyzing product descriptions...
           </div>
         )}
         {renderAiComparison()}

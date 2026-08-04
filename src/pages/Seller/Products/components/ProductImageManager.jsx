@@ -54,23 +54,23 @@ const ProductImageManager = ({
 
     files.forEach((file) => {
       if (visibleCount + validFiles.length >= maxImages) {
-        nextErrors.push(`Mỗi sản phẩm chỉ được tối đa ${maxImages} ảnh.`);
+        nextErrors.push(`Each product can have at most ${maxImages} images.`);
         return;
       }
 
       if (!file.size) {
-        nextErrors.push(`${file.name}: Ảnh không được để trống.`);
+        nextErrors.push(`${file.name}: Image must not be empty.`);
         return;
       }
 
       if (!PRODUCT_IMAGE_LIMITS.allowedTypes.includes(file.type)) {
-        nextErrors.push(`${file.name}: Chỉ hỗ trợ JPG, PNG và WebP.`);
+        nextErrors.push(`${file.name}: Only JPG, PNG, and WebP are supported.`);
         return;
       }
 
       if (file.size > PRODUCT_IMAGE_LIMITS.maxSizeBytes) {
         nextErrors.push(
-          `${file.name}: Ảnh không được vượt quá ${formatMb(PRODUCT_IMAGE_LIMITS.maxSizeBytes)} MB.`,
+          `${file.name}: Image must not exceed ${formatMb(PRODUCT_IMAGE_LIMITS.maxSizeBytes)} MB.`,
         );
         return;
       }
@@ -80,7 +80,7 @@ const ProductImageManager = ({
         currentKeys.has(fileKey) ||
         validFiles.some((item) => getFileKey(item) === fileKey)
       ) {
-        nextErrors.push(`${file.name}: Ảnh đã được chọn.`);
+        nextErrors.push(`${file.name}: Image has already been selected.`);
         return;
       }
 
@@ -238,7 +238,7 @@ const ProductImageManager = ({
                 <button
                   type="button"
                   disabled={isBusy || primary}
-                  aria-label="Đặt ảnh này làm ảnh chính"
+                  aria-label="Set this image as the main image"
                   onClick={() => {
                     onSelectedPrimaryChange({
                       type: "existing",

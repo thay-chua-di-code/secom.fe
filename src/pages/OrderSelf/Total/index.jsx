@@ -5,7 +5,7 @@ export default function OrderFooter({ totalPrice }) {
     <div className="order-footer">
       <div className="total">
         Total:
-        <span>{totalPrice.toLocaleString()}đ</span>
+        <span>{totalPrice.toLocaleString()} VND</span>
       </div>
 
       <div className="actions">

@@ -122,7 +122,7 @@ export default function AdminReturnRequests() {
                   <td>{String(item.sellerId || "--").slice(0, 8)}</td>
                   <td><span className={`admin-return-requests__badge ${getReturnStatusBadgeClass(item.status)}`}>{getReturnStatusLabel(item.status)}</span></td>
                   <td>{formatCurrencyVN(item.refundAmount || 0)}</td>
-                  <td>{item.requestedAtUtc ? new Date(item.requestedAtUtc).toLocaleString("vi-VN") : "--"}</td>
+                  <td>{item.requestedAtUtc ? new Date(item.requestedAtUtc).toLocaleString("en-US") : "--"}</td>
                   <td>
                     <Link to={`/admin/return-requests/${item.id}`} className="admin-return-requests__view">
                       <Eye size={15} /> View

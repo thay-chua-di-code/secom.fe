@@ -3,7 +3,7 @@ import { formatCurrencyVN } from "../../../utils/fncUtils";
 import "./style.scss";
 import { aiService } from "../../../service/aiService";
 import { useEffect, useState } from "react";
-import { Eye, Heart, Star } from "lucide-react"; // Bổ sung Star icon
+import { Eye, Heart, Star } from "lucide-react"; // Add Star icon
 import Title from "../../../components/common/Title";
 
 const ProductSuggestion = ({ productId }) => {
@@ -33,7 +33,7 @@ const ProductSuggestion = ({ productId }) => {
               to={`/product-detail/${product.productId}`}
               className="ai-product-card"
             >
-              {/* Phần hình ảnh & Các nút tương tác góc phải */}
+              {/* Image section and right-side action buttons */}
               <div className="ai-product-card__image-box">
                 <img
                   src={
@@ -43,7 +43,7 @@ const ProductSuggestion = ({ productId }) => {
                   alt={product.productName}
                 />
 
-                {/* Cụm hành động bay trên góc phải ảnh */}
+                {/* Floating action group at the top-right of the image */}
                 <div
                   className="ai-product-card__actions"
                   onClick={(e) => e.preventDefault()}
@@ -61,11 +61,11 @@ const ProductSuggestion = ({ productId }) => {
                 </div>
               </div>
 
-              {/* Phần nội dung thông tin sản phẩm */}
+              {/* Product information content section */}
               <div className="ai-product-card__content">
                 <h5 className="title">{product.productName}</h5>
 
-                {/* Khu vực hiển thị giá bán lẻ và giá gốc */}
+                {/* Area showing sale price and original price */}
                 <div className="price-box">
                   <span className="current-price">
                     {formatCurrencyVN(product.price)}

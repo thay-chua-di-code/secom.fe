@@ -525,7 +525,7 @@ const Products = () => {
                 {historyItems.map((item) => (
                   <article key={item.id}>
                     <strong>{item.action || `${item.previousStatus || "--"} → ${item.newStatus || "--"}`}</strong>
-                    <span>{item.createdAtUtc ? new Date(item.createdAtUtc).toLocaleString("vi-VN") : "--"}</span>
+                    <span>{item.createdAtUtc ? new Date(item.createdAtUtc).toLocaleString("en-US") : "--"}</span>
                     <p>{item.reason || "No reason provided"}</p>
                   </article>
                 ))}

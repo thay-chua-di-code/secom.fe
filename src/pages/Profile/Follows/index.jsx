@@ -43,7 +43,7 @@ export default function Follow() {
         }),
       );
 
-      toast.success("Đã bỏ theo dõi cửa hàng");
+      toast.success("Unfollowed shop");
 
       const shouldGoPreviousPage =
         shopFollowed.length === 1 && page > 1 && pagination.totalCount > 1;
@@ -79,7 +79,7 @@ export default function Follow() {
               <p>
                 Followed at:{" "}
                 {shop.followedAtUtc
-                  ? new Date(shop.followedAtUtc).toLocaleDateString("vi-VN")
+                  ? new Date(shop.followedAtUtc).toLocaleDateString("en-US")
                   : "--"}
               </p>
 

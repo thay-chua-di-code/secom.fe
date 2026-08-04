@@ -184,7 +184,7 @@ export default function Categories() {
         await dispatch(createCategory(formData)).unwrap();
       }
 
-      // Fetch lại toàn bộ categories
+      // Fetch all categories again
       await dispatch(fetchCategories());
 
       handleCloseModal();

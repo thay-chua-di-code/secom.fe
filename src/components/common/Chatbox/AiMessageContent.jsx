@@ -43,7 +43,7 @@ const AiMessageContent = ({ content, productReferences = [] }) => {
       </ReactMarkdown>
 
       {productReferences.length > 0 && (
-        <div className="ai-product-grid" aria-label="Sản phẩm được AI gợi ý">
+        <div className="ai-product-grid" aria-label="AI suggested products">
           {productReferences.map((product) => (
             <ProductRecommendationCard
               key={product.productId || product.id || product.name}
@@ -54,10 +54,10 @@ const AiMessageContent = ({ content, productReferences = [] }) => {
       )}
 
       {fallbackProductIds.length > 0 && (
-        <div className="ai-product-links" aria-label="Liên kết sản phẩm được nhắc đến">
+        <div className="ai-product-links" aria-label="Mentioned product links">
           {fallbackProductIds.map((productId) => (
             <Link key={productId} to={`/product-detail/${productId}`} className="ai-product-link-chip">
-              Xem sản phẩm {productId.slice(0, 8).toUpperCase()}
+              View product {productId.slice(0, 8).toUpperCase()}
             </Link>
           ))}
         </div>

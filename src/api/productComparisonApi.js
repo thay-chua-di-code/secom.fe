@@ -86,16 +86,16 @@ const mapComparisonProduct = (product) => ({
 
 const mapCriterionValue = (value) => ({
   productId: String(getField(value, ["productId", "ProductId", "id", "Id"], "")),
-  value: getField(value, ["value", "Value", "text", "Text"], "Không có thông tin"),
+  value: getField(value, ["value", "Value", "text", "Text"], "No information"),
 });
 
 const mapCriterion = (criterion) => ({
-  name: getField(criterion, ["name", "Name", "criterion", "Criterion", "attribute", "Attribute"], "Tiêu chí"),
+  name: getField(criterion, ["name", "Name", "criterion", "Criterion", "attribute", "Attribute"], "Criterion"),
   values: normalizeArray(getField(criterion, ["values", "Values"], [])).map(mapCriterionValue),
 });
 
 const mapRecommendation = (recommendation) => ({
-  useCase: getField(recommendation, ["useCase", "UseCase", "title", "Title"], "Khuyến nghị"),
+  useCase: getField(recommendation, ["useCase", "UseCase", "title", "Title"], "Recommendation"),
   productId: String(getField(recommendation, ["productId", "ProductId", "id", "Id"], "")),
   reason: getField(recommendation, ["reason", "Reason", "description", "Description"], ""),
 });

@@ -1,4 +1,4 @@
-// Toàn bộ mã màu Hex được bóc tách từ ảnh Figma Dark Mode
+// All Hex colors were extracted from the Figma dark mode image
 $bg-dashboard: #0b0f19;
 $bg-card: #111622;
 $border-color: #1d2433;
@@ -41,7 +41,7 @@ $red-trend: #ef4444;
     }
   }
 
-  // Bố cục grid cho 4 thẻ KPI hàng đầu giống hệt Figma
+  // Grid layout for the top 4 KPI cards matches Figma
   .kpi-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -125,7 +125,7 @@ $red-trend: #ef4444;
     }
   }
 
-  // Các khối chi tiết thống kê phía dưới
+  // Detailed statistic blocks below
   .detail-sections-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -200,7 +200,7 @@ $red-trend: #ef4444;
   }
 }
 
-/* Responsive mượt mà cho các kích cỡ màn hình */
+/* Smooth responsive layout for screen sizes */
 @media (max-width: 1200px) {
   .dashboard-dark {
     .kpi-grid {

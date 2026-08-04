@@ -22,16 +22,16 @@ const formatCurrency = (value) => {
 
 export default function FinanceCharts({ summary }) {
   /**
-   * Dữ liệu tạm thời
+   * Temporary data
    *
-   * Sau này nếu backend trả về:
+   * Later, if the backend returns:
    *
    * {
    *   month: "Jan",
    *   revenue: 130000
    * }
    *
-   * thì chỉ cần map lại dữ liệu này.
+   * only remap this data.
    */
   const revenueData = [
     {
@@ -65,7 +65,7 @@ export default function FinanceCharts({ summary }) {
   ];
 
   /**
-   * Biểu đồ trụ
+   * Bar chart
    */
   const categoryData = [
     {
@@ -142,7 +142,7 @@ export default function FinanceCharts({ summary }) {
                 color: "#fff",
               }}
               formatter={(value) => [
-                `${Number(value).toLocaleString()} đ`,
+                `${Number(value).toLocaleString()} VND`,
                 "Revenue",
               ]}
             />
@@ -213,7 +213,7 @@ export default function FinanceCharts({ summary }) {
                 color: "#fff",
               }}
               formatter={(value) => [
-                `${Number(value).toLocaleString()} đ`,
+                `${Number(value).toLocaleString()} VND`,
                 "Amount",
               ]}
             />

@@ -27,12 +27,12 @@ const getApiErrorMessage = (error, fallback) => {
 
   const status = error?.response?.status;
 
-  if (status === 400) return error?.response?.data?.message || "Nội dung không hợp lệ.";
-  if (status === 401) return "Phiên đăng nhập đã hết hạn.";
-  if (status === 403) return "Bạn không có quyền sử dụng AI chat.";
-  if (status === 429) return "Bạn gửi quá nhiều yêu cầu. Vui lòng thử lại sau.";
-  if (status === 502 || status === 503) return "Dịch vụ AI đang tạm thời không khả dụng.";
-  if (!error?.response) return "Không thể kết nối tới máy chủ.";
+  if (status === 400) return error?.response?.data?.message || "Invalid content.";
+  if (status === 401) return "Your session has expired.";
+  if (status === 403) return "You do not have permission to use AI chat.";
+  if (status === 429) return "You sent too many requests. Please try again later.";
+  if (status === 502 || status === 503) return "The AI service is temporarily unavailable.";
+  if (!error?.response) return "Unable to connect to the server.";
 
   return error?.response?.data?.message || error?.message || fallback;
 };
@@ -48,12 +48,12 @@ export const aiService = {
       const normalizedData = normalizeAiResponse(data);
 
       if (!normalizedData.message) {
-        throw new Error("AI response không chứa message.");
+        throw new Error("AI response does not contain a message.");
       }
 
       return normalizedData;
     } catch (error) {
-      throw new Error(getApiErrorMessage(error, "Không gửi được tin nhắn AI."));
+      throw new Error(getApiErrorMessage(error, "Unable to send AI message."));
     }
   },
 

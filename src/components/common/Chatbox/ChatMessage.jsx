@@ -3,7 +3,7 @@ const formatMessageTime = (message) => {
   const dateValue = message?.createdAtUtc || message?.createdAt;
   if (!dateValue) return "";
 
-  return new Date(dateValue).toLocaleString("vi-VN", {
+  return new Date(dateValue).toLocaleString("en-US", {
     hour: "2-digit",
     minute: "2-digit",
     day: "2-digit",
@@ -46,10 +46,10 @@ const ChatMessage = ({ message, isOwnMessage, onRetry }) => {
         )}
 
         <div className="message__meta">
-          <span>{isSending ? "Đang trả lời..." : formatMessageTime(message)}</span>
+          <span>{isSending ? "Replying..." : formatMessageTime(message)}</span>
           {isFailed && onRetry && (
             <button type="button" onClick={() => onRetry(message)}>
-              Thử lại
+              Retry
             </button>
           )}
         </div>

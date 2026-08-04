@@ -256,9 +256,9 @@ export const mockSellerReviews = [
         rating: 5,
         date: "01 Jun 2026",
         comments: [
-          "Đóng gói cực kỳ cẩn thận.",
-          "Giao hàng rất nhanh.",
-          "Sản phẩm chính hãng.",
+          "Packed very carefully.",
+          "Very fast delivery.",
+          "Authentic product.",
         ],
       },
 
@@ -269,9 +269,9 @@ export const mockSellerReviews = [
         rating: 5,
         date: "08 Jun 2026",
         comments: [
-          "Shop hỗ trợ nhiệt tình.",
-          "Giá tốt hơn nhiều nơi.",
-          "Sẽ tiếp tục ủng hộ.",
+          "The shop was very supportive.",
+          "Better price than many places.",
+          "Will continue to support.",
         ],
       },
 
@@ -281,7 +281,7 @@ export const mockSellerReviews = [
         avatar: "https://i.pravatar.cc/150?img=5",
         rating: 4,
         date: "18 Jun 2026",
-        comments: ["Đúng mô tả.", "Đóng gói đẹp.", "Giao hơi chậm một ngày."],
+        comments: ["As described.", "Nice packaging.", "Delivery was one day late."],
       },
 
       {
@@ -290,7 +290,7 @@ export const mockSellerReviews = [
         avatar: "https://i.pravatar.cc/150?img=7",
         rating: 5,
         date: "20 Jun 2026",
-        comments: ["Đã mua lần thứ 4.", "Shop cực kỳ uy tín."],
+        comments: ["Bought for the fourth time.", "Very trustworthy shop."],
       },
     ],
   },
