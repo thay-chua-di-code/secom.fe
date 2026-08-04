@@ -27,7 +27,7 @@ export const sellerService = {
   sellerShopStatus: async (dispatch) => {
     try {
       dispatch(setLoading(true));
-      const res = await axiosClient.get("/seller/shop/status");
+      const res = await axiosClient.get(API_ENDPOINTS.SELLER.SHOP_STATUS);
       const application = res.data?.data ?? res.data?.Data ?? null;
 
       if (res.data?.success === true && application) {
@@ -50,6 +50,23 @@ export const sellerService = {
 
       const message = e?.response?.data?.message || e.message;
       dispatch(setError(message));
+      const error = new Error(message);
+      error.response = e.response;
+      throw error;
+    }
+  },
+
+  getShopProfile: async () => {
+    const res = await axiosClient.get(API_ENDPOINTS.SELLER.SHOP_STATUS);
+    return res.data?.data ?? null;
+  },
+
+  updateShopProfile: async (payload) => {
+    try {
+      const res = await axiosClient.put(API_ENDPOINTS.SELLER.SHOP_PROFILE, payload);
+      return res.data?.data ?? null;
+    } catch (e) {
+      const message = e?.response?.data?.message || e?.response?.data?.title || e.message || "Update seller profile failed";
       const error = new Error(message);
       error.response = e.response;
       throw error;

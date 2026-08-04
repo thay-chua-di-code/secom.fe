@@ -270,7 +270,7 @@ export default function Finance() {
                   <tr>
                     <th>Seller</th>
                     <th>Gross</th>
-                    <th>Platform Fee</th>
+                    <th>Withdrawal Fee</th>
                     <th>Payment Fee</th>
                     <th>Shipping Fee</th>
                     <th>Refund</th>
@@ -310,7 +310,7 @@ export default function Finance() {
 
                       <td>{formatCurrency(getField(item, ["grossAmount", "amount", "requestedAmount"]))}</td>
 
-                      <td>{formatCurrency(getField(item, ["platformFee", "totalPlatformFee"]))}</td>
+                      <td>{formatCurrency(getField(item, ["fee"]))}</td>
 
                       <td>{formatCurrency(getField(item, ["paymentFee", "transactionFee"]))}</td>
 

@@ -253,8 +253,6 @@ export const adminService = {
     try {
       const res = await axiosClient.get(API_ENDPOINTS.ADMIN.FINANCE.SUMMARY);
 
-      console.log("Finance Summary:", res);
-
       return res.data.data;
     } catch (e) {
       throw new Error(
