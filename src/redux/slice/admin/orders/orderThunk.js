@@ -18,9 +18,7 @@ export const fetchOrderDetail = createAsyncThunk(
   "adminOrder/fetchOrderDetail",
   async (id, thunkAPI) => {
     try {
-      const response = await adminService.getOrderDetail(id);
-
-      return response.data;
+      return await adminService.getOrderDetail(id);
     } catch (err) {
       return thunkAPI.rejectWithValue(
         err.response?.data?.message || "Cannot fetch order detail",

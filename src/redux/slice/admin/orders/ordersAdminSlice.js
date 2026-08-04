@@ -53,12 +53,13 @@ const adminOrderSlice = createSlice({
 
       .addCase(fetchOrderDetail.pending, (state) => {
         state.detailLoading = true;
+        state.orderDetail = null;
         state.error = null;
       })
 
       .addCase(fetchOrderDetail.fulfilled, (state, action) => {
         state.detailLoading = false;
-        state.orderDetail = action.payload.data;
+        state.orderDetail = action.payload;
       })
 
       .addCase(fetchOrderDetail.rejected, (state, action) => {

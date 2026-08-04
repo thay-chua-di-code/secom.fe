@@ -207,12 +207,17 @@ table {
     th {
       height: 10px;
       border-bottom: 1px solid #252d40;
-      background: none;
+      background: #111827;
       color: #64748b;
       font-size: 11px;
       font-weight: 600;
       letter-spacing: 0.08em;
       text-transform: uppercase;
+
+      &:hover {
+        background: #151e2d;
+        color: #f1f5f9;
+      }
     }
   }
 

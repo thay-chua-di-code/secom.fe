@@ -242,6 +242,11 @@ thead {
     letter-spacing: 0.5px;
     text-transform: uppercase;
     white-space: nowrap;
+
+    &:hover {
+      background: #0f172a;
+      color: $text-primary;
+    }
   }
 }
 

@@ -70,6 +70,28 @@
     min-width: 980px;
     border-collapse: collapse;
 
+    thead,
+    thead tr,
+    thead th {
+      background: #0b0f18;
+    }
+
+    thead:hover,
+    thead tr:hover,
+    thead th:hover {
+      background: #0f172a;
+      color: #f1f5f9;
+    }
+
+    tbody tr {
+      background: #111827;
+      transition: background 0.2s ease;
+
+      &:hover {
+        background: #151f31;
+      }
+    }
+
     th,
     td {
       padding: 14px 12px;

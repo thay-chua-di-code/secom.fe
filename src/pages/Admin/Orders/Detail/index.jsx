@@ -12,7 +12,7 @@ import {
   getOrderItemTotalPrice,
 } from "../../../../components/order/orderItemAdapter";
 
-export default function OrderDetailModal({ open, onClose, order }) {
+export default function OrderDetailModal({ open, onClose, order, loading = false, error = null }) {
   if (!open || !order) return null;
 
   const formatMoney = (value) =>
@@ -61,7 +61,11 @@ export default function OrderDetailModal({ open, onClose, order }) {
          
           <div className="info-card full-width">
             <label>Products</label>
-            {items.length ? (
+            {loading ? (
+              <p>Loading order items...</p>
+            ) : error ? (
+              <p>{error}</p>
+            ) : items.length ? (
               <div className="order-detail-products">
                 {items.map((item) => {
                   const itemId = getOrderItemId(item);
@@ -97,7 +101,7 @@ export default function OrderDetailModal({ open, onClose, order }) {
                 })}
               </div>
             ) : (
-              <p>{order.productName || "Missing product data from API"}</p>
+              <p>No products found in this order.</p>
             )}
           </div>
 

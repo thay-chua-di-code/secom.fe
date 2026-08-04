@@ -196,7 +196,6 @@ export const adminService = {
         params,
       });
 
-      console.log("Res:", res);
       return res.data.data;
     } catch (e) {
       throw new Error(
@@ -205,8 +204,9 @@ export const adminService = {
     }
   },
 
-  getOrderDetail(id) {
-    return axiosClient.get(`/admin/orders/${id}`);
+  async getOrderDetail(id) {
+    const response = await axiosClient.get(API_ENDPOINTS.ADMIN.ORDERS.DETAIL(id));
+    return response.data.data;
   },
 
   // [VOUCHER]

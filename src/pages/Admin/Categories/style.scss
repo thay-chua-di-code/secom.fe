@@ -249,6 +249,11 @@
 
         letter-spacing: 0.65px;
         white-space: nowrap;
+
+        &:hover {
+          background: #1b2638;
+          color: #f1f5f9;
+        }
       }
     }
 

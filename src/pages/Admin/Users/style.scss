@@ -306,6 +306,10 @@
         vertical-align: middle;
 
         white-space: nowrap;
+
+        &:hover {
+          color: #f1f5f9;
+        }
       }
     }
 

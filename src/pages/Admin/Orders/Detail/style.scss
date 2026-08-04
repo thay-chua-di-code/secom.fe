@@ -5,6 +5,7 @@ $bg-card: #1d2433;
 $border-color: #262f45;
 $text-main: #ffffff;
 $text-muted: #64748b;
+$text-secondary: #94a3b8;
 $blue-accent: #3b82f6;
 $green-status-bg: rgba(4, 120, 87, 0.2);
 $green-status-text: #10b981;
@@ -167,30 +168,40 @@ $green-status-text: #10b981;
   gap: 12px;
   align-items: center;
   padding: 10px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid $border-color;
   border-radius: 12px;
-  background: #ffffff;
+  background: #151b2a;
+
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease;
+
+  &:hover {
+    border-color: #343d55;
+    background: #182033;
+  }
 }
 
 .order-detail-product__image {
   width: 56px;
   height: 56px;
   border-radius: 10px;
-  background: #f8fafc;
+  background: $bg-primary;
+  border: 1px solid $border-color;
 }
 
 .order-detail-product span {
   display: block;
-  color: #64748b;
+  color: $text-muted;
   font-size: 12px;
 }
 
 .order-detail-product p {
-  color: #0f172a;
+  color: $text-main;
 }
 
 .order-detail-product strong {
-  color: #0f172a;
+  color: $text-secondary;
 }
 
 .order-detail-product__link {
@@ -199,6 +210,6 @@ $green-status-text: #10b981;
 }
 
 .order-detail-product__link:hover p {
-  color: #3b82f6;
+  color: $blue-accent;
   text-decoration: underline;
 }

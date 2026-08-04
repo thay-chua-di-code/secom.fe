@@ -59,6 +59,6 @@ export const getOrderItemUnitPrice = (item = {}) =>
   Number(item.unitPrice ?? item.price ?? item.product?.price ?? 0);
 
 export const getOrderItemTotalPrice = (item = {}) => {
-  const total = item.totalPrice ?? item.subtotal ?? item.totalAmount;
+  const total = item.lineTotal ?? item.totalPrice ?? item.subtotal ?? item.totalAmount;
   return Number(total ?? getOrderItemUnitPrice(item) * getOrderItemQuantity(item));
 };

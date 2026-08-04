@@ -28,6 +28,27 @@
     padding: 28px 24px 40px;
 
     animation: adminPageFade 0.35s ease;
+
+    table {
+      thead,
+      thead tr,
+      thead th {
+        transition:
+          background 0.2s ease,
+          color 0.2s ease;
+      }
+
+      thead:hover,
+      thead tr:hover,
+      thead th:hover {
+        background-color: #0f172a;
+        color: #f1f5f9;
+      }
+
+      tbody tr:hover {
+        background-color: #151f31;
+      }
+    }
   }
 }
 

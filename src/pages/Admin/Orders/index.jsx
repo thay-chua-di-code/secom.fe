@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import "./style.scss";
-import { fetchOrders } from "../../../redux/slice/admin/orders/orderThunk";
+import { fetchOrderDetail, fetchOrders } from "../../../redux/slice/admin/orders/orderThunk";
+import { clearOrderDetail } from "../../../redux/slice/admin/orders/ordersAdminSlice";
 import { formatCurrencyVN, formatDate } from "../../../utils/fncUtils";
 import { Eye, Search, ShoppingCart, Calendar, DollarSign } from "lucide-react";
 import OrderDetailModal from "./Detail";
@@ -11,13 +12,16 @@ const Orders = () => {
   const { orders, loading, pagination } = useSelector(
     (state) => state.ordersAdmin,
   );
+  const { orderDetail, detailLoading, error } = useSelector(
+    (state) => state.ordersAdmin,
+  );
   const [openDetail, setOpenDetail] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const dispatch = useDispatch();
 
   const getProductsSummary = (order) => {
     const items = getOrderItems(order);
-    if (!items.length) return order.productName || "Missing product data";
+    if (!items.length) return order.productName || "No products";
     const firstName = getOrderItemName(items[0]);
     return items.length > 1 ? `${firstName} +${items.length - 1}` : firstName;
   };
@@ -25,6 +29,14 @@ const Orders = () => {
   const handleView = (order) => {
     setSelectedOrder(order);
     setOpenDetail(true);
+    dispatch(clearOrderDetail());
+    dispatch(fetchOrderDetail(order.id));
+  };
+
+  const handleCloseDetail = () => {
+    setOpenDetail(false);
+    setSelectedOrder(null);
+    dispatch(clearOrderDetail());
   };
   useEffect(() => {
     dispatch(
@@ -142,8 +154,10 @@ const Orders = () => {
       </div>
       <OrderDetailModal
         open={openDetail}
-        order={selectedOrder}
-        onClose={() => setOpenDetail(false)}
+        order={orderDetail || selectedOrder}
+        loading={detailLoading}
+        error={error}
+        onClose={handleCloseDetail}
       />
     </>
   );
