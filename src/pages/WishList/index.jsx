@@ -36,7 +36,7 @@ export default function WishlistPage() {
             {wishlist.map((item) => (
               <Card
                 key={item.productId ?? item.id}
-                item={item.product ?? item}
+                item={{ ...(item.product ?? item), ...item }}
               />
             ))}
           </div>

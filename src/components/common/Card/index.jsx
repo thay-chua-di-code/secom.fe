@@ -10,7 +10,6 @@ import {
 } from "../../../redux/slice/userSlice";
 import "./style.scss";
 import { formatCurrencyVN } from "../../../utils/fncUtils";
-import { addCompareProductId } from "../../../utils/compareProducts";
 import useCompare from "../../../hooks/useCompare";
 
 const getApiErrorMessage = (error) =>
@@ -18,6 +17,26 @@ const getApiErrorMessage = (error) =>
   error?.response?.data?.error ||
   error?.message ||
   "Cannot update wishlist. Please try again.";
+
+const FALLBACK_PRODUCT_IMAGE = "/favicon.svg";
+
+const getProductImages = (product = {}) => {
+  const imageList = Array.isArray(product.images)
+    ? product.images
+        .map((image) => image?.imageUrl || image?.url || image?.src)
+        .filter(Boolean)
+    : [];
+
+  return [
+    product.primaryImageUrl,
+    product.productImageUrl,
+    product.imageUrl,
+    product.thumbnailUrl,
+    product.productThumbnailUrl,
+    product.image,
+    ...imageList,
+  ].filter(Boolean);
+};
 
 export default function Card({ item }) {
   const { pathname } = useLocation();
@@ -36,11 +55,7 @@ export default function Card({ item }) {
   const compared = isCompared(productId);
 
   const productName = item.name || item.title || item.productName;
-  const productImages =
-    item.images ||
-    [item.imageUrl || item.primaryImageUrl || item.thumbnailUrl].filter(
-      Boolean,
-    );
+  const productImages = getProductImages(item);
   const isWishlisted = useMemo(
     () =>
       pathname === "/wish-list" ||
@@ -130,7 +145,7 @@ export default function Card({ item }) {
     <div className="custom-product-card">
       <div className="image-container">
         <Link className="image-link" to={`/product-detail/${productId}`}>
-          <img src={productImages[0]} alt={productName} />
+          <img src={productImages[0] || FALLBACK_PRODUCT_IMAGE} alt={productName} />
         </Link>
 
         <div className="floating-actions">

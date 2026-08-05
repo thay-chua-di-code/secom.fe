@@ -83,6 +83,8 @@ export const API_ENDPOINTS = {
     VOUCHERS: "/seller/vouchers",
     PRODUCT: (id) =>
       id || id === 0 ? `/seller/products/${id}` : "/seller/products",
+    PRODUCT_IMPORT_EXCEL: "/seller/products/import-excel",
+    PRODUCT_EXPORT_EXCEL: "/seller/products/export-excel",
     PRODUCT_INVENTORY: (id) => `/seller/products/${id}/inventory`,
     ORDER_STATUS: (id) => `/seller/orders/${id}/status`,
     ORDER_SHIPPING: (id) => `/seller/orders/${id}/shipping`,

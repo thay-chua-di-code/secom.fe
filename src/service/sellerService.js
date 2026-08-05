@@ -7,6 +7,21 @@ import {
   setLoading,
   setStatus,
 } from "../redux/slice/sellerStatusSlice";
+
+const getBlobErrorMessage = async (data) => {
+  if (!(data instanceof Blob)) return null;
+
+  const text = await data.text();
+  if (!text) return null;
+
+  try {
+    const json = JSON.parse(text);
+    return json?.message || json?.title || text;
+  } catch {
+    return text;
+  }
+};
+
 export const sellerService = {
   becomeSeller: async (payload) => {
     try {
@@ -172,6 +187,48 @@ export const sellerService = {
       return result.data.data;
     } catch (e) {
       throw new Error(e?.response?.data?.message || "Update inventory failed");
+    }
+  },
+
+  importProducts: async (file) => {
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const result = await axiosClient.post(
+        API_ENDPOINTS.SELLER.PRODUCT_IMPORT_EXCEL,
+        formData,
+      );
+
+      return result.data?.data ?? result.data;
+    } catch (e) {
+      const message =
+        e?.response?.data?.message ||
+        e?.response?.data?.title ||
+        e?.message ||
+        "Import products failed";
+      const error = new Error(message);
+      error.response = e.response;
+      throw error;
+    }
+  },
+
+  exportProducts: async () => {
+    try {
+      return await axiosClient.get(API_ENDPOINTS.SELLER.PRODUCT_EXPORT_EXCEL, {
+        responseType: "blob",
+      });
+    } catch (e) {
+      const blobMessage = await getBlobErrorMessage(e?.response?.data);
+      const message =
+        blobMessage ||
+        e?.response?.data?.message ||
+        e?.response?.data?.title ||
+        e?.message ||
+        "Export products failed";
+      const error = new Error(message);
+      error.response = e.response;
+      throw error;
     }
   },
 
