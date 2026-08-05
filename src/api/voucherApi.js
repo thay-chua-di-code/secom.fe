@@ -83,11 +83,11 @@ export const voucherApi = {
   },
 
   approveVoucher(voucherId) {
-    return axiosClient.post(API_ENDPOINTS.ADMIN.VOUCHER.APPROVE(voucherId));
+    return axiosClient.patch(API_ENDPOINTS.ADMIN.VOUCHER.APPROVE(voucherId));
   },
 
   rejectVoucher(voucherId, reason) {
-    return axiosClient.post(
+    return axiosClient.patch(
       API_ENDPOINTS.ADMIN.VOUCHER.REJECT(voucherId),
       { reason },
       { headers: { "Content-Type": "application/json" } },
