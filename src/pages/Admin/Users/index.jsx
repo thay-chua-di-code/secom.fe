@@ -281,9 +281,9 @@ export default function UsersPage() {
 
                         <td>
                           <div className="user-actions">
-                            <button className="action-btn edit">
+                            {/* <button className="action-btn edit">
                               <Eye size={14} />
-                            </button>
+                            </button> */}
                             <button
                               type="button"
                               className={`action-btn ${
