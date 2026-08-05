@@ -563,7 +563,7 @@ const CompareModal = ({ open, products = [], onClose, onRemove, onClear }) => {
 
             <button
               type="button"
-              className="close-btn"
+              className="close-btn-compare"
               onClick={handleClose}
               aria-label="Close compare modal"
             >
