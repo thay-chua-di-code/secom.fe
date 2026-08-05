@@ -520,7 +520,7 @@ export default function Categories() {
             {/* FORM */}
 
             <form className="category-modal__form" onSubmit={handleSubmit}>
-              <div className="form-group">
+              <div className="admin-form-group">
                 <label htmlFor="category-name">Category Name</label>
 
                 <input
@@ -538,7 +538,7 @@ export default function Categories() {
                 />
               </div>
 
-              <div className="form-group">
+              <div className="admin-form-group">
                 <label htmlFor="category-slug">Slug</label>
 
                 <input
