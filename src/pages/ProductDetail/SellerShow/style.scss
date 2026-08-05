@@ -1,405 +1,231 @@
-// =========================
-// COLOR
-// =========================
-
-$primary: #ef4444;
-$primary-dark: #dc2626;
-$primary-light: #fff1f2;
+$red: #ef4444;
+$red-dark: #dc2626;
+$red-light: #fef2f2;
 
 $text: #1f2937;
 $text-light: #6b7280;
-$border: #f1f5f9;
-$background: #fff;
-$soft-bg: #fff7f7;
 
-// =========================
-// SELLER CARD
-// =========================
-
-.seller-card {
-  position: relative;
-
+.seller-showcase {
   width: 100%;
-  margin: 30px 0;
-  padding: 26px 30px;
+  margin: 32px 0;
+  padding: 28px;
 
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  gap: 42px;
+  gap: 36px;
 
-  background: $background;
+  background: #fff;
   border: 1px solid #fee2e2;
   border-radius: 22px;
 
-  box-shadow:
-    0 10px 30px rgba(239, 68, 68, 0.06),
-    0 2px 8px rgba(15, 23, 42, 0.03);
+  box-shadow: 0 12px 30px rgba(239, 68, 68, 0.08);
 
-  overflow: hidden;
-
-  transition:
-    transform 0.3s ease,
-    box-shadow 0.3s ease;
-
-  // Decorative red gradient
-  &::before {
-    content: "";
-
-    position: absolute;
-    top: 0;
-    left: 0;
-
-    width: 5px;
-    height: 100%;
-
-    background: linear-gradient(180deg, $primary, #fb7185);
-  }
+  transition: 0.3s;
 
   &:hover {
-    transform: translateY(-3px);
-
-    box-shadow:
-      0 18px 40px rgba(239, 68, 68, 0.1),
-      0 4px 12px rgba(15, 23, 42, 0.04);
+    transform: translateY(-4px);
+    box-shadow: 0 18px 45px rgba(239, 68, 68, 0.12);
   }
-}
 
-// =========================
-// SELLER TOP
-// =========================
+  &__header {
+    flex: 1;
 
-.seller-top {
-  flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 24px;
+  }
 
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-
-  min-width: 280px;
-}
-
-// =========================
-// SELLER INFO
-// =========================
-
-.seller-info {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-
-  h3 {
+  &__profile {
     display: flex;
     align-items: center;
-    gap: 7px;
-
-    margin: 0 0 8px;
-
-    color: $text;
-
-    font-size: 23px;
-    font-weight: 750;
-    letter-spacing: -0.3px;
-
-    svg {
-      flex-shrink: 0;
-    }
+    gap: 18px;
   }
 
-  span {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
+  &__avatar {
+    width: 88px;
+    height: 88px;
 
-    color: $text-light;
+    object-fit: cover;
 
-    font-size: 14px;
-    font-weight: 500;
-  }
-}
+    border-radius: 50%;
+    border: 3px solid $red;
 
-// =========================
-// AVATAR
-// =========================
-
-.seller-avatar {
-  width: 88px;
-  height: 88px;
-
-  flex-shrink: 0;
-
-  object-fit: cover;
-
-  padding: 3px;
-
-  background: white;
-
-  border: 3px solid $primary;
-  border-radius: 50%;
-
-  box-shadow:
-    0 0 0 5px $primary-light,
-    0 8px 20px rgba(239, 68, 68, 0.16);
-
-  transition:
-    transform 0.3s ease,
-    box-shadow 0.3s ease;
-
-  &:hover {
-    transform: rotate(-3deg) scale(1.06);
-
-    box-shadow:
-      0 0 0 7px $primary-light,
-      0 12px 24px rgba(239, 68, 68, 0.2);
-  }
-}
-
-// =========================
-// ACTIONS
-// =========================
-
-.seller-actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-
-  button,
-  a {
-    height: 44px;
-
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-
-    padding: 0 20px;
-
-    border-radius: 12px;
-
-    font-size: 14px;
-    font-weight: 650;
-
-    text-decoration: none;
-
-    transition:
-      transform 0.25s ease,
-      box-shadow 0.25s ease,
-      background 0.25s ease;
-  }
-
-  button {
-    cursor: pointer;
-  }
-
-  .chat-btn {
-    background: linear-gradient(135deg, $primary, #f87171);
-
-    color: white;
-    border: none;
-
-    box-shadow: 0 6px 14px rgba(239, 68, 68, 0.2);
-
-    &:hover {
-      background: linear-gradient(135deg, $primary-dark, $primary);
-
-      transform: translateY(-2px);
-
-      box-shadow: 0 10px 20px rgba(239, 68, 68, 0.28);
-    }
-  }
-
-  .shop-btn {
+    padding: 3px;
     background: white;
 
-    color: $primary;
-    border: 1.5px solid #fecaca;
+    box-shadow: 0 0 0 5px $red-light;
+  }
 
-    &:hover {
-      background: $primary-light;
+  &__info {
+    h3 {
+      display: flex;
+      align-items: center;
+      gap: 8px;
 
-      border-color: $primary;
+      margin-bottom: 8px;
 
-      transform: translateY(-2px);
+      font-size: 24px;
+      font-weight: 700;
+      color: $text;
+    }
+
+    span {
+      color: $text-light;
+      font-size: 14px;
     }
   }
-}
 
-// =========================
-// SELLER STATISTICS
-// =========================
+  &__actions {
+    display: flex;
+    gap: 12px;
 
-.seller-bottom {
-  flex: 1;
+    button,
+    a {
+      height: 46px;
 
-  display: grid;
-  grid-template-columns: repeat(2, minmax(140px, 1fr));
-  gap: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
 
-  padding-left: 32px;
+      padding: 0 22px;
 
-  border-left: 1px solid $border;
-}
+      border-radius: 12px;
 
-.item {
-  min-height: 70px;
+      font-weight: 600;
 
-  display: grid;
-  grid-template-columns: 36px 1fr;
-  grid-template-rows: auto auto;
-  column-gap: 10px;
-  align-items: center;
+      text-decoration: none;
 
-  padding: 12px 14px;
-
-  background: #fffafa;
-
-  border: 1px solid #fef2f2;
-  border-radius: 14px;
-
-  transition:
-    transform 0.25s ease,
-    background 0.25s ease,
-    border-color 0.25s ease;
-
-  svg {
-    grid-row: span 2;
-
-    width: 20px;
-    height: 20px;
-
-    padding: 8px;
-
-    box-sizing: content-box;
-
-    color: $primary;
-
-    background: $primary-light;
-
-    border-radius: 10px;
+      transition: 0.25s;
+    }
   }
 
-  span {
-    color: $text-light;
+  &__chat {
+    color: white;
+    background: $red;
+    border: none;
 
-    font-size: 12px;
-    font-weight: 500;
+    &:hover {
+      background: $red-dark;
+    }
   }
 
-  strong {
-    margin-top: 2px;
+  &__follow {
+    color: $red;
+    background: white;
+    border: 1px solid #fecaca;
 
-    color: $text;
-
-    font-size: 16px;
-    font-weight: 750;
+    &:hover {
+      background: $red-light;
+    }
   }
 
-  &:hover {
-    background: $primary-light;
+  &__shop {
+    color: $red;
+    background: white;
+    border: 1px solid #fecaca;
 
-    border-color: #fecaca;
-
-    transform: translateY(-2px);
-  }
-}
-
-// =========================
-// RESPONSIVE
-// =========================
-
-@media (max-width: 1100px) {
-  .seller-card {
-    gap: 28px;
+    &:hover {
+      background: $red-light;
+    }
   }
 
-  .seller-bottom {
-    padding-left: 24px;
+  &__stats {
+    flex: 1;
+
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+
+    padding-left: 30px;
+
+    border-left: 1px solid #f3f4f6;
   }
 
-  .item {
-    padding: 10px;
+  &__stat {
+    display: grid;
+    grid-template-columns: 42px auto;
+    gap: 10px;
+
+    padding: 16px;
+
+    background: #fff;
+
+    border: 1px solid #fee2e2;
+    border-radius: 16px;
+
+    transition: 0.25s;
+
+    svg {
+      grid-row: span 2;
+
+      width: 18px;
+      height: 18px;
+
+      padding: 9px;
+
+      color: $red;
+      background: $red-light;
+      border-radius: 12px;
+    }
+
+    span {
+      font-size: 13px;
+      color: $text-light;
+    }
+
+    strong {
+      font-size: 18px;
+      font-weight: 700;
+      color: $text;
+    }
+
+    &:hover {
+      background: $red-light;
+      border-color: #fca5a5;
+      transform: translateY(-3px);
+    }
   }
 }
 
 @media (max-width: 992px) {
-  .seller-card {
+  .seller-showcase {
     flex-direction: column;
-    align-items: stretch;
-    gap: 26px;
-  }
 
-  .seller-top {
-    width: 100%;
-  }
-
-  .seller-bottom {
-    width: 100%;
-
-    padding: 24px 0 0;
-
-    border-top: 1px solid $border;
-    border-left: none;
-  }
-}
-
-@media (max-width: 768px) {
-  .seller-card {
-    padding: 24px 20px;
-    border-radius: 18px;
-  }
-
-  .seller-info {
-    align-items: flex-start;
-  }
-
-  .seller-avatar {
-    width: 76px;
-    height: 76px;
-  }
-
-  .seller-info h3 {
-    font-size: 20px;
-  }
-
-  .seller-actions {
-    width: 100%;
-
-    button,
-    a {
-      flex: 1;
-      padding: 0 14px;
+    &__stats {
+      padding-left: 0;
+      padding-top: 24px;
+      border-left: none;
+      border-top: 1px solid #f3f4f6;
     }
   }
 }
 
-@media (max-width: 520px) {
-  .seller-info {
-    gap: 14px;
-  }
+@media (max-width: 600px) {
+  .seller-showcase {
+    padding: 20px;
 
-  .seller-avatar {
-    width: 64px;
-    height: 64px;
-  }
-
-  .seller-info h3 {
-    font-size: 18px;
-  }
-
-  .seller-info span {
-    font-size: 12px;
-  }
-
-  .seller-actions {
-    flex-direction: column;
-
-    button,
-    a {
-      width: 100%;
+    &__profile {
+      align-items: flex-start;
     }
-  }
 
-  .seller-bottom {
-    grid-template-columns: 1fr;
+    &__avatar {
+      width: 72px;
+      height: 72px;
+    }
+
+    &__actions {
+      flex-direction: column;
+
+      button,
+      a {
+        width: 100%;
+      }
+    }
+
+    &__stats {
+      grid-template-columns: 1fr;
+    }
   }
 }

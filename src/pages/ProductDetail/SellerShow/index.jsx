@@ -102,10 +102,13 @@ export default function SellerShow({ seller, shop }) {
   }, [isAuthenticated, sellerId]);
 
   const handleToggleFollow = async () => {
-    if (!sellerId || followLoading || followStatusLoading || isOwnSeller) return;
+    if (!sellerId || followLoading || followStatusLoading || isOwnSeller)
+      return;
 
     if (!isAuthenticated) {
-      navigate(`/login?returnUrl=${encodeURIComponent(window.location.pathname)}`);
+      navigate(
+        `/login?returnUrl=${encodeURIComponent(window.location.pathname)}`,
+      );
       return;
     }
 
@@ -141,9 +144,7 @@ export default function SellerShow({ seller, shop }) {
         }),
       );
 
-      toast.success(
-        confirmedFollowing ? "Followed shop" : "Unfollowed shop",
-      );
+      toast.success(confirmedFollowing ? "Followed shop" : "Unfollowed shop");
     } catch (error) {
       toast.error(error.message || "Cannot update follow status");
     } finally {
@@ -158,7 +159,9 @@ export default function SellerShow({ seller, shop }) {
     }
 
     if (!isAuthenticated) {
-      navigate(`/login?returnUrl=${encodeURIComponent(window.location.pathname)}`);
+      navigate(
+        `/login?returnUrl=${encodeURIComponent(window.location.pathname)}`,
+      );
       return;
     }
 
@@ -189,15 +192,18 @@ export default function SellerShow({ seller, shop }) {
   };
 
   return (
-    <div className="seller-card">
-      <div className="seller-top">
-        <div className="seller-info">
-          <img className="seller-avatar" src={avatarUrl} alt={sellerName} />
+    <div className="seller-showcase">
+      <div className="seller-showcase__header">
+        <div className="seller-showcase__profile">
+          <img
+            className="seller-showcase__avatar"
+            src={avatarUrl}
+            alt={sellerName}
+          />
 
-          <div>
+          <div className="seller-showcase__info">
             <h3>
               {sellerName}
-
               {sellerInfo.verified && (
                 <BadgeCheck size={18} color="#ef4444" fill="#fee2e2" />
               )}
@@ -207,9 +213,9 @@ export default function SellerShow({ seller, shop }) {
           </div>
         </div>
 
-        <div className="seller-actions">
+        <div className="seller-showcase__actions">
           <Button
-            className="chat-btn"
+            className="seller-showcase__chat"
             onClick={handleChatWithSeller}
             disabled={chatLoading}
           >
@@ -219,7 +225,7 @@ export default function SellerShow({ seller, shop }) {
 
           {!isOwnSeller && (
             <Button
-              className="shop-btn"
+              className="seller-showcase__follow"
               onClick={handleToggleFollow}
               disabled={followLoading || followStatusLoading}
             >
@@ -235,7 +241,7 @@ export default function SellerShow({ seller, shop }) {
 
           <Link
             to={sellerId ? `/seller/detail/${sellerId}` : "#"}
-            className="shop-btn"
+            className="seller-showcase__shop"
           >
             <Store size={18} />
             View Shop
@@ -243,26 +249,26 @@ export default function SellerShow({ seller, shop }) {
         </div>
       </div>
 
-      <div className="seller-bottom">
-        <div className="item">
+      <div className="seller-showcase__stats">
+        <div className="seller-showcase__stat">
           <Star size={18} />
           <span>Rating</span>
           <strong>{rating}</strong>
         </div>
 
-        <div className="item">
+        <div className="seller-showcase__stat">
           <Package size={18} />
           <span>Products</span>
           <strong>{totalProducts}</strong>
         </div>
 
-        <div className="item">
+        <div className="seller-showcase__stat">
           <Users size={18} />
           <span>Followers</span>
-          <strong>{Number(followers || 0).toLocaleString()}</strong>
+          <strong>{Number(followers).toLocaleString()}</strong>
         </div>
 
-        <div className="item">
+        <div className="seller-showcase__stat">
           <Store size={18} />
           <span>Joined</span>
           <strong>{joined}</strong>

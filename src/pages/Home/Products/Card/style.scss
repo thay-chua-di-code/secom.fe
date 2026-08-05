@@ -56,7 +56,7 @@
     top: 12px;
     left: 12px;
     padding: 4px 10px;
-    background: #db4444; 
+    background: #db4444;
     color: white;
     border-radius: 4px;
     font-size: 12px;
@@ -184,10 +184,12 @@
     flex-direction: column;
     gap: 6px;
 
+    background: transparent !important;
     .price {
       font-size: 16px;
       font-weight: 600;
       color: #db4444;
+      background: transparent !important;
     }
 
     .rating {
