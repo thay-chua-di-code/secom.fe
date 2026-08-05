@@ -232,7 +232,7 @@ export default function Card({ product }) {
         <h3>{product.name}</h3>
 
         <div className="product-card__price-rating">
-          <span className="price">${formatCurrencyVN(product.price)}</span>
+          <span className="price">{formatCurrencyVN(product.price)}</span>
 
           <div className="rating">
             {[...Array(5)].map((_, i) => (

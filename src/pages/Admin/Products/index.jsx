@@ -218,7 +218,8 @@ const Products = () => {
     try {
       setHistoryTarget(product);
       setHistoryLoading(true);
-      const response = await adminService.getProductModerationHistory(productId);
+      const response =
+        await adminService.getProductModerationHistory(productId);
       const data = unwrapApiData(response);
       setHistoryItems(Array.isArray(data) ? data : []);
     } catch (historyError) {
@@ -318,110 +319,108 @@ const Products = () => {
 
                   return (
                     <tr key={productId}>
-                    {/* PRODUCT */}
-                    <td>
-                      <div className="product-info">
-                        <div className="icon">
-                          <Package size={18} />
+                      {/* PRODUCT */}
+                      <td>
+                        <div className="product-info">
+                          <div className="icon">
+                            <Package size={18} />
+                          </div>
+
+                          <div className="product-info__content">
+                            <span className="product-name">{product.name}</span>
+
+                            <span className="product-sold">
+                              {product.description ||
+                                product.location ||
+                                "No description"}
+                            </span>
+                          </div>
                         </div>
+                      </td>
 
-                        <div className="product-info__content">
-                          <span className="product-name">{product.name}</span>
+                      {/* CATEGORY */}
+                      <td>
+                        <span className="category-name">
+                          {product.categoryName || "-"}
+                        </span>
+                      </td>
 
-                          <span className="product-sold">
-                            {product.description ||
-                              product.location ||
-                              "No description"}
-                          </span>
-                        </div>
-                      </div>
-                    </td>
+                      {/* SELLER */}
+                      <td>
+                        <span className="seller-name">
+                          {product.sellerFullName || "-"}
+                        </span>
+                      </td>
 
-                    {/* CATEGORY */}
-                    <td>
-                      <span className="category-name">
-                        {product.categoryName || "-"}
-                      </span>
-                    </td>
+                      {/* PRICE */}
+                      <td>
+                        <span className="admin-product-price">
+                          {formatCurrencyVN(product.price)}
+                        </span>
+                      </td>
 
-                    {/* SELLER */}
-                    <td>
-                      <span className="seller-name">
-                        {product.sellerFullName || "-"}
-                      </span>
-                    </td>
+                      {/* VIEWS */}
+                      <td>
+                        <span className="stock">{product.viewCount ?? 0}</span>
+                      </td>
 
-                    {/* PRICE */}
-                    <td>
-                      <span className="price">
-                        {formatCurrencyVN(product.price)}
-                      </span>
-                    </td>
+                      {/* VISIBILITY */}
+                      <td>
+                        <span className="rating">
+                          {product.isActive ? "Active" : "Inactive"}
+                          {" / "}
+                          {product.isPublic ? "Public" : "Private"}
+                        </span>
+                      </td>
 
-                    {/* VIEWS */}
-                    <td>
-                      <span className="stock">
-                        {product.viewCount ?? 0}
-                      </span>
-                    </td>
-
-                    {/* VISIBILITY */}
-                    <td>
-                      <span className="rating">
-                        {product.isActive ? "Active" : "Inactive"}
-                        {" / "}
-                        {product.isPublic ? "Public" : "Private"}
-                      </span>
-                    </td>
-
-                    {/* STATUS */}
-                    <td>
-                      <span
-                        className={`status status--${moderationStatus}`}
-                        title={
-                          moderationStatus === "invalid"
-                            ? "Product is marked as both approved and rejected."
-                            : undefined
-                        }
-                      >
-                        {moderationStatusLabels[moderationStatus]}
-                      </span>
-                    </td>
-
-                    {/* ACTIONS */}
-                    <td>
-                      <div className="action-buttons">
-                        <Button
-                          className="action-btn view-btn"
-                          title="View moderation history"
-                          onClick={() => handleViewHistory(product)}
+                      {/* STATUS */}
+                      <td>
+                        <span
+                          className={`status status--${moderationStatus}`}
+                          title={
+                            moderationStatus === "invalid"
+                              ? "Product is marked as both approved and rejected."
+                              : undefined
+                          }
                         >
-                          <Eye size={16} />
-                        </Button>
+                          {moderationStatusLabels[moderationStatus]}
+                        </span>
+                      </td>
 
-                        {canModerate(product) && (
+                      {/* ACTIONS */}
+                      <td>
+                        <div className="action-buttons">
                           <Button
-                            className="action-btn approve-btn"
-                            title="Approve product"
-                            disabled={isActionLoading}
-                            onClick={() => setApproveTarget(product)}
+                            className="action-btn view-btn"
+                            title="View moderation history"
+                            onClick={() => handleViewHistory(product)}
                           >
-                            <Check size={16} />
+                            <Eye size={16} />
                           </Button>
-                        )}
 
-                        {canModerate(product) && (
-                          <Button
-                            className="action-btn reject-btn"
-                            title="Reject product"
-                            disabled={isActionLoading}
-                            onClick={() => setRejectTarget(product)}
-                          >
-                            <X size={16} />
-                          </Button>
-                        )}
-                      </div>
-                    </td>
+                          {canModerate(product) && (
+                            <Button
+                              className="action-btn approve-btn"
+                              title="Approve product"
+                              disabled={isActionLoading}
+                              onClick={() => setApproveTarget(product)}
+                            >
+                              <Check size={16} />
+                            </Button>
+                          )}
+
+                          {canModerate(product) && (
+                            <Button
+                              className="action-btn reject-btn"
+                              title="Reject product"
+                              disabled={isActionLoading}
+                              onClick={() => setRejectTarget(product)}
+                            >
+                              <X size={16} />
+                            </Button>
+                          )}
+                        </div>
+                      </td>
                     </tr>
                   );
                 })
@@ -463,7 +462,11 @@ const Products = () => {
 
       {approveTarget && (
         <div className="admin-products__modal-backdrop" role="presentation">
-          <div className="admin-products__modal" role="dialog" aria-modal="true">
+          <div
+            className="admin-products__modal"
+            role="dialog"
+            aria-modal="true"
+          >
             <h3>Approve product?</h3>
             <p>
               Product: <strong>{approveTarget.name}</strong>
@@ -491,9 +494,16 @@ const Products = () => {
 
       {rejectTarget && (
         <div className="admin-products__modal-backdrop" role="presentation">
-          <form className="admin-products__modal" role="dialog" aria-modal="true" onSubmit={handleReject}>
+          <form
+            className="admin-products__modal"
+            role="dialog"
+            aria-modal="true"
+            onSubmit={handleReject}
+          >
             <h3>Reject product</h3>
-            <p>Product: <strong>{rejectTarget.name}</strong></p>
+            <p>
+              Product: <strong>{rejectTarget.name}</strong>
+            </p>
             <label>
               Reason
               <textarea
@@ -504,8 +514,19 @@ const Products = () => {
               />
             </label>
             <div className="admin-products__modal-actions">
-              <button type="button" disabled={!!actionLoading} onClick={() => setRejectTarget(null)}>Cancel</button>
-              <button type="submit" disabled={!!actionLoading || !rejectReason.trim()}>Reject</button>
+              <button
+                type="button"
+                disabled={!!actionLoading}
+                onClick={() => setRejectTarget(null)}
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={!!actionLoading || !rejectReason.trim()}
+              >
+                Reject
+              </button>
             </div>
           </form>
         </div>
@@ -513,9 +534,15 @@ const Products = () => {
 
       {historyTarget && (
         <div className="admin-products__modal-backdrop" role="presentation">
-          <div className="admin-products__modal admin-products__modal--wide" role="dialog" aria-modal="true">
+          <div
+            className="admin-products__modal admin-products__modal--wide"
+            role="dialog"
+            aria-modal="true"
+          >
             <h3>Moderation history</h3>
-            <p>Product: <strong>{historyTarget.name}</strong></p>
+            <p>
+              Product: <strong>{historyTarget.name}</strong>
+            </p>
             {historyLoading ? (
               <div className="products-state">Loading history...</div>
             ) : historyItems.length === 0 ? (
@@ -524,15 +551,24 @@ const Products = () => {
               <div className="admin-products__history-list">
                 {historyItems.map((item) => (
                   <article key={item.id}>
-                    <strong>{item.action || `${item.previousStatus || "--"} → ${item.newStatus || "--"}`}</strong>
-                    <span>{item.createdAtUtc ? new Date(item.createdAtUtc).toLocaleString("en-US") : "--"}</span>
+                    <strong>
+                      {item.action ||
+                        `${item.previousStatus || "--"} → ${item.newStatus || "--"}`}
+                    </strong>
+                    <span>
+                      {item.createdAtUtc
+                        ? new Date(item.createdAtUtc).toLocaleString("en-US")
+                        : "--"}
+                    </span>
                     <p>{item.reason || "No reason provided"}</p>
                   </article>
                 ))}
               </div>
             )}
             <div className="admin-products__modal-actions">
-              <button type="button" onClick={() => setHistoryTarget(null)}>Close</button>
+              <button type="button" onClick={() => setHistoryTarget(null)}>
+                Close
+              </button>
             </div>
           </div>
         </div>

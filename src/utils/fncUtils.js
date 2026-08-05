@@ -31,12 +31,9 @@ export const formatDate = (dateString) => {
   });
 };
 
-
 // Func: Text length > 12 => .....
 export const truncateText = (text, maxLength = 12) => {
   if (!text) return "";
 
-  return text.length > maxLength
-    ? `${text.slice(0, maxLength)}...`
-    : text;
+  return text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
 };
