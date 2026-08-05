@@ -403,7 +403,7 @@ export default function UsersPage() {
                               <Eye size={14} />
                             </button>
 
-                            {seller.statusText === "PendingApproval" && (
+                            {/* {seller.statusText === "PendingApproval" && (
                               <>
                                 <button className="action-btn approve">
                                   <Check size={14} />
@@ -413,7 +413,7 @@ export default function UsersPage() {
                                   <X size={14} />
                                 </button>
                               </>
-                            )}
+                            )} */}
                           </div>
                         </td>
                       </tr>

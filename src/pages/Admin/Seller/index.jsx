@@ -10,7 +10,7 @@ const SellerManage = () => {
   const { sellers, loading, pageNumber, pageSize, totalPages } = useSelector(
     (state) => state.sellersAdmin,
   );
-  const [openDetail, setOpenDetail] = useState(false);
+  const [openDetail, setOpenDetail] = useState(true);
   const [sellerId, setSellerId] = useState(null);
 
   useEffect(() => {

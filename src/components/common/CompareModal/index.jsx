@@ -22,7 +22,8 @@ const getApiErrorMessage = (error) => {
   const message = data?.message || data?.Message || data?.error || data?.Error;
 
   if (typeof message === "string") return message;
-  if (error?.response?.status === 404) return "One or more products are no longer available.";
+  if (error?.response?.status === 404)
+    return "One or more products are no longer available.";
   if (error?.response?.status === 400) {
     return "The selected products do not have enough description content to compare.";
   }
@@ -30,10 +31,13 @@ const getApiErrorMessage = (error) => {
     return "You do not have permission to compare these products.";
   }
 
-  return error?.message || "Unable to compare products right now. Please try again.";
+  return (
+    error?.message || "Unable to compare products right now. Please try again."
+  );
 };
 
-const getProductId = (product) => String(product?.id || product?.productId || "");
+const getProductId = (product) =>
+  String(product?.id || product?.productId || "");
 
 const getSimilarityLabel = (score) => {
   const numericScore = Number(score);
@@ -53,7 +57,9 @@ const formatSimilarityScore = (score) => {
 };
 
 const getProductNameById = (products, productId) => {
-  const product = products.find((item) => String(item.productId) === String(productId));
+  const product = products.find(
+    (item) => String(item.productId) === String(productId),
+  );
 
   return product?.name || productId || "Unknown product";
 };
@@ -62,7 +68,11 @@ const getLocalComparisonProduct = (product) => ({
   productId: getProductId(product),
   name: product?.name || product?.productName || "Unknown product",
   description: product?.description || null,
-  imageUrl: product?.primaryImageUrl || product?.imageUrl || product?.images?.[0] || null,
+  imageUrl:
+    product?.primaryImageUrl ||
+    product?.imageUrl ||
+    product?.images?.[0] ||
+    null,
   price: product?.price ?? null,
   categoryName: product?.categoryName || product?.category || null,
   condition: product?.condition || null,
@@ -98,14 +108,18 @@ const CompareModal = ({ open, products = [], onClose, onRemove, onClear }) => {
   );
 
   const bestPrice = useMemo(() => {
-    const prices = products.map((item) => Number(item.price)).filter(Number.isFinite);
+    const prices = products
+      .map((item) => Number(item.price))
+      .filter(Number.isFinite);
 
     if (!prices.length) return null;
     return Math.min(...prices);
   }, [products]);
 
   const activeComparisonResult =
-    comparisonResult?.selectionKey === selectionKey ? comparisonResult.data : null;
+    comparisonResult?.selectionKey === selectionKey
+      ? comparisonResult.data
+      : null;
 
   if (!open) return null;
 
@@ -152,7 +166,11 @@ const CompareModal = ({ open, products = [], onClose, onRemove, onClear }) => {
         return (
           <img
             className="product-image"
-            src={failedImageIds[productId] ? placeholderImage : product?.primaryImageUrl || placeholderImage}
+            src={
+              failedImageIds[productId]
+                ? placeholderImage
+                : product?.primaryImageUrl || placeholderImage
+            }
             alt={product?.name || "Product image"}
             onError={() =>
               setFailedImageIds((prev) => ({
@@ -165,7 +183,11 @@ const CompareModal = ({ open, products = [], onClose, onRemove, onClear }) => {
 
       case "price":
         return (
-          <span className={Number(product.price) === bestPrice ? "best-price" : "price"}>
+          <span
+            className={
+              Number(product.price) === bestPrice ? "best-price" : "price"
+            }
+          >
             {Number(product.price) === bestPrice && "🔥 "}
             {formatCurrencyVN(product.price || 0)}
           </span>
@@ -210,15 +232,15 @@ const CompareModal = ({ open, products = [], onClose, onRemove, onClear }) => {
     const uniqueContentByProduct = comparison?.uniqueContentByProduct || [];
     const hasStructuredResult = Boolean(
       summary ||
-        criteria.length ||
-        similarities.length ||
-        differences.length ||
-        recommendations.length ||
-        sameAttributes.length ||
-        differentAttributes.length ||
-        missingAttributes.length ||
-        commonContent.length ||
-        uniqueContentByProduct.length,
+      criteria.length ||
+      similarities.length ||
+      differences.length ||
+      recommendations.length ||
+      sameAttributes.length ||
+      differentAttributes.length ||
+      missingAttributes.length ||
+      commonContent.length ||
+      uniqueContentByProduct.length,
     );
 
     return (
@@ -226,11 +248,15 @@ const CompareModal = ({ open, products = [], onClose, onRemove, onClear }) => {
         <section className="ai-compare-section ai-compare-overview">
           <div>
             <h3>Kết quả Compare with AI</h3>
-            <p>The result is generated from the current product descriptions.</p>
+            <p>
+              The result is generated from the current product descriptions.
+            </p>
           </div>
 
           <div className="ai-compare-score">
-            <strong>{formatSimilarityScore(comparison?.similarityScore)}</strong>
+            <strong>
+              {formatSimilarityScore(comparison?.similarityScore)}
+            </strong>
             <span>{getSimilarityLabel(comparison?.similarityScore)}</span>
             <small>{comparedProducts.length} products compared</small>
           </div>
@@ -240,7 +266,8 @@ const CompareModal = ({ open, products = [], onClose, onRemove, onClear }) => {
           <section className="ai-compare-section">
             <h4>Empty result</h4>
             <p className="ai-compare-empty">
-              The backend processed the request but did not return valid comparison content to display.
+              The backend processed the request but did not return valid
+              comparison content to display.
             </p>
           </section>
         )}
@@ -266,7 +293,9 @@ const CompareModal = ({ open, products = [], onClose, onRemove, onClear }) => {
                 />
                 <div>
                   <h5>{product.name}</h5>
-                  <p>{product.description || "This product has no description."}</p>
+                  <p>
+                    {product.description || "This product has no description."}
+                  </p>
 
                   {product.warnings?.length > 0 && (
                     <div className="ai-compare-warnings">
@@ -279,15 +308,20 @@ const CompareModal = ({ open, products = [], onClose, onRemove, onClear }) => {
                   )}
 
                   <dl className="ai-compare-attributes">
-                    {Object.entries(product.extractedAttributes || {}).length > 0 ? (
-                      Object.entries(product.extractedAttributes).map(([key, value]) => (
-                        <div key={key}>
-                          <dt>{key}</dt>
-                          <dd>{value || "No information"}</dd>
-                        </div>
-                      ))
+                    {Object.entries(product.extractedAttributes || {}).length >
+                    0 ? (
+                      Object.entries(product.extractedAttributes).map(
+                        ([key, value]) => (
+                          <div key={key}>
+                            <dt>{key}</dt>
+                            <dd>{value || "No information"}</dd>
+                          </div>
+                        ),
+                      )
                     ) : (
-                      <p className="ai-compare-empty">No extracted attributes.</p>
+                      <p className="ai-compare-empty">
+                        No extracted attributes.
+                      </p>
                     )}
                   </dl>
                 </div>
@@ -318,7 +352,9 @@ const CompareModal = ({ open, products = [], onClose, onRemove, onClear }) => {
               </table>
             </div>
           ) : (
-            <p className="ai-compare-empty">No clear matching attributes found.</p>
+            <p className="ai-compare-empty">
+              No clear matching attributes found.
+            </p>
           )}
         </section>
 
@@ -341,10 +377,16 @@ const CompareModal = ({ open, products = [], onClose, onRemove, onClear }) => {
                       <td>{criterion.name}</td>
                       {comparedProducts.map((product) => {
                         const value = criterion.values.find(
-                          (item) => String(item.productId) === String(product.productId),
+                          (item) =>
+                            String(item.productId) ===
+                            String(product.productId),
                         )?.value;
 
-                        return <td key={product.productId}>{value || "No information"}</td>;
+                        return (
+                          <td key={product.productId}>
+                            {value || "No information"}
+                          </td>
+                        );
                       })}
                     </tr>
                   ))}
@@ -373,10 +415,16 @@ const CompareModal = ({ open, products = [], onClose, onRemove, onClear }) => {
                       <td>{attribute.attribute}</td>
                       {comparedProducts.map((product) => {
                         const value = attribute.values.find(
-                          (item) => String(item.productId) === String(product.productId),
+                          (item) =>
+                            String(item.productId) ===
+                            String(product.productId),
                         )?.value;
 
-                        return <td key={product.productId}>{value || "No information"}</td>;
+                        return (
+                          <td key={product.productId}>
+                            {value || "No information"}
+                          </td>
+                        );
                       })}
                     </tr>
                   ))}
@@ -384,7 +432,9 @@ const CompareModal = ({ open, products = [], onClose, onRemove, onClear }) => {
               </table>
             </div>
           ) : (
-            <p className="ai-compare-empty">No clear different attributes found.</p>
+            <p className="ai-compare-empty">
+              No clear different attributes found.
+            </p>
           )}
         </section>
 
@@ -394,7 +444,15 @@ const CompareModal = ({ open, products = [], onClose, onRemove, onClear }) => {
             <ul className="ai-compare-list">
               {missingAttributes.map((item) => (
                 <li key={item.attribute}>
-                  <strong>{item.attribute}</strong> is available in {item.availableInProductIds.map((id) => getProductNameById(comparedProducts, id)).join(", ") || "--"} but missing in {item.missingInProductIds.map((id) => getProductNameById(comparedProducts, id)).join(", ") || "--"}.
+                  <strong>{item.attribute}</strong> is available in{" "}
+                  {item.availableInProductIds
+                    .map((id) => getProductNameById(comparedProducts, id))
+                    .join(", ") || "--"}{" "}
+                  but missing in{" "}
+                  {item.missingInProductIds
+                    .map((id) => getProductNameById(comparedProducts, id))
+                    .join(", ") || "--"}
+                  .
                 </li>
               ))}
             </ul>
@@ -422,7 +480,9 @@ const CompareModal = ({ open, products = [], onClose, onRemove, onClear }) => {
             <div className="ai-compare-unique-grid">
               {uniqueContentByProduct.map((item) => (
                 <article key={item.productId}>
-                  <h5>{getProductNameById(comparedProducts, item.productId)}</h5>
+                  <h5>
+                    {getProductNameById(comparedProducts, item.productId)}
+                  </h5>
                   {renderList(item.contents, "No significant unique content.")}
                 </article>
               ))}
@@ -440,7 +500,12 @@ const CompareModal = ({ open, products = [], onClose, onRemove, onClear }) => {
                 <article key={`${recommendation.productId}-${index}`}>
                   <h5>{recommendation.useCase}</h5>
                   <p className="ai-compare-empty">
-                    <strong>{getProductNameById(comparedProducts, recommendation.productId)}</strong>
+                    <strong>
+                      {getProductNameById(
+                        comparedProducts,
+                        recommendation.productId,
+                      )}
+                    </strong>
                     {recommendation.reason ? ` — ${recommendation.reason}` : ""}
                   </p>
                 </article>
@@ -452,7 +517,8 @@ const CompareModal = ({ open, products = [], onClose, onRemove, onClear }) => {
         <section className="ai-compare-section">
           <h4>Note</h4>
           <p className="ai-compare-empty">
-            {comparison?.disclaimer || "The result is generated based on product descriptions currently available in the system."}
+            {comparison?.disclaimer ||
+              "The result is generated based on product descriptions currently available in the system."}
           </p>
         </section>
       </div>
@@ -460,7 +526,12 @@ const CompareModal = ({ open, products = [], onClose, onRemove, onClear }) => {
   };
 
   return (
-    <div className="compare-overlay" role="dialog" aria-modal="true" aria-labelledby="compare-products-title">
+    <div
+      className="compare-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="compare-products-title"
+    >
       <div className="compare-modal">
         <div className="compare-header">
           <div>
@@ -476,7 +547,11 @@ const CompareModal = ({ open, products = [], onClose, onRemove, onClear }) => {
               disabled={selectedProductIds.length < 2 || isComparing}
               aria-label="Compare selected products with AI"
             >
-              {isComparing ? <Loader2 className="spin" size={18} /> : <Sparkles size={18} />}
+              {isComparing ? (
+                <Loader2 className="spin" size={18} />
+              ) : (
+                <Sparkles size={18} />
+              )}
               {isComparing ? "Comparing..." : "Compare with AI"}
             </button>
 
@@ -486,49 +561,57 @@ const CompareModal = ({ open, products = [], onClose, onRemove, onClear }) => {
               </button>
             )}
 
-            <button type="button" className="close-btn" onClick={handleClose} aria-label="Close compare modal">
+            <button
+              type="button"
+              className="close-btn"
+              onClick={handleClose}
+              aria-label="Close compare modal"
+            >
               <X size={20} />
             </button>
           </div>
         </div>
+        <div className="compare-body">
+          <div className="compare-wrapper">
+            <div className="attribute-column">
+              {ATTRIBUTES.map((item) => (
+                <div key={item.key} className="attribute-item">
+                  {item.label}
+                </div>
+              ))}
+            </div>
 
-        <div className="compare-wrapper">
-          <div className="attribute-column">
-            {ATTRIBUTES.map((item) => (
-              <div key={item.key} className="attribute-item">
-                {item.label}
-              </div>
-            ))}
+            {products.map((product) => {
+              const productId = getProductId(product);
+
+              return (
+                <div className="product-column" key={productId}>
+                  <button
+                    type="button"
+                    className="remove-btn"
+                    onClick={() => onRemove(productId)}
+                    aria-label={`Remove ${product.name || "product"} from compare`}
+                  >
+                    <X size={15} />
+                  </button>
+
+                  {ATTRIBUTES.map((item) => (
+                    <div key={item.key} className="product-item">
+                      {renderValue(product, item.key)}
+                    </div>
+                  ))}
+                </div>
+              );
+            })}
           </div>
-
-          {products.map((product) => {
-            const productId = getProductId(product);
-
-            return (
-              <div className="product-column" key={productId}>
-                <button
-                  type="button"
-                  className="remove-btn"
-                  onClick={() => onRemove(productId)}
-                  aria-label={`Remove ${product.name || "product"} from compare`}
-                >
-                  <X size={15} />
-                </button>
-
-                {ATTRIBUTES.map((item) => (
-                  <div key={item.key} className="product-item">
-                    {renderValue(product, item.key)}
-                  </div>
-                ))}
-              </div>
-            );
-          })}
         </div>
-
-        {comparisonError && <div className="ai-compare-error">{comparisonError}</div>}
+        {comparisonError && (
+          <div className="ai-compare-error">{comparisonError}</div>
+        )}
         {isComparing && (
           <div className="ai-compare-loading" aria-busy="true">
-            <Loader2 className="spin" size={24} /> Analyzing product descriptions...
+            <Loader2 className="spin" size={24} /> Analyzing product
+            descriptions...
           </div>
         )}
         {renderAiComparison()}
