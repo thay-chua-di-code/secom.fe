@@ -1,4 +1,5 @@
 import * as signalR from "@microsoft/signalr";
+import { NOTIFICATION_HUB_URL } from "../config/api";
 
 class SignalRService {
   constructor() {
@@ -7,8 +8,8 @@ class SignalRService {
 
   async startConnection(token) {
     this.connection = new signalR.HubConnectionBuilder()
-      .withUrl("http://localhost:5000/chatHub", {
-        accessTokenFactory: () => token,
+      .withUrl(NOTIFICATION_HUB_URL, {
+        accessTokenFactory: () => token ?? "",
       })
       .withAutomaticReconnect()
       .build();

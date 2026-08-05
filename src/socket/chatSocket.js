@@ -1,8 +1,10 @@
 import socketClient from "./socket";
 import { SOCKET_EVENTS } from "./socketEvents";
+import { CHAT_SOCKET_URL } from "../config/api";
 
 export const connectChatSocket = (token) => {
-  socketClient.connect(`ws://localhost:8080/chat?token=${token}`);
+  const separator = CHAT_SOCKET_URL.includes("?") ? "&" : "?";
+  socketClient.connect(`${CHAT_SOCKET_URL}${separator}token=${token}`);
 };
 
 export const sendMessage = (message) => {
