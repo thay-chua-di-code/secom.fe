@@ -8,13 +8,16 @@ export const authService = {
   login: async (payload) => {
     try {
       const result = await axiosClient.post(API_ENDPOINTS.AUTH.LOGIN, payload);
-      if (result.data.data) {
-        localStorage.setItem("token", result.data.data.accessToken);
+
+      const data = result.data.data;
+
+      if (data?.accessToken) {
+        localStorage.setItem("token", data.accessToken);
       }
 
-      return result.data.data;
+      return data;
     } catch (e) {
-      console.error(e?.response?.data);
+      throw e;
     }
   },
   loginGoogle: async (idToken) => {
@@ -45,7 +48,10 @@ export const authService = {
       return result.data;
     } catch (e) {
       if (import.meta.env.DEV) {
-        console.error("[Auth] Logout API failed", e?.response?.data || e.message);
+        console.error(
+          "[Auth] Logout API failed",
+          e?.response?.data || e.message,
+        );
       }
       return null;
     } finally {

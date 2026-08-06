@@ -1,15 +1,22 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import "./style.scss";
 import NotificationDropdown from "../../../../pages/Notifications/Popup";
 
 export default function TopHeader({ onOpenLogin, onOpenRegister }) {
   const { isAuthenticated, role } = useSelector((state) => state.auth);
-
+  const { pathname } = useLocation();
   const normalizedRole = role?.toLowerCase();
-
   const isAdmin = normalizedRole === "admin";
   const isSeller = normalizedRole === "seller";
+
+  const checkIsLogin = () => {
+    if (pathname === "/login" || pathname === "/register") {
+      return true;
+    }
+
+    return false;
+  };
 
   return (
     <div className="top-header">
@@ -33,31 +40,35 @@ export default function TopHeader({ onOpenLogin, onOpenRegister }) {
             </div>
           )}
 
-          <div className="top-header__right">
-            <NotificationDropdown />
+          {checkIsLogin() ? (
+            <div></div>
+          ) : (
+            <div className="top-header__right">
+              <NotificationDropdown />
 
-            {!isAuthenticated && (
-              <>
-                <span className="top-header__divider" />
+              {!isAuthenticated && (
+                <>
+                  <span className="top-header__divider" />
 
-                <Link
-                  to="/login"
-                  onClick={onOpenLogin}
-                  className="top-header__link"
-                >
-                  Login
-                </Link>
+                  <Link
+                    to="/login"
+                    onClick={onOpenLogin}
+                    className="top-header__link"
+                  >
+                    Login
+                  </Link>
 
-                <Link
-                  to="/register"
-                  onClick={onOpenRegister}
-                  className="top-header__button"
-                >
-                  Register
-                </Link>
-              </>
-            )}
-          </div>
+                  <Link
+                    to="/register"
+                    onClick={onOpenRegister}
+                    className="top-header__button"
+                  >
+                    Register
+                  </Link>
+                </>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -76,7 +76,7 @@ const Sidebar = () => {
       path: "/admin/orders",
     },
     {
-      title: "Return / Refund",
+      title: "Exchanges / Warranty",
       icon: <RotateCcw size={17} />,
       path: "/admin/return-requests",
     },

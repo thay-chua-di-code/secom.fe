@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Search, ShoppingCart, Menu, UserRound } from "lucide-react";
 import UserDropdown from "../../../common/UserDropDown";
@@ -13,6 +13,8 @@ import { searchProductsThunk } from "../../../../redux/slice/productSlice";
 
 export default function MainHeader() {
   const dispatch = useDispatch();
+  const { pathname } = useLocation();
+  console.log(pathname);
   const [openSearch, setOpenSearch] = useState(false);
   const [openUser, setOpenUser] = useState(false);
   const [openCart, setOpenCart] = useState(false);
@@ -29,6 +31,13 @@ export default function MainHeader() {
     0,
   );
 
+  const checkIsLogin = () => {
+    if (pathname === "/login" || pathname === "/register") {
+      return true;
+    }
+
+    return false;
+  };
   const handleInputChange = (e) => {
     const value = e.target.value;
     setKeyword(value);
@@ -99,27 +108,31 @@ export default function MainHeader() {
           </Link>
 
           <div className="main-header__search">
-            <div ref={searchRef} className="main-header__search-box">
-              <Input
-                data-testid="product-search-input"
-                type="text"
-                placeholder="Search products..."
-                value={keyword}
-                onFocus={() => setOpenSearch(true)}
-                onChange={handleInputChange}
-                icon={Search}
-                clearable
-                className="header-search"
-              />
+            {checkIsLogin() ? (
+              <div></div>
+            ) : (
+              <div ref={searchRef} className="main-header__search-box">
+                <Input
+                  data-testid="product-search-input"
+                  type="text"
+                  placeholder="Search products..."
+                  value={keyword}
+                  onFocus={() => setOpenSearch(true)}
+                  onChange={handleInputChange}
+                  icon={Search}
+                  clearable
+                  className="header-search"
+                />
 
-              <SearchDropdown
-                open={openSearch}
-                keyword={keyword}
-                categories={categories}
-                products={[]}
-                onClose={() => setOpenSearch(false)}
-              />
-            </div>
+                <SearchDropdown
+                  open={openSearch}
+                  keyword={keyword}
+                  categories={categories}
+                  products={[]}
+                  onClose={() => setOpenSearch(false)}
+                />
+              </div>
+            )}
           </div>
 
           <div className="main-header__actions">

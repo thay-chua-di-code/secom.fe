@@ -4,7 +4,7 @@ import { Eye, EyeOff, Mail } from "lucide-react";
 import logo from "../../../../assets/icons/logo.jpg";
 import { authService } from "../../../../service/authService";
 import Button from "../../../../components/common/Button/Button";
-
+import { toast } from "react-hot-toast";
 import "./style.scss";
 
 const ResetPassWord = () => {
@@ -15,7 +15,42 @@ const ResetPassWord = () => {
 
   const handleSubmitResetPassword = async (e) => {
     e.preventDefault();
-    await authService.reset_pwd({ token, newPassword: newPwd });
+    const result = await authService.reset_pwd({ token, newPassword: newPwd });
+    if (!newPwd) {
+      toast.error("Please enter your password!");
+      return;
+    }
+
+    if (newPwd.length < 8) {
+      toast.error("Password must be at least 8 characters!");
+      return;
+    }
+
+    if (!/[A-Z]/.test(newPwd)) {
+      toast.error("Password must contain at least 1 uppercase letter!");
+      return;
+    }
+
+    if (!/[a-z]/.test(newPwd)) {
+      toast.error("Password must contain at least 1 lowercase letter!");
+      return;
+    }
+
+    if (!/[0-9]/.test(newPwd)) {
+      toast.error("Password must contain at least 1 number!");
+      return;
+    }
+
+    if (!/[!@#$%^&*(),.?":{}|<>[\]\\/'`~_+=;-]/.test(newPwd)) {
+      toast.error("Password must contain at least 1 special character!");
+      return;
+    }
+
+    if (result.success) {
+      toast.success(
+        "Password reset successful! Please log in with your new password.",
+      );
+    }
   };
 
   return (

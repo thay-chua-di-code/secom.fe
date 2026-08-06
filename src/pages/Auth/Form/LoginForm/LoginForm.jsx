@@ -31,7 +31,6 @@ export default function LoginForm() {
           password: loginData.password,
         }),
       ).unwrap();
-
       if (result.role.toLowerCase() === "admin") {
         navigate("/admin");
         toast.success("Login successful!");
@@ -44,9 +43,13 @@ export default function LoginForm() {
         await dispatch(getMyInfoThunk()).unwrap();
       }
     } catch (error) {
-      if (result.role.toLowerCase() !== "admin") {
-        toast.error(error?.response?.data?.message || "Login failed!");
+      const token = localStorage.getItem("token");
+
+      if (token) {
+        return;
       }
+
+      toast.error(error?.response?.data?.message || "Login failed!");
     }
   };
 
@@ -57,7 +60,10 @@ export default function LoginForm() {
   };
 
   return (
-    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+    <GoogleOAuthProvider
+      clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}
+      locale="en"
+    >
       <div className="form_login_container">
         <div className="login_layout">
           {/* Banner */}
@@ -127,6 +133,7 @@ export default function LoginForm() {
                   onSuccess={handleLoginGoogle}
                   onError={() => toast.error("Login Failure")}
                   text="signin_with"
+                  locale="en"
                 />
               </div>
             </div>

@@ -116,7 +116,7 @@
       background: transparent;
       color: #6d82a2;
 
-      font-size: 11px;
+      font-size: 16px;
       font-weight: 500;
 
       cursor: pointer;
@@ -198,7 +198,7 @@
 
       color: #e5e7eb;
 
-      font-size: 11px;
+      font-size: 16px;
 
       &::placeholder {
         color: #5d6f8c;
@@ -323,10 +323,13 @@
   .category-name {
     display: flex;
     align-items: center;
-
     gap: 11px;
-
     font-weight: 600;
+
+    span {
+      color: #fcfbf4;
+      font-size: 16px;
+    }
   }
 
   .category-icon {
@@ -342,21 +345,19 @@
     background: #263b61;
     color: #60a5fa;
 
-    font-size: 12px;
+    font-size: 16px;
     font-weight: 700;
   }
 
   .category-slug {
-    color: #7185a4;
-
+    color: #fcfbf4;
     font-family: monospace;
-    font-size: 11px;
+    font-size: 16px;
   }
 
   .created-date {
-    color: #7185a4;
-
-    font-size: 11px;
+    color: #fcfbf4;
+    font-size: 16px;
   }
 
   // ========================================
@@ -378,7 +379,6 @@
 
     &.active {
       border: 1px solid rgba(16, 185, 129, 0.25);
-
       background: rgba(16, 185, 129, 0.1);
       color: #10b981;
     }
@@ -457,7 +457,7 @@
 
     color: #637795;
 
-    font-size: 11px;
+    font-size: 16px;
 
     > div {
       display: flex;
@@ -587,7 +587,7 @@
 
       color: #657995;
 
-      font-size: 11px;
+      font-size: 16px;
     }
   }
 
@@ -648,7 +648,7 @@
 
       color: #a6b4c8;
 
-      font-size: 11px;
+      font-size: 16px;
       font-weight: 600;
     }
 
@@ -712,7 +712,7 @@
 
       border-radius: 8px;
 
-      font-size: 11px;
+      font-size: 16px;
       font-weight: 600;
 
       cursor: pointer;

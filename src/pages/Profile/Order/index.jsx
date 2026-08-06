@@ -89,7 +89,11 @@ const unwrapPayment = (response) => {
   );
 };
 
-const normalizeStatus = (status) => String(status || "").trim().toLowerCase().replace(/\s+/g, "_");
+const normalizeStatus = (status) =>
+  String(status || "")
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, "_");
 
 const RETURN_LOCKED_ORDER_STATUSES = new Set([
   "waiting_return_approval",
@@ -125,11 +129,14 @@ const ORDER_STATUS_LABELS = {
 
 const hasActiveReturnRequest = (order) => {
   const request = getLatestReturnRefundRequest(order);
-  const returnStatus = normalizeReturnStatus(getReturnRequestStatus(request, order));
+  const returnStatus = normalizeReturnStatus(
+    getReturnRequestStatus(request, order),
+  );
   return ACTIVE_RETURN_STATUSES.has(returnStatus);
 };
 
-const isReturnLockedOrder = (order) => RETURN_LOCKED_ORDER_STATUSES.has(normalizeStatus(order?.status));
+const isReturnLockedOrder = (order) =>
+  RETURN_LOCKED_ORDER_STATUSES.has(normalizeStatus(order?.status));
 
 const canPay = (order) => normalizeStatus(order?.status) === "pending";
 
@@ -153,8 +160,7 @@ const canRequestReturn = (order) => {
 const getOrderId = (order) => order?.orderId || order?.id;
 const getFinalTotal = (order) =>
   order?.finalTotal ?? order?.finalTotalAmount ?? 0;
-const getOrderItems = (order) =>
-  getAdapterOrderItems(order);
+const getOrderItems = (order) => getAdapterOrderItems(order);
 const getOrderItemId = (item) => item?.orderItemId || item?.id;
 const getReturnableItems = (order) =>
   getOrderItems(order).filter((item) => {
@@ -170,7 +176,9 @@ const getReturnableItems = (order) =>
 const getPurchasedQuantity = (item) => getOrderItemQuantity(item);
 const getMaxReturnQuantity = (item) =>
   Number(
-    item?.remainingReturnQuantity ?? item?.returnableQuantity ?? getPurchasedQuantity(item),
+    item?.remainingReturnQuantity ??
+      item?.returnableQuantity ??
+      getPurchasedQuantity(item),
   );
 const getItemUnitPrice = (item) => getOrderItemUnitPrice(item);
 const getItemSubtotal = (item) => getOrderItemTotalPrice(item);
@@ -185,7 +193,15 @@ const getField = (source, ...keys) => {
 };
 
 const getReturnRequestId = (request) =>
-  getField(request, "requestId", "RequestId", "returnRequestId", "ReturnRequestId", "id", "Id");
+  getField(
+    request,
+    "requestId",
+    "RequestId",
+    "returnRequestId",
+    "ReturnRequestId",
+    "id",
+    "Id",
+  );
 
 const getReturnRequestCreatedAt = (request) =>
   getField(
@@ -199,7 +215,13 @@ const getReturnRequestCreatedAt = (request) =>
   );
 
 const getReturnRequestReviewedAt = (request) =>
-  getField(request, "reviewedAtUtc", "ReviewedAtUtc", "reviewedAt", "ReviewedAt");
+  getField(
+    request,
+    "reviewedAtUtc",
+    "ReviewedAtUtc",
+    "reviewedAt",
+    "ReviewedAt",
+  );
 
 const getLatestReturnRefundRequest = (order) => {
   const directRequest = getField(
@@ -216,17 +238,18 @@ const getLatestReturnRefundRequest = (order) => {
 
   if (directRequest) return directRequest;
 
-  const requests = getField(
-    order,
-    "returnRefundRequests",
-    "ReturnRefundRequests",
-    "returnRequests",
-    "ReturnRequests",
-    "refundRequests",
-    "RefundRequests",
-    "afterSalesRequests",
-    "AfterSalesRequests",
-  ) || [];
+  const requests =
+    getField(
+      order,
+      "returnRefundRequests",
+      "ReturnRefundRequests",
+      "returnRequests",
+      "ReturnRequests",
+      "refundRequests",
+      "RefundRequests",
+      "afterSalesRequests",
+      "AfterSalesRequests",
+    ) || [];
 
   if (!Array.isArray(requests) || requests.length === 0) return null;
 
@@ -250,8 +273,15 @@ const getReturnRequestRejectReason = (request) =>
   ) || null;
 
 const getReturnRequestType = (request) =>
-  getField(request, "type", "Type", "requestType", "RequestType", "returnType", "ReturnType") ||
-  "Return/Refund";
+  getField(
+    request,
+    "type",
+    "Type",
+    "requestType",
+    "RequestType",
+    "returnType",
+    "ReturnType",
+  ) || "Return/Refund";
 
 const getReturnRequestStatus = (request, order) =>
   getField(request, "status", "Status") ||
@@ -397,12 +427,14 @@ function OrderDetailModal({ order, payment, loading, onClose }) {
         </section>
 
         <section>
-          <h3>Return / Refund</h3>
+          <h3>Exchanges / Warranty</h3>
           {returnRefundStatus || returnRefundRequest ? (
             <div className="detail-grid return-refund-grid">
               <div>
                 <span>Request ID</span>
-                <strong>{getReturnRequestId(returnRefundRequest) || "--"}</strong>
+                <strong>
+                  {getReturnRequestId(returnRefundRequest) || "--"}
+                </strong>
               </div>
               <div>
                 <span>Type</span>
@@ -410,7 +442,9 @@ function OrderDetailModal({ order, payment, loading, onClose }) {
               </div>
               <div>
                 <span>Return/Refund Status</span>
-                <span className={`return-refund-badge ${getReturnStatusBadgeClass(returnRefundStatus)}`}>
+                <span
+                  className={`return-refund-badge ${getReturnStatusBadgeClass(returnRefundStatus)}`}
+                >
                   {getReturnStatusLabel(returnRefundStatus)}
                 </span>
               </div>
@@ -418,7 +452,9 @@ function OrderDetailModal({ order, payment, loading, onClose }) {
                 <span>Requested At</span>
                 <strong>
                   {getReturnRequestCreatedAt(returnRefundRequest)
-                    ? new Date(getReturnRequestCreatedAt(returnRefundRequest)).toLocaleString()
+                    ? new Date(
+                        getReturnRequestCreatedAt(returnRefundRequest),
+                      ).toLocaleString()
                     : "--"}
                 </strong>
               </div>
@@ -426,7 +462,9 @@ function OrderDetailModal({ order, payment, loading, onClose }) {
                 <span>Reviewed At</span>
                 <strong>
                   {getReturnRequestReviewedAt(returnRefundRequest)
-                    ? new Date(getReturnRequestReviewedAt(returnRefundRequest)).toLocaleString()
+                    ? new Date(
+                        getReturnRequestReviewedAt(returnRefundRequest),
+                      ).toLocaleString()
                     : "--"}
                 </strong>
               </div>
@@ -437,12 +475,17 @@ function OrderDetailModal({ order, payment, loading, onClose }) {
               {normalizeReturnStatus(returnRefundStatus) === "rejected" && (
                 <div className="return-refund-grid__full">
                   <span>Reject Reason</span>
-                  <strong>{getReturnRequestRejectReason(returnRefundRequest) || "No rejection reason provided."}</strong>
+                  <strong>
+                    {getReturnRequestRejectReason(returnRefundRequest) ||
+                      "No rejection reason provided."}
+                  </strong>
                 </div>
               )}
             </div>
           ) : (
-            <p className="order-muted">No return/refund request for this order.</p>
+            <p className="order-muted">
+              No return/refund request for this order.
+            </p>
           )}
         </section>
 
@@ -471,7 +514,10 @@ function OrderDetailModal({ order, payment, loading, onClose }) {
                   key={getAdapterOrderItemId(item)}
                 >
                   {productPath ? (
-                    <Link to={productPath} aria-label={`View product ${productName}`}>
+                    <Link
+                      to={productPath}
+                      aria-label={`View product ${productName}`}
+                    >
                       {productImage}
                     </Link>
                   ) : (
@@ -479,14 +525,19 @@ function OrderDetailModal({ order, payment, loading, onClose }) {
                   )}
                   <div className="order-detail-item__info">
                     {productPath ? (
-                      <Link to={productPath} className="order-detail-item__link">
+                      <Link
+                        to={productPath}
+                        className="order-detail-item__link"
+                      >
                         {productTitle}
                       </Link>
                     ) : (
                       productTitle
                     )}
                     <span>Product ID: {getOrderItemProductId(item)}</span>
-                    <span>Status: {item.status || item.itemStatus || "--"}</span>
+                    <span>
+                      Status: {item.status || item.itemStatus || "--"}
+                    </span>
                   </div>
                   <div className="order-detail-item__price">
                     <span>Qty: {quantity}</span>
@@ -700,7 +751,10 @@ function OrderActionModal({ type, order, actionLoading, onClose, onConfirm }) {
                           <span>
                             <strong>{getOrderItemName(item)}</strong>
                             <small>
-                              Bought: {getPurchasedQuantity(item)} · Unit: {formatCurrencyVN(getItemUnitPrice(item))} · Subtotal: {formatCurrencyVN(getItemSubtotal(item))}
+                              Bought: {getPurchasedQuantity(item)} · Unit:{" "}
+                              {formatCurrencyVN(getItemUnitPrice(item))} ·
+                              Subtotal:{" "}
+                              {formatCurrencyVN(getItemSubtotal(item))}
                             </small>
                           </span>
                         </label>
@@ -713,7 +767,10 @@ function OrderActionModal({ type, order, actionLoading, onClose, onConfirm }) {
                             value={selectedItem.quantity || 1}
                             disabled={!selectedItem.selected}
                             onChange={(event) =>
-                              handleReturnQuantityChange(item, event.target.value)
+                              handleReturnQuantityChange(
+                                item,
+                                event.target.value,
+                              )
                             }
                           />
                         </label>

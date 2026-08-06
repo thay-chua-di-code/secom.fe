@@ -7,14 +7,46 @@ import NotificationDropdown from "../../../../pages/Notifications/Popup";
 import "./style.scss";
 
 const adminSearchTargets = [
-  { label: "Products", description: "Search product name, seller, status", path: "/admin/products" },
-  { label: "Orders", description: "Search buyer, order id, status", path: "/admin/orders" },
-  { label: "Users", description: "Search users by name or email", path: "/admin/users" },
-  { label: "Vouchers", description: "Search voucher code and campaign", path: "/admin/vouchers" },
-  { label: "Return / Refund", description: "Search return requests", path: "/admin/return-requests" },
-  { label: "Finance", description: "Search payouts and money flow", path: "/admin/finance" },
-  { label: "Categories", description: "Search category name or slug", path: "/admin/categories" },
-  { label: "Seller Shops", description: "Search seller approval requests", path: "/admin/seller" },
+  {
+    label: "Products",
+    description: "Search product name, seller, status",
+    path: "/admin/products",
+  },
+  {
+    label: "Orders",
+    description: "Search buyer, order id, status",
+    path: "/admin/orders",
+  },
+  {
+    label: "Users",
+    description: "Search users by name or email",
+    path: "/admin/users",
+  },
+  {
+    label: "Vouchers",
+    description: "Search voucher code and campaign",
+    path: "/admin/vouchers",
+  },
+  {
+    label: "Exchanges / Warranty",
+    description: "Search exchange and warranty",
+    path: "/admin/return-requests",
+  },
+  {
+    label: "Finance",
+    description: "Search payouts and money flow",
+    path: "/admin/finance",
+  },
+  {
+    label: "Categories",
+    description: "Search category name or slug",
+    path: "/admin/categories",
+  },
+  {
+    label: "Seller Shops",
+    description: "Search seller approval requests",
+    path: "/admin/seller",
+  },
 ];
 
 const AdminHeader = ({
@@ -35,7 +67,7 @@ const AdminHeader = ({
     "/admin/users": "User Management",
     "/admin/products": "Product Management",
     "/admin/orders": "Order Management",
-    "/admin/return-requests": "Return / Refund Management",
+    "/admin/return-requests": "Exchanges / Warranty Management",
     "/admin/vouchers": "Voucher Management",
     "/admin/finance": "Finance Management",
   };
@@ -43,7 +75,7 @@ const AdminHeader = ({
   const title =
     pageTitles[location.pathname] ||
     (location.pathname.startsWith("/admin/return-requests/")
-      ? "Return / Refund Management"
+      ? "Exchanges / Warranty Management"
       : "Admin Management");
 
   const currentTarget = useMemo(
@@ -51,7 +83,8 @@ const AdminHeader = ({
       adminSearchTargets.find(
         (target) =>
           location.pathname === target.path ||
-          (target.path !== "/admin" && location.pathname.startsWith(target.path)),
+          (target.path !== "/admin" &&
+            location.pathname.startsWith(target.path)),
       ),
     [location.pathname],
   );
@@ -139,7 +172,11 @@ const AdminHeader = ({
           {openSearch && (
             <div className="admin-search-dropdown">
               <div className="admin-search-dropdown__section">
-                <h4>{keyword.trim() ? "Search Admin Modules" : "Quick Admin Navigation"}</h4>
+                <h4>
+                  {keyword.trim()
+                    ? "Search Admin Modules"
+                    : "Quick Admin Navigation"}
+                </h4>
 
                 <div className="admin-search-dropdown__targets">
                   {visibleTargets.length ? (

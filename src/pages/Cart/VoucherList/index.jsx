@@ -85,38 +85,50 @@ export default function VoucherList({
                 const isSelected = selectedVoucher === voucher.code;
 
                 return (
-                  <button
+                  <div
                     key={voucherKey}
-                    type="button"
-                    aria-label={`Select voucher ${voucher.code}`}
-                    className={`voucher-card ${
-                      isSelected ? "voucher-card--active" : ""
+                    className={`voucher-item ${
+                      isSelected ? "voucher-item--active" : ""
                     }`}
-                    onClick={() => onSelectVoucher?.(voucher.code)}
                   >
-                    <div className="voucher-card__top">
-                      <span className="voucher-card__code">{voucher.code}</span>
+                    {isSelected && (
+                      <div className="voucher-item__selected">✓</div>
+                    )}
 
-                      <span className="voucher-card__discount">
-                        {formatDiscount(voucher)}
+                    <button
+                      type="button"
+                      aria-label={`Select voucher ${voucher.code}`}
+                      className={`voucher-card ${
+                        isSelected ? "voucher-card--active" : ""
+                      }`}
+                      onClick={() => onSelectVoucher?.(voucher.code)}
+                    >
+                      <div className="voucher-card__top">
+                        <span className="voucher-card__code">
+                          {voucher.code}
+                        </span>
+
+                        <span className="voucher-card__discount">
+                          {formatDiscount(voucher)}
+                        </span>
+                      </div>
+
+                      <span className="voucher-card__description">
+                        {voucher.description || voucher.name || "SECOM voucher"}
                       </span>
-                    </div>
 
-                    <span className="voucher-card__description">
-                      {voucher.description || voucher.name || "SECOM voucher"}
-                    </span>
+                      <div className="voucher-card__meta">
+                        <span>
+                          Min {formatCurrencyVN(voucher.minOrderAmount || 0)}
+                        </span>
 
-                    <div className="voucher-card__meta">
-                      <span>
-                        Min {formatCurrencyVN(voucher.minOrderAmount || 0)}
-                      </span>
-
-                      <span>
-                        Exp{" "}
-                        {formatDate(voucher.expiresAtUtc || voucher.endAtUtc)}
-                      </span>
-                    </div>
-                  </button>
+                        <span>
+                          Exp{" "}
+                          {formatDate(voucher.expiresAtUtc || voucher.endAtUtc)}
+                        </span>
+                      </div>
+                    </button>
+                  </div>
                 );
               })}
             </div>

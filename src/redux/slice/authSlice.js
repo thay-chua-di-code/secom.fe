@@ -18,12 +18,13 @@ export const loginThunk = createAsyncThunk(
   async (payload, thunkAPI) => {
     try {
       const data = await authService.login(payload);
+
       setAuthToken(data.accessToken);
 
       return data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data?.message || "Login failed",
+        error.response?.data?.message || error.message || "Login failed",
       );
     }
   },

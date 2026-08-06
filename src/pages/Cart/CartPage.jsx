@@ -62,6 +62,7 @@ export default function CartPage() {
   const headerCheckboxRef = useRef(null);
   const [selectedItemIds, setSelectedItemIds] = useState([]);
   const [selectedVoucher, setSelectedVoucher] = useState(null);
+  const [appliedVoucher, setAppliedVoucher] = useState(null);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [checkoutError, setCheckoutError] = useState("");
   const { isAuthenticated } = useSelector((state) => state.auth);
@@ -103,7 +104,8 @@ export default function CartPage() {
   }, [items, selectedItemIds]);
 
   const selectedItems = useMemo(
-    () => items.filter((item) => validSelectedItemIds.includes(item.cartItemId)),
+    () =>
+      items.filter((item) => validSelectedItemIds.includes(item.cartItemId)),
     [items, validSelectedItemIds],
   );
 
@@ -117,7 +119,7 @@ export default function CartPage() {
     0,
   );
 
-  const activeVoucherCode = selectedVoucher || voucherCode;
+  const activeVoucherCode = appliedVoucher || voucherCode;
   const activeVoucher = useMemo(
     () =>
       (Array.isArray(vouchers) ? vouchers : []).find(
@@ -169,6 +171,12 @@ export default function CartPage() {
   }, [partiallySelected]);
 
   useEffect(() => {
+    if (voucherCode) {
+      setAppliedVoucher(voucherCode);
+    }
+  }, [voucherCode]);
+
+  useEffect(() => {
     if (!items.length) return;
 
     const productId = location.state?.autoSelectProductId;
@@ -216,6 +224,8 @@ export default function CartPage() {
 
     try {
       await applyVoucher(selectedVoucher).unwrap();
+      setAppliedVoucher(selectedVoucher);
+      dispatch(setVoucherCode(selectedVoucher));
       toast.success("Voucher applied successfully.");
     } catch (applyError) {
       toast.error(
@@ -232,10 +242,15 @@ export default function CartPage() {
     try {
       await removeVoucher().unwrap();
       setSelectedVoucher(null);
+      setAppliedVoucher(null);
       dispatch(setVoucherCode(null));
       toast.success("Voucher removed.");
     } catch (removeError) {
-      toast.error(removeError?.message || removeError || "Cannot remove voucher. Please try again.");
+      toast.error(
+        removeError?.message ||
+          removeError ||
+          "Cannot remove voucher. Please try again.",
+      );
     }
   };
 
@@ -286,7 +301,7 @@ export default function CartPage() {
 
       const createOrderResponse = await orderApi.createOrder({
         cartItemIds: validSelectedItemIds,
-        voucherCode: selectedVoucher || voucherCode || null,
+        voucherCode: appliedVoucher || voucherCode || null,
       });
 
       createdOrder = getCreatedOrder(createOrderResponse);
@@ -415,7 +430,11 @@ export default function CartPage() {
               <button
                 type="button"
                 onClick={handleApplyVoucher}
-                disabled={!selectedVoucher || actionLoading}
+                disabled={
+                  !selectedVoucher ||
+                  selectedVoucher === appliedVoucher ||
+                  actionLoading
+                }
               >
                 <TicketPercent size={18} />
                 {actionLoading ? "Applying..." : "Apply Voucher"}
@@ -437,7 +456,13 @@ export default function CartPage() {
               vouchers={vouchers}
               loading={voucherLoading}
               selectedVoucher={selectedVoucher}
-              onSelectVoucher={setSelectedVoucher}
+              onSelectVoucher={(code) => {
+                setSelectedVoucher(code);
+
+                if (code !== appliedVoucher) {
+                  setAppliedVoucher(null);
+                }
+              }}
             />
           </div>
 

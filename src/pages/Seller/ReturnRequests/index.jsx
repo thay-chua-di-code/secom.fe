@@ -51,7 +51,10 @@ const statusOptions = [
   { value: RETURN_REQUEST_STATUSES.APPROVED, label: "Approved" },
   { value: RETURN_REQUEST_STATUSES.REJECTED, label: "Rejected" },
   { value: RETURN_REQUEST_STATUSES.ITEM_RETURNED, label: "Item Returned" },
-  { value: RETURN_REQUEST_STATUSES.REFUND_PROCESSING, label: "Refund Processing" },
+  {
+    value: RETURN_REQUEST_STATUSES.REFUND_PROCESSING,
+    label: "Refund Processing",
+  },
   { value: RETURN_REQUEST_STATUSES.REFUNDED, label: "Refunded" },
   { value: RETURN_REQUEST_STATUSES.CLOSED, label: "Closed" },
 ];
@@ -87,7 +90,9 @@ function SellerReturnDetail({ request, actionLoading, onClose, onOpenAction }) {
         <section className="seller-return-detail-summary">
           <article>
             <span>Status</span>
-            <strong className={`seller-return-status ${getReturnStatusBadgeClass(request.status)}`}>
+            <strong
+              className={`seller-return-status ${getReturnStatusBadgeClass(request.status)}`}
+            >
               {getReturnStatusLabel(request.status)}
             </strong>
           </article>
@@ -101,7 +106,9 @@ function SellerReturnDetail({ request, actionLoading, onClose, onOpenAction }) {
           </article>
           <article>
             <span>Reviewed</span>
-            <strong>{request.reviewedAtUtc ? formatDate(request.reviewedAtUtc) : "-"}</strong>
+            <strong>
+              {request.reviewedAtUtc ? formatDate(request.reviewedAtUtc) : "-"}
+            </strong>
           </article>
         </section>
 
@@ -110,7 +117,9 @@ function SellerReturnDetail({ request, actionLoading, onClose, onOpenAction }) {
           <strong>{request.reasonCode || "-"}</strong>
           <p>{request.description || "No description provided."}</p>
           {request.rejectReason && (
-            <p className="seller-return-detail-danger">Rejected: {request.rejectReason}</p>
+            <p className="seller-return-detail-danger">
+              Rejected: {request.rejectReason}
+            </p>
           )}
         </section>
 
@@ -120,12 +129,16 @@ function SellerReturnDetail({ request, actionLoading, onClose, onOpenAction }) {
             <p>No return items.</p>
           ) : (
             (request.items || []).map((item) => (
-              <article className="seller-return-detail-item" key={item.id || item.orderItemId}>
+              <article
+                className="seller-return-detail-item"
+                key={item.id || item.orderItemId}
+              >
                 <PackageCheck size={18} />
                 <div>
                   <strong>{item.productName || item.orderItemId}</strong>
                   <span>
-                    Qty {item.quantity} · Refund {formatCurrencyVN(item.refundAmount || 0)}
+                    Qty {item.quantity} · Refund{" "}
+                    {formatCurrencyVN(item.refundAmount || 0)}
                   </span>
                   {item.reason && <p>{item.reason}</p>}
                 </div>
@@ -141,7 +154,12 @@ function SellerReturnDetail({ request, actionLoading, onClose, onOpenAction }) {
           ) : (
             <div className="seller-return-detail-evidence">
               {(request.evidenceImages || []).map((image) => (
-                <a key={image.id || image.imageUrl} href={image.imageUrl} target="_blank" rel="noreferrer">
+                <a
+                  key={image.id || image.imageUrl}
+                  href={image.imageUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                >
                   <img src={image.imageUrl} alt="Return evidence" />
                 </a>
               ))}
@@ -155,9 +173,16 @@ function SellerReturnDetail({ request, actionLoading, onClose, onOpenAction }) {
             <p>No history.</p>
           ) : (
             (request.histories || []).map((history, index) => (
-              <article className="seller-return-detail-history" key={`${history.newStatus}-${history.createdAtUtc}-${index}`}>
+              <article
+                className="seller-return-detail-history"
+                key={`${history.newStatus}-${history.createdAtUtc}-${index}`}
+              >
                 <strong>{getReturnStatusLabel(history.newStatus)}</strong>
-                <span>{history.createdAtUtc ? formatDate(history.createdAtUtc) : "-"}</span>
+                <span>
+                  {history.createdAtUtc
+                    ? formatDate(history.createdAtUtc)
+                    : "-"}
+                </span>
                 {history.reason && <p>{history.reason}</p>}
               </article>
             ))
@@ -176,7 +201,9 @@ function SellerReturnDetail({ request, actionLoading, onClose, onOpenAction }) {
               disabled={!!actionLoading}
               onClick={() => onOpenAction(action, request)}
             >
-              {actionLoading === action ? "Processing..." : sellerReturnActionLabels[action]}
+              {actionLoading === action
+                ? "Processing..."
+                : sellerReturnActionLabels[action]}
             </button>
           ))}
         </footer>
@@ -185,7 +212,13 @@ function SellerReturnDetail({ request, actionLoading, onClose, onOpenAction }) {
   );
 }
 
-function SellerReturnActionModal({ action, request, actionLoading, onClose, onSubmit }) {
+function SellerReturnActionModal({
+  action,
+  request,
+  actionLoading,
+  onClose,
+  onSubmit,
+}) {
   const [note, setNote] = useState("");
   const [reason, setReason] = useState("");
 
@@ -361,7 +394,8 @@ export default function SellerReturnRequests() {
   const handleSubmitAction = async (formPayload) => {
     if (!reviewAction) return;
 
-    const requestId = reviewAction.request.id || getRequestId(reviewAction.request);
+    const requestId =
+      reviewAction.request.id || getRequestId(reviewAction.request);
 
     if (!requestId) {
       toast.error("Return request id is missing");
@@ -391,7 +425,9 @@ export default function SellerReturnRequests() {
         await sellerService.confirmReturnReceived(requestId, payload);
       }
 
-      toast.success(`${sellerReturnActionLabels[reviewAction.action]} successfully`);
+      toast.success(
+        `${sellerReturnActionLabels[reviewAction.action]} successfully`,
+      );
       setReviewAction(null);
       await refreshAfterMutation(requestId);
     } catch (actionError) {
@@ -415,8 +451,10 @@ export default function SellerReturnRequests() {
     <div className="seller-return-requests">
       <div className="seller-return-requests__header">
         <div>
-          <span className="seller-return-requests__label">After-sales Management</span>
-          <h1>Return / Refund Requests</h1>
+          <span className="seller-return-requests__label">
+            After-sales Management
+          </span>
+          <h1>Exchanges / Warranty Requests</h1>
           <p>Review return requests and track refund status for your shop.</p>
         </div>
       </div>
@@ -427,27 +465,37 @@ export default function SellerReturnRequests() {
             type="search"
             placeholder="Search request, order, buyer, product..."
             value={filters.keyword}
-            onChange={(event) => handleFilterChange("keyword", event.target.value)}
+            onChange={(event) =>
+              handleFilterChange("keyword", event.target.value)
+            }
           />
           <select
             value={filters.type}
             onChange={(event) => handleFilterChange("type", event.target.value)}
           >
             {typeOptions.map((option) => (
-              <option key={option.value} value={option.value}>{option.label}</option>
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
             ))}
           </select>
           <select
             value={filters.status}
-            onChange={(event) => handleFilterChange("status", event.target.value)}
+            onChange={(event) =>
+              handleFilterChange("status", event.target.value)
+            }
           >
             {statusOptions.map((option) => (
-              <option key={option.value} value={option.value}>{option.label}</option>
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
             ))}
           </select>
           <select
             value={filters.sortBy}
-            onChange={(event) => handleFilterChange("sortBy", event.target.value)}
+            onChange={(event) =>
+              handleFilterChange("sortBy", event.target.value)
+            }
           >
             <option value="newest">Newest</option>
             <option value="oldest">Oldest</option>
@@ -496,75 +544,91 @@ export default function SellerReturnRequests() {
                 </tr>
               )}
 
-              {!loading && !error && requests.map((request) => {
-                const requestId = getRequestId(request);
-                const primaryItem = getPrimaryItem(request);
-                const actions = getSellerReturnActions(request.status);
+              {!loading &&
+                !error &&
+                requests.map((request) => {
+                  const requestId = getRequestId(request);
+                  const primaryItem = getPrimaryItem(request);
+                  const actions = getSellerReturnActions(request.status);
 
-                return (
-                  <tr key={requestId}>
-                    <td><strong>#{String(requestId).slice(0, 8)}</strong></td>
-                    <td>{request.requestType || "return"}</td>
-                    <td>#{String(request.orderId).slice(0, 8)}</td>
-                    <td>{request.buyerName || String(request.buyerId || "-").slice(0, 8)}</td>
-                    <td>
-                      <div className="seller-return-requests__item-name">
-                        <strong>{primaryItem?.productName || "-"}</strong>
-                        <span>{request.items?.length || 0} item(s)</span>
-                      </div>
-                    </td>
-                    <td>{request.reasonCode || "-"}</td>
-                    <td>{formatCurrencyVN(getRequestAmount(request))}</td>
-                    <td>
-                      <span className={`seller-return-status ${getReturnStatusBadgeClass(request.status)}`}>
-                        {getReturnStatusLabel(request.status)}
-                      </span>
-                    </td>
-                    <td>{formatDate(request.createdAtUtc)}</td>
-                    <td>
-                      <div className="seller-return-requests__actions">
-                        <button
-                          type="button"
-                          onClick={() => loadDetail(requestId)}
-                          disabled={detailLoading}
+                  return (
+                    <tr key={requestId}>
+                      <td>
+                        <strong>#{String(requestId).slice(0, 8)}</strong>
+                      </td>
+                      <td>{request.requestType || "return"}</td>
+                      <td>#{String(request.orderId).slice(0, 8)}</td>
+                      <td>
+                        {request.buyerName ||
+                          String(request.buyerId || "-").slice(0, 8)}
+                      </td>
+                      <td>
+                        <div className="seller-return-requests__item-name">
+                          <strong>{primaryItem?.productName || "-"}</strong>
+                          <span>{request.items?.length || 0} item(s)</span>
+                        </div>
+                      </td>
+                      <td>{request.reasonCode || "-"}</td>
+                      <td>{formatCurrencyVN(getRequestAmount(request))}</td>
+                      <td>
+                        <span
+                          className={`seller-return-status ${getReturnStatusBadgeClass(request.status)}`}
                         >
-                          <Eye size={14} /> View
-                        </button>
-                        {actions.map((action) => (
+                          {getReturnStatusLabel(request.status)}
+                        </span>
+                      </td>
+                      <td>{formatDate(request.createdAtUtc)}</td>
+                      <td>
+                        <div className="seller-return-requests__actions">
                           <button
-                            key={action}
                             type="button"
-                            className={action === "reject" ? "danger" : "primary"}
-                            disabled={!!actionLoading}
-                            onClick={() => handleOpenAction(action, request)}
+                            onClick={() => loadDetail(requestId)}
+                            disabled={detailLoading}
                           >
-                            {sellerReturnActionLabels[action]}
+                            <Eye size={14} /> View
                           </button>
-                        ))}
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
+                          {actions.map((action) => (
+                            <button
+                              key={action}
+                              type="button"
+                              className={
+                                action === "reject" ? "danger" : "primary"
+                              }
+                              disabled={!!actionLoading}
+                              onClick={() => handleOpenAction(action, request)}
+                            >
+                              {sellerReturnActionLabels[action]}
+                            </button>
+                          ))}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
             </tbody>
           </table>
         </div>
 
         <div className="seller-return-requests__pagination">
           <span>
-            {pagination.totalCount} request(s) · Page {pagination.pageNumber} of {pagination.totalPages || 1}
+            {pagination.totalCount} request(s) · Page {pagination.pageNumber} of{" "}
+            {pagination.totalPages || 1}
           </span>
           <div>
             <button
               type="button"
               disabled={loading || pagination.pageNumber <= 1}
-              onClick={() => handlePageChange(Math.max(pagination.pageNumber - 1, 1))}
+              onClick={() =>
+                handlePageChange(Math.max(pagination.pageNumber - 1, 1))
+              }
             >
               Previous
             </button>
             <button
               type="button"
-              disabled={loading || pagination.pageNumber >= pagination.totalPages}
+              disabled={
+                loading || pagination.pageNumber >= pagination.totalPages
+              }
               onClick={() => handlePageChange(pagination.pageNumber + 1)}
             >
               Next
