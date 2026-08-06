@@ -34,16 +34,19 @@ export default function LoginForm() {
 
       if (result.role.toLowerCase() === "admin") {
         navigate("/admin");
+        toast.success("Login successful!");
         await dispatch(getMyInfoThunk()).unwrap();
       }
 
-      if (result) {
+      if (result.role.toLowerCase() !== "admin") {
         toast.success("Login successful!");
         navigate("/");
         await dispatch(getMyInfoThunk()).unwrap();
       }
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Login failed!");
+      if (result.role.toLowerCase() !== "admin") {
+        toast.error(error?.response?.data?.message || "Login failed!");
+      }
     }
   };
 
