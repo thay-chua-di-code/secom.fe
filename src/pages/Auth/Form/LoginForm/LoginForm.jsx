@@ -32,7 +32,11 @@ export default function LoginForm() {
         }),
       ).unwrap();
 
-      console.log(result);
+      if (result.role.toLowerCase() === "admin") {
+        navigate("/admin");
+        await dispatch(getMyInfoThunk()).unwrap();
+      }
+
       if (result) {
         toast.success("Login successful!");
         navigate("/");
