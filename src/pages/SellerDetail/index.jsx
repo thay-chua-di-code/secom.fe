@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import "./style.scss";
 import { useSelector } from "react-redux";
 import { getSellerStatistics } from "../../api/sellerStatisticsApi";
@@ -87,6 +87,8 @@ const getProductSellerId = (product) =>
 export default function SellerDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const initialOrderId = searchParams.get("orderId")?.trim() || "";
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const userInfo = useSelector((state) => state.user.userInfo);
   const [statistics, setStatistics] = useState(null);
@@ -100,7 +102,7 @@ export default function SellerDetail() {
   const [ratings, setRatings] = useState([]);
   const [ratingsLoading, setRatingsLoading] = useState(false);
   const [ratingForm, setRatingForm] = useState({
-    orderId: "",
+    orderId: initialOrderId,
     rating: 5,
     comment: "",
   });
@@ -275,7 +277,8 @@ export default function SellerDetail() {
           detail: {
             chatId,
             sellerId: thread.sellerId || id,
-            sellerName: thread.sellerName || "Seller Shop",
+            shopName: thread.shopName,
+            sellerName: thread.shopName || thread.sellerName || "Seller",
             sellerAvatarUrl: thread.sellerAvatarUrl,
           },
         }),
@@ -424,7 +427,7 @@ export default function SellerDetail() {
         comment: ratingForm.comment.trim() || null,
       });
       toast.success("Seller rating submitted");
-      setRatingForm({ orderId: "", rating: 5, comment: "" });
+      setRatingForm({ orderId: initialOrderId, rating: 5, comment: "" });
       await loadSellerRatings();
     } catch (error) {
       toast.error(error?.response?.data?.message || error.message || "Cannot rate seller");

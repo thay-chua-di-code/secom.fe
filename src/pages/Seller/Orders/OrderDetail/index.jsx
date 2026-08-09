@@ -6,6 +6,9 @@ import {
   CalendarDays,
   ShoppingBag,
   CircleDollarSign,
+  Mail,
+  Phone,
+  User,
 } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -149,6 +152,51 @@ const OrderDetail = ({ open, onClose, order }) => {
               <span>Total Products</span>
 
               <strong>{order.items?.length || 0}</strong>
+            </div>
+          </div>
+        </section>
+
+        <section className="seller-order-detail-buyer">
+          <div className="seller-order-detail-section-heading">
+            <div>
+              <h3>Buyer Information</h3>
+
+              <p>Customer contact information for this order</p>
+            </div>
+          </div>
+
+          <div className="seller-order-detail-buyer-card">
+            <div className="seller-order-detail-buyer-item">
+              <div className="seller-order-detail-buyer-icon">
+                <User size={18} />
+              </div>
+
+              <div>
+                <span>Full name</span>
+                <strong>{order.buyerFullName || "Not available"}</strong>
+              </div>
+            </div>
+
+            <div className="seller-order-detail-buyer-item">
+              <div className="seller-order-detail-buyer-icon">
+                <Mail size={18} />
+              </div>
+
+              <div>
+                <span>Email</span>
+                <strong>{order.buyerEmail || "Not available"}</strong>
+              </div>
+            </div>
+
+            <div className="seller-order-detail-buyer-item">
+              <div className="seller-order-detail-buyer-icon">
+                <Phone size={18} />
+              </div>
+
+              <div>
+                <span>Phone number</span>
+                <strong>{order.buyerPhoneNumber || "Not available"}</strong>
+              </div>
             </div>
           </div>
         </section>

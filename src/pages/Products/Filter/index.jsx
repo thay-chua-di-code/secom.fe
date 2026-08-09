@@ -1,7 +1,16 @@
 import { Filter as FilterIcon, Tags, Wallet } from "lucide-react";
 import { useSelector } from "react-redux";
 import "./style.scss";
-import { truncateText } from "../../../utils/fncUtils";
+import { formatCurrencyVN, truncateText } from "../../../utils/fncUtils";
+
+const sanitizePriceInput = (value) => value.replace(/[^\d]/g, "");
+
+const getFormattedPriceInput = (value) => {
+  if (value === "" || value === null || value === undefined) return "";
+  const normalized = sanitizePriceInput(String(value));
+  if (!normalized) return "";
+  return formatCurrencyVN(normalized);
+};
 
 export default function Filter({
   categoryFilter,
@@ -67,17 +76,19 @@ export default function Filter({
 
         <div className="price-range">
           <input
-            type="number"
+            type="text"
+            inputMode="numeric"
             placeholder="Min Price"
-            value={minPrice}
-            onChange={(e) => onMinPriceChange(e.target.value)}
+            value={getFormattedPriceInput(minPrice)}
+            onChange={(e) => onMinPriceChange(sanitizePriceInput(e.target.value))}
           />
 
           <input
-            type="number"
+            type="text"
+            inputMode="numeric"
             placeholder="Max Price"
-            value={maxPrice}
-            onChange={(e) => onMaxPriceChange(e.target.value)}
+            value={getFormattedPriceInput(maxPrice)}
+            onChange={(e) => onMaxPriceChange(sanitizePriceInput(e.target.value))}
           />
         </div>
       </div>

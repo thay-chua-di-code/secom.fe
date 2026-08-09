@@ -108,21 +108,28 @@
     const [exporting, setExporting] = useState(false);
     const [importError, setImportError] = useState(null);
 
-    const {
-      products = [],
-      loading,
-      actionLoading,
-      error,
-    } = useSelector((state) => state.sellerProduct);
+  const {
+    products = [],
+    loading,
+    actionLoading,
+    error,
+    pagination,
+  } = useSelector((state) => state.sellerProduct);
 
-    const refreshProducts = () => {
-      dispatch(
-        fetchSellerProducts({
-          pageNumber: 1,
-          pageSize: 100,
-        }),
-      );
-    };
+  const totalCount = Number(pagination?.totalCount || 0);
+  const totalPages = Math.max(
+    Number(pagination?.totalPages || Math.ceil(totalCount / ITEMS_PER_PAGE) || 0),
+    1,
+  );
+
+  const refreshProducts = () => {
+    dispatch(
+      fetchSellerProducts({
+        page: currentPage,
+        pageSize: ITEMS_PER_PAGE,
+      }),
+    );
+  };
 
     const handleOpenUpdate = (product) => {
       setSelectedProduct(product);
@@ -159,7 +166,7 @@
         await dispatch(deleteSellerProduct(productId)).unwrap();
         toast.success("Product deleted successfully");
         setDeleteTarget(null);
-        const nextTotal = Math.max(products.length - 1, 0);
+        const nextTotal = Math.max(totalCount - 1, 0);
         const nextTotalPages = Math.max(Math.ceil(nextTotal / ITEMS_PER_PAGE), 1);
         setCurrentPage((page) => Math.min(page, nextTotalPages));
       } catch (err) {
@@ -312,18 +319,11 @@
     useEffect(() => {
       dispatch(
         fetchSellerProducts({
-          pageNumber: 1,
-          pageSize: 100,
+          page: currentPage,
+          pageSize: ITEMS_PER_PAGE,
         }),
       );
-    }, [dispatch]);
-
-    const totalPages = Math.ceil(products.length / ITEMS_PER_PAGE);
-
-    const paginatedProducts = products.slice(
-      (currentPage - 1) * ITEMS_PER_PAGE,
-      currentPage * ITEMS_PER_PAGE,
-    );
+    }, [currentPage, dispatch]);
 
     const handlePreviousPage = () => {
       setCurrentPage((prev) => Math.max(prev - 1, 1));
@@ -407,7 +407,7 @@
 
             <div className="seller-products__stat-content">
               <span>Total Products</span>
-              <strong>{products.length}</strong>
+              <strong>{totalCount}</strong>
             </div>
           </div>
 
@@ -439,7 +439,7 @@
             </div>
 
             <span className="seller-products__count">
-              {products.length} Products
+              {totalCount} Products
             </span>
           </div>
 
@@ -458,7 +458,7 @@
               </thead>
 
               <tbody>
-                {paginatedProducts.map((item) => (
+                {products.map((item) => (
                   <tr key={item.id}>
                     {/* PRODUCT */}
                     <td data-label="Product">

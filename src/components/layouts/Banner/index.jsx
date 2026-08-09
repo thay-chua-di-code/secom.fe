@@ -3,6 +3,30 @@ import { ArrowRight } from "lucide-react";
 import { useSelector } from "react-redux";
 import "./styles.scss";
 import { useNavigate } from "react-router-dom";
+import banner1 from "../../../assets/images/banner1.jpg";
+import banner2 from "../../../assets/images/banner2.avif";
+import banner3 from "../../../assets/images/banner3.avif";
+
+const fallbackBanners = [
+  {
+    id: "fallback-banner-1",
+    title: "SECOM Marketplace",
+    heading: "Trusted second-hand products in one place",
+    image: banner1,
+  },
+  {
+    id: "fallback-banner-2",
+    title: "Quality & affordability",
+    heading: "Discover curated deals from active sellers",
+    image: banner2,
+  },
+  {
+    id: "fallback-banner-3",
+    title: "Shop with confidence",
+    heading: "Browse categories and find the right match faster",
+    image: banner3,
+  },
+];
 
 export default function Banner() {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -15,11 +39,7 @@ export default function Banner() {
   const bannerImages =
     banners?.length > 0
       ? banners
-      : [
-          "https://images.unsplash.com/photo-1523275335684-37898b6baf30",
-          "https://images.unsplash.com/photo-1505740420928-5e560c06d30e",
-          "https://images.unsplash.com/photo-1491553895911-0055eca6402d",
-        ];
+      : fallbackBanners;
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -29,7 +49,7 @@ export default function Banner() {
     }, 5000);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [bannerImages.length]);
 
   return (
     <section className="hero">

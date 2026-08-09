@@ -96,6 +96,7 @@ export const API_ENDPOINTS = {
     RETURN_REQUEST_CONFIRM_RECEIVED: (id) =>
       `/seller/return-requests/${id}/confirm-received`,
     BANK: {
+      SINGLE: "/seller/bank-account",
       GP: "/seller/bank-accounts",
       DELETE: (id) => `/seller/bank-accounts/${id}`,
     },
@@ -144,6 +145,8 @@ export const API_ENDPOINTS = {
 
   ADMIN: {
     DASHBOARD: "/admin/dashboard",
+    DASHBOARD_STATISTICS: "/admin/dashboard/statistics",
+    DASHBOARD_TRENDS: "/admin/dashboard/trends",
     USER: {
       GET: "/admin/users",
       LOCK: (id) => `/admin/users/${id}/lock`,
@@ -183,6 +186,7 @@ export const API_ENDPOINTS = {
     },
     FINANCE: {
       SUMMARY: "/admin/finance/money-flow",
+      TRENDS: "/admin/finance/trends",
       PAYOUTS: "/admin/payouts",
       APPROVE: (id) => `/admin/payouts/${id}/approve`,
       REJECT: (id) => `/admin/payouts/${id}/reject`,

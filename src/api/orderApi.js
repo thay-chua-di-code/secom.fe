@@ -13,10 +13,11 @@ export const orderApi = {
 
   getPurchasedOrders: () => axiosClient.get(API_ENDPOINTS.ORDER.ORDER_PURCHASE),
 
-  getPurchasedOrdersPaged: ({ status, page = 1, pageSize = 20 } = {}) => {
+  getPurchasedOrdersPaged: ({ status, search, page = 1, pageSize = 20 } = {}) => {
     return axiosClient.get(API_ENDPOINTS.ORDER.ORDER_PURCHASE_PAGED, {
       params: {
         ...(status && status !== "all" ? { status } : {}),
+        ...(search ? { search } : {}),
         page,
         pageSize,
       },

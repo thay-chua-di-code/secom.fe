@@ -25,6 +25,7 @@ export default function VoucherList({
   vouchers = [],
   loading = false,
   selectedVoucher,
+  disabledReasons = {},
   onSelectVoucher,
 }) {
   const voucherItems = Array.isArray(vouchers) ? vouchers : [];
@@ -83,6 +84,8 @@ export default function VoucherList({
                   voucher.id || voucher.voucherId || voucher.code;
 
                 const isSelected = selectedVoucher === voucher.code;
+                const disabledReason = disabledReasons?.[voucher.code] || "";
+                const isDisabled = Boolean(disabledReason);
 
                 return (
                   <div
@@ -100,8 +103,13 @@ export default function VoucherList({
                       aria-label={`Select voucher ${voucher.code}`}
                       className={`voucher-card ${
                         isSelected ? "voucher-card--active" : ""
-                      }`}
-                      onClick={() => onSelectVoucher?.(voucher.code)}
+                      } ${isDisabled ? "voucher-card--disabled" : ""}`}
+                      onClick={() => {
+                        if (isDisabled) return;
+                        onSelectVoucher?.(voucher.code);
+                      }}
+                      disabled={isDisabled}
+                      title={disabledReason || `Apply voucher ${voucher.code}`}
                     >
                       <div className="voucher-card__top">
                         <span className="voucher-card__code">

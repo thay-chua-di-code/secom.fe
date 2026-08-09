@@ -258,6 +258,22 @@
     box-shadow: 0 8px 18px rgba(239, 68, 68, 0.24);
   }
 
+  &--disabled {
+    cursor: not-allowed;
+    opacity: 0.65;
+    transform: none !important;
+    box-shadow: 0 5px 12px rgba(239, 68, 68, 0.08);
+  }
+
+  &__hint {
+    display: block;
+    margin-top: 10px;
+    color: #ffe4e6;
+    font-size: 11px;
+    line-height: 1.4;
+    text-align: left;
+  }
+
   // =========================
   // ACTIVE
   // =========================

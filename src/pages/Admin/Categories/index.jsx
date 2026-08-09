@@ -22,6 +22,15 @@ import "./style.scss";
 
 const ITEMS_PER_PAGE = 7;
 
+const slugifyCategoryName = (value) =>
+  String(value || "")
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
 export default function Categories() {
   const dispatch = useDispatch();
 
@@ -70,9 +79,7 @@ export default function Categories() {
     const keyword = search.toLowerCase().trim();
 
     return categories.filter((item) => {
-      const matchesSearch =
-        item.name?.toLowerCase().includes(keyword) ||
-        item.slug?.toLowerCase().includes(keyword);
+      const matchesSearch = item.name?.toLowerCase().includes(keyword);
 
       const matchesStatus =
         statusFilter === "all" ||
@@ -177,11 +184,19 @@ export default function Categories() {
         await dispatch(
           updateCategory({
             id: editingId,
-            payload: formData,
+            payload: {
+              ...formData,
+              slug: formData.slug || slugifyCategoryName(formData.name),
+            },
           }),
         ).unwrap();
       } else {
-        await dispatch(createCategory(formData)).unwrap();
+        await dispatch(
+          createCategory({
+            ...formData,
+            slug: slugifyCategoryName(formData.name),
+          }),
+        ).unwrap();
       }
 
       // Fetch all categories again
@@ -345,7 +360,6 @@ export default function Categories() {
               <thead>
                 <tr>
                   <th>CATEGORY</th>
-                  <th>SLUG</th>
                   <th>STATUS</th>
                   <th>CREATED</th>
                   <th>ACTIONS</th>
@@ -359,7 +373,7 @@ export default function Categories() {
                     if (!item) {
                       return (
                         <tr key={`empty-${index}`} className="empty-row">
-                          <td colSpan="5"></td>
+                          <td colSpan="4"></td>
                         </tr>
                       );
                     }
@@ -376,12 +390,6 @@ export default function Categories() {
 
                             <span>{item.name}</span>
                           </div>
-                        </td>
-
-                        {/* SLUG */}
-
-                        <td>
-                          <span className="category-slug">{item.slug}</span>
                         </td>
 
                         {/* STATUS */}
@@ -532,24 +540,6 @@ export default function Categories() {
                     setFormData({
                       ...formData,
                       name: e.target.value,
-                    })
-                  }
-                  required
-                />
-              </div>
-
-              <div className="admin-form-group">
-                <label htmlFor="category-slug">Slug</label>
-
-                <input
-                  id="category-slug"
-                  type="text"
-                  placeholder="e.g. electronics"
-                  value={formData.slug}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      slug: e.target.value,
                     })
                   }
                   required
