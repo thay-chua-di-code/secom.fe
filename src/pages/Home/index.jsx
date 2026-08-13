@@ -7,7 +7,7 @@ import RecentlyViewed from "./Product-viewed";
 import FeatureProducts from "./Products/FeatureProducts";
 import LastestProduct from "./Products/LatestProducts";
 import Policy from "./Policy";
-
+import HomeAbout from "./About";
 import SectionDivider from "../../components/layouts/SectionDivider";
 import CompareModal from "../../components/common/CompareModal";
 
@@ -201,6 +201,16 @@ const Home = () => {
           <SectionDivider />
 
           <LastestProduct />
+        </section>
+
+        {/* =================================================
+    ABOUT SECOM
+================================================= */}
+
+        <section className="home-page__section">
+          <SectionDivider />
+
+          <HomeAbout />
         </section>
 
         {/* =================================================
