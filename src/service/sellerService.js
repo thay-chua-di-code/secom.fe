@@ -22,6 +22,21 @@ const getBlobErrorMessage = async (data) => {
   }
 };
 
+const getApiErrorMessage = (error, fallbackMessage) => {
+  const apiMessage =
+    error?.response?.data?.message ||
+    error?.response?.data?.detail ||
+    error?.response?.data?.error ||
+    error?.response?.data?.title ||
+    error?.message;
+
+  if (typeof apiMessage === "string" && apiMessage.trim()) {
+    return apiMessage;
+  }
+
+  return fallbackMessage;
+};
+
 export const sellerService = {
   becomeSeller: async (payload) => {
     try {
@@ -156,7 +171,13 @@ export const sellerService = {
 
       return result.data.data;
     } catch (e) {
-      throw new Error(e?.response?.data?.message || "Delete product failed");
+      const message = getApiErrorMessage(
+        e,
+        "Unable to delete product. Please try again.",
+      );
+      const error = new Error(message);
+      error.response = e?.response;
+      throw error;
     }
   },
 
