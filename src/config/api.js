@@ -21,7 +21,7 @@ export const API_BASE_URL = /\/api$/i.test(configuredApiBaseUrl)
 
 export const NOTIFICATION_HUB_URL = trimTrailingSlash(
   import.meta.env.VITE_SIGNALR_URL,
-) || `${apiOrigin}/notifications`;
+) || `${apiOrigin}/hubs/realtime`;
 
 const defaultChatSocketUrl = `${apiOrigin.replace(/^http/i, "ws")}/chat`;
 

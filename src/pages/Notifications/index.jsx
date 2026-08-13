@@ -5,7 +5,10 @@ import { Bell, CheckCheck } from "lucide-react";
 
 import NotificationItem from "./Item";
 
-import { getNotifications } from "../../redux/slice/notificationSlice";
+import {
+  getNotifications,
+  markAllNotificationsAsRead,
+} from "../../redux/slice/notificationSlice";
 
 import "./style.scss";
 
@@ -49,7 +52,11 @@ export default function NotificationPage() {
             </div>
           </div>
 
-          <button className="notification-page__mark-read-btn">
+          <button
+            className="notification-page__mark-read-btn"
+            onClick={() => dispatch(markAllNotificationsAsRead())}
+            disabled={unreadCount === 0}
+          >
             <CheckCheck size={16} />
 
             <span>Mark all as read</span>
