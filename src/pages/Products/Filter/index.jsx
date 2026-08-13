@@ -1,14 +1,24 @@
 import { Filter as FilterIcon, Tags, Wallet } from "lucide-react";
+
 import { useSelector } from "react-redux";
-import "./style.scss";
+
 import { formatCurrencyVN, truncateText } from "../../../utils/fncUtils";
+
+import "./style.scss";
 
 const sanitizePriceInput = (value) => value.replace(/[^\d]/g, "");
 
 const getFormattedPriceInput = (value) => {
-  if (value === "" || value === null || value === undefined) return "";
+  if (value === "" || value === null || value === undefined) {
+    return "";
+  }
+
   const normalized = sanitizePriceInput(String(value));
-  if (!normalized) return "";
+
+  if (!normalized) {
+    return "";
+  }
+
   return formatCurrencyVN(normalized);
 };
 
@@ -24,15 +34,30 @@ export default function Filter({
 
   return (
     <aside className="filter">
+      {/* HEADER */}
       <div className="filter__header">
-        <FilterIcon size={20} />
-        <h2>Filters</h2>
+        <div className="filter__header-icon">
+          <FilterIcon size={17} />
+        </div>
+
+        <div>
+          <span className="filter__eyebrow">PRODUCT FILTER</span>
+
+          <h2>Filters</h2>
+        </div>
       </div>
 
+      {/* CATEGORY */}
       <div className="filter__section">
         <div className="filter__title">
-          <Tags size={18} />
-          <span>Categories</span>
+          <div className="filter__title-icon">
+            <Tags size={15} />
+          </div>
+
+          <div>
+            <span>Categories</span>
+            <small>Browse by product type</small>
+          </div>
         </div>
 
         <ul className="filter__categories">
@@ -44,8 +69,10 @@ export default function Filter({
                 checked={!categoryFilter}
                 onChange={() => onCategoryChange(null)}
               />
-              <span className="radio"></span>
-              All Products
+
+              <span className="radio" />
+
+              <span className="category-name">All Products</span>
             </label>
           </li>
 
@@ -59,37 +86,63 @@ export default function Filter({
                   onChange={() => onCategoryChange(category.id)}
                 />
 
-                <span className="radio"></span>
+                <span className="radio" />
 
-                {truncateText(category.name, 20)}
+                <span className="category-name">
+                  {truncateText(category.name, 20)}
+                </span>
               </label>
             </li>
           ))}
         </ul>
       </div>
 
-      <div className="filter__section">
+      {/* PRICE */}
+      <div className="filter__section filter__section--price">
         <div className="filter__title">
-          <Wallet size={18} />
-          <span>Price Range</span>
+          <div className="filter__title-icon">
+            <Wallet size={15} />
+          </div>
+
+          <div>
+            <span>Price Range</span>
+
+            <small>Set your budget</small>
+          </div>
         </div>
 
         <div className="price-range">
-          <input
-            type="text"
-            inputMode="numeric"
-            placeholder="Min Price"
-            value={getFormattedPriceInput(minPrice)}
-            onChange={(e) => onMinPriceChange(sanitizePriceInput(e.target.value))}
-          />
+          <div className="price-range__field">
+            <label>Minimum</label>
 
-          <input
-            type="text"
-            inputMode="numeric"
-            placeholder="Max Price"
-            value={getFormattedPriceInput(maxPrice)}
-            onChange={(e) => onMaxPriceChange(sanitizePriceInput(e.target.value))}
-          />
+            <input
+              type="text"
+              inputMode="numeric"
+              placeholder="Min Price"
+              value={getFormattedPriceInput(minPrice)}
+              onChange={(e) =>
+                onMinPriceChange(sanitizePriceInput(e.target.value))
+              }
+            />
+          </div>
+
+          <div className="price-range__divider">
+            <span />
+          </div>
+
+          <div className="price-range__field">
+            <label>Maximum</label>
+
+            <input
+              type="text"
+              inputMode="numeric"
+              placeholder="Max Price"
+              value={getFormattedPriceInput(maxPrice)}
+              onChange={(e) =>
+                onMaxPriceChange(sanitizePriceInput(e.target.value))
+              }
+            />
+          </div>
         </div>
       </div>
     </aside>

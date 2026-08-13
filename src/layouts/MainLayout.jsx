@@ -14,9 +14,6 @@ export default function MainLayout() {
 
   return (
     <div className="main-layout">
-      {/* Header nếu đang render trong Banner thì để comment */}
-      {/* <Header /> */}
-
       <main
         className={`main-layout__content ${
           isHomePage ? "main-layout__content--home" : ""

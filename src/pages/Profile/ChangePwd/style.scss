@@ -1,216 +1,430 @@
-// style.scss
+/* =========================================================
+   CHANGE PASSWORD
+========================================================= */
 
 .change-password {
   width: 100%;
-  background: #ffffff;
-  border-radius: 20px;
-  padding: 32px;
-  box-shadow:
-    0 4px 20px rgba(0, 0, 0, 0.04);
 
-  &__header {
-    border-bottom: 1px solid #e2e8f0;
-    padding-bottom: 20px;
-    margin-bottom: 32px;
+  display: grid;
 
-    h2 {
-      font-size: 28px;
-      font-weight: 700;
-      color: #0f172a;
-      margin-bottom: 6px;
+  grid-template-columns:
+    minmax(220px, 0.72fr)
+    minmax(0, 1fr);
+
+  gap: 28px;
+
+  color: #ffffff;
+
+  /* =====================================================
+     INTRO
+  ===================================================== */
+
+  &__intro {
+    min-width: 0;
+
+    padding: 22px;
+
+    display: flex;
+    align-items: flex-start;
+
+    gap: 13px;
+
+    border: 1px solid rgba(255, 255, 255, 0.065);
+
+    border-radius: 18px;
+
+    background:
+      radial-gradient(circle at 0 0, rgba(77, 134, 255, 0.09), transparent 42%),
+      rgba(255, 255, 255, 0.02);
+
+    height: fit-content;
+  }
+
+  &__intro-icon {
+    width: 42px;
+    height: 42px;
+
+    flex: 0 0 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid rgba(78, 137, 255, 0.14);
+
+    border-radius: 13px;
+
+    background: rgba(75, 132, 255, 0.07);
+
+    color: #7ea6ff;
+  }
+
+  &__eyebrow {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: rgba(255, 255, 255, 0.27);
+
+    font-family: "Roboto Mono", monospace;
+
+    font-size: 8px;
+
+    font-weight: 500;
+
+    letter-spacing: 0.1em;
+  }
+
+  &__intro {
+    h3 {
+      margin: 0;
+
+      color: #ffffff;
+
+      font-size: 16px;
+
+      font-weight: 500;
+
+      line-height: 1.2;
+
+      letter-spacing: -0.4px;
     }
 
     p {
-      font-size: 14px;
-      color: #64748b;
+      margin: 7px 0 0;
+
+      color: rgba(255, 255, 255, 0.31);
+
+      font-size: 9px;
+
+      line-height: 1.6;
     }
   }
+
+  /* =====================================================
+     FORM
+  ===================================================== */
 
   &__form {
+    min-width: 0;
+
     display: flex;
     flex-direction: column;
-    gap: 24px;
-    max-width: 650px;
+
+    gap: 17px;
   }
 
-  .input-group {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+  /* =====================================================
+     GROUP
+  ===================================================== */
 
-    label {
-      font-size: 14px;
-      font-weight: 600;
-      color: #334155;
-    }
-
-    .input-wrapper {
-      display: flex;
-      align-items: center;
-      height: 54px;
-      border: 1px solid #cbd5e1;
-      border-radius: 14px;
-      padding: 0 16px;
-      background: #fff;
-      transition: all 0.25s ease;
-
-      &:focus-within {
-        border-color: #ec2a2a;
-        box-shadow:
-          0 0 0 4px rgba(2, 132, 199, 0.1);
-      }
-
-      svg {
-        color: #94a3b8;
-        flex-shrink: 0;
-      }
-
-      input {
-        flex: 1;
-        height: 100%;
-        border: none;
-        outline: none;
-        background: transparent;
-        padding: 0 14px;
-        font-size: 15px;
-        color: #0f172a;
-
-        &::placeholder {
-          color: #94a3b8;
-        }
-      }
-
-      button {
-        border: none;
-        outline: none;
-        background: transparent;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        svg {
-          transition: 0.2s;
-        }
-
-        &:hover svg {
-          color: #0284c7;
-        }
-      }
-    }
-  }
-
-  .change-password-btn {
+  &__group {
     width: 100%;
-    height: 52px;
-    border: none;
-    border-radius: 14px;
-    background: #e23e3e;
-    color: white;
-    font-size: 15px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: 0.25s ease;
-    margin-top: 8px;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 7px;
+
+    > label {
+      color: rgba(255, 255, 255, 0.55);
+
+      font-size: 9px;
+
+      font-weight: 500;
+
+      line-height: 1.2;
+    }
+
+    > small {
+      color: rgba(255, 255, 255, 0.25);
+
+      font-size: 8px;
+
+      line-height: 1.4;
+    }
+  }
+
+  /* =====================================================
+     INPUT
+  ===================================================== */
+
+  &__input {
+    position: relative;
+
+    width: 100%;
+    height: 49px;
+
+    display: flex;
+    align-items: center;
+
+    border: 1px solid rgba(255, 255, 255, 0.075);
+
+    border-radius: 13px;
+
+    background: rgba(255, 255, 255, 0.032);
+
+    overflow: hidden;
+
+    transition:
+      background 0.2s ease,
+      border-color 0.2s ease,
+      box-shadow 0.2s ease;
 
     &:hover {
-      background: #971c1c;
+      background: rgba(255, 255, 255, 0.045);
+
+      border-color: rgba(255, 255, 255, 0.11);
+    }
+
+    &:focus-within {
+      background: rgba(255, 255, 255, 0.052);
+
+      border-color: rgba(92, 143, 255, 0.44);
+
+      box-shadow: 0 0 0 3px rgba(72, 128, 255, 0.07);
+
+      .change-password__input-icon {
+        color: #82a8ff;
+      }
+    }
+
+    input {
+      flex: 1;
+
+      min-width: 0;
+      height: 100%;
+
+      padding: 0 8px;
+
+      border: 0;
+
+      outline: none;
+
+      background: transparent;
+
+      color: #ffffff;
+
+      font-family: "Inter", sans-serif;
+
+      font-size: 10px;
+
+      font-weight: 400;
+
+      &::placeholder {
+        color: rgba(255, 255, 255, 0.2);
+      }
+
+      &:autofill,
+      &:-webkit-autofill {
+        -webkit-text-fill-color: #ffffff !important;
+
+        -webkit-box-shadow: 0 0 0 1000px #151821 inset !important;
+      }
+    }
+  }
+
+  &__input-icon {
+    width: 42px;
+
+    flex: 0 0 42px;
+
+    color: rgba(255, 255, 255, 0.3);
+
+    transition: color 0.2s ease;
+  }
+
+  /* =====================================================
+     PASSWORD EYE
+  ===================================================== */
+
+  &__toggle {
+    width: 40px;
+    height: 40px;
+
+    flex: 0 0 40px;
+
+    margin-right: 4px;
+
+    padding: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 0;
+
+    border-radius: 50%;
+
+    background: transparent;
+
+    color: rgba(255, 255, 255, 0.32);
+
+    cursor: pointer;
+
+    transition:
+      background 0.2s ease,
+      color 0.2s ease;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.065);
+
+      color: #ffffff;
+    }
+  }
+
+  /* =====================================================
+     FOOTER
+  ===================================================== */
+
+  &__footer {
+    padding-top: 3px;
+
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  /* =====================================================
+     BUTTON
+  ===================================================== */
+
+  .change-password-btn {
+    width: fit-content !important;
+
+    min-width: 158px !important;
+
+    height: 42px !important;
+
+    padding: 0 18px !important;
+
+    border: 1px solid #ffffff !important;
+
+    border-radius: 999px !important;
+
+    background: #ffffff !important;
+
+    color: #090909 !important;
+
+    font-family: "Inter", sans-serif !important;
+
+    font-size: 9px !important;
+
+    font-weight: 600 !important;
+
+    box-shadow: none !important;
+
+    cursor: pointer;
+
+    transition:
+      background 0.2s ease,
+      border-color 0.2s ease,
+      color 0.2s ease,
+      transform 0.2s ease !important;
+
+    &:hover:not(:disabled) {
+      background: #82a8ff !important;
+
+      border-color: #82a8ff !important;
+
+      color: #071020 !important;
+
+      transform: translateY(-1px) !important;
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(0) !important;
     }
 
     &:disabled {
-      opacity: 0.7;
-      cursor: not-allowed;
+      opacity: 0.42 !important;
+
+      cursor: not-allowed !important;
     }
   }
 }
 
-/* =========================
-   RESPONSIVE
-========================= */
+/* =========================================================
+   TABLET
+========================================================= */
 
-@media screen and (max-width: 1024px) {
+@media (max-width: 900px) {
   .change-password {
-    padding: 24px;
+    grid-template-columns: 1fr;
 
-    &__header {
-      h2 {
-        font-size: 24px;
-      }
-    }
-  }
-}
+    gap: 20px;
 
-@media screen and (max-width: 768px) {
-  .change-password {
-    border-radius: 16px;
-    padding: 20px;
-
-    &__header {
-      margin-bottom: 24px;
-
-      h2 {
-        font-size: 22px;
-      }
-
-      p {
-        font-size: 13px;
-      }
+    &__intro {
+      max-width: 520px;
     }
 
     &__form {
-      gap: 20px;
-    }
-
-    .input-group {
-      .input-wrapper {
-        height: 50px;
-        padding: 0 14px;
-
-        input {
-          font-size: 14px;
-        }
-      }
-    }
-
-    .change-password-btn {
-      height: 48px;
-      font-size: 14px;
+      max-width: none;
     }
   }
 }
 
-@media screen and (max-width: 480px) {
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 520px) {
   .change-password {
-    padding: 16px;
+    gap: 16px;
 
-    &__header {
-      padding-bottom: 16px;
+    &__intro {
+      padding: 16px;
 
-      h2 {
-        font-size: 20px;
-      }
+      border-radius: 15px;
     }
 
-    .input-group {
-      gap: 8px;
+    &__intro-icon {
+      width: 38px;
+      height: 38px;
 
-      label {
-        font-size: 13px;
-      }
+      flex-basis: 38px;
+    }
 
-      .input-wrapper {
-        height: 46px;
-        border-radius: 12px;
+    &__form {
+      gap: 14px;
+    }
 
-        input {
-          padding: 0 10px;
-        }
-      }
+    &__input {
+      height: 47px;
+
+      border-radius: 12px;
+    }
+
+    &__input-icon {
+      width: 38px;
+
+      flex-basis: 38px;
+    }
+
+    &__toggle {
+      width: 38px;
+      height: 38px;
+
+      flex-basis: 38px;
+    }
+
+    &__footer {
+      width: 100%;
     }
 
     .change-password-btn {
-      height: 46px;
-      border-radius: 12px;
+      width: 100% !important;
     }
+  }
+}
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .change-password__input,
+  .change-password__toggle,
+  .change-password-btn {
+    transition: none !important;
   }
 }

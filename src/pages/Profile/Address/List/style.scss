@@ -1,189 +1,222 @@
 .address-list {
+  width: 100%;
+
   display: flex;
   flex-direction: column;
-  gap: 28px;
 
-  /* ==========================
-            Header
-  ========================== */
+  gap: 22px;
 
   &__header {
     display: flex;
-    justify-content: flex-end;
-    align-items: center;
+    align-items: flex-end;
+    justify-content: space-between;
 
-    @media (max-width: 768px) {
-      justify-content: stretch;
+    gap: 18px;
 
-      button {
-        width: 100%;
-      }
+    padding-bottom: 18px;
+
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  &__heading {
+    min-width: 0;
+
+    > span {
+      display: block;
+
+      margin-bottom: 7px;
+
+      color: rgba(255, 255, 255, 0.26);
+
+      font-family: "Roboto Mono", monospace;
+
+      font-size: 8px;
+
+      font-weight: 500;
+
+      letter-spacing: 0.1em;
+    }
+
+    h3 {
+      margin: 0;
+
+      color: #ffffff;
+
+      font-size: 18px;
+
+      font-weight: 500;
+
+      letter-spacing: -0.5px;
+    }
+
+    p {
+      margin: 5px 0 0;
+
+      color: rgba(255, 255, 255, 0.32);
+
+      font-size: 10px;
+
+      line-height: 1.55;
     }
   }
 
-  /* ==========================
-            Add Button
-  ========================== */
-
   &__add-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
+    min-width: 150px !important;
+    height: 42px !important;
 
-    height: 48px;
-    padding: 0 22px;
+    padding: 0 16px !important;
 
-    border: none !important;
-    border-radius: 14px;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
 
-    background: linear-gradient(135deg, #ef4444, #db4444) !important;
-    color: #fff !important;
+    gap: 7px !important;
 
-    font-size: 14px;
-    font-weight: 600;
+    border: 1px solid #ffffff !important;
+
+    border-radius: 999px !important;
+
+    background: #ffffff !important;
+
+    color: #090909 !important;
+
+    font-family: inherit !important;
+
+    font-size: 10px !important;
+
+    font-weight: 600 !important;
+
+    box-shadow: none !important;
 
     cursor: pointer;
 
-    transition: all 0.25s ease;
-
-    box-shadow: 0 12px 24px rgba(219, 68, 68, 0.22);
+    transition:
+      background 0.2s ease,
+      border-color 0.2s ease,
+      color 0.2s ease,
+      transform 0.2s ease !important;
 
     svg {
-      transition: 0.25s;
+      transition: transform 0.2s ease;
     }
 
     &:hover {
-      transform: translateY(-2px);
+      background: #82a8ff !important;
 
-      box-shadow: 0 18px 30px rgba(219, 68, 68, 0.35);
+      border-color: #82a8ff !important;
+
+      color: #071020 !important;
+
+      transform: translateY(-1px) !important;
 
       svg {
         transform: rotate(90deg);
       }
     }
-
-    &:active {
-      transform: scale(0.98);
-    }
   }
-
-  /* ==========================
-          Address Content
-  ========================== */
 
   &__content {
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
+    display: grid;
+
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 12px;
   }
 
-  /* ==========================
-          Empty State
-  ========================== */
-
   &__empty {
-    min-height: 340px;
+    min-height: 320px;
+
+    padding: 40px 24px;
 
     display: flex;
     flex-direction: column;
-    justify-content: center;
+
     align-items: center;
+    justify-content: center;
+
+    gap: 9px;
+
+    border: 1px dashed rgba(255, 255, 255, 0.1);
+
+    border-radius: 20px;
+
+    background: rgba(255, 255, 255, 0.018);
 
     text-align: center;
 
-    gap: 20px;
+    &-icon {
+      width: 56px;
+      height: 56px;
 
-    padding: 40px;
+      margin-bottom: 4px;
 
-    background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
 
-    border: 2px dashed #f3b2b2;
-    border-radius: 22px;
+      border: 1px solid rgba(88, 141, 255, 0.15);
 
-    transition: 0.3s;
+      border-radius: 17px;
 
-    &:hover {
-      border-color: #db4444;
-      background: #fffafa;
+      background: rgba(75, 130, 255, 0.07);
+
+      color: #7fa6ff;
     }
 
-    &::before {
-      content: "📍";
-      font-size: 60px;
-      line-height: 1;
+    h3 {
+      margin: 0;
+
+      color: #ffffff;
+
+      font-size: 16px;
+
+      font-weight: 500;
+
+      letter-spacing: -0.4px;
     }
 
     p {
-      max-width: 320px;
+      max-width: 340px;
 
-      color: #64748b;
+      margin: 0;
 
-      font-size: 15px;
+      color: rgba(255, 255, 255, 0.32);
 
-      line-height: 1.8;
+      font-size: 10px;
+
+      line-height: 1.6;
     }
 
     .address-list__add-btn {
-      margin-top: 4px;
+      margin-top: 10px;
     }
   }
 }
 
-/* ==========================
-        Responsive
-========================== */
-
-@media (max-width: 992px) {
+@media (max-width: 900px) {
   .address-list {
-    gap: 22px;
-
     &__content {
-      gap: 16px;
+      grid-template-columns: 1fr;
     }
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 640px) {
   .address-list {
-    &__empty {
-      min-height: 260px;
+    &__header {
+      align-items: stretch;
 
-      padding: 30px 20px;
-
-      &::before {
-        font-size: 52px;
-      }
-
-      p {
-        font-size: 14px;
-      }
+      flex-direction: column;
     }
 
     &__add-btn {
-      width: 100%;
-      height: 50px;
-      border-radius: 12px;
+      width: 100% !important;
     }
-  }
-}
-
-@media (max-width: 480px) {
-  .address-list {
-    gap: 18px;
 
     &__empty {
-      min-height: 220px;
+      min-height: 270px;
 
-      border-radius: 18px;
-
-      p {
-        font-size: 13px;
-      }
-
-      &::before {
-        font-size: 46px;
-      }
+      padding: 30px 18px;
     }
   }
 }

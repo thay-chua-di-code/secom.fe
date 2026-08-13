@@ -23,36 +23,48 @@ const getApiErrorMessage = (error) =>
   error?.message ||
   "Cannot update wishlist. Please try again.";
 
-export default function Card({ product }) {
+export default function Card({ product, index = 0 }) {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const cartItems = useSelector((state) => {
     const items = state.cart.items;
-
     return Array.isArray(items) ? items : [];
   });
+
   const wishlist = useSelector((state) => {
     const items = state.user.wishlist?.items ?? state.user.wishlist;
-
     return Array.isArray(items) ? items : [];
   });
+
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
-  const navigate = useNavigate();
+
   const [wishlistLoading, setWishlistLoading] = useState(false);
+
   const { toggle, isCompared } = useCompare();
+
+  const productId = product.id || product.productId;
   const productImage =
     product.primaryImageUrl || product.images?.[0] || placeholderImage;
-  const productId = product.id || product.productId;
+
   const compared = isCompared(productId);
+
   const isWishlisted = useMemo(
     () =>
       (wishlist ?? []).some(
         (wishlistItem) =>
-          String(wishlistItem.productId) === String(product.id) ||
-          String(wishlistItem.id) === String(product.id) ||
-          String(wishlistItem.product?.id) === String(product.id),
+          String(wishlistItem.productId) === String(productId) ||
+          String(wishlistItem.id) === String(productId) ||
+          String(wishlistItem.product?.id) === String(productId),
       ),
-    [product.id, wishlist],
+    [wishlist, productId],
   );
+
+  const subtitle =
+    product.shortDescription ||
+    product.description ||
+    product.categoryName ||
+    "Smart shopping, selected for you.";
 
   const handleAddToCart = (e) => {
     e.preventDefault();
@@ -64,7 +76,7 @@ export default function Card({ product }) {
     }
 
     const existingItem = (cartItems ?? []).find(
-      (item) => String(item.productId) === String(product.id),
+      (item) => String(item.productId) === String(productId),
     );
 
     if (existingItem) {
@@ -77,7 +89,7 @@ export default function Card({ product }) {
     } else {
       dispatch(
         addCartItem({
-          productId: product.id,
+          productId,
           quantity: 1,
         }),
       );
@@ -94,18 +106,16 @@ export default function Card({ product }) {
       return;
     }
 
-    if (wishlistLoading) {
-      return;
-    }
+    if (wishlistLoading) return;
 
     try {
       setWishlistLoading(true);
 
       if (isWishlisted) {
-        await dispatch(deleteWishlistThunk(product.id)).unwrap();
+        await dispatch(deleteWishlistThunk(productId)).unwrap();
         toast.success("Removed from wishlist");
       } else {
-        await dispatch(addWishlistThunk(product.id)).unwrap();
+        await dispatch(addWishlistThunk(productId)).unwrap();
         toast.success("Added to wishlist");
       }
     } catch (error) {
@@ -126,7 +136,7 @@ export default function Card({ product }) {
 
     try {
       const existingItem = (cartItems ?? []).find(
-        (item) => String(item.productId) === String(product.id),
+        (item) => String(item.productId) === String(productId),
       );
 
       if (existingItem) {
@@ -139,7 +149,7 @@ export default function Card({ product }) {
       } else {
         await dispatch(
           addCartItem({
-            productId: product.id,
+            productId,
             quantity: 1,
           }),
         ).unwrap();
@@ -147,7 +157,7 @@ export default function Card({ product }) {
 
       navigate("/cart", {
         state: {
-          autoSelectProductId: product.id,
+          autoSelectProductId: productId,
         },
       });
     } catch {
@@ -168,7 +178,11 @@ export default function Card({ product }) {
   };
 
   return (
-    <div className="product-card" data-testid="product-card">
+    <article
+      className="product-card"
+      data-testid="product-card"
+      style={{ "--card-index": index }}
+    >
       <div className="product-card__image-wrapper">
         {product.isNew && <span className="product-card__badge">NEW</span>}
 
@@ -208,9 +222,7 @@ export default function Card({ product }) {
           src={productImage}
           alt={product.name}
           className="product-card__image"
-          onClick={() => {
-            navigate(`/product-detail/${productId}`);
-          }}
+          onClick={() => navigate(`/product-detail/${productId}`)}
         />
 
         <div className="product-card__buttons">
@@ -231,17 +243,22 @@ export default function Card({ product }) {
       <div className="product-card__content">
         <h3>{product.name}</h3>
 
+        <p className="product-card__subtitle">{subtitle}</p>
+
         <div className="product-card__price-rating">
-          <span className="price">{formatCurrencyVN(product.price)}</span>
+          <div className="product-card__price-box">
+            <span className="product-card__price-label">Price</span>
+            <span className="price">{formatCurrencyVN(product.price)}</span>
+          </div>
 
           <div className="rating">
             {[...Array(5)].map((_, i) => (
-              <Star key={i} size={14} fill="currentColor" />
+              <Star key={i} size={13} fill="currentColor" />
             ))}
             <span>({product.review || 0})</span>
           </div>
         </div>
       </div>
-    </div>
+    </article>
   );
 }

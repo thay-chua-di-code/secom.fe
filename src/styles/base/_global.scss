@@ -1,8 +1,15 @@
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto+Mono:wght@400;500;600&display=swap");
+
+/* =========================================================
+   CONTAINER
+========================================================= */
+
 .container-custom {
   width: 100%;
   max-width: 1500px;
+
   margin-inline: auto;
+
   padding-inline: 24px;
 }
 
@@ -29,29 +36,91 @@
     padding-inline: 12px;
   }
 }
+
+/* =========================================================
+   RESET
+========================================================= */
+
 * {
   margin: 0;
   padding: 0;
+
   box-sizing: border-box;
 }
 
+html {
+  font-family:
+    "Inter",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+  text-rendering: optimizeLegibility;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 body {
-  font-family: "Poppins", sans-serif;
+  min-width: 320px;
+
+  margin: 0;
+
+  font-family:
+    "Inter",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
   font-size: 14px;
   font-weight: 400;
+
+  line-height: 1.5;
+
+  letter-spacing: -0.01em;
+
+  color: #ffffff;
+
+  background: #050505;
 
   input:-webkit-autofill,
   input:-webkit-autofill:hover,
   input:-webkit-autofill:focus,
   input:-webkit-autofill:active {
-    -webkit-box-shadow: none !important;
+    -webkit-box-shadow: 0 0 0 1000px transparent inset !important;
 
-    -webkit-text-fill-color: none !important;
+    -webkit-text-fill-color: inherit !important;
+
+    transition: background-color 9999s ease-in-out 0s;
   }
 }
 
-body {
+/* =========================================================
+   FORM ELEMENTS
+========================================================= */
+
+button,
+input,
+textarea,
+select {
+  font-family: inherit;
 }
+
+button {
+  font: inherit;
+}
+
+input,
+textarea,
+select {
+  font-size: inherit;
+}
+
+/* =========================================================
+   TYPOGRAPHY
+========================================================= */
 
 h1,
 h2,
@@ -59,49 +128,165 @@ h3,
 h4,
 h5,
 h6 {
-  font-weight: 500;
+  margin: 0;
+
+  font-family:
+    "Inter",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+  font-weight: 400;
+
+  line-height: 1.05;
+
+  letter-spacing: -0.035em;
 }
+
+p {
+  margin: 0;
+}
+
+/* =========================================================
+   MONO / EYEBROW
+   Dùng cho:
+   DISCOVER
+   OUR PRODUCTS
+   AI SMART PICKS
+   AIDR INTELLIGENCE
+========================================================= */
+
+.font-mono,
+.eyebrow,
+.section-eyebrow {
+  font-family: "Roboto Mono", "SFMono-Regular", Consolas, monospace;
+
+  font-size: 11px;
+
+  font-weight: 500;
+
+  letter-spacing: 0.08em;
+
+  text-transform: uppercase;
+}
+
+/* =========================================================
+   LINKS
+========================================================= */
+
+a {
+  color: inherit;
+
+  text-decoration: none;
+}
+
+/* =========================================================
+   MEDIA
+========================================================= */
+
+img,
+video {
+  max-width: 100%;
+}
+
+/* =========================================================
+   FLEX UTILITIES
+========================================================= */
 
 .flex-g {
   display: flex;
+
   gap: 16px;
 }
 
 .flex-col-g {
   display: flex;
   flex-direction: column;
+
   gap: 5px;
 }
 
 .flex-col-g-center {
   display: flex;
   flex-direction: column;
+
   align-items: center;
   justify-content: center;
+
   gap: 16px;
-}
-.m-t-b-10 {
-  margin-top: 10px;
-  margin-bottom: 10px;
 }
 
 .flex-row-g {
   display: flex;
   flex-direction: row;
+
   gap: 16px;
 }
 
 .flex-row-center-g {
   display: flex;
   flex-direction: row;
+
   align-items: center;
   justify-content: center;
+
   gap: 16px;
 }
 
 .flex-col-start {
   display: flex;
   flex-direction: column;
+
   align-items: flex-start;
+
   gap: 16px;
+}
+
+/* =========================================================
+   SPACING UTILITIES
+========================================================= */
+
+.m-t-b-10 {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+/* =========================================================
+   SELECTION
+========================================================= */
+
+::selection {
+  background: rgba(11, 115, 239, 0.35);
+
+  color: #ffffff;
+}
+
+/* =========================================================
+   SCROLLBAR
+========================================================= */
+
+html {
+  scrollbar-width: thin;
+
+  scrollbar-color: rgba(255, 255, 255, 0.2) #050505;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #050505;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.16);
+
+  border-radius: 999px;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.26);
+  }
 }

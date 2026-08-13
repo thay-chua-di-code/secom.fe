@@ -1,7 +1,5 @@
 import {
   Bell,
-  ClipboardList,
-  Coins,
   CreditCard,
   Lock,
   MapPin,
@@ -10,20 +8,25 @@ import {
   User,
   UserRoundCheck,
 } from "lucide-react";
+
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import toast from "react-hot-toast";
+
 import { userService } from "../../service/userService";
 import { getMyInfoThunk } from "../../redux/slice/userSlice";
 import { uploadImageToCloudinary } from "../../utils/uploadImgCloud";
-import toast from "react-hot-toast";
+
 import ChangePassword from "./ChangePwd";
 import OrderHistory from "./Order";
-import Button from "../../components/common/Button/Button";
-import "./style.scss";
 import AddressList from "./Address/List";
 import VoucherList from "./Voucher";
 import NotificationList from "./Notification";
 import Follow from "./Follows";
+
+import Button from "../../components/common/Button/Button";
+
+import "./style.scss";
 
 const menus = [
   {
@@ -41,17 +44,16 @@ const menus = [
     icon: <MapPin size={18} />,
     key: "address",
   },
-
   {
     title: "Change Password",
     icon: <Lock size={18} />,
     key: "password",
   },
-  {
-    title: "Notification",
-    icon: <Bell size={18} />,
-    key: "notification",
-  },
+  // {
+  //   title: "Notification",
+  //   icon: <Bell size={18} />,
+  //   key: "notification",
+  // },
   {
     title: "Voucher",
     icon: <Ticket size={18} />,
@@ -69,10 +71,15 @@ const defaultAvatar =
 
 const ProfilePage = () => {
   const dispatch = useDispatch();
+
   const userInfo = useSelector((state) => state.user.userInfo);
+
   const [activeMenu, setActiveMenu] = useState("profile");
+
   const [loading, setLoading] = useState(false);
+
   const [previewAvatar, setPreviewAvatar] = useState(defaultAvatar);
+
   const [editProfile, setEditProfile] = useState({
     fullName: "",
     phoneNumber: "",
@@ -81,16 +88,16 @@ const ProfilePage = () => {
   });
 
   useEffect(() => {
-    if (userInfo) {
-      setEditProfile({
-        fullName: userInfo.fullName || "",
-        phoneNumber: userInfo.phoneNumber || "",
-        avatarUrl: userInfo.avatarUrl || "",
-        avatarFile: null,
-      });
+    if (!userInfo) return;
 
-      setPreviewAvatar(userInfo.avatarUrl || defaultAvatar);
-    }
+    setEditProfile({
+      fullName: userInfo.fullName || "",
+      phoneNumber: userInfo.phoneNumber || "",
+      avatarUrl: userInfo.avatarUrl || "",
+      avatarFile: null,
+    });
+
+    setPreviewAvatar(userInfo.avatarUrl || defaultAvatar);
   }, [userInfo]);
 
   const handleChange = (e) => {
@@ -108,14 +115,12 @@ const ProfilePage = () => {
     if (!file) return;
 
     if (!file.type.startsWith("image/")) {
-      toast.warn("Please select image file");
-
+      toast.error("Please select image file");
       return;
     }
 
     if (file.size > 1024 * 1024) {
-      toast.warn("Avatar size must be less than 1MB");
-
+      toast.error("Avatar size must be less than 1MB");
       return;
     }
 
@@ -130,8 +135,7 @@ const ProfilePage = () => {
   const handleSaveProfile = async () => {
     try {
       if (!editProfile.fullName.trim()) {
-        toast.warn("Full name is required");
-
+        toast.error("Full name is required");
         return;
       }
 
@@ -153,7 +157,7 @@ const ProfilePage = () => {
 
       await dispatch(getMyInfoThunk());
 
-      setPreviewAvatar(avatarUrl);
+      setPreviewAvatar(avatarUrl || defaultAvatar);
 
       setEditProfile((prev) => ({
         ...prev,
@@ -163,78 +167,131 @@ const ProfilePage = () => {
 
       toast.success("Profile updated successfully");
     } catch (error) {
+      console.error(error);
+
       toast.error("Update profile failed");
     } finally {
       setLoading(false);
     }
   };
 
+  const getActiveMenuTitle = () =>
+    menus.find((item) => item.key === activeMenu)?.title || "";
+
+  const renderProfile = () => (
+    <div className="profile-card">
+      <div className="profile-card__header">
+        <div className="profile-card__heading">
+          <span className="profile-tag">PERSONAL INFORMATION</span>
+
+          <h2>My Profile</h2>
+
+          <p>
+            Update your personal information and manage your account settings.
+          </p>
+        </div>
+      </div>
+
+      <div className="profile-card__body">
+        <div className="profile-form">
+          {/* LEFT */}
+          <div className="profile-form__left">
+            <div className="profile-form__section-heading">
+              <span>ACCOUNT DETAILS</span>
+              <h3>Personal information</h3>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="profile-full-name">Full Name</label>
+
+              <input
+                id="profile-full-name"
+                type="text"
+                name="fullName"
+                placeholder="Enter your full name"
+                value={editProfile.fullName}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="profile-email">Email</label>
+
+              <input
+                id="profile-email"
+                type="text"
+                disabled
+                value={userInfo?.email || ""}
+              />
+
+              <small className="form-group__hint">
+                Your email address cannot be changed here.
+              </small>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="profile-phone">Phone Number</label>
+
+              <input
+                id="profile-phone"
+                type="text"
+                name="phoneNumber"
+                placeholder="Enter your phone number"
+                value={editProfile.phoneNumber}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="profile-form__actions">
+              <Button
+                className="save-btn"
+                disabled={loading}
+                onClick={handleSaveProfile}
+              >
+                {loading ? "Saving..." : "Save Changes"}
+              </Button>
+            </div>
+          </div>
+
+          {/* RIGHT */}
+          <div className="profile-form__right">
+            <span className="profile-form__avatar-label">PROFILE PHOTO</span>
+
+            <div className="avatar-preview">
+              <img src={previewAvatar} alt="avatar" />
+            </div>
+
+            <h4>{userInfo?.fullName || "Your profile"}</h4>
+
+            <p className="profile-form__avatar-description">
+              Upload a clear photo so your account is easier to recognize.
+            </p>
+
+            <label className="upload-btn">
+              Change Avatar
+              <input
+                hidden
+                type="file"
+                accept="image/*"
+                onChange={handleUploadAvatar}
+              />
+            </label>
+
+            <small>
+              JPG, JPEG or PNG
+              <br />
+              Maximum file size: 1MB
+            </small>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
   const renderContent = () => {
     switch (activeMenu) {
       case "profile":
-        return (
-          <div className="profile-content">
-            <div className="content-header">
-              <h2>My Profile</h2>
-
-              <p>Manage your profile information to secure your account.</p>
-            </div>
-
-            <div className="profile-form">
-              <div className="form-left">
-                <div className="form-group">
-                  <label>Full Name</label>
-
-                  <input
-                    type="text"
-                    name="fullName"
-                    placeholder="Enter your full name"
-                    value={editProfile.fullName}
-                    onChange={handleChange}
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label>Phone Number</label>
-
-                  <input
-                    type="text"
-                    name="phoneNumber"
-                    placeholder="Enter your phone number"
-                    value={editProfile.phoneNumber}
-                    onChange={handleChange}
-                  />
-                </div>
-
-                <Button
-                  className="save-btn"
-                  onClick={handleSaveProfile}
-                  disabled={loading}
-                >
-                  {loading ? "Saving..." : "Save"}
-                </Button>
-              </div>
-
-              <div className="form-right">
-                <img src={previewAvatar} alt="avatar" className="user-avatar" />
-
-                <label className="upload-btn">
-                  Choose Image
-                  <input
-                    type="file"
-                    hidden
-                    accept="image/*"
-                    onChange={handleUploadAvatar}
-                  />
-                </label>
-
-                <span>Maximum file size: 1 MB</span>
-
-                <span>Format: .JPEG, .PNG</span>
-              </div>
-            </div>
-          </div>
-        );
+        return renderProfile();
 
       case "order":
         return <OrderHistory />;
@@ -242,16 +299,12 @@ const ProfilePage = () => {
       case "address":
         return (
           <div className="content-box">
-            <h2>Addresses</h2>
             <AddressList />
           </div>
         );
 
       case "password":
         return <ChangePassword />;
-
-      case "notification":
-        return <NotificationList />;
 
       case "voucher":
         return <VoucherList />;
@@ -268,39 +321,49 @@ const ProfilePage = () => {
     <div className="profile-page">
       <div className="container-custom">
         <div className="profile-layout">
-          {/* Sidebar */}
+          {/* ========================================
+              SIDEBAR
+          ======================================== */}
+
           <aside className="profile-sidebar">
             <div className="profile-sidebar__card">
-              <div className="profile-sidebar__cover" />
+              <div className="profile-sidebar__cover">
+                <span className="profile-sidebar__eyebrow">AIDR ACCOUNT</span>
+              </div>
 
               <div className="profile-sidebar__user">
                 <div className="avatar-wrapper">
                   <img
                     src={userInfo?.avatarUrl || defaultAvatar}
-                    alt="avatar"
+                    alt={userInfo?.fullName || "avatar"}
                     className="user-avatar"
                   />
                 </div>
 
                 <h3>{userInfo?.fullName || "User"}</h3>
 
-                <p>{userInfo?.email}</p>
+                <p>{userInfo?.email || "AIDR member"}</p>
 
                 <button
+                  type="button"
                   className="edit-profile-btn"
                   onClick={() => setActiveMenu("profile")}
                 >
-                  <Settings size={16} />
-                  Edit Profile
+                  <Settings size={15} />
+
+                  <span>Edit Profile</span>
                 </button>
               </div>
 
               <div className="profile-sidebar__divider" />
 
               <div className="profile-sidebar__menu">
+                <span className="profile-sidebar__menu-label">ACCOUNT</span>
+
                 {menus.map((item) => (
                   <button
                     key={item.key}
+                    type="button"
                     onClick={() => setActiveMenu(item.key)}
                     className={`menu-item ${
                       activeMenu === item.key ? "active" : ""
@@ -308,104 +371,30 @@ const ProfilePage = () => {
                   >
                     <span className="menu-icon">{item.icon}</span>
 
-                    <span>{item.title}</span>
+                    <span className="menu-text">{item.title}</span>
                   </button>
                 ))}
               </div>
             </div>
           </aside>
 
-          {/* Main */}
+          {/* ========================================
+              MAIN
+          ======================================== */}
+
           <main className="profile-main">
             {activeMenu === "profile" ? (
-              <div className="profile-card">
-                <div className="profile-card__header">
-                  <div>
-                    <span className="profile-tag">Personal Information</span>
-
-                    <h2>My Profile</h2>
-
-                    <p>
-                      Update your personal information and manage your account
-                      settings.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="profile-card__body">
-                  <div className="profile-form">
-                    <div className="profile-form__left">
-                      <div className="form-group">
-                        <label>Full Name</label>
-
-                        <input
-                          type="text"
-                          name="fullName"
-                          placeholder="Enter your full name"
-                          value={editProfile.fullName}
-                          onChange={handleChange}
-                        />
-                      </div>
-
-                      <div className="form-group">
-                        <label>Email</label>
-
-                        <input
-                          type="text"
-                          disabled
-                          value={userInfo?.email || ""}
-                        />
-                      </div>
-
-                      <div className="form-group">
-                        <label>Phone Number</label>
-
-                        <input
-                          type="text"
-                          name="phoneNumber"
-                          placeholder="Enter your phone number"
-                          value={editProfile.phoneNumber}
-                          onChange={handleChange}
-                        />
-                      </div>
-
-                      <Button
-                        className="save-btn"
-                        disabled={loading}
-                        onClick={handleSaveProfile}
-                      >
-                        {loading ? "Saving..." : "Save Changes"}
-                      </Button>
-                    </div>
-
-                    <div className="profile-form__right">
-                      <div className="avatar-preview">
-                        <img src={previewAvatar} alt="avatar" />
-                      </div>
-
-                      <label className="upload-btn">
-                        Change Avatar
-                        <input
-                          hidden
-                          type="file"
-                          accept="image/*"
-                          onChange={handleUploadAvatar}
-                        />
-                      </label>
-
-                      <small>
-                        JPG, PNG, JPEG
-                        <br />
-                        Maximum size 1MB
-                      </small>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              renderProfile()
             ) : (
-              <div className="profile-content-card">
+              <div className="profile-content-card" key={activeMenu}>
                 <div className="profile-content-card__header">
-                  <h2>{menus.find((x) => x.key === activeMenu)?.title}</h2>
+                  <div>
+                    <span className="profile-tag">ACCOUNT SETTINGS</span>
+
+                    <h2>{getActiveMenuTitle()}</h2>
+
+                    <p>Manage your account preferences and information.</p>
+                  </div>
                 </div>
 
                 <div className="profile-content-card__body">

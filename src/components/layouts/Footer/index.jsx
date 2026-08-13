@@ -1,135 +1,168 @@
 import {
   FaFacebookF,
-  FaTwitter,
   FaInstagram,
   FaLinkedinIn,
-} from "react-icons/fa";
-import { Send } from "lucide-react";
+  FaXTwitter,
+} from "react-icons/fa6";
+import { ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
 
 import "./style.scss";
 
 export default function Footer() {
   return (
-    <footer className="footer" style={{ background: "black" }}>
-      <div className="container-custom">
-        <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-5">
-          {/* Exclusive */}
-          <div>
-            <h3 className="footer__title">AIDR</h3>
-
-            <h4 className="footer__subtitle">Subscribe</h4>
-
-            <p className="footer__text">Get 10% off your first order</p>
-
-            <div className="footer__subscribe">
-              <input type="email" placeholder="Enter your email" />
-              <button>
-                <Send size={18} />
-              </button>
-            </div>
-          </div>
-
-          {/* Support */}
-          <div>
-            <h3 className="footer__title">Support</h3>
-
-            <ul className="footer__list">
-              <li>Hai Chau, Da Nang, Vietnam</li>
-              <li>secom@gmail.com</li>
-              <li>+84905120975</li>
-            </ul>
-          </div>
-
-          {/* Account */}
-          <div>
-            <h3 className="footer__title">Account</h3>
+    <footer className="footer">
+      <div className="footer__container">
+        {/* ========================================
+            TOP
+        ======================================== */}
+        <div className="footer__top">
+          {/* PRODUCTS */}
+          <div className="footer__column">
+            <h3 className="footer__title">Products</h3>
 
             <ul className="footer__links">
               <li>
-                <a href="/">My Account</a>
+                <Link to="/products">All products</Link>
               </li>
+
               <li>
-                <a href="/">Login / Register</a>
+                <Link to="/products">Featured products</Link>
               </li>
+
               <li>
-                <a href="/">Cart</a>
+                <Link to="/products">Latest products</Link>
               </li>
+
               <li>
-                <a href="/">Wishlist</a>
+                <Link to="/products">AI recommendations</Link>
               </li>
+
               <li>
-                <a href="/">Shop</a>
+                <Link to="/products">Compare products</Link>
               </li>
             </ul>
           </div>
 
-          {/* Quick Link */}
-          <div>
-            <h3 className="footer__title">Quick Link</h3>
+          {/* COMPANY */}
+          <div className="footer__column">
+            <h3 className="footer__title">Company</h3>
 
             <ul className="footer__links">
               <li>
-                <a href="/">Privacy Policy</a>
+                <Link to="/">About us</Link>
               </li>
+
               <li>
-                <a href="/">Terms Of Use</a>
+                <Link to="/">Customers</Link>
               </li>
+
               <li>
-                <a href="/">FAQ</a>
+                <Link to="/">Seller channel</Link>
               </li>
+
               <li>
-                <a href="/">Contact</a>
+                <Link to="/">Newsroom</Link>
+              </li>
+
+              <li>
+                <Link to="/">Contact</Link>
               </li>
             </ul>
           </div>
 
-          {/* Download App */}
-          <div>
-            <h3 className="footer__title">Download App</h3>
+          {/* SOLUTIONS */}
+          <div className="footer__column">
+            <h3 className="footer__title">Solutions</h3>
 
-            <p className="footer__small">Save $3 with App New User Only</p>
+            <ul className="footer__links">
+              <li>
+                <Link to="/">For customers</Link>
+              </li>
 
-            <div className="footer__download">
-              <img
-                src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=ShopeeClone"
-                alt="QR"
+              <li>
+                <Link to="/">For sellers</Link>
+              </li>
+
+              <li>
+                <Link to="/">AI shopping</Link>
+              </li>
+
+              <li>
+                <Link to="/">Smart discovery</Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* SUBSCRIBE */}
+          <div className="footer__newsletter">
+            <h3 className="footer__newsletter-title">
+              Sign up for email updates
+            </h3>
+
+            <p>Keep up with AIDR news, product updates and new features.</p>
+
+            <form
+              className="footer__subscribe"
+              onSubmit={(e) => e.preventDefault()}
+            >
+              <input
+                type="email"
+                placeholder="Email address"
+                aria-label="Email address"
               />
 
-              <div className="footer__stores">
-                <img
-                  src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg"
-                  alt="Google Play"
-                />
-
-                <img
-                  src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg"
-                  alt="App Store"
-                />
-              </div>
-            </div>
-
-            <div className="footer__social">
-              <a href="/">
-                <FaFacebookF size={18} />
-              </a>
-
-              <a href="/">
-                <FaTwitter size={18} />
-              </a>
-
-              <a href="/">
-                <FaInstagram size={18} />
-              </a>
-
-              <a href="/">
-                <FaLinkedinIn size={18} />
-              </a>
-            </div>
+              <button type="submit" aria-label="Subscribe">
+                <span>Subscribe</span>
+                <ArrowRight size={15} />
+              </button>
+            </form>
           </div>
         </div>
 
+        {/* ========================================
+            BOTTOM
+        ======================================== */}
         <div className="footer__bottom">
-          © Copyright Secom 2026. All rights reserved
+          <div className="footer__legal">
+            <span>© 2026 AIDR. All rights reserved.</span>
+
+            <Link to="/">Privacy policy</Link>
+
+            <Link to="/">Terms of use</Link>
+
+            <Link to="/">Contact</Link>
+          </div>
+
+          <div className="footer__social">
+            <a
+              href="/"
+              aria-label="Facebook"
+              onClick={(e) => e.preventDefault()}
+            >
+              <FaFacebookF />
+            </a>
+
+            <a href="/" aria-label="X" onClick={(e) => e.preventDefault()}>
+              <FaXTwitter />
+            </a>
+
+            <a
+              href="/"
+              aria-label="Instagram"
+              onClick={(e) => e.preventDefault()}
+            >
+              <FaInstagram />
+            </a>
+
+            <a
+              href="/"
+              aria-label="LinkedIn"
+              onClick={(e) => e.preventDefault()}
+            >
+              <FaLinkedinIn />
+            </a>
+          </div>
         </div>
       </div>
     </footer>

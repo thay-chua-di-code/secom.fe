@@ -1,208 +1,430 @@
-.policy-container {
+/* =========================================================
+   POLICY SECTION
+========================================================= */
+
+.policy-section {
   position: relative;
-  width: 100%;
-  padding: 90px 0;
+
+  width: 100vw;
+
+  margin-left: calc(50% - 50vw);
+
+  padding: 96px 0 105px;
+
   overflow: hidden;
 
-  &::before {
-    content: "";
-    position: absolute;
-    inset: 0;
+  background: #050505;
 
-    background:
-      radial-gradient(
-        circle at top left,
-        rgba(219, 68, 68, 0.06),
-        transparent 35%
-      ),
-      radial-gradient(
-        circle at bottom right,
-        rgba(219, 68, 68, 0.05),
-        transparent 40%
-      );
-    pointer-events: none;
-  }
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 
-  .policy-main-content {
-    position: relative;
-    z-index: 2;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 28px;
+  /* =====================================================
+     TITLE
+  ===================================================== */
 
-    max-width: 1200px;
-    margin: auto;
-  }
+  &__heading {
+    width: min(760px, calc(100% - 40px));
 
-  .policy-card {
-    position: relative;
-
-    padding: 42px 28px;
-
-    background: rgba(255, 255, 255, 0.95);
-
-    border: 1px solid #f1f1f1;
-    border-radius: 28px;
+    margin: 0 auto 58px;
 
     text-align: center;
 
-    overflow: hidden;
+    span {
+      display: block;
 
-    transition: all 0.35s ease;
+      margin-bottom: 16px;
 
-    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+      color: #7b8798;
 
-    &::before {
-      content: "";
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
 
-      position: absolute;
-      inset: 0;
+      font-size: 11px;
+      font-weight: 600;
+
+      line-height: 1;
+
+      letter-spacing: 1px;
+
+      text-transform: uppercase;
+    }
+
+    h2 {
+      margin: 0;
+
+      color: #ffffff;
+
+      font-size: clamp(34px, 3.5vw, 52px);
+      font-weight: 400;
+
+      line-height: 1.03;
+
+      letter-spacing: -2.5px;
+    }
+  }
+}
+
+/* =========================================================
+   MARQUEE
+========================================================= */
+
+.policy-marquee {
+  position: relative;
+
+  width: 100%;
+
+  overflow: hidden;
+
+  /*
+    Hover vào khu vực thì dừng chạy để đọc
+  */
+  &:hover {
+    .policy-marquee__track {
+      animation-play-state: paused;
+    }
+  }
+
+  /* =====================================================
+     EDGE FADE
+  ===================================================== */
+
+  &__fade {
+    position: absolute;
+
+    top: 0;
+    bottom: 0;
+
+    z-index: 5;
+
+    width: 130px;
+
+    pointer-events: none;
+
+    &--left {
+      left: 0;
 
       background: linear-gradient(
-        135deg,
-        rgba(219, 68, 68, 0.08),
-        transparent 65%
+        90deg,
+        #050505 0%,
+        rgba(5, 5, 5, 0.92) 35%,
+        transparent 100%
       );
-
-      opacity: 0;
-
-      transition: 0.35s;
     }
 
-    &:hover {
-      transform: translateY(-10px);
+    &--right {
+      right: 0;
 
-      border-color: rgba(219, 68, 68, 0.25);
+      background: linear-gradient(
+        270deg,
+        #050505 0%,
+        rgba(5, 5, 5, 0.92) 35%,
+        transparent 100%
+      );
+    }
+  }
 
-      box-shadow: 0 22px 45px rgba(15, 23, 42, 0.12);
+  /* =====================================================
+     TRACK
+  ===================================================== */
 
-      &::before {
-        opacity: 1;
+  &__track {
+    width: max-content;
+
+    display: flex;
+    align-items: stretch;
+
+    gap: 16px;
+
+    padding: 0 8px;
+
+    animation: policyMarquee 34s linear infinite;
+
+    will-change: transform;
+  }
+}
+
+/* =========================================================
+   POLICY CARD
+========================================================= */
+
+.policy-card {
+  width: 320px;
+  min-width: 320px;
+
+  min-height: 128px;
+
+  padding: 23px 24px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 17px;
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  border-radius: 22px;
+
+  background: rgba(255, 255, 255, 0.035);
+
+  color: #ffffff;
+
+  transition:
+    background 0.25s ease,
+    border-color 0.25s ease,
+    transform 0.25s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+
+    background: rgba(255, 255, 255, 0.07);
+
+    border-color: rgba(255, 255, 255, 0.14);
+
+    .policy-card__icon {
+      background: #ffffff;
+
+      color: #080808;
+
+      transform: scale(1.04);
+    }
+  }
+
+  /* =====================================================
+     ICON
+  ===================================================== */
+
+  &__icon {
+    width: 48px;
+    height: 48px;
+
+    flex: 0 0 48px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid rgba(255, 255, 255, 0.1);
+
+    border-radius: 15px;
+
+    background: rgba(255, 255, 255, 0.06);
+
+    color: #75a7ff;
+
+    transition:
+      background 0.25s ease,
+      color 0.25s ease,
+      transform 0.25s ease;
+  }
+
+  /* =====================================================
+     CONTENT
+  ===================================================== */
+
+  &__content {
+    min-width: 0;
+
+    h3 {
+      margin: 0 0 7px;
+
+      color: #ffffff;
+
+      font-size: 16px;
+      font-weight: 500;
+
+      line-height: 1.2;
+
+      letter-spacing: -0.35px;
+    }
+
+    p {
+      margin: 0;
+
+      color: rgba(255, 255, 255, 0.46);
+
+      font-size: 12px;
+
+      line-height: 1.5;
+    }
+  }
+}
+
+/* =========================================================
+   ANIMATION
+========================================================= */
+
+@keyframes policyMarquee {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    /*
+      Vì array nhân đôi nên dịch khoảng 1/2 track
+      để loop liền mạch.
+    */
+    transform: translateX(-50%);
+  }
+}
+
+/* =========================================================
+   LARGE SCREEN
+========================================================= */
+
+@media (min-width: 1600px) {
+  .policy-card {
+    width: 340px;
+    min-width: 340px;
+  }
+
+  .policy-marquee {
+    &__track {
+      gap: 18px;
+
+      animation-duration: 38s;
+    }
+  }
+}
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 992px) {
+  .policy-section {
+    padding: 78px 0 86px;
+
+    &__heading {
+      margin-bottom: 46px;
+
+      h2 {
+        font-size: clamp(32px, 6vw, 46px);
+      }
+    }
+  }
+
+  .policy-card {
+    width: 290px;
+    min-width: 290px;
+
+    min-height: 120px;
+
+    padding: 20px;
+
+    border-radius: 20px;
+  }
+
+  .policy-marquee {
+    &__fade {
+      width: 75px;
+    }
+
+    &__track {
+      animation-duration: 30s;
+    }
+  }
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 576px) {
+  .policy-section {
+    padding: 64px 0 72px;
+
+    &__heading {
+      width: calc(100% - 30px);
+
+      margin-bottom: 36px;
+
+      span {
+        margin-bottom: 12px;
+
+        font-size: 10px;
       }
 
-      img {
-        transform: scale(1.08) rotate(-5deg);
-      }
+      h2 {
+        font-size: 32px;
 
+        letter-spacing: -1.8px;
+      }
+    }
+  }
+
+  .policy-card {
+    width: 260px;
+    min-width: 260px;
+
+    min-height: 108px;
+
+    padding: 17px;
+
+    gap: 13px;
+
+    border-radius: 18px;
+
+    &__icon {
+      width: 42px;
+      height: 42px;
+
+      flex-basis: 42px;
+
+      border-radius: 13px;
+    }
+
+    &__content {
       h3 {
-        color: #db4444;
-      }
-    }
-
-    img {
-      position: relative;
-      z-index: 2;
-
-      width: 84px;
-      height: 84px;
-
-      margin-bottom: 24px;
-
-      padding: 16px;
-
-      border-radius: 50%;
-
-      background: linear-gradient(135deg, #fff, #fafafa);
-
-      box-shadow: 0 12px 24px rgba(219, 68, 68, 0.18);
-
-      transition: 0.35s;
-    }
-
-    .policy-card-text {
-      position: relative;
-      z-index: 2;
-
-      h3 {
-        margin-bottom: 14px;
-
-        font-size: 19px;
-        font-weight: 800;
-
-        color: #111827;
-
-        letter-spacing: 0.5px;
-
-        transition: 0.3s;
+        font-size: 14px;
       }
 
       p {
-        margin: 0;
-
-        color: #64748b;
-
-        font-size: 15px;
-
-        line-height: 1.7;
+        font-size: 11px;
       }
+    }
+  }
+
+  .policy-marquee {
+    &__fade {
+      width: 35px;
+    }
+
+    &__track {
+      gap: 11px;
+
+      animation-duration: 25s;
     }
   }
 }
 
-/* ===========================
-        TABLET
-=========================== */
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
 
-@media (max-width: 992px) {
-  .policy-container {
-    padding: 70px 0;
+@media (prefers-reduced-motion: reduce) {
+  .policy-marquee {
+    overflow-x: auto;
 
-    .policy-main-content {
-      grid-template-columns: repeat(2, 1fr);
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
     }
 
-    .policy-card {
-      padding: 34px 22px;
+    &__fade {
+      display: none;
+    }
 
-      img {
-        width: 76px;
-        height: 76px;
-      }
-
-      .policy-card-text {
-        h3 {
-          font-size: 17px;
-        }
-
-        p {
-          font-size: 14px;
-        }
-      }
+    &__track {
+      animation: none;
     }
   }
-}
 
-/* ===========================
-        MOBILE
-=========================== */
+  .policy-card {
+    transition: none;
 
-@media (max-width: 768px) {
-  .policy-container {
-    padding: 60px 0;
-
-    .policy-main-content {
-      grid-template-columns: 1fr;
-      gap: 22px;
-    }
-
-    .policy-card {
-      padding: 30px 24px;
-
-      img {
-        width: 72px;
-        height: 72px;
-      }
-
-      .policy-card-text {
-        h3 {
-          font-size: 16px;
-        }
-
-        p {
-          font-size: 14px;
-        }
-      }
+    &:hover {
+      transform: none;
     }
   }
 }

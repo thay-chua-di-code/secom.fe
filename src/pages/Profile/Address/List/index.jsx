@@ -1,61 +1,84 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Plus } from "lucide-react";
+import { MapPin, Plus } from "lucide-react";
+
 import AddressCard from "../Card";
 import { addressService } from "../../../../service/addressService";
 import Button from "../../../../components/common/Button/Button";
-import "./style.scss";
+
 import AddAddressModal from "../Form/FormAdd";
 import UpdateAddressForm from "../Form/FormUpdate";
+
+import "./style.scss";
+
 export default function AddressList() {
   const dispatch = useDispatch();
+
   const [openUpdate, setOpenUpdate] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState(null);
-
-  const handleEdit = (address) => {
-    setSelectedAddress(address);
-    setOpenUpdate(true);
-  };
   const [openAddModal, setOpenAddModal] = useState(false);
+
   const addresses = useSelector((state) => state.user.addresses);
 
   useEffect(() => {
     addressService.getAddress(dispatch);
   }, [dispatch]);
 
+  const handleEdit = (address) => {
+    setSelectedAddress(address);
+    setOpenUpdate(true);
+  };
+
   return (
     <div className="address-list" data-testid="profile-address-section">
-      <div className="address-list__header flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+      <div className="address-list__header">
+        <div className="address-list__heading">
+          <span>SHIPPING ADDRESSES</span>
+
+          <div>
+            <h3>Saved addresses</h3>
+
+            <p>Manage where your orders should be delivered.</p>
+          </div>
+        </div>
+
         <Button
           data-testid="add-address-btn"
           className="address-list__add-btn"
           onClick={() => setOpenAddModal(true)}
         >
-          <Plus size={16} />
+          <Plus size={15} />
           Add New Address
         </Button>
       </div>
 
       {!addresses?.length ? (
         <div className="address-list__empty">
-          <p>You don't have any saved addresses yet.</p>
+          <div className="address-list__empty-icon">
+            <MapPin size={26} />
+          </div>
+
+          <h3>No saved addresses</h3>
+
+          <p>Add your first shipping address to make checkout faster.</p>
 
           <Button
             data-testid="add-address-btn"
             className="address-list__add-btn"
             onClick={() => setOpenAddModal(true)}
           >
-            <Plus size={16} />
+            <Plus size={15} />
             Add Your First Address
           </Button>
         </div>
       ) : (
         <div className="address-list__content">
-          {addresses.map((address) => (
+          {addresses.map((address, index) => (
             <AddressCard
               key={address.id}
               address={address}
               onEdit={handleEdit}
+              index={index}
             />
           ))}
         </div>
@@ -68,7 +91,10 @@ export default function AddressList() {
 
       <UpdateAddressForm
         open={openUpdate}
-        onClose={() => setOpenUpdate(false)}
+        onClose={() => {
+          setOpenUpdate(false);
+          setSelectedAddress(null);
+        }}
         initialData={selectedAddress}
       />
     </div>

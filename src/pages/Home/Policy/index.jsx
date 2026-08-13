@@ -1,36 +1,88 @@
 import React from "react";
+import {
+  BadgeCheck,
+  Headphones,
+  RefreshCcw,
+  ShieldCheck,
+  Truck,
+  WalletCards,
+} from "lucide-react";
+
 import "./style.scss";
-// Image
-import service1 from "../../../assets/images/policyIcon/Services1.png";
-import service2 from "../../../assets/images/policyIcon/Services2.png";
-import service3 from "../../../assets/images/policyIcon/Services3.png";
+
+const policies = [
+  {
+    icon: Truck,
+    title: "Fast Delivery",
+    description: "Quick and reliable delivery for eligible orders.",
+  },
+  {
+    icon: Headphones,
+    title: "24/7 Support",
+    description: "Friendly support whenever you need assistance.",
+  },
+  {
+    icon: RefreshCcw,
+    title: "Easy Returns",
+    description: "Simple return process for eligible products.",
+  },
+  {
+    icon: ShieldCheck,
+    title: "Secure Shopping",
+    description: "Your payments and personal information stay protected.",
+  },
+  {
+    icon: WalletCards,
+    title: "Flexible Payment",
+    description: "Convenient payment options for a smoother checkout.",
+  },
+  {
+    icon: BadgeCheck,
+    title: "Trusted Products",
+    description: "Discover products from verified marketplace sellers.",
+  },
+];
+
 const Policy = () => {
+  /*
+    Nhân đôi array để marquee chạy liên tục
+    mà không bị khoảng trắng ở cuối.
+  */
+  const marqueeItems = [...policies, ...policies];
+
   return (
-    <div className="policy-container">
-      <div className="policy-main-content flex-row-center-g">
-        <div className="policy-card flex-col-g">
-          <img src={service1} alt="Service 1" />
-          <div className="policy-card-text">
-            <h3>FREE AND FAST DELIVERY</h3>
-            <p>Free delivery for all orders over $140</p>
-          </div>
-        </div>
-        <div className="policy-card">
-          <img src={service2} alt="Service 2" />
-          <div className="policy-card-text">
-            <h3>24/7 CUSTOMER SERVICE</h3>
-            <p>Friendly 24/7 customer support</p>
-          </div>
-        </div>
-        <div className="policy-card">
-          <img src={service3} alt="Service 3" />
-          <div className="policy-card-text">
-            <h3>MONEY BACK GUARANTEE</h3>
-            <p>We return money within 30 days</p>
-          </div>
+    <section className="policy-section">
+      <div className="policy-section__heading">
+        <span>SHOP WITH CONFIDENCE</span>
+
+        <h2>Everything you need for a better shopping experience</h2>
+      </div>
+
+      <div className="policy-marquee">
+        <div className="policy-marquee__fade policy-marquee__fade--left" />
+        <div className="policy-marquee__fade policy-marquee__fade--right" />
+
+        <div className="policy-marquee__track">
+          {marqueeItems.map((policy, index) => {
+            const Icon = policy.icon;
+
+            return (
+              <article key={`${policy.title}-${index}`} className="policy-card">
+                <div className="policy-card__icon">
+                  <Icon size={21} />
+                </div>
+
+                <div className="policy-card__content">
+                  <h3>{policy.title}</h3>
+
+                  <p>{policy.description}</p>
+                </div>
+              </article>
+            );
+          })}
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 

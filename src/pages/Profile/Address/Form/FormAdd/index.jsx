@@ -61,7 +61,11 @@ export default function AddressModal({ open, onClose }) {
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="address-form" data-testid="address-form">
+        <form
+          onSubmit={handleSubmit}
+          className="address-form"
+          data-testid="address-form"
+        >
           <div className="grid gap-6 md:grid-cols-2">
             <div className="form-group">
               <label>Receiver Name</label>
@@ -163,7 +167,11 @@ export default function AddressModal({ open, onClose }) {
           </div>
 
           <div className="address-modal__footer">
-            <Button type="submit" data-testid="address-save-btn" className="address-btn address-btn--save">
+            <Button
+              type="submit"
+              data-testid="address-save-btn"
+              className="address-btn address-btn--save"
+            >
               Save Address
             </Button>
           </div>

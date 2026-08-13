@@ -1,16 +1,26 @@
 import { useMemo, useState } from "react";
-import { FaHeart, FaRegHeart, FaEye } from "react-icons/fa";
+import { FaEye, FaHeart, FaRegHeart } from "react-icons/fa";
+
+import { ArrowUpRight, Check, ShoppingBag } from "lucide-react";
+
 import toast from "react-hot-toast";
+
 import { Link, useLocation, useNavigate } from "react-router-dom";
+
 import { useDispatch, useSelector } from "react-redux";
+
 import { addCartItem } from "../../../redux/slice/cartSlice";
+
 import {
   addWishlistThunk,
   deleteWishlistThunk,
 } from "../../../redux/slice/userSlice";
-import "./style.scss";
+
 import { formatCurrencyVN } from "../../../utils/fncUtils";
+
 import useCompare from "../../../hooks/useCompare";
+
+import "./style.scss";
 
 const getApiErrorMessage = (error) =>
   error?.response?.data?.message ||
@@ -40,22 +50,33 @@ const getProductImages = (product = {}) => {
 
 export default function Card({ item }) {
   const { pathname } = useLocation();
-  const isProducts = pathname === "/products" ? true : false;
+
+  const isProducts = pathname === "/products";
+
   const { toggle, isCompared } = useCompare();
+
   const dispatch = useDispatch();
+
   const navigate = useNavigate();
+
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+
   const wishlist = useSelector((state) => {
     const items = state.user.wishlist?.items ?? state.user.wishlist;
 
     return Array.isArray(items) ? items : [];
   });
+
   const [wishlistLoading, setWishlistLoading] = useState(false);
+
   const productId = item.id || item.productId;
+
   const compared = isCompared(productId);
 
-  const productName = item.name || item.title || item.productName;
+  const productName = item.name || item.title || item.productName || "Product";
+
   const productImages = getProductImages(item);
+
   const isWishlisted = useMemo(
     () =>
       pathname === "/wish-list" ||
@@ -74,7 +95,9 @@ export default function Card({ item }) {
     }
 
     toast.error("Please login to use wishlist");
+
     navigate("/login");
+
     return false;
   };
 
@@ -91,9 +114,11 @@ export default function Card({ item }) {
 
       if (isWishlisted) {
         await dispatch(deleteWishlistThunk(productId)).unwrap();
+
         toast.success("Removed from wishlist");
       } else {
         await dispatch(addWishlistThunk(productId)).unwrap();
+
         toast.success("Added to wishlist");
       }
     } catch (error) {
@@ -103,8 +128,9 @@ export default function Card({ item }) {
     }
   };
 
-  const handleBuyNow = async (e) => {
-    e.preventDefault();
+  const handleBuyNow = async (event) => {
+    event.preventDefault();
+    event.stopPropagation();
 
     if (!isAuthenticated) {
       navigate("/login");
@@ -141,15 +167,29 @@ export default function Card({ item }) {
       toast.error(error.message);
     }
   };
+
   return (
-    <div className="custom-product-card">
+    <article className="custom-product-card">
+      {/* =====================================
+          IMAGE
+      ====================================== */}
+
       <div className="image-container">
         <Link className="image-link" to={`/product-detail/${productId}`}>
-          <img src={productImages[0] || FALLBACK_PRODUCT_IMAGE} alt={productName} />
+          <img
+            src={productImages[0] || FALLBACK_PRODUCT_IMAGE}
+            alt={productName}
+          />
         </Link>
+
+        {/* FLOATING ACTIONS */}
 
         <div className="floating-actions">
           <button
+            type="button"
+            aria-label={
+              isWishlisted ? "Remove from wishlist" : "Add to wishlist"
+            }
             className={`action-btn ${isWishlisted ? "active" : ""}`}
             onClick={handleToggleWishlist}
             disabled={wishlistLoading}
@@ -160,28 +200,63 @@ export default function Card({ item }) {
           <Link
             className="action-btn"
             to={`/product-detail/${productId}`}
-            onClick={(e) => e.stopPropagation()}
+            aria-label="View product"
+            onClick={(event) => event.stopPropagation()}
           >
             <FaEye />
           </Link>
         </div>
 
-        <button className="quick-buy-btn" onClick={handleBuyNow}>
-          Buy Now
-        </button>
+        {/* QUICK ACTION BAR */}
 
-        {isProducts && (
+        <div
+          className={`product-quick-actions ${
+            isProducts ? "product-quick-actions--compare" : ""
+          }`}
+        >
           <button
-            className={`quick-buy-btn compare-btn ${compared ? "active" : ""}`}
-            onClick={handleToggleCompare}
+            type="button"
+            className="quick-buy-btn"
+            onClick={handleBuyNow}
           >
-            {compared ? "✓ Compared" : "Compare"}
+            <ShoppingBag size={14} />
+
+            <span>Buy Now</span>
           </button>
-        )}
+
+          {isProducts && (
+            <button
+              type="button"
+              className={`compare-btn ${compared ? "active" : ""}`}
+              onClick={handleToggleCompare}
+            >
+              {compared ? (
+                <>
+                  <Check size={14} />
+
+                  <span>Compared</span>
+                </>
+              ) : (
+                <span>Compare</span>
+              )}
+            </button>
+          )}
+        </div>
       </div>
 
+      {/* =====================================
+          INFO
+      ====================================== */}
+
       <div className="info-container">
-        <h3 className="product-title">{productName}</h3>
+        <Link
+          to={`/product-detail/${productId}`}
+          className="product-title-link"
+        >
+          <h3 className="product-title">{productName}</h3>
+
+          <ArrowUpRight size={14} />
+        </Link>
 
         <div className="price-container">
           <span className="current-price">{formatCurrencyVN(item.price)}</span>
@@ -197,6 +272,6 @@ export default function Card({ item }) {
           <span className="review-count">(65)</span>
         </div>
       </div>
-    </div>
+    </article>
   );
 }

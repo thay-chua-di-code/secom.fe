@@ -1,8 +1,10 @@
 import { useState } from "react";
+import { Eye, EyeOff, KeyRound, LockKeyhole, ShieldCheck } from "lucide-react";
+
 import Button from "../../../components/common/Button/Button";
-import { Eye, EyeOff, LockKeyhole } from "lucide-react";
-import "./style.scss";
 import { authService } from "../../../service/authService";
+
+import "./style.scss";
 
 const ChangePassword = () => {
   const [loading, setLoading] = useState(false);
@@ -43,20 +45,16 @@ const ChangePassword = () => {
         !changePwdData.confirmPassword
       ) {
         alert("Please fill all fields");
-
         return;
       }
 
       if (changePwdData.newPassword.length < 6) {
         alert("Password must be at least 6 characters");
-
         return;
       }
-      ``;
 
       if (changePwdData.newPassword !== changePwdData.confirmPassword) {
         alert("Password confirmation does not match");
-
         return;
       }
 
@@ -76,8 +74,14 @@ const ChangePassword = () => {
         newPassword: "",
         confirmPassword: "",
       });
+
+      setShowPassword({
+        current: false,
+        new: false,
+        confirm: false,
+      });
     } catch (error) {
-      console.log(error);
+      console.error(error);
 
       alert("Update password failed");
     } finally {
@@ -87,83 +91,126 @@ const ChangePassword = () => {
 
   return (
     <div className="change-password">
-      {/* <div className="change-password__header">
-        <h2>Change Password</h2>
+      <div className="change-password__intro">
+        <div className="change-password__intro-icon">
+          <ShieldCheck size={20} />
+        </div>
 
-        <p>Keep your account secure by updating your password</p>
-      </div> */}
+        <div>
+          <span className="change-password__eyebrow">ACCOUNT SECURITY</span>
+
+          <h3>Protect your account</h3>
+
+          <p>Use a strong password that you do not use for other accounts.</p>
+        </div>
+      </div>
 
       <div className="change-password__form">
-        {/* CURRENT PASSWORD */}
-        <div className="input-group">
-          <label>Current Password</label>
+        {/* CURRENT */}
+        <div className="change-password__group">
+          <label htmlFor="currentPassword">Current Password</label>
 
-          <div className="input-wrapper">
-            <LockKeyhole size={18} />
+          <div className="change-password__input">
+            <LockKeyhole size={16} className="change-password__input-icon" />
 
             <input
+              id="currentPassword"
               type={showPassword.current ? "text" : "password"}
               name="currentPassword"
               placeholder="Enter current password"
               value={changePwdData.currentPassword}
               onChange={handleChange}
+              autoComplete="current-password"
             />
 
-            <button type="button" onClick={() => togglePassword("current")}>
-              {showPassword.current ? <EyeOff size={18} /> : <Eye size={18} />}
+            <button
+              type="button"
+              className="change-password__toggle"
+              aria-label={
+                showPassword.current
+                  ? "Hide current password"
+                  : "Show current password"
+              }
+              onClick={() => togglePassword("current")}
+            >
+              {showPassword.current ? <EyeOff size={16} /> : <Eye size={16} />}
             </button>
           </div>
         </div>
 
-        {/* NEW PASSWORD */}
-        <div className="input-group">
-          <label>New Password</label>
+        {/* NEW */}
+        <div className="change-password__group">
+          <label htmlFor="newPassword">New Password</label>
 
-          <div className="input-wrapper">
-            <LockKeyhole size={18} />
+          <div className="change-password__input">
+            <KeyRound size={16} className="change-password__input-icon" />
 
             <input
+              id="newPassword"
               type={showPassword.new ? "text" : "password"}
               name="newPassword"
               placeholder="Enter new password"
               value={changePwdData.newPassword}
               onChange={handleChange}
+              autoComplete="new-password"
             />
 
-            <button type="button" onClick={() => togglePassword("new")}>
-              {showPassword.new ? <EyeOff size={18} /> : <Eye size={18} />}
+            <button
+              type="button"
+              className="change-password__toggle"
+              aria-label={
+                showPassword.new ? "Hide new password" : "Show new password"
+              }
+              onClick={() => togglePassword("new")}
+            >
+              {showPassword.new ? <EyeOff size={16} /> : <Eye size={16} />}
             </button>
           </div>
+
+          <small>Use at least 6 characters.</small>
         </div>
 
-        {/* CONFIRM PASSWORD */}
-        <div className="input-group">
-          <label>Confirm Password</label>
+        {/* CONFIRM */}
+        <div className="change-password__group">
+          <label htmlFor="confirmPassword">Confirm Password</label>
 
-          <div className="input-wrapper">
-            <LockKeyhole size={18} />
+          <div className="change-password__input">
+            <KeyRound size={16} className="change-password__input-icon" />
 
             <input
+              id="confirmPassword"
               type={showPassword.confirm ? "text" : "password"}
               name="confirmPassword"
               placeholder="Confirm new password"
               value={changePwdData.confirmPassword}
               onChange={handleChange}
+              autoComplete="new-password"
             />
 
-            <button type="button" onClick={() => togglePassword("confirm")}>
-              {showPassword.confirm ? <EyeOff size={18} /> : <Eye size={18} />}
+            <button
+              type="button"
+              className="change-password__toggle"
+              aria-label={
+                showPassword.confirm
+                  ? "Hide confirmed password"
+                  : "Show confirmed password"
+              }
+              onClick={() => togglePassword("confirm")}
+            >
+              {showPassword.confirm ? <EyeOff size={16} /> : <Eye size={16} />}
             </button>
           </div>
         </div>
 
-        <Button
-          className="change-password-btn"
-          onClick={handleSubmit}
-          disabled={loading}
-        >
-          {loading ? "Updating..." : "Update Password"}
-        </Button>
+        <div className="change-password__footer">
+          <Button
+            className="change-password-btn"
+            onClick={handleSubmit}
+            disabled={loading}
+          >
+            {loading ? "Updating..." : "Update Password"}
+          </Button>
+        </div>
       </div>
     </div>
   );

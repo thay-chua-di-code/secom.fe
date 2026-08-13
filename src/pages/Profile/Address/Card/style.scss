@@ -1,141 +1,324 @@
 .address-card {
   position: relative;
-  padding: 1.25rem;
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 16px;
-  transition: all 0.25s ease;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+
+  min-width: 0;
+
+  padding: 17px;
+
+  overflow: hidden;
+
+  border: 1px solid rgba(255, 255, 255, 0.065);
+
+  border-radius: 18px;
+
+  background: rgba(255, 255, 255, 0.022);
+
+  animation: addressCardReveal 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+
+  animation-delay: calc(var(--address-index, 0) * 60ms);
+
+  transition:
+    background 0.22s ease,
+    border-color 0.22s ease,
+    transform 0.22s ease;
 
   &:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
-    border-color: #d1d5db;
+    background: rgba(255, 255, 255, 0.04);
+
+    border-color: rgba(255, 255, 255, 0.11);
+
+    transform: translateY(-2px);
   }
 
   &__header {
     display: flex;
-    justify-content: space-between;
     align-items: flex-start;
-    gap: 1rem;
-    margin-bottom: 1rem;
+    justify-content: space-between;
+
+    gap: 12px;
+
+    margin-bottom: 16px;
+  }
+
+  &__identity {
+    min-width: 0;
+
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+  }
+
+  &__avatar {
+    width: 40px;
+    height: 40px;
+
+    flex: 0 0 40px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid rgba(94, 145, 255, 0.14);
+
+    border-radius: 12px;
+
+    background: rgba(76, 132, 255, 0.07);
+
+    color: #82a9ff;
+
+    font-size: 13px;
+
+    font-weight: 600;
   }
 
   &__name {
-    font-size: 1rem;
-    font-weight: 600;
-    color: #111827;
-    margin-bottom: 0.35rem;
+    max-width: 180px;
+
+    margin: 0 0 5px;
+
+    overflow: hidden;
+
+    color: #ffffff;
+
+    font-size: 13px;
+
+    font-weight: 500;
+
+    line-height: 1.2;
+
+    letter-spacing: -0.3px;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
   }
 
   &__phone {
     display: flex;
     align-items: center;
-    gap: 0.4rem;
-    color: #6b7280;
-    font-size: 0.875rem;
+
+    gap: 5px;
+
+    color: rgba(255, 255, 255, 0.31);
+
+    font-size: 13px;
+
+    svg {
+      color: rgba(255, 255, 255, 0.4);
+    }
+  }
+
+  &__default,
+  &__not-default {
+    min-height: 28px;
+
+    padding: 0 9px;
+
+    flex-shrink: 0;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 4px;
+
+    border-radius: 999px;
+
+    font-family: inherit;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    white-space: nowrap;
   }
 
   &__default {
-    padding: 0.35rem 0.75rem;
-    border-radius: 999px;
-    background: #dcfce7;
-    color: #15803d;
-    font-size: 0.75rem;
-    font-weight: 600;
-    white-space: nowrap;
+    border: 1px solid rgba(64, 211, 134, 0.14);
+
+    background: rgba(45, 200, 116, 0.06);
+
+    color: #71dca5;
   }
 
   &__not-default {
-    padding: 0.35rem 0.75rem;
-    border-radius: 999px;
-    border: 1px solid #db4444;
-    background: #eff6ff;
-    color: #fff;
-    font-size: 0.75rem;
-    font-weight: 600;
-    white-space: nowrap;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+
+    background: rgba(255, 255, 255, 0.03);
+
+    color: rgba(255, 255, 255, 0.45);
+
     cursor: pointer;
-    transition: all 0.2s ease;
+
+    transition:
+      background 0.2s ease,
+      color 0.2s ease,
+      border-color 0.2s ease;
 
     &:hover {
-      background: #af2424;
-      color: #fff;
-      transform: translateY(-1px);
-    }
+      background: #ffffff;
 
-    &:active {
-      transform: translateY(0);
+      border-color: #ffffff;
+
+      color: #090909;
     }
   }
 
   &__address {
+    min-height: 88px;
+
+    padding: 13px;
+
     display: flex;
     align-items: flex-start;
-    gap: 0.75rem;
-    margin-bottom: 1.25rem;
-    color: #4b5563;
-    font-size: 0.9rem;
-    line-height: 1.6;
 
-    svg {
-      flex-shrink: 0;
-      margin-top: 2px;
-      color: #b32424;
+    gap: 10px;
+
+    border: 1px solid rgba(255, 255, 255, 0.05);
+
+    border-radius: 14px;
+
+    background: rgba(255, 255, 255, 0.018);
+
+    &-icon {
+      width: 31px;
+      height: 31px;
+
+      flex: 0 0 31px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      border-radius: 10px;
+
+      background: rgba(77, 132, 255, 0.07);
+
+      color: #79a2ff;
+    }
+
+    div:last-child {
+      min-width: 0;
+    }
+
+    p {
+      margin: 0;
+
+      color: rgba(255, 255, 255, 0.72);
+
+      font-size: 13px;
+
+      line-height: 1.5;
+    }
+
+    span {
+      display: block;
+
+      margin-top: 4px;
+
+      color: rgba(255, 255, 255, 0.28);
+
+      font-size: 12px;
+
+      line-height: 1.45;
     }
   }
 
   &__actions {
+    margin-top: 13px;
+
     display: flex;
     justify-content: flex-end;
-    gap: 0.75rem;
-  }
 
-  .btn-edit,
-  .btn-delete {
-    padding: 0.65rem 1rem;
-    border-radius: 10px;
-    font-size: 0.875rem;
-    font-weight: 500;
-    transition: all 0.2s ease;
-  }
+    gap: 7px;
 
-  .btn-edit {
-    border: 1px solid #d1d5db;
-    background: #fff;
-    color: #374151;
+    .btn-edit,
+    .btn-delete {
+      min-width: 82px !important;
+      height: 36px !important;
 
-    &:hover {
-      background: #f3f4f6;
+      padding: 0 12px !important;
+
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+
+      gap: 6px !important;
+
+      border-radius: 999px !important;
+
+      font-size: 13px !important;
+
+      font-weight: 500 !important;
+
+      box-shadow: none !important;
     }
-  }
 
-  .btn-delete {
-    border: none;
-    background: #ef4444;
-    color: #fff;
+    .btn-edit {
+      border: 1px solid rgba(255, 255, 255, 0.09) !important;
 
-    &:hover {
-      background: #dc2626;
+      background: rgba(255, 255, 255, 0.035) !important;
+
+      color: rgba(255, 255, 255, 0.62) !important;
+
+      &:hover {
+        background: #ffffff !important;
+
+        border-color: #ffffff !important;
+
+        color: #090909 !important;
+      }
+    }
+
+    .btn-delete {
+      border: 1px solid rgba(255, 83, 83, 0.14) !important;
+
+      background: rgba(255, 70, 70, 0.05) !important;
+
+      color: #ff7e7e !important;
+
+      &:hover {
+        background: rgba(255, 70, 70, 0.11) !important;
+
+        border-color: rgba(255, 83, 83, 0.3) !important;
+
+        color: #ff9c9c !important;
+      }
     }
   }
 }
 
-@media (max-width: 640px) {
+@keyframes addressCardReveal {
+  from {
+    opacity: 0;
+
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 520px) {
   .address-card {
-    padding: 1rem;
+    padding: 14px;
 
     &__header {
       flex-direction: column;
-      gap: 0.75rem;
     }
 
     &__actions {
-      flex-direction: column;
+      display: grid;
+
+      grid-template-columns: repeat(2, 1fr);
 
       .btn-edit,
       .btn-delete {
-        width: 100%;
+        width: 100% !important;
       }
     }
   }

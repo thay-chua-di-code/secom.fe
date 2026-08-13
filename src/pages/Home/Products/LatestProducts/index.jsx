@@ -1,11 +1,13 @@
 import Title from "../../../../components/common/Title";
 import Card from "../Card";
 import { useSelector } from "react-redux";
-import { PackageSearch } from "lucide-react";
+import { ArrowUpRight, PackageSearch } from "lucide-react";
 import "./style.scss";
 import { Link } from "react-router-dom";
+
 const LastestProduct = () => {
   const { loading, error } = useSelector((state) => state.home);
+
   const latestProducts = useSelector((state) => {
     const items = state.home.latestProducts?.items ?? state.home.latestProducts;
 
@@ -15,7 +17,7 @@ const LastestProduct = () => {
   if (loading) {
     return (
       <section className="lastest-products">
-        <Title title="Lastest Product" />
+        <Title eyebrow="LATEST PRODUCTS" title="Latest Product Searching" />
 
         <div className="lastest-products__empty">
           <p>Loading products...</p>
@@ -27,7 +29,7 @@ const LastestProduct = () => {
   if (error) {
     return (
       <section className="lastest-products">
-        <Title title="Lastest Product" />
+        <Title eyebrow="LATEST PRODUCTS" title="Latest Product Searching" />
 
         <div className="lastest-products__empty">
           <PackageSearch size={72} />
@@ -43,11 +45,7 @@ const LastestProduct = () => {
   if (!latestProducts || latestProducts.length === 0) {
     return (
       <section className="lastest-products">
-        <Title title="Lastest Product" />
-
-        <div className="lastest-products__header">
-          <h2>Lastest Product Searching</h2>
-        </div>
+        <Title eyebrow="LATEST PRODUCTS" title="Latest Product Searching" />
 
         <div className="lastest-products__empty">
           <PackageSearch size={72} />
@@ -55,7 +53,7 @@ const LastestProduct = () => {
           <h3>No products found</h3>
 
           <p>
-            Lastest products are currently unavailable. Please check back later.
+            Latest products are currently unavailable. Please check back later.
           </p>
         </div>
       </section>
@@ -64,20 +62,24 @@ const LastestProduct = () => {
 
   return (
     <section className="lastest-products">
-      <Title title="Lastest Product" />
-
-      <div className="lastest-products__header">
-        <h2>Lastest Product Searching</h2>
-      </div>
+      <Title eyebrow="LATEST PRODUCTS" title="Latest Product Searching" />
 
       <div className="lastest-products__grid">
-        {latestProducts.map((product) => (
-          <Card key={product.id} product={product} />
+        {latestProducts.map((product, index) => (
+          <Card
+            key={product.id || product.productId}
+            product={product}
+            index={index}
+          />
         ))}
       </div>
 
       <div className="lastest-products__footer">
-        <Link to={'/products'}>View All Products</Link>
+        <Link to="/products">
+          <span>View All Products</span>
+
+          <ArrowUpRight size={16} />
+        </Link>
       </div>
     </section>
   );

@@ -1,87 +1,322 @@
-// ==============================
-// VOUCHER CONTENT
-// ==============================
+/* =========================================================
+   VOUCHER CONTENT
+========================================================= */
 
 .voucher-content {
   width: 100%;
-  padding: 10px 0;
-}
 
-// ==============================
-// VOUCHER LIST
-// ==============================
+  color: #ffffff;
 
-.voucher-list {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
-}
+  /* =====================================================
+     HEADER
+  ===================================================== */
 
-// ==============================
-// LOADING
-// ==============================
+  &__header {
+    margin-bottom: 20px;
 
-.voucher-loading {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    padding-bottom: 18px;
 
-  min-height: 220px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
 
-  color: #64748b;
-  font-size: 14px;
-}
+    gap: 18px;
 
-// ==============================
-// EMPTY
-// ==============================
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 
-.voucher-empty {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    h3 {
+      margin: 0;
 
-  min-height: 220px;
+      color: #ffffff;
 
-  color: #64748b;
-  background: #ffffff;
+      font-size: 18px;
 
-  border: 1px dashed #cbd5e1;
-  border-radius: 14px;
+      font-weight: 500;
 
-  font-size: 14px;
-}
+      line-height: 1.2;
 
-// ==============================
-// PAGINATION
-// ==============================
+      letter-spacing: -0.5px;
+    }
 
-.voucher-pagination {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
+    p {
+      max-width: 420px;
 
-  margin-top: 24px;
+      margin: 6px 0 0;
 
-  button {
+      color: rgba(255, 255, 255, 0.31);
+
+      font-size: 10px;
+
+      line-height: 1.55;
+    }
+  }
+
+  &__eyebrow {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: rgba(255, 255, 255, 0.26);
+
+    font-family: "Roboto Mono", monospace;
+
+    font-size: 8px;
+
+    font-weight: 500;
+
+    letter-spacing: 0.1em;
+  }
+
+  &__count {
+    min-width: 34px;
+    height: 34px;
+
+    padding: 0 10px;
+
     display: inline-flex;
     align-items: center;
     justify-content: center;
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+
+    border-radius: 999px;
+
+    background: rgba(255, 255, 255, 0.035);
+
+    color: rgba(255, 255, 255, 0.64);
+
+    font-size: 10px;
+
+    font-weight: 600;
+  }
+}
+
+/* =========================================================
+   VOUCHER LIST
+========================================================= */
+
+.voucher-list {
+  display: grid;
+
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+
+  gap: 12px;
+
+  &__item {
+    min-width: 0;
+
+    opacity: 0;
+
+    transform: translateY(10px);
+
+    animation: voucherCardReveal 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+
+    animation-delay: calc(var(--voucher-index, 0) * 55ms);
+  }
+}
+
+/* =========================================================
+   NORMALIZE VOUCHER CARD
+   nếu VoucherCard cũ còn background trắng
+========================================================= */
+
+.voucher-list {
+  .voucher-card {
+    height: 100%;
+
+    border: 1px solid rgba(255, 255, 255, 0.065) !important;
+
+    border-radius: 18px !important;
+
+    background: rgba(255, 255, 255, 0.022) !important;
+
+    color: #ffffff !important;
+
+    box-shadow: none !important;
+
+    transition:
+      background 0.22s ease,
+      border-color 0.22s ease,
+      transform 0.22s ease !important;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.042) !important;
+
+      border-color: rgba(255, 255, 255, 0.11) !important;
+
+      transform: translateY(-2px);
+    }
+  }
+}
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.voucher-loading {
+  min-height: 270px;
+
+  padding: 36px 20px;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+
+  border: 1px dashed rgba(255, 255, 255, 0.09);
+
+  border-radius: 20px;
+
+  background: rgba(255, 255, 255, 0.017);
+
+  text-align: center;
+
+  &__spinner {
+    width: 30px;
+    height: 30px;
+
+    margin-bottom: 5px;
+
+    border: 2px solid rgba(255, 255, 255, 0.1);
+
+    border-top-color: #7ea6ff;
+
+    border-radius: 50%;
+
+    animation: voucherSpinner 0.75s linear infinite;
+  }
+
+  strong {
+    color: #ffffff;
+
+    font-size: 13px;
+
+    font-weight: 500;
+  }
+
+  p {
+    margin: 0;
+
+    color: rgba(255, 255, 255, 0.28);
+
+    font-size: 9px;
+  }
+}
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
+.voucher-empty {
+  min-height: 300px;
+
+  padding: 40px 24px;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 9px;
+
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+
+  border-radius: 20px;
+
+  background: rgba(255, 255, 255, 0.018);
+
+  text-align: center;
+
+  &__icon {
+    width: 56px;
+    height: 56px;
+
+    margin-bottom: 4px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid rgba(88, 140, 255, 0.15);
+
+    border-radius: 17px;
+
+    background: rgba(72, 130, 255, 0.07);
+
+    color: #7da5ff;
+  }
+
+  h3 {
+    margin: 0;
+
+    color: #ffffff;
+
+    font-size: 16px;
+
+    font-weight: 500;
+
+    letter-spacing: -0.4px;
+  }
+
+  p {
+    max-width: 340px;
+
+    margin: 0;
+
+    color: rgba(255, 255, 255, 0.3);
+
+    font-size: 10px;
+
+    line-height: 1.6;
+  }
+}
+
+/* =========================================================
+   PAGINATION
+========================================================= */
+
+.voucher-pagination {
+  margin-top: 22px;
+
+  padding-top: 18px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 12px;
+
+  border-top: 1px solid rgba(255, 255, 255, 0.055);
+
+  button {
+    min-width: 96px;
+    height: 38px;
+
+    padding: 0 13px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
     gap: 5px;
 
-    min-width: 92px;
-    height: 36px;
-    padding: 0 12px;
+    border: 1px solid rgba(255, 255, 255, 0.09);
 
-    color: #334155;
-    background: #ffffff;
+    border-radius: 999px;
 
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.035);
 
-    font-size: 12px;
-    font-weight: 600;
+    color: rgba(255, 255, 255, 0.58);
+
+    font-family: inherit;
+
+    font-size: 9px;
+
+    font-weight: 500;
 
     cursor: pointer;
 
@@ -92,51 +327,98 @@
       transform 0.2s ease;
 
     &:hover:not(:disabled) {
-      color: #ffffff;
-      background: #0284c7;
-      border-color: #0284c7;
+      background: #ffffff;
+
+      border-color: #ffffff;
+
+      color: #090909;
 
       transform: translateY(-1px);
     }
 
     &:disabled {
-      color: #94a3b8;
-      background: #f8fafc;
+      opacity: 0.28;
 
       cursor: not-allowed;
     }
   }
 }
 
+/* =========================================================
+   PAGE INFO
+========================================================= */
+
 .page-info {
+  min-height: 38px;
+
+  padding: 0 11px;
+
   display: flex;
   align-items: center;
+
   gap: 5px;
 
-  color: #64748b;
-  font-size: 13px;
+  border: 1px solid rgba(255, 255, 255, 0.055);
+
+  border-radius: 999px;
+
+  background: rgba(255, 255, 255, 0.02);
+
+  color: rgba(255, 255, 255, 0.3);
+
+  font-size: 8px;
 
   strong {
-    min-width: 26px;
-    height: 26px;
+    min-width: 24px;
+    height: 24px;
+
+    padding: 0 6px;
 
     display: inline-flex;
     align-items: center;
     justify-content: center;
 
-    color: #0284c7;
-    background: #f0f9ff;
+    border: 1px solid rgba(100, 150, 255, 0.13);
 
-    border-radius: 6px;
+    border-radius: 8px;
 
-    font-size: 12px;
-    font-weight: 700;
+    background: rgba(75, 130, 255, 0.07);
+
+    color: #85aaff;
+
+    font-size: 9px;
+
+    font-weight: 600;
   }
 }
 
-// ==============================
-// TABLET
-// ==============================
+/* =========================================================
+   ANIMATION
+========================================================= */
+
+@keyframes voucherCardReveal {
+  from {
+    opacity: 0;
+
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+
+    transform: translateY(0);
+  }
+}
+
+@keyframes voucherSpinner {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* =========================================================
+   LAPTOP
+========================================================= */
 
 @media (max-width: 1100px) {
   .voucher-list {
@@ -144,29 +426,99 @@
   }
 }
 
-// ==============================
-// MOBILE
-// ==============================
+/* =========================================================
+   MOBILE
+========================================================= */
 
 @media (max-width: 650px) {
+  .voucher-content {
+    &__header {
+      align-items: flex-start;
+
+      p {
+        max-width: 280px;
+      }
+    }
+  }
+
   .voucher-list {
     grid-template-columns: 1fr;
-    gap: 12px;
+
+    gap: 10px;
   }
 
   .voucher-pagination {
-    gap: 10px;
+    gap: 7px;
 
     button {
       min-width: 82px;
-      height: 34px;
-      padding: 0 9px;
 
-      font-size: 11px;
+      padding: 0 10px;
+
+      font-size: 8px;
     }
   }
 
   .page-info {
-    font-size: 12px;
+    padding: 0 8px;
+
+    span {
+      &:first-child,
+      &:nth-child(3) {
+        display: none;
+      }
+    }
+  }
+}
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 420px) {
+  .voucher-pagination {
+    button {
+      min-width: 42px;
+
+      width: 42px;
+
+      padding: 0;
+
+      font-size: 0;
+
+      gap: 0;
+
+      svg {
+        width: 15px;
+        height: 15px;
+      }
+    }
+  }
+
+  .voucher-empty,
+  .voucher-loading {
+    min-height: 240px;
+  }
+}
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .voucher-list__item {
+    opacity: 1;
+
+    transform: none;
+
+    animation: none;
+  }
+
+  .voucher-loading__spinner {
+    animation-duration: 1.5s;
+  }
+
+  .voucher-pagination button {
+    transition: none;
   }
 }
