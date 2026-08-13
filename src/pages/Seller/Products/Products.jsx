@@ -26,12 +26,15 @@ import { formatCurrencyVN } from "../../../utils/fncUtils";
 import "./style.scss";
 
 const ITEMS_PER_PAGE = 8;
+
 const SUPPORTED_IMPORT_EXTENSIONS = [".xls", ".csv"];
+
 const INVALID_IMPORT_FILE_MESSAGE =
   "Hiện tại hệ thống chỉ hỗ trợ file .xls và .csv.";
 
 const isValidImportFile = (file) => {
   const fileName = file?.name?.toLowerCase() || "";
+
   return SUPPORTED_IMPORT_EXTENSIONS.some((extension) =>
     fileName.endsWith(extension),
   );
@@ -41,9 +44,13 @@ const extractFileNameFromDisposition = (contentDisposition) => {
   if (!contentDisposition) return null;
 
   const utf8Match = contentDisposition.match(/filename\*=UTF-8''([^;]+)/i);
-  if (utf8Match?.[1]) return decodeURIComponent(utf8Match[1]);
+
+  if (utf8Match?.[1]) {
+    return decodeURIComponent(utf8Match[1]);
+  }
 
   const fileNameMatch = contentDisposition.match(/filename="?([^";]+)"?/i);
+
   return fileNameMatch?.[1] || null;
 };
 
@@ -52,105 +59,43 @@ const formatErrors = (errors) => {
 
   if (Array.isArray(errors)) {
     return errors.flatMap((error) => {
-      if (typeof error === "string") return error;
+      if (typeof error === "string") {
+        return error;
+      }
 
-      const row = error.rowNumber || error.RowNumber;
-      const field = error.field || error.Field;
-      const message = error.message || error.Message;
+      const row = error?.rowNumber || error?.RowNumber;
+      const field = error?.field || error?.Field;
+      const message = error?.message || error?.Message;
 
       if (message) {
-        return `${row ? `Dòng ${row}` : "Dữ liệu"}${field ? ` - ${field}` : ""}: ${message}`;
+        return `${
+          row ? `Dòng ${row}` : "Dữ liệu"
+        }${field ? ` - ${field}` : ""}: ${message}`;
       }
 
       return JSON.stringify(error);
     });
   }
 
-<<<<<<< HEAD
   if (typeof errors === "object") {
-    return Object.entries(errors).flatMap(([field, messages]) => {
-      if (Array.isArray(messages)) {
-        return messages.map((message) => `${field}: ${message}`);
+    return Object.entries(errors).flatMap(([field, value]) => {
+      if (Array.isArray(value)) {
+        return value.map((message) => `${field}: ${message}`);
       }
 
-      return `${field}: ${messages}`;
+      return `${field}: ${String(value)}`;
     });
   }
-=======
-  const {
-    products = [],
-    loading,
-    actionLoading,
-    error,
-    pagination,
-  } = useSelector((state) => state.sellerProduct);
-
-  const totalCount = Number(pagination?.totalCount || 0);
-  const totalPages = Math.max(
-    Number(pagination?.totalPages || Math.ceil(totalCount / ITEMS_PER_PAGE) || 0),
-    1,
-  );
-
-  const refreshProducts = () => {
-    dispatch(
-      fetchSellerProducts({
-        page: currentPage,
-        pageSize: ITEMS_PER_PAGE,
-      }),
-    );
-  };
-
-    const handleOpenUpdate = (product) => {
-      setSelectedProduct(product);
-      setOpenUpdate(true);
-    };
-
-    const handleCloseUpdate = () => {
-      setSelectedProduct(null);
-      setOpenUpdate(false);
-    };
-
-    const getProductId = (product) => product?.productId || product?.id;
-
-    const getProductStock = (product) =>
-      Number(product?.stockQuantity ?? product?.stock ?? product?.quantity ?? 0);
-
-    const handleOpenInventory = (product) => {
-      setInventoryTarget(product);
-      setInventoryForm({
-        stockQuantity: getProductStock(product),
-        lowStockThreshold: Number(product?.lowStockThreshold ?? 0),
-      });
-    };
-
-    const handleDeleteProduct = async () => {
-      const productId = getProductId(deleteTarget);
-
-      if (!productId) {
-        toast.error("Product id is missing");
-        return;
-      }
-
-      try {
-        await dispatch(deleteSellerProduct(productId)).unwrap();
-        toast.success("Product deleted successfully");
-        setDeleteTarget(null);
-        const nextTotal = Math.max(totalCount - 1, 0);
-        const nextTotalPages = Math.max(Math.ceil(nextTotal / ITEMS_PER_PAGE), 1);
-        setCurrentPage((page) => Math.min(page, nextTotalPages));
-      } catch (err) {
-        toast.error(err || "Delete product failed");
-      }
-    };
->>>>>>> 9e502702ff9ba4aeca9f9b97ace2ce4b63aad286
 
   return [String(errors)];
 };
 
 const getErrorDetails = (error) => {
   const data = error?.response?.data;
+
   const message =
     data?.message || data?.title || error?.message || "Thao tác thất bại.";
+
   return {
     message,
     errors: formatErrors(data?.errors || data?.data?.errors),
@@ -160,191 +105,114 @@ const getErrorDetails = (error) => {
 const Products = () => {
   const dispatch = useDispatch();
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const [openAdd, setOpenAdd] = useState(false);
-  const [openUpdate, setOpenUpdate] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState(null);
-  const [deleteTarget, setDeleteTarget] = useState(null);
-  const [inventoryTarget, setInventoryTarget] = useState(null);
-  const [inventoryForm, setInventoryForm] = useState({
-    stockQuantity: 0,
-    lowStockThreshold: 0,
-  });
-  const [openImport, setOpenImport] = useState(false);
-  const [selectedImportFile, setSelectedImportFile] = useState(null);
-  const [importing, setImporting] = useState(false);
-  const [exporting, setExporting] = useState(false);
-  const [importError, setImportError] = useState(null);
-
   const {
     products = [],
     loading,
     actionLoading,
     error,
+    pagination,
   } = useSelector((state) => state.sellerProduct);
 
-<<<<<<< HEAD
-  const refreshProducts = () => {
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const [openAdd, setOpenAdd] = useState(false);
+
+  const [openUpdate, setOpenUpdate] = useState(false);
+
+  const [selectedProduct, setSelectedProduct] = useState(null);
+
+  const [deleteTarget, setDeleteTarget] = useState(null);
+
+  const [inventoryTarget, setInventoryTarget] = useState(null);
+
+  const [inventoryForm, setInventoryForm] = useState({
+    stockQuantity: 0,
+    lowStockThreshold: 0,
+  });
+
+  const [openImport, setOpenImport] = useState(false);
+
+  const [selectedImportFile, setSelectedImportFile] = useState(null);
+
+  const [importing, setImporting] = useState(false);
+
+  const [exporting, setExporting] = useState(false);
+
+  const [importError, setImportError] = useState(null);
+
+  const totalCount = Number(pagination?.totalCount ?? products?.length ?? 0);
+
+  const totalPages = Math.max(
+    Number(
+      pagination?.totalPages ?? Math.ceil(totalCount / ITEMS_PER_PAGE) ?? 1,
+    ),
+    1,
+  );
+
+  // ========================================
+  // LOAD PRODUCTS
+  // ========================================
+
+  const refreshProducts = (page = currentPage) => {
     dispatch(
       fetchSellerProducts({
-        pageNumber: 1,
-        pageSize: 100,
+        page,
+        pageNumber: page,
+        pageSize: ITEMS_PER_PAGE,
       }),
     );
   };
-=======
-      try {
-        await dispatch(
-          updateInventory({
-            productId,
-            stockQuantity,
-            lowStockThreshold,
-          }),
-        ).unwrap();
-        toast.success("Inventory updated successfully");
-        setInventoryTarget(null);
-        refreshProducts();
-      } catch (err) {
-        toast.error(err || "Update inventory failed");
-      }
-    };
 
-    const handleImportFileChange = (event) => {
-      const file = event.target.files?.[0] || null;
-      setImportError(null);
+  useEffect(() => {
+    dispatch(
+      fetchSellerProducts({
+        page: currentPage,
+        pageNumber: currentPage,
+        pageSize: ITEMS_PER_PAGE,
+      }),
+    );
+  }, [currentPage, dispatch]);
 
-      if (!file) {
-        setSelectedImportFile(null);
-        return;
-      }
-
-      if (!isValidImportFile(file)) {
-        setSelectedImportFile(null);
-        setImportError({ message: INVALID_IMPORT_FILE_MESSAGE, errors: [] });
-        event.target.value = "";
-        return;
-      }
-
-      setSelectedImportFile(file);
-    };
-
-    const handleCloseImport = () => {
-      if (importing) return;
-      setOpenImport(false);
-      setSelectedImportFile(null);
-      setImportError(null);
-    };
-
-    const handleImportProducts = async (event) => {
-      event.preventDefault();
-
-      if (importing) return;
-
-      if (!selectedImportFile) {
-        setImportError({ message: "Vui lòng chọn file .xls hoặc .csv.", errors: [] });
-        return;
-      }
-
-      if (!isValidImportFile(selectedImportFile)) {
-        setImportError({ message: INVALID_IMPORT_FILE_MESSAGE, errors: [] });
-        return;
-      }
-
-      if (selectedImportFile.size === 0) {
-        setImportError({ message: "File import đang rỗng.", errors: [] });
-        return;
-      }
-
-      try {
-        setImporting(true);
-        setImportError(null);
-        const result = await sellerService.importProducts(selectedImportFile);
-        const errors = formatErrors(result?.errors || result?.Errors);
-
-        if (errors.length > 0 || Number(result?.failedRows || result?.FailedRows || 0) > 0) {
-          setImportError({
-            message: `Import hoàn tất với ${result?.failedRows ?? result?.FailedRows ?? 0} dòng lỗi.`,
-            errors,
-          });
-          return;
-        }
-
-        toast.success(
-          result?.successRows || result?.SuccessRows
-            ? `Import sản phẩm thành công: ${result.successRows ?? result.SuccessRows} dòng.`
-            : "Import sản phẩm thành công.",
-        );
-        setSelectedImportFile(null);
-        setOpenImport(false);
-        refreshProducts();
-      } catch (err) {
-        setImportError(getErrorDetails(err));
-      } finally {
-        setImporting(false);
-      }
-    };
-
-    const handleExportProducts = async () => {
-      if (exporting) return;
-
-      try {
-        setExporting(true);
-        const response = await sellerService.exportProducts();
-        const fileName =
-          extractFileNameFromDisposition(response.headers?.["content-disposition"]) ||
-          "seller-products.xls";
-        const blob = new Blob([response.data], {
-          type: response.headers?.["content-type"] || "application/vnd.ms-excel",
-        });
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = fileName;
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-        window.URL.revokeObjectURL(url);
-        toast.success("Xuất danh sách sản phẩm thành công.");
-      } catch (err) {
-        const { message, errors } = getErrorDetails(err);
-        toast.error(errors.length > 0 ? errors[0] : message);
-      } finally {
-        setExporting(false);
-      }
-    };
-
-    useEffect(() => {
-      dispatch(
-        fetchSellerProducts({
-          page: currentPage,
-          pageSize: ITEMS_PER_PAGE,
-        }),
-      );
-    }, [currentPage, dispatch]);
->>>>>>> 9e502702ff9ba4aeca9f9b97ace2ce4b63aad286
-
-  const handleOpenUpdate = (product) => {
-    setSelectedProduct(product);
-    setOpenUpdate(true);
-  };
-
-  const handleCloseUpdate = () => {
-    setSelectedProduct(null);
-    setOpenUpdate(false);
-  };
+  // ========================================
+  // PRODUCT HELPERS
+  // ========================================
 
   const getProductId = (product) => product?.productId || product?.id;
 
   const getProductStock = (product) =>
     Number(product?.stockQuantity ?? product?.stock ?? product?.quantity ?? 0);
 
-  const handleOpenInventory = (product) => {
-    setInventoryTarget(product);
-    setInventoryForm({
-      stockQuantity: getProductStock(product),
-      lowStockThreshold: Number(product?.lowStockThreshold ?? 0),
-    });
+  // ========================================
+  // ADD PRODUCT
+  // ========================================
+
+  const handleCloseAdd = () => {
+    setOpenAdd(false);
+
+    refreshProducts();
   };
+
+  // ========================================
+  // UPDATE PRODUCT
+  // ========================================
+
+  const handleOpenUpdate = (product) => {
+    setSelectedProduct(product);
+
+    setOpenUpdate(true);
+  };
+
+  const handleCloseUpdate = () => {
+    setSelectedProduct(null);
+
+    setOpenUpdate(false);
+
+    refreshProducts();
+  };
+
+  // ========================================
+  // DELETE PRODUCT
+  // ========================================
 
   const handleDeleteProduct = async () => {
     const productId = getProductId(deleteTarget);
@@ -356,21 +224,49 @@ const Products = () => {
 
     try {
       await dispatch(deleteSellerProduct(productId)).unwrap();
+
       toast.success("Product deleted successfully");
+
       setDeleteTarget(null);
-      const nextTotal = Math.max(products.length - 1, 0);
+
+      const nextTotal = Math.max(totalCount - 1, 0);
+
       const nextTotalPages = Math.max(Math.ceil(nextTotal / ITEMS_PER_PAGE), 1);
-      setCurrentPage((page) => Math.min(page, nextTotalPages));
+
+      const nextPage = Math.min(currentPage, nextTotalPages);
+
+      if (nextPage !== currentPage) {
+        setCurrentPage(nextPage);
+      } else {
+        refreshProducts(nextPage);
+      }
     } catch (err) {
-      toast.error(err || "Delete product failed");
+      toast.error(
+        typeof err === "string" ? err : err?.message || "Delete product failed",
+      );
     }
+  };
+
+  // ========================================
+  // INVENTORY
+  // ========================================
+
+  const handleOpenInventory = (product) => {
+    setInventoryTarget(product);
+
+    setInventoryForm({
+      stockQuantity: getProductStock(product),
+      lowStockThreshold: Number(product?.lowStockThreshold ?? 0),
+    });
   };
 
   const handleSaveInventory = async (event) => {
     event.preventDefault();
 
     const productId = getProductId(inventoryTarget);
+
     const stockQuantity = Number(inventoryForm.stockQuantity);
+
     const lowStockThreshold = Number(inventoryForm.lowStockThreshold || 0);
 
     if (!productId) {
@@ -396,16 +292,28 @@ const Products = () => {
           lowStockThreshold,
         }),
       ).unwrap();
+
       toast.success("Inventory updated successfully");
+
       setInventoryTarget(null);
+
       refreshProducts();
     } catch (err) {
-      toast.error(err || "Update inventory failed");
+      toast.error(
+        typeof err === "string"
+          ? err
+          : err?.message || "Update inventory failed",
+      );
     }
   };
 
+  // ========================================
+  // IMPORT
+  // ========================================
+
   const handleImportFileChange = (event) => {
     const file = event.target.files?.[0] || null;
+
     setImportError(null);
 
     if (!file) {
@@ -415,8 +323,14 @@ const Products = () => {
 
     if (!isValidImportFile(file)) {
       setSelectedImportFile(null);
-      setImportError({ message: INVALID_IMPORT_FILE_MESSAGE, errors: [] });
+
+      setImportError({
+        message: INVALID_IMPORT_FILE_MESSAGE,
+        errors: [],
+      });
+
       event.target.value = "";
+
       return;
     }
 
@@ -425,8 +339,11 @@ const Products = () => {
 
   const handleCloseImport = () => {
     if (importing) return;
+
     setOpenImport(false);
+
     setSelectedImportFile(null);
+
     setImportError(null);
   };
 
@@ -440,44 +357,63 @@ const Products = () => {
         message: "Vui lòng chọn file .xls hoặc .csv.",
         errors: [],
       });
+
       return;
     }
 
     if (!isValidImportFile(selectedImportFile)) {
-      setImportError({ message: INVALID_IMPORT_FILE_MESSAGE, errors: [] });
+      setImportError({
+        message: INVALID_IMPORT_FILE_MESSAGE,
+        errors: [],
+      });
+
       return;
     }
 
     if (selectedImportFile.size === 0) {
-      setImportError({ message: "File import đang rỗng.", errors: [] });
+      setImportError({
+        message: "File import đang rỗng.",
+        errors: [],
+      });
+
       return;
     }
 
     try {
       setImporting(true);
+
       setImportError(null);
+
       const result = await sellerService.importProducts(selectedImportFile);
+
       const errors = formatErrors(result?.errors || result?.Errors);
 
-      if (
-        errors.length > 0 ||
-        Number(result?.failedRows || result?.FailedRows || 0) > 0
-      ) {
+      const failedRows = Number(result?.failedRows ?? result?.FailedRows ?? 0);
+
+      if (errors.length > 0 || failedRows > 0) {
         setImportError({
-          message: `Import hoàn tất với ${result?.failedRows ?? result?.FailedRows ?? 0} dòng lỗi.`,
+          message: `Import hoàn tất với ${failedRows} dòng lỗi.`,
           errors,
         });
+
         return;
       }
 
+      const successRows = result?.successRows ?? result?.SuccessRows ?? 0;
+
       toast.success(
-        result?.successRows || result?.SuccessRows
-          ? `Import sản phẩm thành công: ${result.successRows ?? result.SuccessRows} dòng.`
+        successRows
+          ? `Import sản phẩm thành công: ${successRows} dòng.`
           : "Import sản phẩm thành công.",
       );
+
       setSelectedImportFile(null);
+
       setOpenImport(false);
-      refreshProducts();
+
+      setCurrentPage(1);
+
+      refreshProducts(1);
     } catch (err) {
       setImportError(getErrorDetails(err));
     } finally {
@@ -485,51 +421,56 @@ const Products = () => {
     }
   };
 
+  // ========================================
+  // EXPORT
+  // ========================================
+
   const handleExportProducts = async () => {
     if (exporting) return;
 
     try {
       setExporting(true);
+
       const response = await sellerService.exportProducts();
+
       const fileName =
         extractFileNameFromDisposition(
-          response.headers?.["content-disposition"],
+          response?.headers?.["content-disposition"],
         ) || "seller-products.xls";
+
       const blob = new Blob([response.data], {
-        type: response.headers?.["content-type"] || "application/vnd.ms-excel",
+        type: response?.headers?.["content-type"] || "application/vnd.ms-excel",
       });
+
       const url = window.URL.createObjectURL(blob);
+
       const link = document.createElement("a");
+
       link.href = url;
+
       link.download = fileName;
+
       document.body.appendChild(link);
+
       link.click();
+
       link.remove();
+
       window.URL.revokeObjectURL(url);
+
       toast.success("Xuất danh sách sản phẩm thành công.");
     } catch (err) {
       const { message, errors } = getErrorDetails(err);
+
       toast.error(errors.length > 0 ? errors[0] : message);
     } finally {
       setExporting(false);
     }
   };
 
-  useEffect(() => {
-    dispatch(
-      fetchSellerProducts({
-        pageNumber: 1,
-        pageSize: 100,
-      }),
-    );
-  }, [dispatch]);
-
-  const totalPages = Math.ceil(products.length / ITEMS_PER_PAGE);
-
-  const paginatedProducts = products.slice(
-    (currentPage - 1) * ITEMS_PER_PAGE,
-    currentPage * ITEMS_PER_PAGE,
-  );
+  // ========================================
+  // PAGINATION
+  // ========================================
 
   const handlePreviousPage = () => {
     setCurrentPage((prev) => Math.max(prev - 1, 1));
@@ -539,274 +480,45 @@ const Products = () => {
     setCurrentPage((prev) => Math.min(prev + 1, totalPages));
   };
 
-  if (loading) {
+  // ========================================
+  // LOADING
+  // ========================================
+
+  if (loading && products.length === 0) {
     return (
       <div className="seller-products__loading">
         <div className="seller-products__loading-spinner" />
+
         <span>Loading products...</span>
       </div>
     );
   }
 
-  {
-    /* ERROR */
-  }
-  {
-    error && <div className="seller-products__error">{error}</div>;
-  }
+  // ========================================
+  // RENDER
+  // ========================================
 
   return (
     <div className="seller-products">
-      {/* HEADER */}
+      {/* =========================
+          HEADER
+      ========================= */}
+
       <div className="seller-products__header">
         <div className="seller-products__heading">
           <div className="seller-products__heading-icon">
             <Package size={24} />
           </div>
 
-<<<<<<< HEAD
           <div>
-            <span className="seller-products__eyebrow">
-              Inventory Management
-=======
-          <div className="seller-products__toolbar">
-            <Button
-              className="seller-products__add-btn seller-products__toolbar-btn"
-              disabled={importing}
-              onClick={() => setOpenImport(true)}
-            >
-              <Upload size={18} />
-              {importing ? "Đang nhập sản phẩm..." : "Import Excel"}
-            </Button>
-
-            <Button
-              className="seller-products__add-btn seller-products__toolbar-btn"
-              disabled={exporting}
-              onClick={handleExportProducts}
-            >
-              <Download size={18} />
-              {exporting ? "Đang xuất file..." : "Export Excel"}
-            </Button>
-
-            <Button
-              className="seller-products__add-btn seller-products__toolbar-btn"
-              onClick={() => setOpenAdd(true)}
-            >
-              <Plus size={18} />
-              Add Product
-            </Button>
-          </div>
-        </div>
-
-        {/* STATS */}
-        <div className="seller-products__stats">
-          <div className="seller-products__stat-card">
-            <div className="seller-products__stat-icon">
-              <Package size={20} />
-            </div>
-
-            <div className="seller-products__stat-content">
-              <span>Total Products</span>
-              <strong>{totalCount}</strong>
-            </div>
-          </div>
-
-          <div className="seller-products__stat-card">
-            <div className="seller-products__stat-icon seller-products__stat-icon--success">
-              <TrendingUp size={20} />
-            </div>
-
-            <div className="seller-products__stat-content">
-              <span>Active Products</span>
-
-              <strong>{products.filter((item) => item.isActive).length}</strong>
-            </div>
-          </div>
-        </div>
-
-        {/* PRODUCTS CARD */}
-        <div className="seller-products__card">
-          {/* CARD HEADER */}
-          <div className="seller-products__card-header">
-            <div>
-              <span className="seller-products__section-label">
-                Product Inventory
-              </span>
-
-              <h2>Your Products</h2>
-
-              <p>View and manage your product inventory</p>
-            </div>
-
-            <span className="seller-products__count">
-              {totalCount} Products
->>>>>>> 9e502702ff9ba4aeca9f9b97ace2ce4b63aad286
+            <span className="seller-products__section-label">
+              Product Management
             </span>
 
-            <h1>Product Management</h1>
+            <h1>Products</h1>
 
-            <p>Manage and monitor all products in your store</p>
+            <p>Manage and monitor all products in your store.</p>
           </div>
-<<<<<<< HEAD
-=======
-
-          {/* TABLE */}
-          <div className="seller-products__table-wrapper">
-            <table className="seller-products__table">
-              <thead>
-                <tr>
-                  <th>Product</th>
-                  <th>Category</th>
-                  <th>Price</th>
-                  <th>Stock</th>
-                  <th>Status</th>
-                  <th className="seller-products__action-column">Action</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {products.map((item) => (
-                  <tr key={item.id}>
-                    {/* PRODUCT */}
-                    <td data-label="Product">
-                      <div className="seller-products__product-info">
-                        <div className="seller-products__product-avatar">
-                          {item.name?.charAt(0)?.toUpperCase()}
-                        </div>
-
-                        <div className="seller-products__product-details">
-                          <strong>{item.name}</strong>
-
-                          <span>ID: {item.id?.slice(0, 8)?.toUpperCase()}</span>
-                        </div>
-                      </div>
-                    </td>
-
-                    {/* CATEGORY */}
-                    <td data-label="Category">
-                      <span className="seller-products__category">
-                        {item.categoryName || "-"}
-                      </span>
-                    </td>
-
-                    {/* PRICE */}
-                    <td data-label="Price">
-                      <strong className="seller-products__price">
-                        {formatCurrencyVN(item.price)}
-                      </strong>
-                    </td>
-
-                    <td data-label="Stock">
-                      <span className="seller-products__stock">
-                        {getProductStock(item)}
-                      </span>
-                    </td>
-
-                    {/* STATUS */}
-                    <td data-label="Status">
-                      <span
-                        className={`seller-products__status ${
-                          item.isActive
-                            ? "seller-products__status--active"
-                            : "seller-products__status--inactive"
-                        }`}
-                      >
-                        <span className="seller-products__status-dot" />
-
-                        {item.isActive ? "Active" : "Inactive"}
-                      </span>
-                    </td>
-
-                    {/* ACTION */}
-                    <td data-label="Action">
-                      <div className="seller-products__actions">
-                        <button
-                          type="button"
-                          className="seller-products__action-btn seller-products__action-btn--edit"
-                          onClick={() => handleOpenUpdate(item)}
-                          aria-label={`Edit ${item.name}`}
-                        >
-                          <Pencil size={17} />
-                        </button>
-                        <button
-                          type="button"
-                          className="seller-products__action-btn seller-products__action-btn--inventory"
-                          onClick={() => handleOpenInventory(item)}
-                          aria-label={`Edit inventory for ${item.name}`}
-                        >
-                          <Boxes size={17} />
-                        </button>
-                        <button
-                          type="button"
-                          className="seller-products__action-btn seller-products__action-btn--delete"
-                          onClick={() => setDeleteTarget(item)}
-                          aria-label={`Delete ${item.name}`}
-                        >
-                          <Trash2 size={17} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-
-                {products.length === 0 && (
-                  <tr>
-                    <td colSpan={6}>
-                      <div className="seller-products__empty">
-                        <div className="seller-products__empty-icon">
-                          <Package size={38} />
-                        </div>
-
-                        <h3>No products found</h3>
-
-                        <p>Start by adding your first product.</p>
-
-                        <button
-                          type="button"
-                          className="seller-products__empty-btn"
-                          onClick={() => setOpenAdd(true)}
-                        >
-                          <Plus size={16} />
-                          Add Product
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-
-          {/* PAGINATION */}
-          {products.length > 0 && (
-            <div className="seller-products__pagination">
-              <button
-                type="button"
-                className="seller-products__pagination-btn seller-products__pagination-btn--prev"
-                disabled={currentPage === 1}
-                onClick={handlePreviousPage}
-              >
-                <ChevronLeft size={18} />
-                <span>Previous</span>
-              </button>
-
-              <span className="seller-products__pagination-info">
-                Page <strong>{currentPage}</strong> of{" "}
-                <strong>{totalPages}</strong>
-              </span>
-
-              <button
-                type="button"
-                className="seller-products__pagination-btn seller-products__pagination-btn--next"
-                disabled={currentPage === totalPages}
-                onClick={handleNextPage}
-              >
-                <span>Next</span>
-                <ChevronRight size={18} />
-              </button>
-            </div>
-          )}
->>>>>>> 9e502702ff9ba4aeca9f9b97ace2ce4b63aad286
         </div>
 
         <div className="seller-products__toolbar">
@@ -816,6 +528,7 @@ const Products = () => {
             onClick={() => setOpenImport(true)}
           >
             <Upload size={18} />
+
             {importing ? "Đang nhập sản phẩm..." : "Import Excel"}
           </Button>
 
@@ -825,6 +538,7 @@ const Products = () => {
             onClick={handleExportProducts}
           >
             <Download size={18} />
+
             {exporting ? "Đang xuất file..." : "Export Excel"}
           </Button>
 
@@ -838,7 +552,22 @@ const Products = () => {
         </div>
       </div>
 
-      {/* STATS */}
+      {/* =========================
+          ERROR
+      ========================= */}
+
+      {error && (
+        <div className="seller-products__error">
+          {typeof error === "string"
+            ? error
+            : error?.message || "Unable to load products."}
+        </div>
+      )}
+
+      {/* =========================
+          STATS
+      ========================= */}
+
       <div className="seller-products__stats">
         <div className="seller-products__stat-card">
           <div className="seller-products__stat-icon">
@@ -847,7 +576,8 @@ const Products = () => {
 
           <div className="seller-products__stat-content">
             <span>Total Products</span>
-            <strong>{products.length}</strong>
+
+            <strong>{totalCount}</strong>
           </div>
         </div>
 
@@ -864,9 +594,11 @@ const Products = () => {
         </div>
       </div>
 
-      {/* PRODUCTS CARD */}
+      {/* =========================
+          PRODUCTS CARD
+      ========================= */}
+
       <div className="seller-products__card">
-        {/* CARD HEADER */}
         <div className="seller-products__card-header">
           <div>
             <span className="seller-products__section-label">
@@ -875,114 +607,126 @@ const Products = () => {
 
             <h2>Your Products</h2>
 
-            <p>View and manage your product inventory</p>
+            <p>View and manage your product inventory.</p>
           </div>
 
-          <span className="seller-products__count">
-            {products.length} Products
-          </span>
+          <span className="seller-products__count">{totalCount} Products</span>
         </div>
 
-        {/* TABLE */}
+        {/* =========================
+            TABLE
+        ========================= */}
+
         <div className="seller-products__table-wrapper">
           <table className="seller-products__table">
             <thead>
               <tr>
                 <th>Product</th>
+
                 <th>Category</th>
+
                 <th>Price</th>
+
                 <th>Stock</th>
+
                 <th>Status</th>
+
                 <th className="seller-products__action-column">Action</th>
               </tr>
             </thead>
 
             <tbody>
-              {paginatedProducts.map((item) => (
-                <tr key={item.id}>
-                  {/* PRODUCT */}
-                  <td data-label="Product">
-                    <div className="seller-products__product-info">
-                      <div className="seller-products__product-avatar">
-                        {item.name?.charAt(0)?.toUpperCase()}
+              {products.map((item) => {
+                const productId = getProductId(item);
+
+                return (
+                  <tr key={productId || item.name}>
+                    <td data-label="Product">
+                      <div className="seller-products__product-info">
+                        <div className="seller-products__product-avatar">
+                          {item.name?.charAt(0)?.toUpperCase()}
+                        </div>
+
+                        <div className="seller-products__product-details">
+                          <strong>{item.name}</strong>
+
+                          <span>
+                            ID:{" "}
+                            {productId
+                              ? String(productId).slice(0, 8).toUpperCase()
+                              : "-"}
+                          </span>
+                        </div>
                       </div>
+                    </td>
 
-                      <div className="seller-products__product-details">
-                        <strong>{item.name}</strong>
+                    <td data-label="Category">
+                      <span className="seller-products__category">
+                        {item.categoryName || "-"}
+                      </span>
+                    </td>
 
-                        <span>ID: {item.id?.slice(0, 8)?.toUpperCase()}</span>
+                    <td data-label="Price">
+                      <strong className="seller-products__price">
+                        {formatCurrencyVN(item.price || 0)}
+                      </strong>
+                    </td>
+
+                    <td data-label="Stock">
+                      <span className="seller-products__stock">
+                        {getProductStock(item)}
+                      </span>
+                    </td>
+
+                    <td data-label="Status">
+                      <span
+                        className={`seller-products__status ${
+                          item.isActive
+                            ? "seller-products__status--active"
+                            : "seller-products__status--inactive"
+                        }`}
+                      >
+                        <span className="seller-products__status-dot" />
+
+                        {item.isActive ? "Active" : "Inactive"}
+                      </span>
+                    </td>
+
+                    <td data-label="Action">
+                      <div className="seller-products__actions">
+                        <button
+                          type="button"
+                          className="seller-products__action-btn seller-products__action-btn--edit"
+                          onClick={() => handleOpenUpdate(item)}
+                          aria-label={`Edit ${item.name}`}
+                        >
+                          <Pencil size={17} />
+                        </button>
+
+                        <button
+                          type="button"
+                          className="seller-products__action-btn seller-products__action-btn--inventory"
+                          onClick={() => handleOpenInventory(item)}
+                          aria-label={`Edit inventory for ${item.name}`}
+                        >
+                          <Boxes size={17} />
+                        </button>
+
+                        <button
+                          type="button"
+                          className="seller-products__action-btn seller-products__action-btn--delete"
+                          onClick={() => setDeleteTarget(item)}
+                          aria-label={`Delete ${item.name}`}
+                        >
+                          <Trash2 size={17} />
+                        </button>
                       </div>
-                    </div>
-                  </td>
+                    </td>
+                  </tr>
+                );
+              })}
 
-                  {/* CATEGORY */}
-                  <td data-label="Category">
-                    <span className="seller-products__category">
-                      {item.categoryName || "-"}
-                    </span>
-                  </td>
-
-                  {/* PRICE */}
-                  <td data-label="Price">
-                    <strong className="seller-products__price">
-                      {formatCurrencyVN(item.price)}
-                    </strong>
-                  </td>
-
-                  <td data-label="Stock">
-                    <span className="seller-products__stock">
-                      {getProductStock(item)}
-                    </span>
-                  </td>
-
-                  {/* STATUS */}
-                  <td data-label="Status">
-                    <span
-                      className={`seller-products__status ${
-                        item.isActive
-                          ? "seller-products__status--active"
-                          : "seller-products__status--inactive"
-                      }`}
-                    >
-                      <span className="seller-products__status-dot" />
-
-                      {item.isActive ? "Active" : "Inactive"}
-                    </span>
-                  </td>
-
-                  {/* ACTION */}
-                  <td data-label="Action">
-                    <div className="seller-products__actions">
-                      <button
-                        type="button"
-                        className="seller-products__action-btn seller-products__action-btn--edit"
-                        onClick={() => handleOpenUpdate(item)}
-                        aria-label={`Edit ${item.name}`}
-                      >
-                        <Pencil size={17} />
-                      </button>
-                      <button
-                        type="button"
-                        className="seller-products__action-btn seller-products__action-btn--inventory"
-                        onClick={() => handleOpenInventory(item)}
-                        aria-label={`Edit inventory for ${item.name}`}
-                      >
-                        <Boxes size={17} />
-                      </button>
-                      <button
-                        type="button"
-                        className="seller-products__action-btn seller-products__action-btn--delete"
-                        onClick={() => setDeleteTarget(item)}
-                        aria-label={`Delete ${item.name}`}
-                      >
-                        <Trash2 size={17} />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-
-              {products.length === 0 && (
+              {!loading && products.length === 0 && (
                 <tr>
                   <td colSpan={6}>
                     <div className="seller-products__empty">
@@ -1010,16 +754,20 @@ const Products = () => {
           </table>
         </div>
 
-        {/* PAGINATION */}
-        {products.length > 0 && (
+        {/* =========================
+            PAGINATION
+        ========================= */}
+
+        {totalCount > 0 && (
           <div className="seller-products__pagination">
             <button
               type="button"
               className="seller-products__pagination-btn seller-products__pagination-btn--prev"
-              disabled={currentPage === 1}
+              disabled={currentPage <= 1 || loading}
               onClick={handlePreviousPage}
             >
               <ChevronLeft size={18} />
+
               <span>Previous</span>
             </button>
 
@@ -1031,30 +779,39 @@ const Products = () => {
             <button
               type="button"
               className="seller-products__pagination-btn seller-products__pagination-btn--next"
-              disabled={currentPage === totalPages}
+              disabled={currentPage >= totalPages || loading}
               onClick={handleNextPage}
             >
               <span>Next</span>
+
               <ChevronRight size={18} />
             </button>
           </div>
         )}
       </div>
 
-      {/* ADD MODAL */}
-      {openAdd && (
-        <AddProductModal open={openAdd} onClose={() => setOpenAdd(false)} />
-      )}
+      {/* =========================
+          ADD MODAL
+      ========================= */}
 
-      {/* UPDATE MODAL */}
+      {openAdd && <AddProductModal open={openAdd} onClose={handleCloseAdd} />}
+
+      {/* =========================
+          UPDATE MODAL
+      ========================= */}
+
       {openUpdate && selectedProduct && (
         <UpdateProductModal
-          key={selectedProduct.id}
+          key={getProductId(selectedProduct) || selectedProduct.name}
           open={openUpdate}
           product={selectedProduct}
           onClose={handleCloseUpdate}
         />
       )}
+
+      {/* =========================
+          IMPORT MODAL
+      ========================= */}
 
       {openImport && (
         <div className="seller-products__modal-backdrop" role="presentation">
@@ -1065,6 +822,7 @@ const Products = () => {
             onSubmit={handleImportProducts}
           >
             <h3>Import Excel</h3>
+
             <p>
               Chọn file <strong>.xls</strong> hoặc <strong>.csv</strong> để nhập
               sản phẩm. Hệ thống chưa hỗ trợ file .xlsx.
@@ -1072,6 +830,7 @@ const Products = () => {
 
             <label className="seller-products__field">
               <span>File sản phẩm</span>
+
               <input
                 type="file"
                 accept=".xls,.csv,application/vnd.ms-excel,text/csv"
@@ -1090,10 +849,11 @@ const Products = () => {
             {importError && (
               <div className="seller-products__import-error" role="alert">
                 <strong>{importError.message}</strong>
-                {importError.errors.length > 0 && (
+
+                {importError.errors?.length > 0 && (
                   <ul>
-                    {importError.errors.slice(0, 20).map((item) => (
-                      <li key={item}>{item}</li>
+                    {importError.errors.slice(0, 20).map((item, index) => (
+                      <li key={`${item}-${index}`}>{item}</li>
                     ))}
                   </ul>
                 )}
@@ -1116,6 +876,7 @@ const Products = () => {
               >
                 Cancel
               </button>
+
               <button
                 type="submit"
                 className="seller-products__modal-btn seller-products__modal-btn--primary"
@@ -1128,6 +889,10 @@ const Products = () => {
         </div>
       )}
 
+      {/* =========================
+          DELETE MODAL
+      ========================= */}
+
       {deleteTarget && (
         <div className="seller-products__modal-backdrop" role="presentation">
           <div
@@ -1136,11 +901,13 @@ const Products = () => {
             aria-modal="true"
           >
             <h3>Delete product?</h3>
+
             <p>
               This will remove <strong>{deleteTarget.name}</strong> from your
               shop. Products linked to existing orders may be rejected by the
               server.
             </p>
+
             <div className="seller-products__modal-actions">
               <button
                 type="button"
@@ -1150,18 +917,23 @@ const Products = () => {
               >
                 Cancel
               </button>
+
               <button
                 type="button"
                 className="seller-products__modal-btn seller-products__modal-btn--danger"
                 disabled={actionLoading}
                 onClick={handleDeleteProduct}
               >
-                Delete
+                {actionLoading ? "Deleting..." : "Delete"}
               </button>
             </div>
           </div>
         </div>
       )}
+
+      {/* =========================
+          INVENTORY MODAL
+      ========================= */}
 
       {inventoryTarget && (
         <div className="seller-products__modal-backdrop" role="presentation">
@@ -1172,11 +944,14 @@ const Products = () => {
             onSubmit={handleSaveInventory}
           >
             <h3>Edit inventory</h3>
+
             <p>
               Update stock levels for <strong>{inventoryTarget.name}</strong>.
             </p>
+
             <label className="seller-products__field">
               <span>Stock quantity</span>
+
               <input
                 type="number"
                 min="0"
@@ -1190,8 +965,10 @@ const Products = () => {
                 }
               />
             </label>
+
             <label className="seller-products__field">
               <span>Low stock threshold</span>
+
               <input
                 type="number"
                 min="0"
@@ -1205,6 +982,7 @@ const Products = () => {
                 }
               />
             </label>
+
             <div className="seller-products__modal-actions">
               <button
                 type="button"
@@ -1214,12 +992,13 @@ const Products = () => {
               >
                 Cancel
               </button>
+
               <button
                 type="submit"
                 className="seller-products__modal-btn seller-products__modal-btn--primary"
                 disabled={actionLoading}
               >
-                Save
+                {actionLoading ? "Saving..." : "Save"}
               </button>
             </div>
           </form>

@@ -5,7 +5,6 @@
 .seller-order-detail-overlay {
   position: fixed;
   inset: 0;
-
   z-index: 9999;
 
   display: flex;
@@ -14,8 +13,7 @@
 
   padding: 24px;
 
-  background: rgba(2, 6, 23, 0.78);
-
+  background: rgba(2, 6, 23, 0.8);
   backdrop-filter: blur(6px);
 
   animation: sellerOrderDetailFadeIn 0.2s ease;
@@ -31,8 +29,8 @@
   display: flex;
   flex-direction: column;
 
-  width: min(920px, 100%);
-  max-height: min(900px, 92vh);
+  width: min(960px, 100%);
+  max-height: min(920px, 92vh);
 
   overflow: hidden;
 
@@ -40,10 +38,9 @@
   border-radius: 16px;
 
   background: #111827;
-
   color: #e5e7eb;
 
-  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.52);
 
   animation: sellerOrderDetailSlideUp 0.22s ease;
 }
@@ -155,7 +152,6 @@
   border-radius: 9px;
 
   background: #151c2c;
-
   color: #94a3b8;
 
   cursor: pointer;
@@ -170,7 +166,6 @@
     border-color: #3b82f6;
 
     background: #172033;
-
     color: #ffffff;
 
     transform: rotate(90deg);
@@ -178,7 +173,6 @@
 
   &:disabled {
     cursor: not-allowed;
-
     opacity: 0.5;
   }
 }
@@ -277,54 +271,6 @@
   color: #93c5fd !important;
 }
 
-.seller-order-detail-buyer {
-  padding: 0 28px 20px;
-}
-
-.seller-order-detail-buyer-card {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
-}
-
-.seller-order-detail-buyer-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 14px;
-  border: 1px solid #f1f5f9;
-  border-radius: 15px;
-  background: #ffffff;
-
-  span {
-    display: block;
-    margin-bottom: 5px;
-    color: #94a3b8;
-    font-size: 11px;
-    font-weight: 500;
-  }
-
-  strong {
-    display: block;
-    color: #1e293b;
-    font-size: 14px;
-    font-weight: 700;
-    word-break: break-word;
-  }
-}
-
-.seller-order-detail-buyer-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  width: 34px;
-  height: 34px;
-  border-radius: 10px;
-  background: #fff1f2;
-  color: #ef4444;
-}
-
 // ========================================
 // STATUS
 // ========================================
@@ -402,39 +348,8 @@
 }
 
 // ========================================
-// PRODUCTS SECTION
+// COMMON SECTION HEADING
 // ========================================
-
-.seller-order-detail-products {
-  flex: 1;
-
-  min-height: 0;
-
-  overflow-y: auto;
-
-  padding: 18px 24px 22px;
-
-  scrollbar-width: thin;
-  scrollbar-color: #334155 transparent;
-
-  &::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    border-radius: 999px;
-
-    background: #334155;
-
-    &:hover {
-      background: #475569;
-    }
-  }
-}
 
 .seller-order-detail-section-heading {
   display: flex;
@@ -483,6 +398,140 @@
 
     font-size: 10px;
     font-weight: 800;
+  }
+}
+
+// ========================================
+// BUYER INFORMATION
+// ========================================
+
+.seller-order-detail-buyer {
+  padding: 18px 24px 6px;
+}
+
+.seller-order-detail-buyer-card {
+  display: grid;
+
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+
+  gap: 10px;
+}
+
+.seller-order-detail-buyer-item {
+  display: flex;
+  align-items: center;
+
+  gap: 11px;
+
+  min-width: 0;
+
+  padding: 13px;
+
+  border: 1px solid #273149;
+  border-radius: 12px;
+
+  background: #0f172a;
+
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    transform 0.2s ease;
+
+  &:hover {
+    border-color: #334155;
+
+    background: #151c2c;
+
+    transform: translateY(-1px);
+  }
+
+  > div:last-child {
+    min-width: 0;
+  }
+
+  span {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: #64748b;
+
+    font-size: 9px;
+    font-weight: 700;
+
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  strong {
+    display: block;
+
+    overflow: hidden;
+
+    color: #e5e7eb;
+
+    font-size: 11px;
+    font-weight: 800;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+}
+
+.seller-order-detail-buyer-icon {
+  width: 34px;
+  height: 34px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid #273149;
+  border-radius: 10px;
+
+  background: #151c2c;
+
+  color: #93c5fd;
+
+  svg {
+    stroke-width: 1.8;
+  }
+}
+
+// ========================================
+// PRODUCTS SECTION
+// ========================================
+
+.seller-order-detail-products {
+  flex: 1;
+
+  min-height: 0;
+
+  overflow-y: auto;
+
+  padding: 18px 24px 22px;
+
+  scrollbar-width: thin;
+  scrollbar-color: #334155 transparent;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+
+    background: #334155;
+
+    &:hover {
+      background: #475569;
+    }
   }
 }
 
@@ -784,7 +833,7 @@
 
   border-radius: inherit;
 
-  background: rgba(2, 6, 23, 0.72);
+  background: rgba(2, 6, 23, 0.74);
 
   backdrop-filter: blur(4px);
 
@@ -838,59 +887,16 @@
 }
 
 // ========================================
-// OPTIONAL STATUS SELECT
-// ========================================
-
-.seller-order-detail-status-action {
-  display: inline-flex;
-  align-items: center;
-
-  gap: 8px;
-
-  color: #94a3b8;
-
-  font-size: 11px;
-  font-weight: 700;
-
-  select {
-    height: 40px;
-
-    padding: 0 12px;
-
-    border: 1px solid #273149;
-    border-radius: 10px;
-
-    outline: none;
-
-    background: #151c2c;
-
-    color: #e5e7eb;
-
-    font-family: inherit;
-    font-size: 11px;
-    font-weight: 700;
-
-    &:focus {
-      border-color: #3b82f6;
-
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.11);
-    }
-
-    option {
-      background: #111827;
-
-      color: #e5e7eb;
-    }
-  }
-}
-
-// ========================================
 // RESPONSIVE
 // ========================================
 
 @media (max-width: 900px) {
   .seller-order-detail-summary {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .seller-order-detail-buyer-card {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -947,16 +953,12 @@
     }
   }
 
+  .seller-order-detail-buyer {
+    padding: 14px 16px 4px;
+  }
+
   .seller-order-detail-products {
     padding: 16px;
-  }
-
-  .seller-order-detail-buyer {
-    padding: 0 16px 16px;
-  }
-
-  .seller-order-detail-buyer-card {
-    grid-template-columns: 1fr;
   }
 
   .seller-order-detail-product {
@@ -1041,6 +1043,10 @@
     button {
       width: 100%;
     }
+  }
+
+  .seller-order-detail-buyer-item {
+    align-items: flex-start;
   }
 }
 
