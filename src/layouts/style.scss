@@ -1,3 +1,46 @@
+.main-layout {
+  width: 100%;
+  min-height: 100vh;
+
+  overflow-x: hidden;
+
+  background: #000 !important;
+
+  &__content {
+    width: 100%;
+  }
+
+  &__content--home {
+    width: 100%;
+    max-width: none;
+
+    margin: 0;
+    padding: 0;
+  }
+
+  &__page {
+    width: 100%;
+  }
+
+  &__page--home {
+    width: 100%;
+    max-width: none;
+
+    margin: 0;
+    padding: 0;
+  }
+}
+
+.container-custom {
+  width: 100%;
+
+  max-width: 1440px;
+
+  margin: 0 auto;
+
+  padding-left: 24px;
+  padding-right: 24px;
+}
 // ========================================
 // ADMIN LAYOUT
 // ========================================
