@@ -329,7 +329,14 @@ const Products = () => {
                           <div className="product-info__content">
                             <span className="product-name">{product.name}</span>
 
-                            <span className="product-sold">
+                            <span
+                              className="product-sold"
+                              title={
+                                product.description ||
+                                product.location ||
+                                "No description"
+                              }
+                            >
                               {product.description ||
                                 product.location ||
                                 "No description"}
@@ -359,9 +366,9 @@ const Products = () => {
                         </span>
                       </td>
 
-                      {/* VIEWS */}
+                      {/* STOCK */}
                       <td>
-                        <span className="stock">{product.viewCount ?? 0}</span>
+                        <span className="stock">{product.stockQuantity ?? 0}</span>
                       </td>
 
                       {/* VISIBILITY */}

@@ -63,6 +63,8 @@ const formatDate = (value) => {
 
 const Vouchers = () => {
   const [openAdd, setOpenAdd] = useState(false);
+  const [openEdit, setOpenEdit] = useState(false);
+  const [selectedVoucher, setSelectedVoucher] = useState(null);
   const [vouchers, setVouchers] = useState([]);
   const [pagination, setPagination] = useState({
     pageNumber: 1,
@@ -74,7 +76,7 @@ const Vouchers = () => {
     keyword: "",
     discountType: "all",
     status: "all",
-    sortBy: "default",
+    sortBy: "",
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -168,6 +170,17 @@ const Vouchers = () => {
     loadVouchers({ page: pagination.pageNumber });
   };
 
+  const handleOpenEdit = (voucher) => {
+    setSelectedVoucher(voucher);
+    setOpenEdit(true);
+  };
+
+  const handleCloseEdit = () => {
+    setOpenEdit(false);
+    setSelectedVoucher(null);
+    loadVouchers({ page: pagination.pageNumber });
+  };
+
   return (
     <div className="seller-vouchers">
       {/* Header */}
@@ -213,13 +226,11 @@ const Vouchers = () => {
             <option value="active">Active</option>
             <option value="inactive">Inactive</option>
             <option value="expired">Expired</option>
-            <option value="exhausted">Exhausted</option>
           </select>
           <select
             value={filters.sortBy}
             onChange={(event) => handleFilterChange("sortBy", event.target.value)}
           >
-            <option value="default">Default sort</option>
             <option value="createdAtUtc_desc">Newest</option>
             <option value="createdAtUtc_asc">Oldest</option>
             <option value="endAtUtc_asc">Ending soon</option>
@@ -308,8 +319,7 @@ const Vouchers = () => {
                         <button
                           type="button"
                           className="seller-vouchers__action-btn seller-vouchers__action-btn--edit"
-                          disabled
-                          title="Edit voucher is not available in current API contract"
+                          onClick={() => handleOpenEdit(item)}
                         >
                           Edit
                         </button>
@@ -387,6 +397,15 @@ const Vouchers = () => {
 
       {openAdd && (
         <AddVoucherModal open={openAdd} onClose={handleCloseAdd} />
+      )}
+
+      {openEdit && selectedVoucher && (
+        <AddVoucherModal
+          open={openEdit}
+          mode="edit"
+          initialVoucher={selectedVoucher}
+          onClose={handleCloseEdit}
+        />
       )}
     </div>
   );

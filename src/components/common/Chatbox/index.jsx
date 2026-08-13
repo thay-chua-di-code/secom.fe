@@ -24,20 +24,33 @@ const formatChatTime = (dateString) => {
   });
 };
 
-const normalizeChatListItem = (chat, index) => ({
-  ...chat,
-  id: chat.chatId ?? chat.id ?? `chat-${index}`,
-  type: "seller",
-  name: chat.sellerName || chat.shopName || `Seller ${chat.sellerId ?? ""}`,
-  avatar:
-    chat.sellerAvatarUrl ||
-    chat.avatar ||
-    "https://api.dicebear.com/7.x/initials/svg?seed=Seller",
-  lastMessage: chat.latestMessagePreview || "No messages yet",
-  text: chat.latestMessagePreview || "No messages yet",
-  time: formatChatTime(chat.latestMessageAtUtc),
-  unread: chat.unreadCount ?? 0,
-});
+const normalizeChatListItem = (chat, index, currentUserId) => {
+  const currentId = currentUserId ? String(currentUserId).toLowerCase() : "";
+  const isSellerViewer = currentId && String(chat.sellerId ?? "").toLowerCase() === currentId;
+  const resolvedSellerName =
+    chat.shopName || chat.sellerName || chat.fullName || "Seller";
+  const resolvedBuyerName = chat.buyerName || chat.fullName || "Buyer";
+  const peerName = isSellerViewer
+    ? resolvedBuyerName
+    : resolvedSellerName;
+  const peerAvatar = isSellerViewer
+    ? chat.buyerAvatarUrl
+    : chat.sellerAvatarUrl || chat.avatar;
+
+  return {
+    ...chat,
+    id: chat.chatId ?? chat.id ?? `chat-${index}`,
+    type: "seller",
+    name: peerName,
+    avatar:
+      peerAvatar ||
+      `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(peerName || "Chat")}`,
+    lastMessage: chat.latestMessagePreview || "No messages yet",
+    text: chat.latestMessagePreview || "No messages yet",
+    time: formatChatTime(chat.latestMessageAtUtc),
+    unread: chat.unreadCount ?? 0,
+  };
+};
 
 const createMessageId = () => {
   if (typeof crypto !== "undefined" && crypto.randomUUID) {
@@ -94,11 +107,11 @@ const ChatBox = () => {
       },
       ...(Array.isArray(chats)
         ? chats.filter(Boolean).map((chat, index) =>
-            normalizeChatListItem(chat, index),
+            normalizeChatListItem(chat, index, currentUserId),
           )
         : []),
     ],
-    [chats],
+    [chats, currentUserId],
   );
 
   const [open, setOpen] = useState(false);

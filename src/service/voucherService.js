@@ -11,8 +11,14 @@ export const voucherService = {
   },
 
   applyVoucherToCart: async (code) => {
+    const normalizedCode = String(code?.code ?? code ?? "").trim();
+
+    if (!normalizedCode) {
+      throw new Error("Voucher code is required.");
+    }
+
     const response = await axiosClient.put(API_ENDPOINTS.CART.APPLY_VOUCHER, {
-      code,
+      code: normalizedCode,
     });
 
     return response.data;

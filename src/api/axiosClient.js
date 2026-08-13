@@ -22,10 +22,21 @@ export const setLogoutHandler = (fn) => {
   logoutHandler = fn;
 };
 
+axiosClient.interceptors.request.use((config) => {
+  if (config?.skipAuth) {
+    if (config.headers) {
+      delete config.headers.Authorization;
+      delete config.headers.authorization;
+    }
+  }
+
+  return config;
+});
+
 axiosClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    if (error.response?.status === 401 && !error.config?.skipAuth) {
       logoutHandler?.();
       localStorage.clear();
     }

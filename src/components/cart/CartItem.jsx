@@ -1,12 +1,9 @@
+import { Link } from "react-router-dom";
 import { Package, Trash2 } from "lucide-react";
 import QuantitySelector from "./QuantitySelector";
 import { useDispatch } from "react-redux";
 import { removeCartItem } from "../../redux/slice/cartSlice";
-
-const currencyFormatter = new Intl.NumberFormat("en-US", {
-  style: "currency",
-  currency: "USD",
-});
+import { formatCurrencyVN } from "../../utils/fncUtils";
 
 export default function CartItem({
   item,
@@ -18,6 +15,20 @@ export default function CartItem({
   const rowSelectedClass = checked ? "bg-secom-50/30" : "";
 
   const dispatch = useDispatch();
+  const productDetailPath = item.productId
+    ? `/product-detail/${item.productId}`
+    : null;
+  const productImage = item.productImageUrl ? (
+    <img
+      src={item.productImageUrl}
+      alt={item.productName || "Product"}
+      className="h-[72px] w-[72px] rounded-xl object-cover"
+    />
+  ) : (
+    <div className="flex h-[72px] w-[72px] shrink-0 items-center justify-center rounded-xl bg-gray-100">
+      <Package className="text-gray-400" size={24} />
+    </div>
+  );
 
   const handleRemove = () => {
     dispatch(removeCartItem(item.cartItemId));
@@ -40,24 +51,37 @@ export default function CartItem({
         </div>
 
         <div className="flex flex-1 items-center gap-5 pr-6">
-          <div className="flex h-[72px] w-[72px] shrink-0 items-center justify-center rounded-xl bg-gray-100">
-            <Package className="text-gray-400" size={24} />
-          </div>
+          {productDetailPath ? (
+            <Link to={productDetailPath} className="shrink-0">
+              {productImage}
+            </Link>
+          ) : (
+            productImage
+          )}
           <div className="min-w-0">
-            <p className="line-clamp-2 text-sm font-semibold leading-6 text-slate-900">
-              {item.productName || "Unnamed Product"}
-            </p>
+            {productDetailPath ? (
+              <Link
+                to={productDetailPath}
+                className="line-clamp-2 text-sm font-semibold leading-6 text-slate-900 hover:text-secom-600"
+              >
+                {item.productName || "Unnamed Product"}
+              </Link>
+            ) : (
+              <p className="line-clamp-2 text-sm font-semibold leading-6 text-slate-900">
+                {item.productName || "Unnamed Product"}
+              </p>
+            )}
             <p className="mt-1 text-sm text-slate-500">
-              Seller:{" "}
+              Product ID:{" "}
               <span className="font-medium text-slate-600">
-                {item.sellerId}
+                {String(item.productId || "--").slice(0, 8)}
               </span>
             </p>
           </div>
         </div>
 
         <div className="w-40 text-right text-sm font-medium tabular-nums text-slate-900">
-          {currencyFormatter.format(item.unitPrice || 0)}
+          {formatCurrencyVN(item.unitPrice || 0)}
         </div>
 
         <div className="flex w-40 justify-center">
@@ -69,7 +93,7 @@ export default function CartItem({
         </div>
 
         <div className="w-44 text-right text-sm font-medium tabular-nums text-slate-900">
-          {currencyFormatter.format(item.subtotal || 0)}
+          {formatCurrencyVN(item.subtotal || 0)}
         </div>
 
         <div className="flex w-24 justify-center">
@@ -98,18 +122,31 @@ export default function CartItem({
             }
             className="mt-1 h-4 w-4 rounded border-gray-300 text-secom-600 focus:ring-secom-300"
           />
-          <div className="flex h-[72px] w-[72px] shrink-0 items-center justify-center rounded-xl bg-gray-100">
-            <Package className="text-gray-400" size={24} />
-          </div>
+          {productDetailPath ? (
+            <Link to={productDetailPath} className="shrink-0">
+              {productImage}
+            </Link>
+          ) : (
+            productImage
+          )}
           <div className="min-w-0 flex-1">
-            <p className="line-clamp-2 text-sm font-semibold text-slate-900">
-              {item.productName || "Unnamed Product"}
-            </p>
+            {productDetailPath ? (
+              <Link
+                to={productDetailPath}
+                className="line-clamp-2 text-sm font-semibold text-slate-900 hover:text-secom-600"
+              >
+                {item.productName || "Unnamed Product"}
+              </Link>
+            ) : (
+              <p className="line-clamp-2 text-sm font-semibold text-slate-900">
+                {item.productName || "Unnamed Product"}
+              </p>
+            )}
             <p className="mt-1 text-xs text-slate-500">
-              Seller: {item.sellerId}
+              Product ID: {String(item.productId || "--").slice(0, 8)}
             </p>
             <p className="mt-1 text-xs font-medium tabular-nums text-slate-900">
-              {currencyFormatter.format(item.unitPrice || 0)}
+              {formatCurrencyVN(item.unitPrice || 0)}
             </p>
           </div>
         </div>
@@ -123,7 +160,7 @@ export default function CartItem({
           <div className="text-right">
             <p className="text-xs text-slate-500">Subtotal</p>
             <p className="text-sm font-semibold tabular-nums text-slate-900">
-              {currencyFormatter.format(item.subtotal || 0)}
+              {formatCurrencyVN(item.subtotal || 0)}
             </p>
           </div>
           <button

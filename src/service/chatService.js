@@ -14,6 +14,7 @@ const getApiErrorMessage = (error, fallback) =>
  * @property {string} chatId
  * @property {string} buyerId
  * @property {string} sellerId
+ * @property {string | null} shopName
  * @property {string | null} productId
  * @property {string | null} latestMessagePreview
  * @property {string | null} latestMessageAtUtc
@@ -25,6 +26,7 @@ const getApiErrorMessage = (error, fallback) =>
  * @property {string} chatId
  * @property {string} buyerId
  * @property {string} sellerId
+ * @property {string | null} shopName
  * @property {string} sellerName
  * @property {string | null} sellerAvatarUrl
  * @property {string} createdAtUtc

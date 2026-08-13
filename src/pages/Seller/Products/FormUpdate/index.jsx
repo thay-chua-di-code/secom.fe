@@ -181,7 +181,7 @@ const UpdateProductModal = ({ open, product, onClose }) => {
         setSelectedPrimary(null);
       }
       await refetchImages();
-      await dispatch(fetchSellerProducts({ pageNumber: 1, pageSize: 10 }));
+      await dispatch(fetchSellerProducts({ page: 1, pageSize: 10 }));
     } catch (error) {
       toast.error(getErrorMessage(error, "Delete item image was failed."));
     } finally {
@@ -197,7 +197,7 @@ const UpdateProductModal = ({ open, product, onClose }) => {
       await setPrimaryProductImage(productId, imageId);
       toast.success("Main image was updated.");
       await refetchImages();
-      await dispatch(fetchSellerProducts({ pageNumber: 1, pageSize: 10 }));
+      await dispatch(fetchSellerProducts({ page: 1, pageSize: 10 }));
     } catch (error) {
       toast.error(getErrorMessage(error, "Update main image was failed."));
     } finally {
@@ -308,7 +308,7 @@ const UpdateProductModal = ({ open, product, onClose }) => {
 
       clearPendingImages();
       await refetchImages();
-      await dispatch(fetchSellerProducts({ pageNumber: 1, pageSize: 10 }));
+      await dispatch(fetchSellerProducts({ page: 1, pageSize: 10 }));
       toast.success("Product updated successfully!", { duration: 2500 });
       onClose();
     } catch (error) {

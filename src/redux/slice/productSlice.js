@@ -3,9 +3,21 @@ import { dicoveryService } from "../../service/dicoveryService";
 import productApi from "../../api/productApi";
 
 const initialState = {
-  products: [],
+  products: {
+    items: [],
+    pageNumber: 1,
+    pageSize: 20,
+    totalCount: 0,
+    totalPages: 0,
+  },
   productSearch: [],
-  productFilter: [],
+  productFilter: {
+    items: [],
+    pageNumber: 1,
+    pageSize: 20,
+    totalCount: 0,
+    totalPages: 0,
+  },
   productDetail: null,
   reviews: [],
   reviewsData: {
@@ -58,8 +70,7 @@ export const fetchProductsByCategory = createAsyncThunk(
         page: 1,
         pageSize: 20,
       });
-
-      return response.data;
+      return response;
     } catch (error) {
       return thunkAPI.rejectWithValue(
         error.response?.data || "Failed to fetch products",
@@ -73,15 +84,14 @@ export const searchProductsThunk = createAsyncThunk(
   async (params, thunkAPI) => {
     try {
       const response = await dicoveryService.getProductByKeyWord(params);
-      const data = response.data.data;
 
       return {
-        items: data.items,
+        items: response.items,
         pagination: {
-          page: data.pageNumber,
-          limit: data.pageSize,
-          totalPages: data.totalPages,
-          totalItems: data.totalCount,
+          page: response.pageNumber,
+          limit: response.pageSize,
+          totalPages: response.totalPages,
+          totalItems: response.totalCount,
         },
       };
     } catch (error) {
@@ -112,8 +122,9 @@ const productSlice = createSlice({
     },
 
     clearProducts(state) {
-      state.products = [];
+      state.products = initialState.products;
       state.productSearch = [];
+      state.productFilter = initialState.productFilter;
     },
 
     getProduct(state, action) {
@@ -124,9 +135,17 @@ const productSlice = createSlice({
         ...(data.latestProducts || []),
       ];
 
-      state.products = Array.from(
+      const dedupedProducts = Array.from(
         new Map(products.map((item) => [item.id, item])).values(),
       );
+
+      state.products = {
+        items: dedupedProducts,
+        pageNumber: 1,
+        pageSize: dedupedProducts.length || 20,
+        totalCount: dedupedProducts.length,
+        totalPages: dedupedProducts.length > 0 ? 1 : 0,
+      };
     },
 
     getReviews(state, action) {

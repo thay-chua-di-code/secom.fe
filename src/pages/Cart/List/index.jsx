@@ -1,4 +1,6 @@
+import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import { Package } from "lucide-react";
 import { removeCartItem } from "../../../redux/slice/cartSlice";
 import "./style.scss";
 import { formatCurrencyVN } from "../../../utils/fncUtils";
@@ -37,11 +39,56 @@ export default function CartList({
               onChange={(e) => onSelectItem(item.cartItemId, e.target.checked)}
             />
             <div className="cart-item__content">
-              <h3>{item.productName}</h3>
-              <span>Qty: {item.quantity}</span>
-              <div className="cart-item__price">
-                {formatCurrencyVN(item.subtotal || 0)}
+              <div className="cart-item__product">
+                {item.productId ? (
+                  <Link
+                    to={`/product-detail/${item.productId}`}
+                    className="cart-item__image-link"
+                  >
+                    {item.imageUrl ? (
+                      <img
+                        src={item.imageUrl}
+                        alt={item.productName || "Product"}
+                        className="cart-item__image"
+                      />
+                    ) : (
+                      <div className="cart-item__image cart-item__image--placeholder">
+                        <Package size={22} />
+                      </div>
+                    )}
+                  </Link>
+                ) : item.imageUrl ? (
+                  <img
+                    src={item.imageUrl}
+                    alt={item.productName || "Product"}
+                    className="cart-item__image"
+                  />
+                ) : (
+                  <div className="cart-item__image cart-item__image--placeholder">
+                    <Package size={22} />
+                  </div>
+                )}
+
+                <div className="cart-item__details">
+                  {item.productId ? (
+                    <Link
+                      to={`/product-detail/${item.productId}`}
+                      className="cart-item__name"
+                    >
+                      {item.productName}
+                    </Link>
+                  ) : (
+                    <h3 className="cart-item__name">{item.productName}</h3>
+                  )}
+
+                  <span>Qty: {item.quantity}</span>
+
+                  <div className="cart-item__price">
+                    {formatCurrencyVN(item.subtotal || 0)}
+                  </div>
+                </div>
               </div>
+
               <div className="cart-item__actions">
                 <button
                   data-testid="quantity-decrease-btn"

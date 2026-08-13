@@ -1,72 +1,88 @@
+import { useEffect, useMemo, useState } from "react";
 import {
   ResponsiveContainer,
-  AreaChart,
-  Area,
   BarChart,
   Bar,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
+  LineChart,
+  Line,
 } from "recharts";
 
+import { adminService } from "../../../../service/adminService";
 import "./style.scss";
 
+const tooltipProps = {
+  allowEscapeViewBox: { x: true, y: true },
+  wrapperStyle: { zIndex: 20, pointerEvents: "none" },
+};
+
+const CURRENT_YEAR = new Date().getFullYear();
+
 const formatCurrency = (value) => {
-  if (value >= 1000000) {
-    return `$${Math.round(value / 1000)}k`;
+  const numericValue = Number(value || 0);
+
+  if (numericValue >= 1000000) {
+    return `${Math.round(numericValue / 1000)}k`;
   }
 
-  return `$${value.toLocaleString()}`;
+  return numericValue.toLocaleString();
 };
 
 export default function FinanceCharts({ summary }) {
-  /**
-   * Temporary data
-   *
-   * Later, if the backend returns:
-   *
-   * {
-   *   month: "Jan",
-   *   revenue: 130000
-   * }
-   *
-   * only remap this data.
-   */
-  const revenueData = [
-    {
-      month: "Jan",
-      revenue: 140000,
-    },
-    {
-      month: "Feb",
-      revenue: 130000,
-    },
-    {
-      month: "Mar",
-      revenue: 190000,
-    },
-    {
-      month: "Apr",
-      revenue: 165000,
-    },
-    {
-      month: "May",
-      revenue: 220000,
-    },
-    {
-      month: "Jun",
-      revenue: 200000,
-    },
-    {
-      month: "Jul",
-      revenue: summary?.totalGMV || 260000,
-    },
-  ];
+  const [trendState, setTrendState] = useState({
+    loading: true,
+    error: null,
+    data: null,
+  });
 
-  /**
-   * Bar chart
-   */
+  useEffect(() => {
+    let isMounted = true;
+
+    setTrendState((currentState) => ({
+      ...currentState,
+      loading: true,
+      error: null,
+    }));
+
+    adminService
+      .getFinanceTrends({ year: CURRENT_YEAR })
+      .then((data) => {
+        if (!isMounted) {
+          return;
+        }
+
+        setTrendState({
+          loading: false,
+          error: null,
+          data,
+        });
+      })
+      .catch((error) => {
+        if (!isMounted) {
+          return;
+        }
+
+        setTrendState({
+          loading: false,
+          error: error.message || "Unable to load revenue trend.",
+          data: null,
+        });
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const trendItems = useMemo(() => trendState.data?.items ?? [], [trendState.data]);
+  const hasTrendActivity = useMemo(
+    () => trendItems.some((item) => Number(item?.successfulPayments || 0) > 0),
+    [trendItems],
+  );
+
   const categoryData = [
     {
       name: "GMV",
@@ -77,93 +93,53 @@ export default function FinanceCharts({ summary }) {
       value: summary?.totalPlatformFee || 0,
     },
     {
-      name: "Seller Payout",
+      name: "Seller Wallet Releases",
       value: summary?.totalSellerPayoutAmount || 0,
     },
   ];
 
   return (
     <div className="finance-charts">
-      {/* Revenue Trend */}
       <div className="chart-card revenue-chart">
         <div className="chart-header">
-          <h3>Revenue Trend</h3>
+          <div>
+            <h3>Revenue Trend</h3>
+            <span>{`Monthly successful payments — ${trendState.data?.year || CURRENT_YEAR}`}</span>
+          </div>
         </div>
 
-        <ResponsiveContainer width="100%" height={240}>
-          <AreaChart
-            data={revenueData}
-            margin={{
-              top: 10,
-              right: 10,
-              left: 0,
-              bottom: 0,
-            }}
-          >
-            <defs>
-              <linearGradient id="revenueGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#10b981" stopOpacity={0.28} />
-
-                <stop offset="100%" stopColor="#10b981" stopOpacity={0} />
-              </linearGradient>
-            </defs>
-
-            <CartesianGrid
-              stroke="#1e293b"
-              strokeDasharray="3 3"
-              vertical={false}
-            />
-
-            <XAxis
-              dataKey="month"
-              axisLine={false}
-              tickLine={false}
-              tick={{
-                fill: "#64748b",
-                fontSize: 12,
-              }}
-            />
-
-            <YAxis
-              axisLine={false}
-              tickLine={false}
-              tick={{
-                fill: "#64748b",
-                fontSize: 12,
-              }}
-              tickFormatter={formatCurrency}
-            />
-
-            <Tooltip
-              contentStyle={{
-                background: "#111827",
-                border: "1px solid #334155",
-                borderRadius: "8px",
-                color: "#fff",
-              }}
-              formatter={(value) => [
-                `${Number(value).toLocaleString()} VND`,
-                "Revenue",
-              ]}
-            />
-
-            <Area
-              type="monotone"
-              dataKey="revenue"
-              stroke="#10b981"
-              strokeWidth={2}
-              fill="url(#revenueGradient)"
-              dot={false}
-              activeDot={{
-                r: 5,
-                fill: "#10b981",
-              }}
-            />
-          </AreaChart>
-        </ResponsiveContainer>
+        {trendState.loading ? (
+          <div className="finance-chart-state">Loading revenue trend...</div>
+        ) : trendState.error ? (
+          <div className="finance-chart-state finance-chart-state--error">
+            Unable to load revenue trend.
+          </div>
+        ) : !hasTrendActivity ? (
+          <div className="finance-chart-state finance-chart-state--empty">
+            No historical revenue data is available for {trendState.data?.year || CURRENT_YEAR}.
+          </div>
+        ) : (
+          <ResponsiveContainer width="100%" height={240}>
+            <LineChart data={trendItems} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
+              <CartesianGrid stroke="#1e293b" strokeDasharray="3 3" vertical={false} />
+              <XAxis dataKey="label" axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 11 }} />
+              <YAxis axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 11 }} tickFormatter={formatCurrency} />
+              <Tooltip
+                {...tooltipProps}
+                contentStyle={{
+                  background: "#111827",
+                  border: "1px solid #334155",
+                  borderRadius: "8px",
+                  color: "#fff",
+                }}
+                formatter={(value) => [`${Number(value).toLocaleString()} VND`, "Successful Payments"]}
+              />
+              <Line type="monotone" dataKey="successfulPayments" name="Successful Payments" stroke="#38bdf8" strokeWidth={2.5} dot={{ r: 3 }} activeDot={{ r: 5 }} />
+            </LineChart>
+          </ResponsiveContainer>
+        )}
       </div>
 
-      {/* Financial Overview */}
       <div className="chart-card category-chart">
         <div className="chart-header">
           <h3>Financial Overview</h3>
@@ -206,6 +182,7 @@ export default function FinanceCharts({ summary }) {
             />
 
             <Tooltip
+              {...tooltipProps}
               contentStyle={{
                 background: "#111827",
                 border: "1px solid #334155",

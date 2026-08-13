@@ -14,7 +14,6 @@ import { searchProductsThunk } from "../../../../redux/slice/productSlice";
 export default function MainHeader() {
   const dispatch = useDispatch();
   const { pathname } = useLocation();
-  console.log(pathname);
   const [openSearch, setOpenSearch] = useState(false);
   const [openUser, setOpenUser] = useState(false);
   const [openCart, setOpenCart] = useState(false);

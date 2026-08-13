@@ -10,13 +10,28 @@ import {
   TrendingDown,
 } from "lucide-react";
 import "./style.scss";
-import { adminService } from "../../../service/adminService";
 import AdminDashboardCharts from "./Chart";
+
+const formatGrowth = (value) => {
+  const safeValue = Number(value ?? 0);
+  const isPositive = safeValue >= 0;
+  const Icon = isPositive ? TrendingUp : TrendingDown;
+  const className = isPositive ? "positive" : "negative";
+  const prefix = safeValue > 0 ? "+" : "";
+
+  return {
+    Icon,
+    className,
+    label: `${prefix}${safeValue.toFixed(1)}%`,
+  };
+};
+
 const Dashboard = () => {
   const dispatch = useDispatch();
   const statistics = useSelector((state) => state.dashboardAdmin.statistics);
-
-  console.log(statistics);
+  const overview = statistics?.overview ?? {};
+  const products = statistics?.products ?? {};
+  const orders = statistics?.orders ?? {};
 
   useEffect(() => {
     dispatch(fetchDashboardStatistics());
@@ -28,6 +43,11 @@ const Dashboard = () => {
       currency: "VND",
     }).format(value || 0);
 
+  const revenueGrowth = formatGrowth(overview?.revenueGrowthPercentage);
+  const orderGrowth = formatGrowth(overview?.orderGrowthPercentage);
+  const userGrowth = formatGrowth(overview?.userGrowthPercentage);
+  const sellerGrowth = formatGrowth(overview?.sellerGrowthPercentage);
+
   return (
     <div className="dashboard-dark">
       <section className="kpi-grid">
@@ -36,60 +56,57 @@ const Dashboard = () => {
             <div className="icon-wrapper blue">
               <DollarSign size={20} />
             </div>
-            <span className="trend positive">
-              <TrendingUp size={14} /> +18.2%
+            <span className={`trend ${revenueGrowth.className}`}>
+              <revenueGrowth.Icon size={14} /> {revenueGrowth.label}
             </span>
           </div>
           <div className="kpi-card__body">
-            <h3>{formatMoney(statistics?.totalRevenue)}</h3>
+            <h3>{formatMoney(overview?.totalRevenue)}</h3>
             <label>Total Revenue</label>
           </div>
         </div>
 
-        {/* Card 2: Total Orders */}
         <div className="kpi-card">
           <div className="kpi-card__header">
             <div className="icon-wrapper cyan">
               <ShoppingCart size={20} />
             </div>
-            <span className="trend positive">
-              <TrendingUp size={14} /> +12.5%
+            <span className={`trend ${orderGrowth.className}`}>
+              <orderGrowth.Icon size={14} /> {orderGrowth.label}
             </span>
           </div>
           <div className="kpi-card__body">
-            <h3>{(statistics?.totalOrders || 0).toLocaleString()}</h3>
+            <h3>{(overview?.totalOrders || 0).toLocaleString()}</h3>
             <label>Total Orders</label>
           </div>
         </div>
 
-        {/* Card 3: Active Users */}
         <div className="kpi-card">
           <div className="kpi-card__header">
             <div className="icon-wrapper purple">
               <Users size={20} />
             </div>
-            <span className="trend positive">
-              <TrendingUp size={14} /> +8.1%
+            <span className={`trend ${userGrowth.className}`}>
+              <userGrowth.Icon size={14} /> {userGrowth.label}
             </span>
           </div>
           <div className="kpi-card__body">
-            <h3>{(statistics?.totalUsers || 0).toLocaleString()}</h3>
-            <label>Total Users (Buyers: {statistics?.totalBuyers})</label>
+            <h3>{(overview?.totalUsers || 0).toLocaleString()}</h3>
+            <label>Total Users (Buyers: {overview?.totalBuyers || 0})</label>
           </div>
         </div>
 
-        {/* Card 4: Active Sellers */}
         <div className="kpi-card">
           <div className="kpi-card__header">
             <div className="icon-wrapper orange">
               <ShoppingBag size={20} />
             </div>
-            <span className="trend negative">
-              <TrendingDown size={14} /> -2.3%
+            <span className={`trend ${sellerGrowth.className}`}>
+              <sellerGrowth.Icon size={14} /> {sellerGrowth.label}
             </span>
           </div>
           <div className="kpi-card__body">
-            <h3>{(statistics?.totalSellers || 0).toLocaleString()}</h3>
+            <h3>{(overview?.activeSellers || 0).toLocaleString()}</h3>
             <label>Active Sellers</label>
           </div>
         </div>
@@ -101,19 +118,19 @@ const Dashboard = () => {
           <div className="sub-grid">
             <div className="sub-card">
               <label>Total Products</label>
-              <p className="value">{statistics?.totalProducts || 0}</p>
+              <p className="value">{products?.totalProducts || 0}</p>
             </div>
             <div className="sub-card pending">
               <label>Pending</label>
-              <p className="value">{statistics?.pendingProducts || 0}</p>
+              <p className="value">{products?.pendingProducts || 0}</p>
             </div>
             <div className="sub-card approved">
               <label>Approved</label>
-              <p className="value">{statistics?.approvedProducts || 0}</p>
+              <p className="value">{products?.approvedProducts || 0}</p>
             </div>
             <div className="sub-card rejected">
               <label>Rejected</label>
-              <p className="value">{statistics?.rejectedProducts || 0}</p>
+              <p className="value">{products?.rejectedProducts || 0}</p>
             </div>
           </div>
         </section>
@@ -123,11 +140,11 @@ const Dashboard = () => {
           <div className="sub-grid (3 cols)">
             <div className="sub-card completed">
               <label>Completed Orders</label>
-              <p className="value">{statistics?.completedOrders || 0}</p>
+              <p className="value">{orders?.completedOrders || 0}</p>
             </div>
             <div className="sub-card cancelled">
               <label>Cancelled Orders</label>
-              <p className="value">{statistics?.cancelledOrders || 0}</p>
+              <p className="value">{orders?.cancelledOrders || 0}</p>
             </div>
           </div>
         </section>
