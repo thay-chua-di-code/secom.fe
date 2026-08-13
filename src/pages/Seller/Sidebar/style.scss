@@ -1,0 +1,440 @@
+.seller-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  width: 280px;
+  height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+
+  background: #0d1117;
+  color: #ffffff;
+
+  border-right: 1px solid #20252d;
+
+  z-index: 1000;
+
+  transition: transform 0.3s ease;
+
+  // =========================
+  // BRAND
+  // =========================
+
+  &__brand {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    height: 72px;
+
+    padding: 0 16px;
+
+    text-decoration: none;
+
+    border-bottom: 1px solid #20252d;
+  }
+
+  &__brand-icon {
+    width: 32px;
+    height: 32px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 10px;
+
+    background: #3b82f6;
+    color: white;
+
+    box-shadow: 0 6px 16px rgba(59, 130, 246, 0.28);
+  }
+
+  &__brand-content {
+    display: flex;
+    flex-direction: column;
+
+    min-width: 0;
+
+    strong {
+      color: #f8fafc;
+
+      font-size: 14px;
+      font-weight: 700;
+
+      line-height: 1.2;
+    }
+
+    span {
+      margin-top: 3px;
+
+      color: #64748b;
+
+      font-size: 10px;
+      font-weight: 400;
+
+      line-height: 1.2;
+    }
+  }
+
+  // =========================
+  // CONTENT
+  // =========================
+
+  &__content {
+    flex: 1;
+
+    padding: 18px 12px 0;
+
+    overflow-y: auto;
+  }
+
+  &__section-title {
+    display: block;
+
+    padding: 0 4px;
+    margin-bottom: 10px;
+
+    color: #718096;
+
+    font-size: 10px;
+    font-weight: 600;
+
+    letter-spacing: 1px;
+  }
+
+  // =========================
+  // MENU
+  // =========================
+
+  &__menu {
+    display: flex;
+    flex-direction: column;
+
+    gap: 2px;
+  }
+
+  &__item {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+
+    min-height: 42px;
+
+    padding: 0 10px;
+
+    gap: 12px;
+
+    color: #718096;
+
+    text-decoration: none;
+
+    border-radius: 12px;
+
+    transition:
+      background 0.2s ease,
+      color 0.2s ease,
+      transform 0.2s ease;
+
+    &:hover {
+      color: #dbeafe;
+
+      background: rgba(59, 130, 246, 0.08);
+
+      .seller-sidebar__item-icon {
+        color: #60a5fa;
+      }
+    }
+
+    &.active {
+      color: #ffffff;
+
+      background: #3b82f6;
+
+      box-shadow: 0 8px 18px rgba(59, 130, 246, 0.22);
+
+      .seller-sidebar__item-icon {
+        color: #ffffff;
+      }
+
+      .seller-sidebar__item-title {
+        font-weight: 600;
+      }
+    }
+  }
+
+  &__item-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 18px;
+
+    flex-shrink: 0;
+
+    color: #718096;
+
+    transition: color 0.2s ease;
+  }
+
+  &__item-title {
+    flex: 1;
+
+    font-size: 14px;
+    font-weight: 400;
+
+    white-space: nowrap;
+  }
+
+  // =========================
+  // USER
+  // =========================
+
+  &__user {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    min-height: 64px;
+
+    padding: 10px 12px;
+
+    margin-top: auto;
+
+    border-top: 1px solid #20252d;
+  }
+
+  &__avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 32px;
+    height: 32px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background: #3b82f6;
+    color: #ffffff;
+
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  &__user-info {
+    display: flex;
+    flex-direction: column;
+
+    min-width: 0;
+
+    flex: 1;
+
+    strong {
+      color: #f8fafc;
+
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    span {
+      margin-top: 3px;
+
+      color: #64748b;
+
+      font-size: 9px;
+
+      overflow: hidden;
+
+      text-overflow: ellipsis;
+
+      white-space: nowrap;
+    }
+  }
+
+  &__settings {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 4px;
+
+    border: none;
+
+    background: transparent;
+
+    color: #64748b;
+
+    cursor: pointer;
+
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: #cbd5e1;
+    }
+  }
+
+  &__settings-menu {
+    position: absolute;
+
+    right: 10px;
+    bottom: 54px;
+
+    z-index: 10;
+
+    min-width: 150px;
+
+    padding: 8px;
+
+    border: 1px solid #273149;
+    border-radius: 12px;
+
+    background: #111827;
+
+    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.35);
+
+    button {
+      display: flex;
+
+      width: 100%;
+
+      align-items: center;
+
+      gap: 8px;
+
+      padding: 9px 10px;
+
+      border: 0;
+
+      border-radius: 9px;
+
+      background: transparent;
+
+      color: #e5e7eb;
+
+      cursor: pointer;
+
+      font-size: 12px;
+      font-weight: 700;
+
+      &:hover {
+        background: #1f2937;
+
+        color: #fca5a5;
+      }
+    }
+  }
+}
+
+// =========================
+// MOBILE TOGGLE
+// =========================
+
+.seller-sidebar-toggle {
+  display: none;
+
+  position: fixed;
+
+  top: 16px;
+  left: 16px;
+
+  z-index: 1100;
+
+  width: 42px;
+  height: 42px;
+
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid #e2e8f0;
+
+  border-radius: 10px;
+
+  background: #ffffff;
+
+  color: #334155;
+
+  cursor: pointer;
+
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+}
+
+.seller-sidebar-close {
+  display: none;
+}
+
+.seller-sidebar-overlay {
+  display: none;
+}
+
+// =========================
+// RESPONSIVE
+// =========================
+
+@media (max-width: 768px) {
+  .seller-sidebar {
+    transform: translateX(-100%);
+
+    width: 280px;
+
+    &.open {
+      transform: translateX(0);
+    }
+  }
+
+  .seller-sidebar-toggle {
+    display: flex;
+  }
+
+  .seller-sidebar-close {
+    position: absolute;
+
+    top: 14px;
+    right: 12px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 32px;
+    height: 32px;
+
+    border: none;
+
+    border-radius: 8px;
+
+    background: transparent;
+
+    color: #94a3b8;
+
+    cursor: pointer;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.08);
+
+      color: #ffffff;
+    }
+  }
+
+  .seller-sidebar-overlay {
+    position: fixed;
+
+    inset: 0;
+
+    display: block;
+
+    background: rgba(0, 0, 0, 0.55);
+
+    z-index: 999;
+  }
+}

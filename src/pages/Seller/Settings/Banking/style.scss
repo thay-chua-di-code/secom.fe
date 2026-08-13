@@ -1,123 +1,494 @@
+// ========================================
+// SELLER BANKING PAGE
+// ========================================
+
+.seller-banking-page {
+  width: 100%;
+  min-height: 100%;
+
+  color: #e5e7eb;
+}
+
+// ========================================
+// MAIN CARD
+// ========================================
+
+.banking-card {
+  width: 100%;
+
+  overflow: hidden;
+
+  border: 1px solid #20252d;
+  border-radius: 16px;
+
+  background: #0d1117;
+
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.14);
+}
+
+// ========================================
+// HEADER
+// ========================================
+
 .banking-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-top: 20px;
-  margin-bottom: 25px;
+  justify-content: space-between;
+
+  gap: 24px;
+
+  padding: 22px 24px;
+
+  border-bottom: 1px solid #20252d;
+
+  background: #0d1117;
+}
+
+.banking-title {
+  display: flex;
+  align-items: center;
+
+  gap: 13px;
+
+  min-width: 0;
+
+  .title-icon {
+    width: 42px;
+    height: 42px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid #273149;
+    border-radius: 12px;
+
+    background: #151c2c;
+
+    color: #93c5fd;
+
+    svg {
+      stroke-width: 1.8;
+    }
+  }
+
+  > div:last-child {
+    min-width: 0;
+  }
+
+  h2 {
+    margin: 0;
+
+    color: #f8fafc;
+
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 1.25;
+  }
 
   p {
-    color: #777;
-    margin-top: 5px;
+    margin: 5px 0 0;
+
+    color: #64748b;
+
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.4;
   }
 }
 
+// ========================================
+// ADD ACCOUNT BUTTON
+// ========================================
+
 .add-bank-btn {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  flex-shrink: 0;
 
-  border: none;
-  border-radius: 10px;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 
-  background: #e61717;
-  color: white;
+  gap: 8px !important;
 
-  padding: 10px 18px;
+  min-height: 40px !important;
+
+  padding: 0 16px !important;
+
+  border: 1px solid #273149 !important;
+  border-radius: 11px !important;
+
+  background: #151c2c !important;
+  color: #dbeafe !important;
+
+  box-shadow: none !important;
+
+  font-size: 12px !important;
+  font-weight: 800 !important;
 
   cursor: pointer;
+
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease !important;
+
+  svg {
+    flex-shrink: 0;
+  }
+
+  &:hover {
+    border-color: #3b82f6 !important;
+
+    background: #172033 !important;
+    color: #ffffff !important;
+
+    box-shadow: 0 8px 24px rgba(37, 99, 235, 0.12) !important;
+
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
 }
+
+// ========================================
+// CONTENT BODY
+// ========================================
+
+.banking-body {
+  padding: 22px 24px 24px;
+
+  background: #0d1117;
+}
+
+// ========================================
+// TABLE WRAPPER
+// ========================================
+
+.bank-table-wrapper {
+  width: 100%;
+
+  overflow: hidden;
+
+  border: 1px solid #202938;
+  border-radius: 14px;
+
+  background: #111827;
+}
+
+// ========================================
+// TABLE HEADER
+// ========================================
+
+.bank-table-header {
+  display: grid;
+
+  grid-template-columns:
+    minmax(220px, 1.3fr)
+    minmax(180px, 1fr)
+    minmax(180px, 1fr);
+
+  align-items: center;
+
+  min-height: 48px;
+
+  padding: 0 20px;
+
+  border-bottom: 1px solid #273149;
+
+  background: #0f172a;
+
+  > div {
+    color: #64748b;
+
+    font-size: 10px;
+    font-weight: 800;
+
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+}
+
+// ========================================
+// BANK LIST
+// ========================================
 
 .bank-list {
   display: flex;
   flex-direction: column;
-  gap: 18px;
-  margin-top: 16px;
+
+  width: 100%;
 }
+
+// ========================================
+// BANK ITEM
+// ========================================
 
 .bank-item {
-  display: flex;
+  display: grid;
+
+  grid-template-columns:
+    minmax(220px, 1.3fr)
+    minmax(180px, 1fr)
+    minmax(180px, 1fr);
+
   align-items: center;
-  gap: 18px;
 
-  border: 1px solid #e5e7eb;
+  min-height: 78px;
 
-  border-radius: 12px;
+  padding: 13px 20px;
 
-  padding: 18px;
+  border-bottom: 1px solid #1f2937;
 
-  transition: 0.25s;
+  background: #111827;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
+
+  &:last-child {
+    border-bottom: none;
+  }
 
   &:hover {
-    border-color: #a31313;
-    transform: translateY(-2px);
+    background: #151c2c;
+
+    .bank-icon {
+      border-color: #3b82f6;
+
+      background: #172033;
+      color: #bfdbfe;
+    }
+
+    .account-number {
+      color: #bfdbfe;
+    }
   }
 }
+
+// ========================================
+// COLUMNS
+// ========================================
+
+.bank-column {
+  min-width: 0;
+
+  display: flex;
+  align-items: center;
+}
+
+.bank-name-column {
+  gap: 12px;
+
+  h3 {
+    overflow: hidden;
+
+    margin: 0;
+
+    color: #f8fafc;
+
+    font-size: 13px;
+    font-weight: 800;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+}
+
+// ========================================
+// BANK ICON
+// ========================================
 
 .bank-icon {
-  width: 55px;
-  height: 55px;
-  border-radius: 50%;
-  background: #e0f2fe;
+  width: 42px;
+  height: 42px;
+
+  flex-shrink: 0;
+
   display: flex;
-  justify-content: center;
   align-items: center;
-  color: #df2f2f;
+  justify-content: center;
+
+  border: 1px solid #273149;
+  border-radius: 11px;
+
+  background: #151c2c;
+
+  color: #93c5fd;
+
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    color 0.2s ease;
+
+  svg {
+    stroke-width: 1.8;
+  }
 }
 
-.bank-content {
-  h3 {
-    margin-bottom: 6px;
-  }
+// ========================================
+// ACCOUNT TEXT
+// ========================================
 
-  span {
-    color: #0284c7;
-    font-weight: 600;
+.account-number {
+  color: #93c5fd;
+
+  font-size: 12px;
+  font-weight: 800;
+
+  letter-spacing: 0.04em;
+
+  transition: color 0.2s ease;
+}
+
+.account-holder {
+  overflow: hidden;
+
+  color: #cbd5e1;
+
+  font-size: 12px;
+  font-weight: 700;
+
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.mobile-label {
+  display: none;
+}
+
+// ========================================
+// EMPTY STATE
+// ========================================
+
+.empty-bank {
+  min-height: 340px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  padding: 48px 20px;
+
+  text-align: center;
+
+  border: 1px dashed #273149;
+  border-radius: 14px;
+
+  background: #0f172a;
+
+  h3 {
+    margin: 16px 0 0;
+
+    color: #f8fafc;
+
+    font-size: 15px;
+    font-weight: 800;
   }
 
   p {
-    margin-top: 5px;
-    color: #666;
+    margin: 8px 0 0;
+
+    color: #64748b;
+
+    font-size: 12px;
+    line-height: 1.6;
   }
 }
 
-.empty-bank {
-  padding: 50px 20px;
+.empty-bank-icon {
+  width: 64px;
+  height: 64px;
 
   display: flex;
-  flex-direction: column;
   align-items: center;
+  justify-content: center;
 
-  color: #888;
+  border: 1px solid #273149;
+  border-radius: 18px;
+
+  background: #151c2c;
+
+  color: #718096;
 
   svg {
-    margin-bottom: 15px;
-    color: #0284c7;
-  }
-
-  h3 {
-    margin-bottom: 10px;
+    stroke-width: 1.5;
   }
 }
 
+.empty-add-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+
+  min-height: 40px;
+
+  margin-top: 20px;
+  padding: 0 16px;
+
+  border: 1px solid #273149;
+  border-radius: 10px;
+
+  background: #151c2c;
+  color: #dbeafe;
+
+  font-size: 12px;
+  font-weight: 800;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+
+  &:hover {
+    border-color: #3b82f6;
+
+    background: #172033;
+    color: #ffffff;
+
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+// ========================================
+// LOADING
+// ========================================
+
 .bank-loading {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
+  display: grid;
+
+  gap: 12px;
 }
 
 .bank-skeleton {
-  height: 90px;
+  height: 76px;
 
-  border-radius: 12px;
+  border: 1px solid #1f2937;
+  border-radius: 13px;
 
-  background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 37%, #f3f4f6 63%);
+  background: linear-gradient(90deg, #111827 25%, #172033 38%, #111827 63%);
 
   background-size: 400% 100%;
 
-  animation: skeleton 1.4s infinite;
+  animation: bankSkeleton 1.4s ease infinite;
 }
 
-@keyframes skeleton {
+@keyframes bankSkeleton {
   0% {
     background-position: 100% 0;
   }
@@ -127,58 +498,145 @@
   }
 }
 
-@media (max-width: 768px) {
-  .banking-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 15px;
-  }
+// ========================================
+// MODAL OVERLAY
+// IMPORTANT:
+// JSX uses bank-modal-overlay
+// ========================================
 
-  .add-bank-btn {
-    width: 100%;
-    justify-content: center;
-  }
-
-  .bank-item {
-    align-items: flex-start;
-  }
-}
-
-.modal-overlay {
+.bank-modal-overlay {
   position: fixed;
+
   inset: 0;
 
-  background: rgba(0, 0, 0, 0.45);
+  z-index: 9999;
 
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
 
-  z-index: 1000;
+  padding: 20px;
+
+  background: rgba(2, 6, 23, 0.78);
+
+  backdrop-filter: blur(6px);
+
+  animation: bankingOverlay 0.2s ease;
 }
 
+@keyframes bankingOverlay {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+// ========================================
+// MODAL
+// ========================================
+
 .bank-modal {
-  width: 100%;
-  max-width: 520px;
+  width: min(520px, 100%);
 
-  background: white;
+  overflow: hidden;
 
+  border: 1px solid #273149;
   border-radius: 16px;
 
-  padding: 28px;
+  background: #111827;
 
-  animation: popup 0.25s ease;
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.5);
 
-  h2 {
-    margin-bottom: 24px;
-  }
+  animation: bankModalPopup 0.22s ease;
 
   form {
     display: flex;
     flex-direction: column;
+
     gap: 18px;
+
+    padding: 22px 24px 24px;
+
+    background: #111827;
   }
 }
+
+// ========================================
+// MODAL HEADER
+// ========================================
+
+.bank-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 18px;
+
+  padding: 20px 24px;
+
+  border-bottom: 1px solid #273149;
+
+  background: #0f172a;
+
+  h2 {
+    margin: 0;
+
+    color: #f8fafc;
+
+    font-size: 17px;
+    font-weight: 800;
+    line-height: 1.3;
+  }
+
+  p {
+    margin: 5px 0 0;
+
+    color: #64748b;
+
+    font-size: 11px;
+    line-height: 1.5;
+  }
+}
+
+.modal-close-btn {
+  width: 34px;
+  height: 34px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  border: 1px solid transparent;
+  border-radius: 9px;
+
+  background: transparent;
+  color: #718096;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+
+  &:hover {
+    border-color: #273149;
+
+    background: #151c2c;
+    color: #e5e7eb;
+  }
+}
+
+// ========================================
+// FORM
+// ========================================
 
 .form-group {
   display: flex;
@@ -187,95 +645,385 @@
   gap: 8px;
 
   label {
-    font-weight: 600;
+    color: #cbd5e1;
+
+    font-size: 12px;
+    font-weight: 800;
+
+    span {
+      color: #60a5fa;
+    }
   }
 
   input {
-    border: 1px solid #d1d5db;
+    width: 100%;
+    height: 43px;
 
+    box-sizing: border-box;
+
+    padding: 0 13px;
+
+    border: 1px solid #273149;
     border-radius: 10px;
 
-    padding: 13px;
+    outline: none;
 
-    font-size: 15px;
+    background: #151c2c;
+    color: #e5e7eb;
 
-    transition: 0.2s;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 500;
+
+    caret-color: #60a5fa;
+
+    transition:
+      border-color 0.2s ease,
+      background 0.2s ease,
+      box-shadow 0.2s ease;
+
+    &::placeholder {
+      color: #52647f;
+    }
+
+    &:hover {
+      border-color: #334155;
+    }
 
     &:focus {
-      outline: none;
-      border-color: #c70202;
-      box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.12);
+      border-color: #3b82f6;
+
+      background: #172033;
+
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.11);
+    }
+
+    &:autofill,
+    &:-webkit-autofill {
+      -webkit-text-fill-color: #e5e7eb;
+
+      box-shadow: 0 0 0 1000px #151c2c inset;
+
+      transition: background-color 9999s ease-in-out 0s;
     }
   }
 }
 
+// ========================================
+// MODAL FOOTER
+// ========================================
+
 .modal-footer {
   display: flex;
+  align-items: center;
   justify-content: flex-end;
 
-  gap: 12px;
+  gap: 10px;
 
-  margin-top: 10px;
+  margin-top: 2px;
+  padding-top: 18px;
+
+  border-top: 1px solid #1f2937;
 }
+
+// ========================================
+// CANCEL
+// ========================================
 
 .cancel-btn {
-  background: #f3f4f6;
-  margin-top: 12px;
-  color: #374151;
+  min-width: 100px;
+  height: 40px;
 
-  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 
-  width: 110px;
-  height: 55px;
+  padding: 0 16px;
 
+  border: 1px solid #273149;
   border-radius: 10px;
 
-  cursor: pointer;
-}
+  background: #151c2c;
+  color: #94a3b8;
 
-.save-btn {
-  background: #a10303;
-
-  color: white;
-
-  border: none;
-
-  padding: 11px 22px;
-
-  border-radius: 10px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 800;
 
   cursor: pointer;
 
-  transition: 0.25s;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    color 0.2s ease;
 
   &:hover {
-    background: #075985;
+    border-color: #475569;
+
+    background: #1f2937;
+    color: #f8fafc;
   }
 }
 
-@keyframes popup {
+// ========================================
+// SAVE BUTTON
+// ========================================
+
+.save-btn {
+  min-width: 112px;
+  height: 40px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0 17px;
+
+  border: 1px solid #2563eb;
+  border-radius: 10px;
+
+  background: #2563eb;
+  color: #ffffff;
+
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 800;
+
+  cursor: pointer;
+
+  box-shadow: 0 7px 18px rgba(37, 99, 235, 0.16);
+
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+
+  &:hover {
+    border-color: #3b82f6;
+
+    background: #3b82f6;
+
+    box-shadow: 0 9px 24px rgba(37, 99, 235, 0.25);
+
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+// ========================================
+// MODAL ANIMATION
+// ========================================
+
+@keyframes bankModalPopup {
   from {
     opacity: 0;
-    transform: scale(0.9);
+
+    transform: translateY(10px) scale(0.98);
   }
 
   to {
     opacity: 1;
-    transform: scale(1);
+
+    transform: translateY(0) scale(1);
   }
 }
 
-@media (max-width: 640px) {
+// ========================================
+// TABLET
+// ========================================
+
+@media (max-width: 900px) {
+  .bank-table-header,
+  .bank-item {
+    grid-template-columns:
+      minmax(180px, 1.2fr)
+      minmax(150px, 1fr)
+      minmax(150px, 1fr);
+  }
+}
+
+// ========================================
+// MOBILE
+// ========================================
+
+@media (max-width: 768px) {
+  .banking-header {
+    align-items: stretch;
+
+    padding: 18px;
+
+    flex-direction: column;
+
+    gap: 16px;
+  }
+
+  .banking-title {
+    h2 {
+      font-size: 16px;
+    }
+  }
+
+  .add-bank-btn {
+    width: 100%;
+  }
+
+  .banking-body {
+    padding: 16px 18px 18px;
+  }
+
+  .bank-table-wrapper {
+    overflow: visible;
+
+    border: none;
+
+    background: transparent;
+  }
+
+  .bank-table-header {
+    display: none;
+  }
+
+  .bank-list {
+    gap: 12px;
+  }
+
+  .bank-item {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+
+    gap: 15px;
+
+    min-height: auto;
+
+    padding: 16px;
+
+    border: 1px solid #202938;
+    border-radius: 13px;
+
+    background: #111827;
+
+    &:last-child {
+      border-bottom: 1px solid #202938;
+    }
+  }
+
+  .bank-column {
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+
+    gap: 5px;
+  }
+
+  .bank-name-column {
+    flex-direction: row;
+    align-items: center;
+
+    gap: 12px;
+
+    > div:last-child {
+      min-width: 0;
+    }
+
+    .mobile-label {
+      display: none;
+    }
+  }
+
+  .mobile-label {
+    display: block;
+
+    color: #52647f;
+
+    font-size: 9px;
+    font-weight: 800;
+
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .account-number,
+  .account-holder {
+    font-size: 12px;
+  }
+
+  .empty-bank {
+    min-height: 280px;
+  }
+}
+
+// ========================================
+// SMALL MOBILE
+// ========================================
+
+@media (max-width: 500px) {
+  .seller-banking-page {
+    width: 100%;
+  }
+
+  .banking-card {
+    border-radius: 13px;
+  }
+
+  .banking-header {
+    padding: 16px;
+  }
+
+  .banking-title {
+    align-items: flex-start;
+
+    .title-icon {
+      width: 38px;
+      height: 38px;
+
+      border-radius: 10px;
+    }
+  }
+
+  .banking-body {
+    padding: 14px;
+  }
+
+  .bank-modal-overlay {
+    align-items: flex-end;
+
+    padding: 0;
+  }
+
   .bank-modal {
-    margin: 20px;
-    padding: 22px;
+    width: 100%;
+    max-width: none;
+
+    border-right: none;
+    border-bottom: none;
+    border-left: none;
+
+    border-radius: 17px 17px 0 0;
+
+    form {
+      padding: 18px;
+    }
+  }
+
+  .bank-modal-header {
+    padding: 18px;
   }
 
   .modal-footer {
-    flex-direction: column;
+    flex-direction: column-reverse;
 
     button {
       width: 100%;
     }
+  }
+
+  .cancel-btn,
+  .save-btn {
+    height: 42px;
   }
 }

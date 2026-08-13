@@ -1,16 +1,23 @@
-$primary: #ef4444;
-$primary-dark: #dc2626;
-$primary-light: #fff5f5;
-
-$text: #111827;
-$text-secondary: #6b7280;
-$text-muted: #9ca3af;
-
-$border: #e5e7eb;
-$background: #f8fafc;
-$white: #ffffff; // ========================================
-// SWITCH GROUP
 // ========================================
+// VARIABLES
+// ========================================
+
+$primary: #3b82f6;
+$primary-dark: #2563eb;
+$primary-light: rgba(59, 130, 246, 0.12);
+
+$text: #ffffff;
+$text-secondary: #cbd5e1;
+$text-muted: #64748b;
+
+$border: #273149;
+
+$background: #0b0f19;
+$card: #111622;
+$card-soft: #151c2c;
+$card-hover: #172033;
+
+$white: #ffffff;
 
 // ========================================
 // SWITCH GROUP
@@ -18,8 +25,11 @@ $white: #ffffff; // ========================================
 
 .product-switch-group {
   display: grid;
+
   grid-template-columns: repeat(2, minmax(0, 1fr));
+
   gap: 18px;
+
   margin: 10px 0 24px;
 
   @media (max-width: 768px) {
@@ -36,40 +46,57 @@ $white: #ffffff; // ========================================
 
   display: flex;
   align-items: center;
+
   gap: 14px;
 
   min-height: 58px;
+
   padding: 14px 16px;
 
-  border: 1px solid #f1d4d4;
+  border: 1px solid $border;
+
   border-radius: 12px;
 
-  background: #fffafa;
+  background: $card-soft;
 
   cursor: pointer;
 
-  transition: all 0.25s ease;
+  transition:
+    border-color 0.25s ease,
+    background 0.25s ease,
+    box-shadow 0.25s ease,
+    transform 0.25s ease;
 
   input {
     position: absolute;
+
     opacity: 0;
+
     pointer-events: none;
   }
 
   &:hover {
-    border-color: #fca5a5;
-    background: #fff5f5;
+    border-color: #3b4a63;
+
+    background: $card-hover;
+
+    transform: translateY(-1px);
   }
 
   &:has(input:checked) {
-    border-color: #ef4444;
-    background: #fff3f3;
-    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.08);
+    border-color: $primary;
+
+    background: rgba(59, 130, 246, 0.08);
+
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
   }
 
   &:has(input:disabled) {
-    opacity: 0.6;
+    opacity: 0.5;
+
     cursor: not-allowed;
+
+    transform: none;
   }
 }
 
@@ -79,41 +106,76 @@ $white: #ffffff; // ========================================
 
 .product-switch {
   position: relative;
+
   flex-shrink: 0;
 
   width: 42px;
   height: 24px;
 
-  border-radius: 999px;
-  background: #d1d5db;
+  border: 1px solid #374151;
 
-  transition: 0.25s;
+  border-radius: 999px;
+
+  background: #374151;
+
+  transition:
+    background 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
 
   &::after {
-    content: "";
-
     position: absolute;
+
     top: 2px;
     left: 2px;
 
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
 
     border-radius: 50%;
-    background: white;
 
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    background: #cbd5e1;
 
-    transition: 0.25s;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+
+    content: "";
+
+    transition:
+      transform 0.25s ease,
+      background 0.25s ease;
   }
 }
 
+// ========================================
+// CHECKED SWITCH
+// ========================================
+
 .product-switch-item input:checked + .product-switch {
-  background: linear-gradient(135deg, #f87171, #ef4444);
+  border-color: $primary;
+
+  background: $primary;
+
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 .product-switch-item input:checked + .product-switch::after {
+  background: $white;
+
   transform: translateX(18px);
+}
+
+// ========================================
+// DISABLED SWITCH
+// ========================================
+
+.product-switch-item input:disabled + .product-switch {
+  background: #1f2937;
+
+  border-color: #273149;
+}
+
+.product-switch-item input:disabled + .product-switch::after {
+  background: #64748b;
 }
 
 // ========================================
@@ -122,20 +184,41 @@ $white: #ffffff; // ========================================
 
 .product-switch-label {
   display: flex;
+
   flex-direction: column;
+
   gap: 4px;
 
   min-width: 0;
 
   strong {
-    color: #1f2937;
+    color: $text;
+
     font-size: 14px;
     font-weight: 700;
   }
 
   small {
-    color: #6b7280;
+    color: $text-muted;
+
     font-size: 12px;
+
     line-height: 1.4;
+  }
+}
+
+// ========================================
+// CHECKED LABEL
+// ========================================
+
+.product-switch-item:has(input:checked) {
+  .product-switch-label {
+    strong {
+      color: #dbeafe;
+    }
+
+    small {
+      color: #93a4bd;
+    }
   }
 }

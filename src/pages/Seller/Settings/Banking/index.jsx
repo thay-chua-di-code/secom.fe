@@ -1,16 +1,20 @@
 import React, { useState, useEffect } from "react";
 import "./style.scss";
 import { useDispatch, useSelector } from "react-redux";
-import { Plus, Landmark } from "lucide-react";
+import { Plus, Landmark, CreditCard, X } from "lucide-react";
 import {
   createSellerBankAccount,
   fetchSellerBankAccounts,
 } from "../../../../redux/slice/seller/banking/bankingThunk";
 import Button from "../../../../components/common/Button/Button";
+
 const BankingSeller = () => {
   const dispatch = useDispatch();
+
   const [showBankModal, setShowBankModal] = useState(false);
+
   const { bankAccounts, loading } = useSelector((state) => state.sellerBanking);
+
   const [formData, setFormData] = useState({
     bankName: "",
     accountNumber: "",
@@ -43,68 +47,136 @@ const BankingSeller = () => {
   React.useEffect(() => {
     dispatch(fetchSellerBankAccounts());
   }, [dispatch]);
+
   return (
     <>
-      <div className="banking-card">
-        <div className="banking-header">
-          <div>
-            <h2>Bank Accounts</h2>
+      <div className="seller-banking-page">
+        <div className="banking-card">
+          {/* HEADER */}
+          <div className="banking-header">
+            <div className="banking-title">
+              <div className="title-icon">
+                <Landmark size={22} />
+              </div>
 
-            <p>Manage your withdrawal bank accounts.</p>
+              <div>
+                <h2>Bank Accounts</h2>
+                <p>Manage your withdrawal bank accounts.</p>
+              </div>
+            </div>
+
+            <Button
+              className="add-bank-btn"
+              onClick={() => setShowBankModal(true)}
+            >
+              <Plus size={17} />
+              <span>Add Account</span>
+            </Button>
           </div>
 
-          <Button
-            className="add-bank-btn"
-            onClick={() => setShowBankModal(true)}
-          >
-            <Plus size={18} />
-            Add Account
-          </Button>
-        </div>
-
-        {loading ? (
-          <div className="bank-loading">
-            {[1, 2, 3].map((item) => (
-              <div className="bank-skeleton" key={item}></div>
-            ))}
-          </div>
-        ) : bankAccounts.length === 0 ? (
-          <div className="empty-bank">
-            <Landmark size={45} />
-
-            <h3>No bank accounts</h3>
-
-            <p>Add a bank account to receive payments.</p>
-          </div>
-        ) : (
-          <div className="bank-list">
-            {bankAccounts.map((bank) => (
-              <div className="bank-item" key={bank.id}>
-                <div className="bank-icon">
-                  <Landmark size={24} />
+          {/* CONTENT */}
+          <div className="banking-body">
+            {loading ? (
+              <div className="bank-loading">
+                {[1, 2, 3].map((item) => (
+                  <div className="bank-skeleton" key={item} />
+                ))}
+              </div>
+            ) : bankAccounts.length === 0 ? (
+              <div className="empty-bank">
+                <div className="empty-bank-icon">
+                  <Landmark size={34} />
                 </div>
 
-                <div className="bank-content">
-                  <h3>{bank.bankName}</h3>
+                <h3>No bank accounts</h3>
 
-                  <span>{bank.accountNumberMasked}</span>
+                <p>
+                  You haven't added any bank account yet.
+                  <br />
+                  Add an account to receive withdrawal payments.
+                </p>
 
-                  <p>{bank.accountHolderName}</p>
+                <button
+                  className="empty-add-btn"
+                  onClick={() => setShowBankModal(true)}
+                >
+                  <Plus size={17} />
+                  Add Bank Account
+                </button>
+              </div>
+            ) : (
+              <div className="bank-table-wrapper">
+                <div className="bank-table-header">
+                  <div>Bank</div>
+                  <div>Account Number</div>
+                  <div>Account Holder</div>
+                </div>
+
+                <div className="bank-list">
+                  {bankAccounts.map((bank) => (
+                    <div className="bank-item" key={bank.id}>
+                      <div className="bank-column bank-name-column">
+                        <div className="bank-icon">
+                          <Landmark size={21} />
+                        </div>
+
+                        <div>
+                          <span className="mobile-label">Bank</span>
+                          <h3>{bank.bankName}</h3>
+                        </div>
+                      </div>
+
+                      <div className="bank-column">
+                        <span className="mobile-label">Account Number</span>
+
+                        <span className="account-number">
+                          {bank.accountNumberMasked}
+                        </span>
+                      </div>
+
+                      <div className="bank-column">
+                        <span className="mobile-label">Account Holder</span>
+
+                        <span className="account-holder">
+                          {bank.accountHolderName}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
-            ))}
+            )}
           </div>
-        )}
+        </div>
       </div>
 
+      {/* MODAL */}
       {showBankModal && (
-        <div className="modal-overlay" onClick={() => setShowBankModal(false)}>
+        <div
+          className="bank-modal-overlay"
+          onClick={() => setShowBankModal(false)}
+        >
           <div className="bank-modal" onClick={(e) => e.stopPropagation()}>
-            <h2>Add Bank Account</h2>
+            <div className="bank-modal-header">
+              <div>
+                <h2>Add Bank Account</h2>
+                <p>Add a bank account for withdrawal payments.</p>
+              </div>
+
+              <button
+                type="button"
+                className="modal-close-btn"
+                onClick={() => setShowBankModal(false)}
+              >
+                <X size={20} />
+              </button>
+            </div>
 
             <form onSubmit={handleCreateBank}>
               <div className="form-group">
-                <label>Bank Name</label>
+                <label>
+                  Bank Name <span>*</span>
+                </label>
 
                 <input
                   name="bankName"
@@ -116,25 +188,29 @@ const BankingSeller = () => {
               </div>
 
               <div className="form-group">
-                <label>Account Number</label>
+                <label>
+                  Account Number <span>*</span>
+                </label>
 
                 <input
                   name="accountNumber"
                   value={formData.accountNumber}
                   onChange={handleChange}
-                  placeholder="0123456789"
+                  placeholder="Enter account number"
                   required
                 />
               </div>
 
               <div className="form-group">
-                <label>Account Holder</label>
+                <label>
+                  Account Holder <span>*</span>
+                </label>
 
                 <input
                   name="accountHolderName"
                   value={formData.accountHolderName}
                   onChange={handleChange}
-                  placeholder="Nguyen Van A"
+                  placeholder="Ex: Nguyen Van A"
                   required
                 />
               </div>
@@ -149,7 +225,7 @@ const BankingSeller = () => {
                 </button>
 
                 <button className="save-btn" type="submit">
-                  Save
+                  Add Account
                 </button>
               </div>
             </form>

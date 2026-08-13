@@ -1,13 +1,51 @@
+// ==========================================
+// SELLER DASHBOARD - DARK THEME
+// MATCH ADMIN DESIGN SYSTEM
+// ==========================================
+
+$bg-dashboard: #0b0f19;
+$bg-card: #111622;
+$bg-card-soft: #151c2c;
+$bg-hover: #172033;
+
+$border-color: #1d2433;
+$border-light: #273149;
+
+$text-main: #ffffff;
+$text-secondary: #cbd5e1;
+$text-muted: #64748b;
+
+$blue-accent: #3b82f6;
+$cyan-accent: #06b6d4;
+$purple-accent: #6366f1;
+$orange-accent: #f59e0b;
+
+$green-trend: #10b981;
+$red-trend: #ef4444;
+
+// ==========================================
+// DASHBOARD
+// ==========================================
+
 .dashboard {
   display: flex;
   flex-direction: column;
+
   gap: 24px;
+
   width: 100%;
   height: 100%;
+
   min-height: 0;
+
   padding-bottom: 32px;
+
   overflow-y: auto;
   overflow-x: hidden;
+
+  // background: $bg-dashboard;
+
+  color: $text-main;
 
   // ==========================================
   // PAGE HEADER
@@ -17,192 +55,244 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+
     gap: 24px;
+
     flex-wrap: wrap;
 
     h1 {
       margin: 0;
-      color: #171717;
-      font-size: 32px;
-      font-weight: 800;
-      letter-spacing: -0.8px;
+
+      color: $text-main;
+
+      font-size: 28px;
+      font-weight: 700;
+
+      letter-spacing: -0.5px;
     }
 
     p {
       margin: 8px 0 0;
-      color: #737373;
-      font-size: 15px;
+
+      color: $text-muted;
+
+      font-size: 14px;
     }
   }
 
   // ==========================================
-  // WALLET
+  // WALLET SUMMARY
   // ==========================================
 
   .wallet-summary {
     display: flex;
+
     gap: 14px;
+
     flex-wrap: wrap;
   }
 
   .wallet-item {
     position: relative;
+
     min-width: 170px;
+
     overflow: hidden;
+
     padding: 16px 18px;
 
-    border: 1px solid #f0f0f0;
-    border-radius: 16px;
+    border: 1px solid $border-color;
 
-    background: #ffffff;
+    border-radius: 14px;
 
-    box-shadow: 0 8px 25px rgba(23, 23, 23, 0.05);
+    background: $bg-card;
+
+    box-shadow: none;
 
     transition:
       transform 0.25s ease,
+      border-color 0.25s ease,
       box-shadow 0.25s ease;
 
     &::before {
       position: absolute;
+
       top: 0;
       left: 0;
 
       width: 100%;
       height: 3px;
 
-      background: #ef4444;
+      background: $blue-accent;
 
       content: "";
     }
 
     &:hover {
-      transform: translateY(-4px);
+      transform: translateY(-3px);
 
-      box-shadow: 0 14px 30px rgba(239, 68, 68, 0.12);
+      border-color: rgba(59, 130, 246, 0.45);
+
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
     }
 
     span {
       display: block;
+
       margin-bottom: 8px;
 
-      color: #737373;
+      color: $text-muted;
+
       font-size: 11px;
       font-weight: 700;
+
       letter-spacing: 0.7px;
+
       text-transform: uppercase;
     }
 
     strong {
-      color: #dc2626;
+      color: $blue-accent;
+
       font-size: 20px;
       font-weight: 800;
     }
 
     &:nth-child(2) {
       &::before {
-        background: #f97316;
+        background: $orange-accent;
       }
 
       strong {
-        color: #ea580c;
+        color: $orange-accent;
       }
     }
 
     &:nth-child(3) {
       &::before {
-        background: #16a34a;
+        background: $green-trend;
       }
 
       strong {
-        color: #16a34a;
+        color: $green-trend;
       }
     }
   }
 
   // ==========================================
-  // STATS
+  // STAT CARDS
   // ==========================================
 
   &__stats {
     display: grid;
+
     grid-template-columns: repeat(4, 1fr);
-    gap: 18px;
+
+    gap: 20px;
 
     .card {
       position: relative;
+
       overflow: hidden;
 
-      padding: 22px;
+      min-height: 140px;
 
-      border: 1px solid #f0f0f0;
-      border-radius: 18px;
+      padding: 20px;
 
-      background: #ffffff;
+      border: 1px solid $border-color;
 
-      box-shadow: 0 8px 24px rgba(23, 23, 23, 0.045);
+      border-radius: 14px;
+
+      background: $bg-card;
+
+      box-shadow: none;
 
       transition:
         transform 0.25s ease,
+        border-color 0.25s ease,
         box-shadow 0.25s ease;
 
       &::after {
         position: absolute;
-        right: -25px;
-        bottom: -35px;
 
-        width: 100px;
-        height: 100px;
+        right: -30px;
+        bottom: -40px;
+
+        width: 110px;
+        height: 110px;
 
         border-radius: 50%;
 
-        background: rgba(239, 68, 68, 0.06);
+        background: rgba(59, 130, 246, 0.06);
 
         content: "";
       }
 
-      &:hover {
-        transform: translateY(-4px);
+      &:nth-child(2)::after {
+        background: rgba(6, 182, 212, 0.06);
+      }
 
-        box-shadow: 0 14px 32px rgba(239, 68, 68, 0.1);
+      &:nth-child(3)::after {
+        background: rgba(99, 102, 241, 0.06);
+      }
+
+      &:nth-child(4)::after {
+        background: rgba(245, 158, 11, 0.06);
+      }
+
+      &:hover {
+        transform: translateY(-3px);
+
+        border-color: rgba(59, 130, 246, 0.4);
+
+        box-shadow: 0 14px 32px rgba(0, 0, 0, 0.2);
       }
 
       h2 {
         position: relative;
+
         z-index: 1;
 
         margin: 0;
 
-        color: #171717;
-        font-size: 28px;
-        font-weight: 800;
+        color: $text-main;
+
+        font-size: 26px;
+        font-weight: 700;
       }
 
       p {
         position: relative;
+
         z-index: 1;
 
         margin: 6px 0 0;
 
-        color: #737373;
-        font-size: 14px;
+        color: $text-muted;
+
+        font-size: 13px;
         font-weight: 500;
       }
 
       .growth {
         position: relative;
+
         z-index: 1;
 
         display: inline-flex;
+
         align-items: center;
 
         margin-top: 14px;
+
         padding: 5px 9px;
 
         border-radius: 999px;
 
-        background: #fff1f2;
+        background: rgba(16, 185, 129, 0.12);
 
-        color: #dc2626;
+        color: $green-trend;
+
         font-size: 12px;
         font-weight: 700;
       }
@@ -215,7 +305,9 @@
 
   &__grid {
     display: grid;
+
     grid-template-columns: 1fr;
+
     gap: 20px;
   }
 }
@@ -227,17 +319,30 @@
 .dashboard-card {
   padding: 24px;
 
-  border: 1px solid #f0f0f0;
-  border-radius: 18px;
+  border: 1px solid $border-color;
 
-  background: #ffffff;
+  border-radius: 16px;
 
-  box-shadow: 0 8px 24px rgba(23, 23, 23, 0.045);
+  background: $bg-card;
+
+  box-shadow: none;
+
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+
+  &:hover {
+    border-color: #273149;
+
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.16);
+  }
 
   &__header {
     display: flex;
+
     align-items: center;
     justify-content: space-between;
+
     gap: 16px;
 
     margin-bottom: 20px;
@@ -245,9 +350,10 @@
     h3 {
       margin: 0;
 
-      color: #171717;
-      font-size: 18px;
-      font-weight: 800;
+      color: $text-main;
+
+      font-size: 16px;
+      font-weight: 600;
     }
   }
 }
@@ -258,30 +364,37 @@
 
 .revenue-overview {
   display: grid;
+
   grid-template-columns: repeat(3, 1fr);
+
   gap: 16px;
 }
 
 .revenue-item {
   padding: 20px;
 
-  border: 1px solid #fee2e2;
-  border-radius: 14px;
+  border: 1px solid $border-color;
 
-  background: linear-gradient(135deg, #fffafa, #ffffff);
+  border-radius: 12px;
+
+  background: rgba(255, 255, 255, 0.02);
 
   transition:
     transform 0.25s ease,
-    box-shadow 0.25s ease;
+    border-color 0.25s ease,
+    background 0.25s ease;
 
   &:hover {
     transform: translateY(-3px);
 
-    box-shadow: 0 10px 24px rgba(239, 68, 68, 0.08);
+    border-color: rgba(59, 130, 246, 0.35);
+
+    background: rgba(59, 130, 246, 0.04);
   }
 
   span {
-    color: #737373;
+    color: $text-muted;
+
     font-size: 13px;
     font-weight: 600;
   }
@@ -289,9 +402,18 @@
   h2 {
     margin: 10px 0 0;
 
-    color: #dc2626;
+    color: $blue-accent;
+
     font-size: 24px;
-    font-weight: 800;
+    font-weight: 700;
+  }
+
+  &:nth-child(2) h2 {
+    color: $cyan-accent;
+  }
+
+  &:nth-child(3) h2 {
+    color: $green-trend;
   }
 }
 
@@ -301,7 +423,9 @@
 
 .seller-dashboard__grid {
   display: grid;
+
   grid-template-columns: minmax(0, 1fr);
+
   gap: 20px;
 }
 
@@ -310,17 +434,20 @@
 
   padding: 24px;
 
-  border: 1px solid #f0f0f0;
-  border-radius: 18px;
+  border: 1px solid $border-color;
 
-  background: #ffffff;
+  border-radius: 16px;
 
-  box-shadow: 0 8px 24px rgba(23, 23, 23, 0.045);
+  background: $bg-card;
+
+  box-shadow: none;
 
   &__header {
     display: flex;
+
     align-items: center;
     justify-content: space-between;
+
     gap: 16px;
 
     margin-bottom: 22px;
@@ -328,9 +455,10 @@
     h3 {
       margin: 4px 0 0;
 
-      color: #171717;
-      font-size: 19px;
-      font-weight: 800;
+      color: $text-main;
+
+      font-size: 16px;
+      font-weight: 600;
     }
   }
 }
@@ -338,49 +466,66 @@
 .seller-section-label {
   display: block;
 
-  color: #ef4444;
+  color: $blue-accent;
+
   font-size: 11px;
   font-weight: 800;
+
   letter-spacing: 0.8px;
+
   text-transform: uppercase;
 }
 
 .seller-order-count {
   padding: 7px 12px;
 
+  border: 1px solid rgba(59, 130, 246, 0.2);
+
   border-radius: 999px;
 
-  background: #fff1f2;
+  background: rgba(59, 130, 246, 0.12);
 
-  color: #dc2626;
+  color: #93c5fd;
+
   font-size: 12px;
   font-weight: 700;
 }
 
 // ==========================================
-// SELLER ORDERS TABLE
+// ORDERS TABLE
 // ==========================================
 
 .seller-orders-table-wrapper {
   width: 100%;
+
   overflow-x: auto;
+
+  scrollbar-width: thin;
+
+  scrollbar-color: #273149 #111622;
 
   &::-webkit-scrollbar {
     height: 6px;
   }
 
   &::-webkit-scrollbar-track {
-    background: #fafafa;
+    background: $bg-card;
   }
 
   &::-webkit-scrollbar-thumb {
     border-radius: 999px;
-    background: #fecaca;
+
+    background: #273149;
+
+    &:hover {
+      background: #3b4a63;
+    }
   }
 }
 
 .seller-orders-table {
   width: 100%;
+
   min-width: 700px;
 
   border-collapse: collapse;
@@ -388,24 +533,29 @@
   th {
     padding: 13px 16px;
 
-    border-bottom: 1px solid #f5f5f5;
+    border-bottom: 1px solid $border-color;
 
-    background: #fffafa;
+    background: #0f1520;
 
-    color: #737373;
+    color: $text-muted;
+
     font-size: 11px;
     font-weight: 800;
+
     letter-spacing: 0.5px;
+
     text-align: left;
+
     text-transform: uppercase;
   }
 
   td {
     padding: 16px;
 
-    border-bottom: 1px solid #f5f5f5;
+    border-bottom: 1px solid $border-color;
 
-    color: #525252;
+    color: $text-secondary;
+
     font-size: 14px;
   }
 
@@ -413,7 +563,7 @@
     transition: background 0.2s ease;
 
     &:hover {
-      background: #fffafa;
+      background: $bg-hover;
     }
 
     &:last-child td {
@@ -423,17 +573,20 @@
 }
 
 .seller-order-code {
-  color: #dc2626;
+  color: #93c5fd;
+
   font-weight: 800;
 }
 
 .seller-customer-name {
-  color: #404040;
+  color: $text-secondary;
+
   font-weight: 600;
 }
 
 .seller-order-total {
-  color: #171717;
+  color: $text-main;
+
   font-weight: 800;
 }
 
@@ -443,6 +596,7 @@
 
 .seller-order-status {
   display: inline-flex;
+
   align-items: center;
 
   padding: 6px 10px;
@@ -451,29 +605,42 @@
 
   font-size: 11px;
   font-weight: 800;
+
   text-transform: capitalize;
 
   &--completed,
   &--delivered {
-    background: #f0fdf4;
-    color: #16a34a;
+    border: 1px solid rgba(16, 185, 129, 0.2);
+
+    background: rgba(16, 185, 129, 0.12);
+
+    color: #34d399;
   }
 
   &--pending,
   &--processing {
-    background: #fff7ed;
-    color: #ea580c;
+    border: 1px solid rgba(245, 158, 11, 0.2);
+
+    background: rgba(245, 158, 11, 0.12);
+
+    color: #fbbf24;
   }
 
   &--cancelled,
   &--rejected {
-    background: #fff1f2;
-    color: #dc2626;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+
+    background: rgba(239, 68, 68, 0.12);
+
+    color: #f87171;
   }
 
   &--unknown {
-    background: #f5f5f5;
-    color: #737373;
+    border: 1px solid $border-color;
+
+    background: rgba(100, 116, 139, 0.12);
+
+    color: #94a3b8;
   }
 }
 
@@ -484,14 +651,17 @@
 
   span {
     display: block;
+
     margin-bottom: 8px;
+
     font-size: 30px;
   }
 
   p {
     margin: 0;
 
-    color: #a3a3a3;
+    color: $text-muted;
+
     font-size: 14px;
   }
 }
@@ -502,32 +672,43 @@
 
 .top-products {
   display: flex;
+
   flex-direction: column;
+
   gap: 12px;
 
   &__item {
     display: flex;
+
     align-items: center;
     justify-content: space-between;
 
     padding: 14px 16px;
 
-    border: 1px solid #f5f5f5;
+    border: 1px solid $border-color;
+
     border-radius: 12px;
 
-    background: #fffafa;
+    background: rgba(255, 255, 255, 0.02);
 
-    transition: all 0.2s ease;
+    transition:
+      border-color 0.2s ease,
+      background 0.2s ease,
+      transform 0.2s ease;
 
     &:hover {
-      border-color: #fecaca;
-      background: #fff1f2;
+      transform: translateY(-1px);
+
+      border-color: rgba(59, 130, 246, 0.4);
+
+      background: rgba(59, 130, 246, 0.06);
     }
 
     h4 {
       margin: 0;
 
-      color: #262626;
+      color: $text-main;
+
       font-size: 14px;
       font-weight: 700;
     }
@@ -535,11 +716,14 @@
     p {
       margin: 5px 0 0;
 
-      color: #a3a3a3;
+      color: $text-muted;
+
       font-size: 12px;
     }
 
     > span {
+      color: $blue-accent;
+
       font-size: 20px;
     }
   }
@@ -551,19 +735,24 @@
 
 .activities {
   display: flex;
+
   flex-direction: column;
+
   gap: 10px;
 }
 
 .activity {
   padding: 14px 16px;
 
-  border-left: 3px solid #ef4444;
+  border: 1px solid $border-color;
+  border-left: 3px solid $blue-accent;
+
   border-radius: 10px;
 
-  background: #fffafa;
+  background: rgba(59, 130, 246, 0.04);
 
-  color: #525252;
+  color: $text-secondary;
+
   font-size: 14px;
 }
 
@@ -585,6 +774,7 @@
 
     .page-header {
       align-items: flex-start;
+
       flex-direction: column;
 
       h1 {
@@ -593,19 +783,24 @@
 
       .wallet-summary {
         display: grid;
+
         grid-template-columns: repeat(3, 1fr);
+
         width: 100%;
       }
 
       .wallet-item {
         min-width: 0;
+
         width: 100%;
+
         padding: 14px;
       }
     }
 
     &__stats {
       grid-template-columns: 1fr 1fr;
+
       gap: 12px;
 
       .card {
@@ -643,6 +838,7 @@
 
   .seller-dashboard-card__header {
     align-items: flex-start;
+
     flex-direction: column;
   }
 
@@ -652,7 +848,7 @@
 }
 
 // ==========================================
-// RESPONSIVE SELLER ORDERS TABLE
+// RESPONSIVE ORDERS TABLE
 // ==========================================
 
 @media (max-width: 768px) {
@@ -662,6 +858,7 @@
 
   .seller-orders-table {
     min-width: 0;
+
     width: 100%;
 
     thead {
@@ -670,26 +867,31 @@
 
     tbody {
       display: flex;
+
       flex-direction: column;
+
       gap: 12px;
     }
 
     tbody tr {
       display: grid;
+
       grid-template-columns: 1fr 1fr;
+
       gap: 14px;
 
       padding: 16px;
 
-      border: 1px solid #f5f5f5;
+      border: 1px solid $border-color;
+
       border-radius: 14px;
 
-      background: #ffffff;
+      background: $bg-card;
 
-      box-shadow: 0 4px 14px rgba(23, 23, 23, 0.04);
+      box-shadow: none;
 
       &:hover {
-        background: #fffafa;
+        background: $bg-hover;
       }
 
       &:last-child td {
@@ -699,60 +901,53 @@
 
     td {
       display: flex;
+
       flex-direction: column;
+
       gap: 5px;
 
       padding: 0;
 
       border: none;
 
+      color: $text-secondary;
+
       font-size: 13px;
 
-      // Order ID
-      &:nth-child(1) {
-        &::before {
-          content: "ORDER ID";
-        }
+      &:nth-child(1)::before {
+        content: "ORDER ID";
       }
 
-      // Customer
-      &:nth-child(2) {
-        &::before {
-          content: "CUSTOMER";
-        }
+      &:nth-child(2)::before {
+        content: "CUSTOMER";
       }
 
-      // Total
-      &:nth-child(3) {
-        &::before {
-          content: "TOTAL";
-        }
+      &:nth-child(3)::before {
+        content: "TOTAL";
       }
 
-      // Status
-      &:nth-child(4) {
-        &::before {
-          content: "STATUS";
-        }
+      &:nth-child(4)::before {
+        content: "STATUS";
       }
 
       &::before {
-        color: #a3a3a3;
+        color: $text-muted;
 
         font-size: 10px;
         font-weight: 800;
+
         letter-spacing: 0.6px;
+
         text-transform: uppercase;
       }
     }
 
-    // Order ID full width
     td:first-child {
       grid-column: 1 / -1;
 
       padding-bottom: 12px;
 
-      border-bottom: 1px solid #f5f5f5;
+      border-bottom: 1px solid $border-color;
 
       .seller-order-code {
         font-size: 15px;
@@ -766,6 +961,7 @@
 
   .seller-empty-orders {
     display: flex !important;
+
     align-items: center;
     justify-content: center;
 

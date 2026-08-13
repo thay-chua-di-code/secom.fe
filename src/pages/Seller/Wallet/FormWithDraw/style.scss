@@ -1,190 +1,526 @@
+// ========================================
+// WITHDRAW FORM
+// ========================================
+
 .withdraw-form {
   width: 100%;
   max-width: 650px;
-  margin: auto;
-  padding: 32px;
-  background: #fff;
-  border-radius: 24px;
-  border: 1px solid #f3f4f6;
-  box-shadow: 0 15px 45px rgba(239, 68, 68, 0.08);
+
+  margin: 0 auto;
+
+  padding: 26px;
+
+  box-sizing: border-box;
+
+  border: 1px solid #273149;
+  border-radius: 16px;
+
+  background: #111827;
+
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.32);
+
+  color: #e5e7eb;
+
+  // ========================================
+  // HEADER
+  // ========================================
 
   .withdraw-header {
     display: flex;
     align-items: center;
-    gap: 18px;
-    margin-bottom: 28px;
+
+    gap: 14px;
+
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+
+    border-bottom: 1px solid #1f2937;
 
     .icon {
-      width: 64px;
-      height: 64px;
-      border-radius: 18px;
-      background: linear-gradient(135deg, #ef4444, #dc2626);
+      width: 48px;
+      height: 48px;
+
+      flex-shrink: 0;
+
       display: flex;
       align-items: center;
       justify-content: center;
-      color: white;
-      box-shadow: 0 12px 25px rgba(239, 68, 68, 0.25);
+
+      border: 1px solid #273149;
+      border-radius: 12px;
+
+      background: #151c2c;
+
+      color: #93c5fd;
+
+      box-shadow: none;
+
+      svg {
+        stroke-width: 1.8;
+      }
+    }
+
+    > div:last-child {
+      min-width: 0;
     }
 
     h2 {
       margin: 0;
-      font-size: 26px;
-      font-weight: 700;
-      color: #111827;
+
+      color: #f8fafc;
+
+      font-size: 18px;
+      font-weight: 800;
+      line-height: 1.3;
     }
 
     p {
-      margin-top: 6px;
-      color: #6b7280;
-      font-size: 14px;
+      margin: 5px 0 0;
+
+      color: #64748b;
+
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 1.5;
     }
   }
 
+  // ========================================
+  // FORM GROUP
+  // ========================================
+
   .form-group {
-    margin-bottom: 22px;
+    display: flex;
+    flex-direction: column;
+
+    gap: 8px;
+
+    margin-bottom: 18px;
 
     label {
       display: flex;
       align-items: center;
+
       gap: 8px;
-      margin-bottom: 10px;
-      font-weight: 600;
-      color: #374151;
+
+      margin: 0;
+
+      color: #cbd5e1;
+
+      font-size: 12px;
+      font-weight: 800;
+
+      svg {
+        flex-shrink: 0;
+
+        width: 16px;
+        height: 16px;
+
+        color: #718096;
+
+        stroke-width: 1.8;
+      }
     }
 
     input,
     textarea,
     select {
       width: 100%;
-      border: 1px solid #e5e7eb;
-      border-radius: 14px;
-      padding: 14px 16px;
-      font-size: 15px;
-      transition: 0.25s;
-      background: #fafafa;
+
+      box-sizing: border-box;
+
+      border: 1px solid #273149;
+      border-radius: 10px;
+
+      outline: none;
+
+      background: #151c2c;
+      color: #e5e7eb;
+
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 500;
+
+      transition:
+        border-color 0.2s ease,
+        background 0.2s ease,
+        box-shadow 0.2s ease,
+        color 0.2s ease;
+
+      &::placeholder {
+        color: #52647f;
+      }
+
+      &:hover:not(:disabled) {
+        border-color: #334155;
+      }
 
       &:focus {
-        outline: none;
-        border-color: #ef4444;
-        background: white;
-        box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.12);
+        border-color: #3b82f6;
+
+        background: #172033;
+
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.11);
+      }
+
+      &:disabled {
+        cursor: not-allowed;
+
+        background: #111827;
+        color: #64748b;
+
+        opacity: 0.7;
+      }
+
+      &:autofill,
+      &:-webkit-autofill {
+        -webkit-text-fill-color: #e5e7eb;
+
+        box-shadow: 0 0 0 1000px #151c2c inset;
+
+        transition: background-color 9999s ease-in-out 0s;
       }
     }
 
+    input,
+    select {
+      height: 43px;
+
+      padding: 0 13px;
+    }
+
     textarea {
-      resize: none;
+      min-height: 105px;
+
+      padding: 12px 13px;
+
+      line-height: 1.6;
+
+      resize: vertical;
+    }
+
+    // ========================================
+    // SELECT
+    // ========================================
+
+    select {
+      appearance: none;
+      -webkit-appearance: none;
+
+      cursor: pointer;
+
+      padding-right: 40px;
+
+      background-image:
+        linear-gradient(45deg, transparent 50%, #718096 50%),
+        linear-gradient(135deg, #718096 50%, transparent 50%);
+
+      background-position:
+        calc(100% - 17px) 18px,
+        calc(100% - 12px) 18px;
+
+      background-size:
+        5px 5px,
+        5px 5px;
+
+      background-repeat: no-repeat;
+
+      option {
+        background: #111827;
+        color: #e5e7eb;
+      }
     }
   }
+
+  // ========================================
+  // WITHDRAW BUTTON
+  // ========================================
 
   .withdraw-btn {
     width: 100%;
-    height: 54px;
-    border: none;
-    border-radius: 16px;
-    background: linear-gradient(135deg, #ef4444, #dc2626);
-    color: white;
-    font-size: 16px;
-    font-weight: 700;
-    display: flex;
+    height: 43px;
+
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+
+    gap: 8px;
+
+    margin-top: 4px;
+
+    padding: 0 18px;
+
+    border: 1px solid #2563eb;
+    border-radius: 10px;
+
+    background: #2563eb;
+    color: #ffffff;
+
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 800;
+
     cursor: pointer;
-    transition: 0.25s;
+
+    box-shadow: 0 7px 18px rgba(37, 99, 235, 0.16);
+
+    transition:
+      border-color 0.2s ease,
+      background 0.2s ease,
+      box-shadow 0.2s ease,
+      transform 0.2s ease;
+
+    svg {
+      flex-shrink: 0;
+
+      width: 17px;
+      height: 17px;
+    }
 
     &:hover:not(:disabled) {
-      transform: translateY(-2px);
-      box-shadow: 0 14px 28px rgba(239, 68, 68, 0.35);
+      border-color: #3b82f6;
+
+      background: #3b82f6;
+
+      box-shadow: 0 9px 24px rgba(37, 99, 235, 0.25);
+
+      transform: translateY(-1px);
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(0);
     }
 
     &:disabled {
-      opacity: 0.6;
       cursor: not-allowed;
+
+      border-color: #273149;
+
+      background: #1f2937;
+      color: #64748b;
+
+      box-shadow: none;
+
+      opacity: 1;
     }
   }
 }
 
+// ========================================
+// WITHDRAW MODAL
+// ========================================
+
 .withdraw-modal {
   position: fixed;
+
   inset: 0;
+
   z-index: 9999;
 
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
 
-  background: rgba(15, 23, 42, 0.45);
-  backdrop-filter: blur(8px);
+  padding: 20px;
 
-  animation: fade 0.25s;
+  background: rgba(2, 6, 23, 0.78);
+
+  backdrop-filter: blur(6px);
+
+  animation: withdrawFade 0.2s ease;
 }
 
-.withdraw-modal__content {
-  width: min(700px, 92vw);
-  max-height: 90vh;
-  overflow: auto;
+// ========================================
+// MODAL CONTENT
+// ========================================
 
+.withdraw-modal__content {
   position: relative;
 
-  border-radius: 28px;
+  width: min(650px, 100%);
 
-  animation: popup 0.3s ease;
+  max-height: calc(100vh - 40px);
 
-  background: transparent;
+  overflow-y: auto;
+
+  border: 1px solid #273149;
+  border-radius: 16px;
+
+  background: #111827;
+
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.5);
+
+  animation: withdrawPopup 0.22s ease;
+
+  scrollbar-width: thin;
+  scrollbar-color: #334155 #111827;
 
   &::-webkit-scrollbar {
-    width: 8px;
+    width: 7px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #111827;
   }
 
   &::-webkit-scrollbar-thumb {
-    background: #ddd;
-    border-radius: 20px;
+    border-radius: 999px;
+
+    background: #334155;
+
+    &:hover {
+      background: #475569;
+    }
+  }
+
+  // remove double card look
+  .withdraw-form {
+    max-width: none;
+
+    border: none;
+    border-radius: 0;
+
+    box-shadow: none;
   }
 }
 
+// ========================================
+// CLOSE BUTTON
+// ========================================
+
 .withdraw-modal__close {
   position: absolute;
-  top: 20px;
-  right: 35px;
-  width: 42px;
-  height: 42px;
-  border: none;
-  border-radius: 50%;
-  background: #fff;
-  color: #374151;
+
+  top: 16px;
+  right: 16px;
+
+  z-index: 20;
+
+  width: 34px;
+  height: 34px;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
+  padding: 0;
+
+  border: 1px solid #273149;
+  border-radius: 9px;
+
+  background: #151c2c;
+  color: #94a3b8;
+
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+
   cursor: pointer;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-  transition: 0.25s;
-  z-index: 20;
+
+  box-shadow: none;
+
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
 
   &:hover {
-    background: #ef4444;
-    color: #fff;
+    border-color: #3b82f6;
+
+    background: #172033;
+    color: #ffffff;
+
     transform: rotate(90deg);
   }
 }
 
-@keyframes popup {
+// ========================================
+// ANIMATION
+// ========================================
+
+@keyframes withdrawPopup {
   from {
     opacity: 0;
-    transform: translateY(25px) scale(0.95);
+
+    transform: translateY(10px) scale(0.98);
   }
 
   to {
     opacity: 1;
+
     transform: translateY(0) scale(1);
   }
 }
 
-@keyframes fade {
+@keyframes withdrawFade {
   from {
     opacity: 0;
   }
 
   to {
     opacity: 1;
+  }
+}
+
+// ========================================
+// MOBILE
+// ========================================
+
+@media (max-width: 600px) {
+  .withdraw-modal {
+    align-items: flex-end;
+
+    padding: 0;
+  }
+
+  .withdraw-modal__content {
+    width: 100%;
+    max-height: 92vh;
+
+    border-right: none;
+    border-bottom: none;
+    border-left: none;
+
+    border-radius: 17px 17px 0 0;
+  }
+
+  .withdraw-form {
+    padding: 20px 18px 22px;
+
+    .withdraw-header {
+      padding-right: 36px;
+
+      .icon {
+        width: 42px;
+        height: 42px;
+
+        border-radius: 10px;
+      }
+
+      h2 {
+        font-size: 16px;
+      }
+
+      p {
+        font-size: 11px;
+      }
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .withdraw-btn {
+      height: 42px;
+    }
+  }
+
+  .withdraw-modal__close {
+    top: 14px;
+    right: 14px;
+
+    width: 32px;
+    height: 32px;
   }
 }
