@@ -1,141 +1,621 @@
+/* =========================================================
+   AI PRODUCT SUGGESTION
+========================================================= */
+
 .ai-products {
   width: 100%;
-  padding: 20px 0;
+
+  padding: 0;
+
+  color: #ffffff;
 
   &__list {
-    display: flex;
-    flex-wrap: wrap;
-    margin: 0 -10px; // Offset for child item padding
+    width: 100%;
+
+    margin-top: 24px;
+
+    display: grid;
+
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+
+    gap: 14px;
   }
 }
+
+/* =========================================================
+   CARD WRAPPER
+========================================================= */
 
 .ai-product-card-wrapper {
-  // Split evenly into 4 columns per row (25%)
-  width: 25%;
-  padding: 10px;
-  box-sizing: border-box;
+  min-width: 0;
 
-  // Responsive: tablets show 2 products per row, phones show 1 product per row
-  @media (max-width: 992px) {
-    width: 50%;
+  width: 100%;
+
+  padding: 0;
+
+  opacity: 0;
+
+  animation: aiSuggestionReveal 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+
+  &:nth-child(2) {
+    animation-delay: 0.05s;
   }
-  @media (max-width: 576px) {
-    width: 100%;
+
+  &:nth-child(3) {
+    animation-delay: 0.1s;
+  }
+
+  &:nth-child(4) {
+    animation-delay: 0.15s;
+  }
+
+  &:nth-child(5) {
+    animation-delay: 0.2s;
+  }
+
+  &:nth-child(6) {
+    animation-delay: 0.25s;
+  }
+
+  &:nth-child(7) {
+    animation-delay: 0.3s;
+  }
+
+  &:nth-child(8) {
+    animation-delay: 0.35s;
   }
 }
 
+/* =========================================================
+   PRODUCT CARD
+========================================================= */
+
 .ai-product-card {
-  display: block;
-  text-decoration: none;
-  color: #000;
-  // background: #fff;
-  border-radius: 4px;
+  position: relative;
+
+  min-width: 0;
+
+  height: 100%;
+
+  display: flex;
+
+  flex-direction: column;
+
   overflow: hidden;
-  transition: transform 0.2s ease;
+
+  border: 1px solid rgba(255, 255, 255, 0.065);
+
+  border-radius: 20px;
+
+  background: #111214;
+
+  color: #ffffff;
+
+  text-decoration: none;
+
+  box-shadow: none;
+
+  transition:
+    transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.2s ease,
+    background 0.2s ease;
 
   &:hover {
-    transform: translateY(-2px);
+    transform: translateY(-4px);
+
+    border-color: rgba(255, 255, 255, 0.11);
+
+    background: #141518;
+
+    .ai-product-card__image-box {
+      img {
+        transform: scale(1.035);
+      }
+    }
+
+    .ai-product-card__actions {
+      opacity: 1;
+
+      transform: translateY(0);
+    }
   }
+
+  /* =====================================================
+     IMAGE
+  ===================================================== */
 
   &__image-box {
     position: relative;
+
     width: 100%;
-    background-color: #f5f5f5;
-    border-radius: 4px;
-    aspect-ratio: 1 / 1; // Keep the image square at a 1:1 ratio
+
+    aspect-ratio: 1.08 / 1;
+
     display: flex;
+
     align-items: center;
     justify-content: center;
 
+    overflow: hidden;
+
+    background: #f3f3f2;
+
     img {
-      max-width: 100%;
-      max-height: 100%;
+      width: 100%;
+      height: 100%;
+
+      max-width: none;
+      max-height: none;
+
+      padding: 18px;
+
+      display: block;
+
       object-fit: contain;
-      padding: 15px;
+
+      mix-blend-mode: multiply;
+
+      transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
     }
   }
 
-  // Floating actions (heart and eye buttons) on the right
+  /* =====================================================
+     FLOATING ACTIONS
+  ===================================================== */
+
   &__actions {
     position: absolute;
-    top: 12px;
-    right: 12px;
+
+    top: 10px;
+    right: 10px;
+
+    z-index: 3;
+
     display: flex;
+
     flex-direction: column;
-    gap: 8px;
-    z-index: 2;
+
+    gap: 7px;
+
+    opacity: 0;
+
+    transform: translateY(-4px);
+
+    transition:
+      opacity 0.2s ease,
+      transform 0.2s ease;
 
     .icon-btn {
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      background: #ffffff;
-      border: none;
+      width: 36px;
+      height: 36px;
+
+      padding: 0;
+
       display: flex;
+
       align-items: center;
       justify-content: center;
+
+      border: 1px solid rgba(10, 10, 10, 0.08);
+
+      border-radius: 50%;
+
+      background: rgba(255, 255, 255, 0.92);
+
+      color: #505760;
+
       cursor: pointer;
-      box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
-      color: #000;
+
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.09);
+
+      backdrop-filter: blur(10px);
+
+      -webkit-backdrop-filter: blur(10px);
+
       transition:
-        background 0.2s,
-        color 0.2s;
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
 
       &:hover {
-        background: #db4444; 
-        color: #fff;
+        background: #ffffff;
+
+        color: #111111;
+
+        transform: scale(1.04);
+      }
+
+      &:active {
+        transform: scale(0.96);
+      }
+
+      &:first-child {
+        &:hover {
+          color: #e24f59;
+        }
+      }
+
+      svg {
+        pointer-events: none;
       }
     }
   }
 
+  /* =====================================================
+     CONTENT
+  ===================================================== */
+
   &__content {
-    padding: 12px 0 4px 0;
-    background: none;
+    min-width: 0;
+
+    flex: 1;
+
+    padding: 15px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    background: transparent;
+
     .title {
-      font-size: 15px;
-      font-weight: 500;
-      margin: 0 0 8px 0;
-      color: #000;
-      display: -webkit-box;
-      -webkit-line-clamp: 1;
-      -webkit-box-orient: vertical;
+      min-height: 36px;
+
+      margin: 0 0 10px;
+
       overflow: hidden;
+
+      display: -webkit-box;
+
+      color: rgba(255, 255, 255, 0.82);
+
+      font-size: 12px;
+
+      font-weight: 500;
+
+      line-height: 1.45;
+
+      letter-spacing: -0.25px;
+
+      -webkit-line-clamp: 2;
+
+      -webkit-box-orient: vertical;
     }
 
+    /* ===================================================
+       PRICE
+    =================================================== */
+
     .price-box {
+      margin-bottom: 9px;
+
       display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 8px;
+
+      align-items: baseline;
+
+      flex-wrap: wrap;
+
+      gap: 7px;
 
       .current-price {
-        color: #db4444; // Red color for the sale price
-        font-weight: 600;
+        color: #ffffff;
+
         font-size: 16px;
+
+        font-weight: 600;
+
+        line-height: 1;
+
+        letter-spacing: -0.4px;
       }
 
       .old-price {
-        color: #7d8184;
+        color: rgba(255, 255, 255, 0.27);
+
+        font-size: 10px;
+
         text-decoration: line-through;
-        font-size: 14px;
       }
     }
 
+    /* ===================================================
+       RATING
+    =================================================== */
+
     .rating-box {
+      margin-top: auto;
+
       display: flex;
+
       align-items: center;
-      gap: 8px;
+
+      gap: 7px;
 
       .stars {
         display: flex;
-        gap: 2px;
+
+        align-items: center;
+
+        gap: 1px;
+
+        svg {
+          width: 11px;
+          height: 11px;
+
+          color: #e6b85d;
+
+          fill: #e6b85d;
+        }
       }
 
       .review-count {
-        font-size: 13px;
-        color: #7d8184;
+        color: rgba(255, 255, 255, 0.27);
+
+        font-size: 8px;
+
         font-weight: 500;
       }
     }
+  }
+}
+
+/* =========================================================
+   LOADING STATE SUPPORT
+========================================================= */
+
+.ai-products__state {
+  min-height: 150px;
+
+  margin-top: 22px;
+
+  padding: 24px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border: 1px dashed rgba(255, 255, 255, 0.08);
+
+  border-radius: 18px;
+
+  background: rgba(255, 255, 255, 0.018);
+
+  color: rgba(255, 255, 255, 0.34);
+
+  font-size: 10px;
+
+  text-align: center;
+}
+
+/* =========================================================
+   ANIMATION
+========================================================= */
+
+@keyframes aiSuggestionReveal {
+  from {
+    opacity: 0;
+
+    transform: translateY(22px) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1200px) {
+  .ai-products {
+    &__list {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .ai-products {
+    &__list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+
+      gap: 12px;
+    }
+  }
+
+  .ai-product-card {
+    border-radius: 17px;
+
+    &__content {
+      padding: 13px;
+
+      .title {
+        font-size: 11px;
+      }
+
+      .price-box {
+        .current-price {
+          font-size: 15px;
+        }
+      }
+    }
+
+    &__actions {
+      opacity: 1;
+
+      transform: none;
+    }
+  }
+}
+
+@media (max-width: 520px) {
+  .ai-products {
+    &__list {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .ai-product-card {
+    display: grid;
+
+    grid-template-columns:
+      118px
+      minmax(0, 1fr);
+
+    min-height: 118px;
+
+    &__image-box {
+      height: 100%;
+
+      min-height: 118px;
+
+      aspect-ratio: auto;
+
+      img {
+        padding: 10px;
+      }
+    }
+
+    &__content {
+      justify-content: center;
+
+      .title {
+        min-height: auto;
+      }
+    }
+
+    &__actions {
+      top: 7px;
+      right: 7px;
+
+      gap: 5px;
+
+      .icon-btn {
+        width: 31px;
+        height: 31px;
+      }
+    }
+  }
+}
+
+/* =========================================================
+   TOUCH DEVICE
+========================================================= */
+
+@media (hover: none) {
+  .ai-product-card {
+    &__actions {
+      opacity: 1;
+
+      transform: none;
+    }
+  }
+}
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .ai-product-card-wrapper {
+    opacity: 1;
+
+    animation: none !important;
+  }
+
+  .ai-product-card,
+  .ai-product-card__image-box img,
+  .ai-product-card__actions,
+  .ai-product-card__actions .icon-btn {
+    transform: none !important;
+
+    transition: none !important;
+  }
+}
+
+/* =========================================================
+   AI PRODUCTS REVEAL
+========================================================= */
+
+.ai-products-reveal {
+  opacity: 0;
+
+  transform: translateY(48px);
+
+  transition:
+    opacity 0.85s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.85s cubic-bezier(0.22, 1, 0.36, 1);
+
+  will-change: opacity, transform;
+
+  &.is-visible {
+    opacity: 1;
+
+    transform: translateY(0);
+
+    .ai-product-card-wrapper {
+      opacity: 1;
+
+      animation: aiSuggestionReveal 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    .ai-product-card-wrapper:nth-child(2) {
+      animation-delay: 0.05s;
+    }
+
+    .ai-product-card-wrapper:nth-child(3) {
+      animation-delay: 0.1s;
+    }
+
+    .ai-product-card-wrapper:nth-child(4) {
+      animation-delay: 0.15s;
+    }
+
+    .ai-product-card-wrapper:nth-child(5) {
+      animation-delay: 0.2s;
+    }
+
+    .ai-product-card-wrapper:nth-child(6) {
+      animation-delay: 0.25s;
+    }
+
+    .ai-product-card-wrapper:nth-child(7) {
+      animation-delay: 0.3s;
+    }
+
+    .ai-product-card-wrapper:nth-child(8) {
+      animation-delay: 0.35s;
+    }
+  }
+}
+
+@keyframes aiSuggestionReveal {
+  from {
+    opacity: 0;
+
+    transform: translateY(22px) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ai-products-reveal,
+  .ai-products-reveal .ai-product-card-wrapper {
+    opacity: 1 !important;
+
+    transform: none !important;
+
+    animation: none !important;
+
+    transition: none !important;
   }
 }

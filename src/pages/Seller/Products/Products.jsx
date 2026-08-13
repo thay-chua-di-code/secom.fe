@@ -522,7 +522,7 @@ const Products = () => {
         </div>
 
         <div className="seller-products__toolbar">
-          <Button
+          {/* <Button
             className="seller-products__add-btn seller-products__toolbar-btn"
             disabled={importing}
             onClick={() => setOpenImport(true)}
@@ -540,7 +540,7 @@ const Products = () => {
             <Download size={18} />
 
             {exporting ? "Đang xuất file..." : "Export Excel"}
-          </Button>
+          </Button> */}
 
           <Button
             className="seller-products__add-btn seller-products__toolbar-btn"

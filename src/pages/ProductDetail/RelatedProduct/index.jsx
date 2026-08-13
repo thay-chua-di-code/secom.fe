@@ -10,6 +10,7 @@ import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import Title from "../../../components/common/Title/index";
 import { aiService } from "../../../service/aiService";
+import useReveal from "../../../hooks/useReveal";
 import "./style.scss";
 
 const getApiErrorMessage = (error) =>
@@ -21,7 +22,11 @@ const getApiErrorMessage = (error) =>
 export default function RelatedProducts({ productId, products = [] }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
+  const reveal = useReveal({
+    threshold: 0.08,
+    rootMargin: "0px 0px -60px 0px",
+    once: false,
+  });
   const [loadingId, setLoadingId] = useState(null);
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [isLoadingRelated, setIsLoadingRelated] = useState(false);
@@ -60,7 +65,8 @@ export default function RelatedProducts({ productId, products = [] }) {
           "/favicon.svg",
         condition: product.condition || "--",
         location: product.location || "--",
-        categoryName: product.category?.name || product.categoryName || "Uncategorized",
+        categoryName:
+          product.category?.name || product.categoryName || "Uncategorized",
       }))
       .filter((product) => product.id);
   }, [products, relatedProducts]);
@@ -137,11 +143,18 @@ export default function RelatedProducts({ productId, products = [] }) {
   };
 
   return (
-    <section className="related-products">
+    <section
+      ref={reveal.ref}
+      className={`related-products related-products-reveal ${
+        reveal.visible ? "is-visible" : ""
+      }`}
+    >
       <Title title="Related Products" />
 
       {isLoadingRelated && (
-        <div className="related-products__state">Loading related products...</div>
+        <div className="related-products__state">
+          Loading related products...
+        </div>
       )}
 
       {!isLoadingRelated && relatedError && (
@@ -150,9 +163,13 @@ export default function RelatedProducts({ productId, products = [] }) {
         </div>
       )}
 
-      {!isLoadingRelated && !relatedError && normalizedProducts.length === 0 && (
-        <div className="related-products__state">No related products found.</div>
-      )}
+      {!isLoadingRelated &&
+        !relatedError &&
+        normalizedProducts.length === 0 && (
+          <div className="related-products__state">
+            No related products found.
+          </div>
+        )}
 
       <div className="related-products__grid">
         {normalizedProducts.map((product) => {
@@ -165,10 +182,7 @@ export default function RelatedProducts({ productId, products = [] }) {
               className="related-card"
             >
               <div className="related-card__image">
-                <img
-                  src={product.image}
-                  alt={product.name}
-                />
+                <img src={product.image} alt={product.name} />
 
                 <button
                   className={`wishlist-btn ${isWishlisted ? "active" : ""}`}
@@ -185,7 +199,9 @@ export default function RelatedProducts({ productId, products = [] }) {
               <div className="related-card__content">
                 <h3>{product.name}</h3>
 
-                <div className="price">{formatCurrencyVN(product.price)} VND</div>
+                <div className="price">
+                  {formatCurrencyVN(product.price)} VND
+                </div>
 
                 <div className="meta">
                   <span>{product.condition}</span>

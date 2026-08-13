@@ -46,25 +46,25 @@ const Home = () => {
   const discoveryReveal = useReveal({
     threshold: 0.12,
     rootMargin: "0px 0px -60px 0px",
-    once: true,
+    once: false,
   });
 
   const featuredReveal = useReveal({
     threshold: 0.08,
     rootMargin: "0px 0px -70px 0px",
-    once: true,
+    once: false,
   });
 
   const latestReveal = useReveal({
     threshold: 0.08,
     rootMargin: "0px 0px -70px 0px",
-    once: true,
+    once: false,
   });
 
   const policyReveal = useReveal({
     threshold: 0.08,
     rootMargin: "0px 0px -60px 0px",
-    once: true,
+    once: false,
   });
 
   /* =========================================
@@ -118,7 +118,7 @@ const Home = () => {
           MAIN CONTENT
       ===================================================== */}
 
-      <div className="home-page__content">
+      <div className="home-page__content" style={{ padding: "0 10px" }}>
         {/* =================================================
             DISCOVERY
         ================================================= */}
