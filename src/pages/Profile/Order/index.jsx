@@ -1,5 +1,5 @@
-import { Clock3, PackageCheck, Search, Truck } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { Clock3, PackageCheck, Search, ShoppingBag, Truck } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import { orderApi, unwrapApiData } from "../../../api/orderApi";
@@ -46,14 +46,6 @@ const statusLabels = {
   completed: "Completed",
   cancelled: "Cancelled",
   refunded: "Refunded",
-};
-
-const defaultCardInfo = {
-  cardName: "JOHN DOE",
-  cardNumber: "4242424242424242",
-  expirationMonth: "12",
-  expirationYear: "2030",
-  securityCode: "123",
 };
 
 const getApiErrorMessage = (error) =>
@@ -290,68 +282,6 @@ const getReturnRequestStatus = (request, order) =>
 const getReturnRequestReason = (request) =>
   getField(request, "reason", "Reason", "reasonCode", "ReasonCode") || "--";
 
-const loadOmiseScript = () => {
-  return new Promise((resolve, reject) => {
-    if (window.Omise) {
-      resolve(window.Omise);
-      return;
-    }
-
-    const existingScript = document.querySelector(
-      'script[src="https://cdn.omise.co/omise.js"]',
-    );
-
-    if (existingScript) {
-      existingScript.addEventListener("load", () => resolve(window.Omise));
-      existingScript.addEventListener("error", () =>
-        reject(new Error("Cannot load Omise.js")),
-      );
-      return;
-    }
-
-    const script = document.createElement("script");
-    script.src = "https://cdn.omise.co/omise.js";
-    script.async = true;
-    script.onload = () => resolve(window.Omise);
-    script.onerror = () => reject(new Error("Cannot load Omise.js"));
-    document.body.appendChild(script);
-  });
-};
-
-const createOmiseToken = async (cardInfo) => {
-  const publicKey = import.meta.env.VITE_OMISE_PUBLIC_KEY;
-
-  if (!publicKey) {
-    throw new Error("Missing VITE_OMISE_PUBLIC_KEY");
-  }
-
-  const Omise = await loadOmiseScript();
-  Omise.setPublicKey(publicKey);
-
-  return new Promise((resolve, reject) => {
-    Omise.createToken(
-      "card",
-      {
-        name: cardInfo.cardName.trim(),
-        number: cardInfo.cardNumber.trim(),
-        expiration_month: cardInfo.expirationMonth.trim(),
-        expiration_year: cardInfo.expirationYear.trim(),
-        security_code: cardInfo.securityCode.trim(),
-      },
-      (statusCode, response) => {
-        if (statusCode === 200 && response?.id) {
-          resolve(response);
-          return;
-        }
-
-        reject(
-          new Error(response?.message || "Unable to create payment token."),
-        );
-      },
-    );
-  });
-};
-
 function StatusBadge({ status }) {
   const normalized = normalizeStatus(status);
   return (
@@ -366,6 +296,8 @@ function OrderDetailModal({ order, payment, loading, onClose }) {
   const items = getOrderItems(order);
   const returnRefundRequest = getLatestReturnRefundRequest(order);
   const returnRefundStatus = getReturnRequestStatus(returnRefundRequest, order);
+  const orderStatus = normalizeStatus(order.status);
+  const canRateSeller = orderStatus === "completed";
   return (
     <div className="order-detail-backdrop">
       <div className="order-detail-panel">
@@ -418,6 +350,10 @@ function OrderDetailModal({ order, payment, loading, onClose }) {
             <div>
               <span>Final Total</span>
               <strong>{formatCurrencyVN(getFinalTotal(order))}</strong>
+            </div>
+            <div>
+              <span>Total Items</span>
+              <strong>{items.length}</strong>
             </div>
             <div>
               <span>Voucher Code</span>
@@ -538,6 +474,21 @@ function OrderDetailModal({ order, payment, loading, onClose }) {
                     <span>
                       Status: {item.status || item.itemStatus || "--"}
                     </span>
+                    <div className="order-detail-item__actions">
+                      {productPath && (
+                        <Link to={productPath} onClick={onClose}>
+                          Review product
+                        </Link>
+                      )}
+                      {item.sellerId && canRateSeller && (
+                        <Link
+                          to={`/seller/detail/${item.sellerId}?orderId=${encodeURIComponent(getOrderId(order))}`}
+                          onClick={onClose}
+                        >
+                          Rate seller
+                        </Link>
+                      )}
+                    </div>
                   </div>
                   <div className="order-detail-item__price">
                     <span>Qty: {quantity}</span>
@@ -554,18 +505,8 @@ function OrderDetailModal({ order, payment, loading, onClose }) {
           <h3>Payment</h3>
           <div className="detail-grid">
             <div>
-              <span>Payment ID</span>
-              <strong>{payment?.id || payment?.paymentId || "--"}</strong>
-            </div>
-            <div>
               <span>Gateway</span>
               <strong>{payment?.gateway || "Omise"}</strong>
-            </div>
-            <div>
-              <span>Gateway Transaction ID</span>
-              <strong>
-                {payment?.gatewayTransactionId || payment?.chargeId || "--"}
-              </strong>
             </div>
             <div>
               <span>Payment Status</span>
@@ -576,10 +517,6 @@ function OrderDetailModal({ order, payment, loading, onClose }) {
               <strong>
                 {formatCurrencyVN(payment?.amount || getFinalTotal(order))}
               </strong>
-            </div>
-            <div>
-              <span>Currency</span>
-              <strong>{payment?.currency || "--"}</strong>
             </div>
           </div>
         </section>
@@ -829,6 +766,8 @@ function OrderActionModal({ type, order, actionLoading, onClose, onConfirm }) {
 
 export default function OrderHistory() {
   const [activeStatus, setActiveStatus] = useState("all");
+  const [orderKeyword, setOrderKeyword] = useState("");
+  const [debouncedOrderKeyword, setDebouncedOrderKeyword] = useState("");
   const [orders, setOrders] = useState([]);
   const [pagination, setPagination] = useState({
     page: 1,
@@ -841,22 +780,15 @@ export default function OrderHistory() {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [selectedPayment, setSelectedPayment] = useState(null);
   const [detailLoading, setDetailLoading] = useState(false);
-  const [cardInfo, setCardInfo] = useState(defaultCardInfo);
   const [orderAction, setOrderAction] = useState(null);
 
-  const handleCardInfoChange = (field, value) => {
-    setCardInfo((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
-
   const loadOrders = useCallback(
-    async ({ page = 1, status = activeStatus } = {}) => {
+    async ({ page = 1, status = activeStatus, search = debouncedOrderKeyword } = {}) => {
       try {
         setLoading(true);
         const response = await orderApi.getPurchasedOrdersPaged({
           status: status === "all" ? undefined : status,
+          search: search?.trim() || undefined,
           page,
           pageSize: pagination.pageSize,
         });
@@ -874,17 +806,26 @@ export default function OrderHistory() {
         setLoading(false);
       }
     },
-    [activeStatus, pagination.pageSize],
+    [activeStatus, debouncedOrderKeyword, pagination.pageSize],
   );
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      setDebouncedOrderKeyword(orderKeyword.trim());
+    }, 400);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [orderKeyword]);
+
+  const isSearchPending = orderKeyword.trim() !== debouncedOrderKeyword;
 
   useEffect(() => {
     const timeoutId = window.setTimeout(() => loadOrders({ page: 1 }), 0);
     return () => window.clearTimeout(timeoutId);
-  }, [loadOrders]);
+  }, [activeStatus, debouncedOrderKeyword, loadOrders]);
 
   const handleStatusChange = (status) => {
     setActiveStatus(status);
-    loadOrders({ page: 1, status });
   };
 
   const loadDetail = async (orderId) => {
@@ -911,6 +852,10 @@ export default function OrderHistory() {
     }
   };
 
+  const filteredOrders = useMemo(() => {
+    return Array.isArray(orders) ? orders : [];
+  }, [orders]);
+
   const handlePay = async (order) => {
     if (!canPay(order)) {
       setError("Only pending orders can be paid.");
@@ -922,20 +867,34 @@ export default function OrderHistory() {
 
     try {
       setActionLoading(orderId);
-      const token = await createOmiseToken(cardInfo);
       const paymentRequest = {
         orderId,
         amount,
         currency: "vnd",
         returnUri: `${window.location.origin}/payment-return`,
-        tokenId: token.id,
+        cancelUri: `${window.location.origin}/payment-cancel`,
       };
 
-      const response =
-        await paymentApi.createPaymentTransaction(paymentRequest);
+      if (!paymentRequest.orderId) {
+        throw new Error("Missing orderId");
+      }
+
+      if (!paymentRequest.amount || paymentRequest.amount <= 0) {
+        throw new Error("Missing amount");
+      }
+
+      const response = await paymentApi.createPaymentTransaction(paymentRequest);
       const data = unwrapApiData(response);
       const payment = data?.data ?? data;
-      const paymentUrl = payment?.paymentUrl;
+      const paymentUrl =
+        payment?.paymentUrl ||
+        payment?.checkoutUrl ||
+        response?.data?.data?.paymentUrl ||
+        response?.data?.paymentUrl ||
+        response?.paymentUrl ||
+        response?.data?.data?.checkoutUrl ||
+        response?.data?.checkoutUrl ||
+        response?.checkoutUrl;
 
       if (paymentUrl) {
         localStorage.setItem("lastOrderId", orderId);
@@ -1096,7 +1055,12 @@ export default function OrderHistory() {
       <div className="order-header">
         <div className="search-box">
           <Search size={18} />
-          <input type="text" placeholder="Search by order ID..." />
+          <input
+            type="text"
+            placeholder="Search orders or products..."
+            value={orderKeyword}
+            onChange={(event) => setOrderKeyword(event.target.value)}
+          />
         </div>
 
         <button
@@ -1124,70 +1088,47 @@ export default function OrderHistory() {
 
       {error && <p className="order-error">{error}</p>}
 
-      <div className="order-card-form">
-        <h3>Card Information</h3>
-        <div className="order-card-form__grid">
-          <label>
-            Card Name
-            <input
-              type="text"
-              value={cardInfo.cardName}
-              onChange={(event) =>
-                handleCardInfoChange("cardName", event.target.value)
-              }
-            />
-          </label>
-          <label>
-            Card Number
-            <input
-              type="text"
-              value={cardInfo.cardNumber}
-              onChange={(event) =>
-                handleCardInfoChange("cardNumber", event.target.value)
-              }
-            />
-          </label>
-          <label>
-            Month
-            <input
-              type="text"
-              value={cardInfo.expirationMonth}
-              onChange={(event) =>
-                handleCardInfoChange("expirationMonth", event.target.value)
-              }
-            />
-          </label>
-          <label>
-            Year
-            <input
-              type="text"
-              value={cardInfo.expirationYear}
-              onChange={(event) =>
-                handleCardInfoChange("expirationYear", event.target.value)
-              }
-            />
-          </label>
-          <label>
-            CVV
-            <input
-              type="password"
-              value={cardInfo.securityCode}
-              onChange={(event) =>
-                handleCardInfoChange("securityCode", event.target.value)
-              }
-            />
-          </label>
-        </div>
-      </div>
+      {isSearchPending && !loading && (
+        <p className="order-muted">Searching orders...</p>
+      )}
 
       {loading && <p className="order-muted">Loading orders...</p>}
 
       <div className="order-list">
-        {!loading && orders.length === 0 && (
-          <p className="order-muted">No orders found.</p>
+        {!loading && filteredOrders.length === 0 && (
+          <div className="order-empty-state">
+            <div className="order-empty-state__icon">
+              <ShoppingBag size={34} />
+            </div>
+            <h3>No orders found</h3>
+            <p>
+              {orderKeyword.trim() || activeStatus !== "all"
+                ? "Try clearing your search or changing the current status filter."
+                : "You have not placed any orders yet. Start shopping to see your order history here."}
+            </p>
+            <div className="order-empty-state__actions">
+              {(orderKeyword.trim() || activeStatus !== "all") && (
+                <button
+                  type="button"
+                  className="order-empty-state__secondary-btn"
+                  onClick={() => {
+                    setOrderKeyword("");
+                    if (activeStatus !== "all") {
+                      handleStatusChange("all");
+                    }
+                  }}
+                >
+                  Clear filters
+                </button>
+              )}
+              <Link to="/products" className="order-empty-state__primary-btn">
+                Browse products
+              </Link>
+            </div>
+          </div>
         )}
 
-        {orders.map((order) => {
+        {filteredOrders.map((order) => {
           const orderId = getOrderId(order);
           const isLoading = actionLoading === orderId;
 

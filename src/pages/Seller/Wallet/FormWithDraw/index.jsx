@@ -1,34 +1,17 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchSellerBankAccounts } from "../../../../redux/slice/seller/banking/bankingThunk";
-import { Landmark, Wallet, FileText, ArrowUpRight } from "lucide-react";
+import React from "react";
+import { FileText, ArrowUpRight, Landmark, Wallet } from "lucide-react";
 import "./style.scss";
 import toast from "react-hot-toast";
 import { sellerService } from "../../../../service/sellerService";
 
-const FormWithDraw = ({ onSuccess }) => {
-  const dispatch = useDispatch();
-  const [loading, setLoading] = useState(false);
-  const { bankAccounts } = useSelector((state) => state.sellerBanking);
-
-  const [form, setForm] = useState({
-    bankAccountId: "",
+const FormWithDraw = ({ onSuccess, bankAccount, onManageBankAccount }) => {
+  const [loading, setLoading] = React.useState(false);
+  const [form, setForm] = React.useState({
     amount: "",
     reason: "",
   });
 
-  useEffect(() => {
-    dispatch(fetchSellerBankAccounts());
-  }, [dispatch]);
-
-  useEffect(() => {
-    if (bankAccounts?.length > 0) {
-      setForm((prev) => ({
-        ...prev,
-        bankAccountId: bankAccounts[0].id,
-      }));
-    }
-  }, [bankAccounts]);
+  const maskedAccountNumber = bankAccount?.accountNumberMasked || "";
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -41,9 +24,15 @@ const FormWithDraw = ({ onSuccess }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    if (!form.bankAccountId) {
-      return toast.error("Please select a bank account.");
+
+    if (loading) {
+      return;
+    }
+
+    if (!bankAccount?.id) {
+      toast.error("Please add a bank account before requesting a withdrawal.");
+      onManageBankAccount?.();
+      return;
     }
 
     if (!form.amount || Number(form.amount) <= 0) {
@@ -51,24 +40,27 @@ const FormWithDraw = ({ onSuccess }) => {
     }
 
     try {
+      setLoading(true);
       const result = await sellerService.createWithDraw({
-        ...form,
+        bankAccountId: bankAccount.id,
         amount: Number(form.amount),
+        reason: form.reason,
       });
 
-      if (result.data.success) {
+      if (result?.success) {
         toast.success("Create withdraw successfully!");
-        setLoading(false);
-        setForm({
-          bankAccountId: bankAccounts?.[0]?.id || "",
-          amount: "",
-          reason: "",
-        });
+        setForm({ amount: "", reason: "" });
         onSuccess?.();
       }
     } catch (e) {
-      toast.error(e?.response?.data?.message || e.message);
-      setLoading(false);
+      toast.error(
+        e?.response?.data?.detail ||
+          e?.response?.data?.message ||
+          e.message,
+      );
+      if ((e?.message || "").includes("bank account")) {
+        onManageBankAccount?.();
+      }
     } finally {
       setLoading(false);
     }
@@ -83,29 +75,34 @@ const FormWithDraw = ({ onSuccess }) => {
 
         <div>
           <h2>Withdraw Money</h2>
-          <p>Transfer your balance to your bank account.</p>
+          <p>Transfer your balance to your saved bank account.</p>
         </div>
       </div>
 
       <div className="form-group">
         <label>
           <Landmark size={18} />
-          Bank Account
+          Withdraw to
         </label>
 
-        <select
-          name="bankAccountId"
-          value={form.bankAccountId}
-          onChange={handleChange}
-          disabled={loading}
-        >
-          {bankAccounts?.map((bank) => (
-            <option key={bank.id} value={bank.id}>
-              {bank.bankName} • {bank.accountNumberMasked} •{" "}
-              {bank.accountHolderName}
-            </option>
-          ))}
-        </select>
+        {bankAccount?.id ? (
+          <div className="withdraw-bank-summary">
+            <strong>{bankAccount.bankName}</strong>
+            <span>{maskedAccountNumber}</span>
+            <p>{bankAccount.accountHolderName}</p>
+            {bankAccount.branchName ? <small>{bankAccount.branchName}</small> : null}
+            <button type="button" className="manage-bank-link" onClick={onManageBankAccount}>
+              Manage Bank Account
+            </button>
+          </div>
+        ) : (
+          <div className="withdraw-bank-summary withdraw-bank-summary--empty">
+            <p>No bank account added.</p>
+            <button type="button" className="manage-bank-link" onClick={onManageBankAccount}>
+              Add Bank Account
+            </button>
+          </div>
+        )}
       </div>
 
       <div className="form-group">

@@ -358,6 +358,61 @@ $red-trend: #ef4444;
   }
 }
 
+.seller-dashboard-status-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+
+  padding: 32px;
+
+  border: 1px solid #f0f0f0;
+  border-radius: 18px;
+
+  background: #ffffff;
+
+  box-shadow: 0 8px 24px rgba(23, 23, 23, 0.045);
+
+  h2 {
+    margin: 0;
+    color: #171717;
+    font-size: 24px;
+    font-weight: 800;
+  }
+
+  p {
+    max-width: 680px;
+    margin: 0;
+    color: #525252;
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  &__action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 220px;
+    height: 46px;
+    padding: 0 20px;
+
+    border-radius: 12px;
+
+    background: #dc2626;
+
+    color: #ffffff;
+    font-weight: 700;
+    text-decoration: none;
+
+    transition: background 0.2s ease;
+
+    &:hover {
+      background: #b91c1c;
+    }
+  }
+}
+
 // ==========================================
 // REVENUE
 // ==========================================

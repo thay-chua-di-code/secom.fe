@@ -38,7 +38,7 @@
 
 .cart-item {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 18px;
 
   background: #fff;
@@ -72,14 +72,59 @@
   &__content {
     flex: 1;
 
-    h3 {
-      margin: 0 0 10px;
-      font-size: 18px;
-      font-weight: 700;
-      color: #1e293b;
-      line-height: 1.4;
-    }
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
 
+    min-width: 0;
+
+    h3 {
+      margin: 0;
+    }
+  }
+
+  &__product {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    min-width: 0;
+  }
+
+  &__image-link {
+    display: inline-flex;
+    flex-shrink: 0;
+    border-radius: 18px;
+    overflow: hidden;
+    cursor: pointer;
+
+    &:hover .cart-item__image {
+      transform: scale(1.03);
+    }
+  }
+
+  &__image {
+    width: 88px;
+    height: 88px;
+    object-fit: cover;
+    display: block;
+    background: #fff5f5;
+    transition: transform 0.2s ease;
+
+    &--placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #94a3b8;
+      background: #f1f5f9;
+    }
+  }
+
+  &__details {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
     span {
       display: inline-block;
       padding: 6px 12px;
@@ -93,9 +138,22 @@
     }
   }
 
-  &__price {
-    margin-top: 16px;
+  &__name {
+    display: inline-block;
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: 700;
+    color: #1e293b;
+    line-height: 1.4;
 
+    &:hover {
+      color: #dc2626;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+  }
+
+  &__price {
     font-size: 24px;
     font-weight: 800;
 
@@ -192,10 +250,21 @@
     padding: 18px;
     gap: 14px;
 
+    &__product {
+      gap: 12px;
+    }
+
+    &__image {
+      width: 72px;
+      height: 72px;
+    }
+
     &__content {
-      h3 {
-        font-size: 16px;
-      }
+      gap: 14px;
+    }
+
+    &__name {
+      font-size: 16px;
     }
 
     &__price {

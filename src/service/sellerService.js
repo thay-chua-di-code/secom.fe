@@ -89,11 +89,11 @@ export const sellerService = {
   },
 
   // [PRODUCT]
-  getProducts: async (pageNumber = 1, pageSize = 10) => {
+  getProducts: async (page = 1, pageSize = 10) => {
     try {
       const result = await axiosClient.get(`/seller/products`, {
         params: {
-          pageNumber,
+          page,
           pageSize,
         },
       });
@@ -239,7 +239,64 @@ export const sellerService = {
 
       return res.data.data;
     } catch (e) {
-      throw new Error(e?.response?.data?.message || e.message);
+      const error = new Error(e?.response?.data?.message || e.message);
+      error.response = e?.response;
+      throw error;
+    }
+  },
+
+  getSellerBankAccount: async () => {
+    try {
+      const res = await axiosClient.get(API_ENDPOINTS.SELLER.BANK.SINGLE);
+      return res.data.data ?? null;
+    } catch (e) {
+      if (e?.response?.status === 404) {
+        try {
+          const fallback = await axiosClient.get(API_ENDPOINTS.SELLER.BANK.GP);
+          const accounts = Array.isArray(fallback?.data?.data)
+            ? fallback.data.data
+            : [];
+          return accounts[0] ?? null;
+        } catch (fallbackError) {
+          const error = new Error(
+            fallbackError?.response?.data?.message || fallbackError.message,
+          );
+          error.response = fallbackError?.response;
+          throw error;
+        }
+      }
+
+      const error = new Error(e?.response?.data?.message || e.message);
+      error.response = e?.response;
+      throw error;
+    }
+  },
+
+  upsertSellerBankAccount: async (data) => {
+    try {
+      const res = await axiosClient.put(API_ENDPOINTS.SELLER.BANK.SINGLE, data);
+      return res.data.data;
+    } catch (e) {
+      if (e?.response?.status === 404) {
+        try {
+          const accounts = await sellerService.getSellerBankAccounts();
+
+          if (!Array.isArray(accounts) || accounts.length === 0) {
+            const createRes = await axiosClient.post(API_ENDPOINTS.SELLER.BANK.GP, data);
+            return createRes.data.data;
+          }
+        } catch (fallbackError) {
+          const error = new Error(
+            fallbackError?.response?.data?.message || fallbackError.message,
+          );
+          error.response = fallbackError?.response;
+          throw error;
+        }
+      }
+
+      const error = new Error(e?.response?.data?.message || e.message);
+      error.response = e?.response;
+      throw error;
     }
   },
 

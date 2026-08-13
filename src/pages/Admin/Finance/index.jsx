@@ -47,6 +47,21 @@ const getSellerName = (item) =>
 const getBankName = (item) =>
   item?.bankName || item?.bank?.name || item?.bankAccount?.bankName || "-";
 
+const getAccountHolderName = (item) =>
+  item?.accountHolderName || item?.bankAccount?.accountHolderName || "-";
+
+const getMaskedAccountNumber = (item) => {
+  const rawValue = item?.accountNumber || item?.bankAccount?.accountNumber || "";
+  const normalizedValue = String(rawValue).replace(/\s+/g, "").trim();
+
+  if (!normalizedValue) {
+    return "-";
+  }
+
+  const visibleSuffix = normalizedValue.slice(-4);
+  return `******${visibleSuffix}`;
+};
+
 const getRequestedDate = (item) =>
   item?.requestedAtUtc || item?.createdAtUtc || item?.createdAt;
 
@@ -114,46 +129,55 @@ export default function Finance() {
       title: "Total GMV",
       value: summary?.totalGMV,
       icon: DollarSign,
+      description: "Completed order value processed through the platform.",
     },
     {
-      title: "Platform Revenue",
+      title: "Successful Payments",
       value: summary?.totalPlatformRevenue,
       icon: TrendingUp,
+      description: "Successful buyer payments recorded by the payment gateway.",
     },
     {
       title: "Platform Fee",
       value: summary?.totalPlatformFee,
       icon: Wallet,
+      description: "Commission deducted from seller settlements.",
     },
     {
       title: "Refund Amount",
       value: summary?.totalRefundAmount,
       icon: RotateCcw,
+      description: "Successful refund transactions only.",
     },
     {
-      title: "Seller Payout",
+      title: "Seller Wallet Releases",
       value: summary?.totalSellerPayoutAmount,
       icon: Landmark,
+      description: "Funds released into seller wallets from completed sales.",
     },
     {
       title: "Pending Withdrawal",
       value: summary?.totalPendingWithdrawalAmount,
       icon: Banknote,
+      description: "Withdrawal requests awaiting completion.",
     },
     {
       title: "Completed Withdrawal",
       value: summary?.totalCompletedWithdrawalAmount,
       icon: BadgeDollarSign,
+      description: "Withdrawals already completed by the platform.",
     },
     {
       title: "Failed Withdrawal",
       value: summary?.totalFailedWithdrawalAmount,
       icon: CircleDollarSign,
+      description: "Withdrawals marked as failed.",
     },
     {
       title: "Net Revenue",
       value: summary?.netRevenue,
       icon: DollarSign,
+      description: "Current code formula: payments - refunds - seller wallet releases.",
     },
   ];
 
@@ -237,6 +261,8 @@ export default function Finance() {
                     <span>{item.title}</span>
 
                     <h3>{Number(item.value || 0).toLocaleString()} VND</h3>
+
+                    <p>{item.description}</p>
                   </div>
                 </div>
               );
@@ -269,13 +295,10 @@ export default function Finance() {
                 <thead>
                   <tr>
                     <th>Seller</th>
-                    <th>Gross</th>
-                    <th>Withdrawal Fee</th>
-                    <th>Payment Fee</th>
-                    <th>Shipping Fee</th>
-                    <th>Refund</th>
-                    <th>Seller Net</th>
+                    <th>Requested Amount</th>
                     <th>Bank</th>
+                    <th>Account Holder</th>
+                    <th>Account</th>
                     <th>Requested Date</th>
                     <th>Status</th>
                     <th width="180">Action</th>
@@ -285,11 +308,11 @@ export default function Finance() {
                 <tbody>
                   {payoutsLoading ? (
                     <tr>
-                      <td colSpan={11}>Loading withdrawal requests...</td>
+                      <td colSpan={7}>Loading withdrawal requests...</td>
                     </tr>
                   ) : payoutsError ? (
                     <tr>
-                      <td colSpan={11}>
+                      <td colSpan={7}>
                         {payoutsError.includes("403")
                           ? "You do not have permission to view payout requests."
                           : payoutsError || "Unable to load withdrawal requests."}
@@ -297,7 +320,7 @@ export default function Finance() {
                     </tr>
                   ) : payouts.length === 0 ? (
                     <tr>
-                      <td colSpan={11}>No withdrawal requests found.</td>
+                      <td colSpan={7}>No withdrawal requests found.</td>
                     </tr>
                   ) : (
                     payouts.map((item) => {
@@ -308,19 +331,14 @@ export default function Finance() {
                     <tr key={itemId}>
                       <td>{getSellerName(item)}</td>
 
-                      <td>{formatCurrency(getField(item, ["grossAmount", "amount", "requestedAmount"]))}</td>
 
-                      <td>{formatCurrency(getField(item, ["fee"]))}</td>
-
-                      <td>{formatCurrency(getField(item, ["paymentFee", "transactionFee"]))}</td>
-
-                      <td>{formatCurrency(getField(item, ["shippingFee"]))}</td>
-
-                      <td>{formatCurrency(getField(item, ["refundAmount"]))}</td>
-
-                      <td>{formatCurrency(getField(item, ["sellerNetAmount", "netAmount", "payoutAmount", "amount"]))}</td>
+                      <td>{formatCurrency(getField(item, ["amount", "requestedAmount"]))}</td>
 
                       <td>{getBankName(item)}</td>
+
+                      <td>{getAccountHolderName(item)}</td>
+
+                      <td>{getMaskedAccountNumber(item)}</td>
 
                       <td>{formatDate(getRequestedDate(item))}</td>
 

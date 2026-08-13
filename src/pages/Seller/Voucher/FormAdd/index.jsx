@@ -1,24 +1,67 @@
-import { useSelector } from "react-redux";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import "./style.scss";
 import { sellerService } from "../../../../service/sellerService";
-const AddVoucherModal = ({ open, onClose }) => {
-  const userInfo = useSelector((state) => state.user.userInfo);
+
+const createInitialForm = () => ({
+  code: "",
+  discountType: "percentage",
+  discountValue: "",
+  minOrderAmount: "",
+  quantity: "",
+  endAtUtc: "",
+});
+
+const toDateTimeLocalValue = (value) => {
+  if (!value) return "";
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+
+  const timezoneOffset = date.getTimezoneOffset() * 60000;
+  return new Date(date.getTime() - timezoneOffset).toISOString().slice(0, 16);
+};
+
+const AddVoucherModal = ({
+  open,
+  onClose,
+  mode = "create",
+  initialVoucher = null,
+}) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [form, setForm] = useState({
-    code: "",
-    name: "",
-    description: "",
-    discountType: "percentage",
-    discountValue: "",
-    minOrderAmount: "",
-    maxDiscountAmount: "",
-    quantity: "",
-    startAtUtc: "",
-    endAtUtc: "",
-    isActive: true,
-  });
+  const [form, setForm] = useState(createInitialForm());
+
+  const isEditMode = mode === "edit";
+  const voucherId = initialVoucher?.id ?? initialVoucher?.voucherId ?? null;
+  const modalTitle = isEditMode ? "Edit Voucher" : "Create Voucher";
+  const submitLabel = isEditMode ? "Save Changes" : "Create Voucher";
+  const submittingLabel = isEditMode ? "Saving..." : "Creating...";
+
+  const baseStartAtUtc = useMemo(() => {
+    if (initialVoucher?.startAtUtc) {
+      return new Date(initialVoucher.startAtUtc).toISOString();
+    }
+
+    return new Date().toISOString();
+  }, [initialVoucher?.startAtUtc]);
+
+  useEffect(() => {
+    if (!open) return;
+
+    if (isEditMode && initialVoucher) {
+      setForm({
+        code: initialVoucher.code || "",
+        discountType: initialVoucher.discountType || "percentage",
+        discountValue: String(initialVoucher.discountValue ?? ""),
+        minOrderAmount: String(initialVoucher.minOrderAmount ?? ""),
+        quantity: String(initialVoucher.quantity ?? ""),
+        endAtUtc: toDateTimeLocalValue(initialVoucher.endAtUtc),
+      });
+      return;
+    }
+
+    setForm(createInitialForm());
+  }, [initialVoucher, isEditMode, open]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -32,8 +75,8 @@ const AddVoucherModal = ({ open, onClose }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!form.code.trim() || !form.name.trim()) {
-      toast.error("Voucher code and name are required");
+    if (!form.code.trim()) {
+      toast.error("Voucher code is required");
       return;
     }
 
@@ -55,40 +98,45 @@ const AddVoucherModal = ({ open, onClose }) => {
       return;
     }
 
-    if (!form.startAtUtc) {
-      toast.error("Start date is required");
-      return;
-    }
-
-    if (form.endAtUtc && new Date(form.endAtUtc) <= new Date(form.startAtUtc)) {
+    if (form.endAtUtc && new Date(form.endAtUtc) <= new Date(baseStartAtUtc)) {
       toast.error("End date must be after start date");
       return;
     }
 
     const payload = {
-      ...form,
-      sellerId: userInfo?.sellerId || userInfo?.userId || userInfo?.id || null,
       code: form.code.trim(),
-      name: form.name.trim(),
-      description: form.description.trim() || null,
+      name: form.code.trim(),
+      description: null,
       discountValue: Number(form.discountValue),
-      minOrderAmount: Number(form.minOrderAmount),
-      maxDiscountAmount: form.maxDiscountAmount
-        ? Number(form.maxDiscountAmount)
-        : null,
+      minOrderAmount: Number(form.minOrderAmount || 0),
+      maxDiscountAmount: null,
       quantity: Number(form.quantity),
-      startAtUtc: new Date(form.startAtUtc).toISOString(),
+      startAtUtc: baseStartAtUtc,
       endAtUtc: form.endAtUtc ? new Date(form.endAtUtc).toISOString() : null,
-      isActive: form.isActive ?? true,
     };
 
     try {
       setIsSubmitting(true);
-      await sellerService.createVoucher(payload);
-      toast.success("Seller voucher created successfully");
+      if (isEditMode) {
+        if (!voucherId) {
+          throw new Error("Voucher id is missing");
+        }
+
+        await sellerService.updateVoucher(voucherId, payload);
+        toast.success("Seller voucher updated successfully");
+      } else {
+        await sellerService.createVoucher(payload);
+        toast.success("Seller voucher created successfully");
+      }
+
       onClose();
     } catch (error) {
-      toast.error(error.message || "Create seller voucher failed");
+      toast.error(
+        error.message ||
+          (isEditMode
+            ? "Update seller voucher failed"
+            : "Create seller voucher failed"),
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -100,7 +148,7 @@ const AddVoucherModal = ({ open, onClose }) => {
     <div className="modal-overlay">
       <div className="product-modal">
         <div className="modal-header">
-          <h2>Create Voucher</h2>
+          <h2>{modalTitle}</h2>
         </div>
 
         <form onSubmit={handleSubmit}>
@@ -116,25 +164,15 @@ const AddVoucherModal = ({ open, onClose }) => {
             </div>
 
             <div className="form-group">
-              <label>Voucher Name</label>
+              <label>Expiration Date</label>
+
               <input
-                name="name"
-                placeholder="Summer Sale"
-                value={form.name}
+                type="datetime-local"
+                name="endAtUtc"
+                value={form.endAtUtc}
                 onChange={handleChange}
               />
             </div>
-          </div>
-
-          <div className="form-group">
-            <label>Description</label>
-
-            <textarea
-              name="description"
-              placeholder="Voucher description..."
-              value={form.description}
-              onChange={handleChange}
-            />
           </div>
 
           <div className="row">
@@ -178,20 +216,6 @@ const AddVoucherModal = ({ open, onClose }) => {
             </div>
 
             <div className="form-group">
-              <label>Maximum Discount</label>
-
-              <input
-                type="number"
-                name="maxDiscountAmount"
-                placeholder="100000"
-                value={form.maxDiscountAmount}
-                onChange={handleChange}
-              />
-            </div>
-          </div>
-
-          <div className="row">
-            <div className="form-group">
               <label>Quantity</label>
 
               <input
@@ -202,43 +226,11 @@ const AddVoucherModal = ({ open, onClose }) => {
                 onChange={handleChange}
               />
             </div>
-
-            <div className="form-group"></div>
           </div>
 
-          <div className="row">
-            <div className="form-group">
-              <label>Start Date</label>
-
-              <input
-                type="datetime-local"
-                name="startAtUtc"
-                value={form.startAtUtc}
-                onChange={handleChange}
-              />
-            </div>
-
-            <div className="form-group">
-              <label>End Date</label>
-
-              <input
-                type="datetime-local"
-                name="endAtUtc"
-                value={form.endAtUtc}
-                onChange={handleChange}
-              />
-            </div>
-          </div>
-
-          <div className="checkbox-group">
-            <input
-              type="checkbox"
-              name="isActive"
-              checked={form.isActive}
-              onChange={handleChange}
-            />
-
-            <span>Active Voucher</span>
+          <div className="seller-voucher-modal__note">
+            Seller vouchers support editing persisted fields only: code, discount type,
+            discount value, minimum order, quantity, and expiration date.
           </div>
 
           <div className="actions">
@@ -252,7 +244,7 @@ const AddVoucherModal = ({ open, onClose }) => {
             </button>
 
             <button className="create-btn" type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Creating..." : "Create Voucher"}
+              {isSubmitting ? submittingLabel : submitLabel}
             </button>
           </div>
         </form>

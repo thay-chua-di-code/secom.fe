@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Eye, EyeOff, Mail } from "lucide-react";
 import logo from "../../../../assets/icons/logo.jpg";
 import { authService } from "../../../../service/authService";
@@ -9,13 +9,20 @@ import "./style.scss";
 
 const ResetPassWord = () => {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const token = searchParams.get("token");
   const [newPwd, setPwd] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const handleSubmitResetPassword = async (e) => {
     e.preventDefault();
-    const result = await authService.reset_pwd({ token, newPassword: newPwd });
+
+    if (!token) {
+      toast.error("Reset token is missing or invalid.");
+      return;
+    }
+
     if (!newPwd) {
       toast.error("Please enter your password!");
       return;
@@ -46,10 +53,20 @@ const ResetPassWord = () => {
       return;
     }
 
-    if (result.success) {
+    try {
+      setSubmitting(true);
+      const result = await authService.reset_pwd({ token, newPassword: newPwd });
+
+      if (result?.success) {
       toast.success(
         "Password reset successful! Please log in with your new password.",
       );
+        navigate("/login", { replace: true });
+      }
+    } catch (error) {
+      toast.error(error.message || "Password reset failed.");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -102,8 +119,8 @@ const ResetPassWord = () => {
 
         {/* BUTTON */}
         <div className="form_actions">
-          <Button type="submit" fullWidth={true}>
-            Reset Password
+          <Button type="submit" fullWidth={true} disabled={submitting}>
+            {submitting ? "Resetting Password..." : "Reset Password"}
           </Button>
         </div>
 

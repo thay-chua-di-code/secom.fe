@@ -179,7 +179,8 @@ export default function SellerShow({ seller, shop }) {
           detail: {
             chatId,
             sellerId: thread.sellerId || sellerId,
-            sellerName: thread.sellerName || sellerName,
+            shopName: thread.shopName,
+            sellerName: thread.shopName || thread.sellerName || sellerName || "Seller",
             sellerAvatarUrl: thread.sellerAvatarUrl || avatarUrl,
           },
         }),

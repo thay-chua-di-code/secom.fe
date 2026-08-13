@@ -2,14 +2,14 @@ import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { authService } from "../../../../service/authService";
-import { loginThunk } from "../../../../redux/slice/authSlice";
+import { googleLoginThunk, loginThunk } from "../../../../redux/slice/authSlice";
 import { getMyInfoThunk } from "../../../../redux/slice/userSlice";
 import banner from "../../../../assets/images/SideImage.png";
 import toast from "react-hot-toast";
 import "./LoginForm.scss";
 import Button from "../../../../components/common/Button/Button";
 import { Eye, EyeOff } from "lucide-react";
+import { isSeller } from "../../../../utils/auth";
 
 export default function LoginForm() {
   const dispatch = useDispatch();
@@ -21,6 +21,23 @@ export default function LoginForm() {
   });
   const [showPassword, setShowPassword] = useState(false);
 
+  const handleAuthSuccess = async (result) => {
+    await dispatch(getMyInfoThunk()).unwrap();
+    toast.success("Login successful!");
+
+    if (result.role.toLowerCase() === "admin") {
+      navigate("/admin");
+      return;
+    }
+
+    if (isSeller(result.role)) {
+      navigate("/seller");
+      return;
+    }
+
+    navigate("/");
+  };
+
   const handleSubmitLogin = async (e) => {
     e.preventDefault();
 
@@ -31,17 +48,8 @@ export default function LoginForm() {
           password: loginData.password,
         }),
       ).unwrap();
-      if (result.role.toLowerCase() === "admin") {
-        navigate("/admin");
-        toast.success("Login successful!");
-        await dispatch(getMyInfoThunk()).unwrap();
-      }
 
-      if (result.role.toLowerCase() !== "admin") {
-        toast.success("Login successful!");
-        navigate("/");
-        await dispatch(getMyInfoThunk()).unwrap();
-      }
+      await handleAuthSuccess(result);
     } catch (error) {
       const token = localStorage.getItem("token");
 
@@ -49,13 +57,24 @@ export default function LoginForm() {
         return;
       }
 
-      toast.error(error?.response?.data?.message || "Login failed!");
+      toast.error(error || "Login failed!");
     }
   };
 
   const handleLoginGoogle = async (credentialResponse) => {
-    if (credentialResponse) {
-      await authService.loginGoogle(credentialResponse.credential);
+    if (!credentialResponse?.credential) {
+      toast.error("Google login failed.");
+      return;
+    }
+
+    try {
+      const result = await dispatch(
+        googleLoginThunk(credentialResponse.credential),
+      ).unwrap();
+
+      await handleAuthSuccess(result);
+    } catch (error) {
+      toast.error(error || "Google login failed.");
     }
   };
 
@@ -66,12 +85,10 @@ export default function LoginForm() {
     >
       <div className="form_login_container">
         <div className="login_layout">
-          {/* Banner */}
           <div className="login_banner">
             <img src={banner} alt="Login Banner" />
           </div>
 
-          {/* Form */}
           <form onSubmit={handleSubmitLogin} className="form_login_wrapper">
             <div className="form_header">
               <h2>Log in to Secom</h2>
@@ -131,7 +148,7 @@ export default function LoginForm() {
                 <GoogleLogin
                   width="100%"
                   onSuccess={handleLoginGoogle}
-                  onError={() => toast.error("Login Failure")}
+                  onError={() => toast.error("Google login failed.")}
                   text="signin_with"
                   locale="en"
                 />

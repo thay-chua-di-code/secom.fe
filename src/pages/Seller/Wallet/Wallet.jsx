@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useState } from "react";
 import {
-  FileChartColumnIncreasingIcon,
   RefreshCw,
   Wallet as WalletIcon,
+  Landmark,
 } from "lucide-react";
 import { sellerService } from "../../../service/sellerService";
 import { formatCurrencyVN } from "../../../utils/fncUtils";
 import FormWithDraw from "./FormWithDraw";
+import { useNavigate } from "react-router-dom";
 
 import "./style.scss";
 
@@ -24,7 +25,9 @@ const normalizeTransactions = (payload) => ({
 });
 
 export default function SellerWallet() {
+  const navigate = useNavigate();
   const [wallet, setWallet] = useState(null);
+  const [bankAccount, setBankAccount] = useState(null);
   const [openWithDraw, setOpenWithDraw] = useState(false);
   const [transactions, setTransactions] = useState([]);
   const [page, setPage] = useState(1);
@@ -46,6 +49,13 @@ export default function SellerWallet() {
     } catch (err) {
       console.error("Wallet:", err);
       setError(getApiErrorMessage(err));
+    }
+
+    try {
+      const bankAccountResponse = await sellerService.getSellerBankAccount();
+      setBankAccount(bankAccountResponse);
+    } catch (err) {
+      setBankAccount(null);
     }
 
     // Transactions
@@ -93,7 +103,15 @@ export default function SellerWallet() {
           <button
             type="button"
             className="withdraw-btn"
-            onClick={() => setOpenWithDraw(true)}
+            onClick={() => {
+              if (!bankAccount?.id) {
+                setError("Please add a bank account before requesting a withdrawal.");
+                navigate("/seller/settings");
+                return;
+              }
+
+              setOpenWithDraw(true);
+            }}
           >
             <WalletIcon size={18} />
             Withdraw
@@ -140,6 +158,28 @@ export default function SellerWallet() {
           <span>Withdrawn</span>
           <strong>{formatCurrencyVN(wallet?.withdrawnBalance ?? 0)}</strong>
         </article>
+      </div>
+
+      <div className="seller-wallet-page__table-card seller-wallet-page__payout-card">
+        <div className="seller-wallet-page__table-header">
+          <h2>Withdrawal Account</h2>
+          <button type="button" className="refresh-btn" onClick={() => navigate("/seller/settings")}>
+            <Landmark size={16} />
+            Manage
+          </button>
+        </div>
+
+        {bankAccount?.id ? (
+          <div className="seller-wallet-page__state seller-wallet-page__state--account">
+            <strong>{bankAccount.bankName}</strong>
+            <span>{bankAccount.accountHolderName}</span>
+            <span>{bankAccount.accountNumberMasked}</span>
+          </div>
+        ) : (
+          <div className="seller-wallet-page__state">
+            No bank account added.
+          </div>
+        )}
       </div>
 
       <div className="seller-wallet-page__table-card">
@@ -228,6 +268,11 @@ export default function SellerWallet() {
               </button>
 
               <FormWithDraw
+                bankAccount={bankAccount}
+                onManageBankAccount={() => {
+                  setOpenWithDraw(false);
+                  navigate("/seller/settings");
+                }}
                 onSuccess={() => {
                   setOpenWithDraw(false);
                   loadWallet();

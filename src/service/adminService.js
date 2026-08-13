@@ -9,7 +9,7 @@ import {
 export const adminService = {
   getDashBoard: async () => {
     try {
-      const result = await axiosClient.get("/admin/dashboard");
+      const result = await axiosClient.get(API_ENDPOINTS.ADMIN.DASHBOARD_STATISTICS);
       console.log(result);
       return result.data;
     } catch (e) {
@@ -21,6 +21,19 @@ export const adminService = {
       throw new Error(errorMessage);
     } finally {
       console.log("Done");
+    }
+  },
+  getDashboardTrends: async (params) => {
+    try {
+      const result = await axiosClient.get(API_ENDPOINTS.ADMIN.DASHBOARD_TRENDS, {
+        params,
+      });
+
+      return result.data.data;
+    } catch (e) {
+      throw new Error(
+        e?.response?.data?.message || e.message || "Unable to load dashboard trend",
+      );
     }
   },
   // [USER]
@@ -257,6 +270,20 @@ export const adminService = {
     } catch (e) {
       throw new Error(
         e.response?.data?.message || e.message || "Something went wrong",
+      );
+    }
+  },
+
+  getFinanceTrends: async (params) => {
+    try {
+      const res = await axiosClient.get(API_ENDPOINTS.ADMIN.FINANCE.TRENDS, {
+        params,
+      });
+
+      return res.data.data;
+    } catch (e) {
+      throw new Error(
+        e?.response?.data?.message || e.message || "Unable to load finance trend",
       );
     }
   },

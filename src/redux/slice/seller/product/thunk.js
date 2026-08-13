@@ -8,7 +8,6 @@ export const fetchSellerProducts = createAsyncThunk(
   async ({ page = 1, pageSize = 10 } = {}, { rejectWithValue }) => {
     try {
       const res = await sellerService.getProducts(page, pageSize);
-      console.log(res);
       return res;
     } catch (err) {
       return rejectWithValue(err.message);

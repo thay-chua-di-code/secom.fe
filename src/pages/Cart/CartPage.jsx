@@ -14,12 +14,14 @@ import { fetchVouchers } from "../../redux/slice/voucherSlice";
 import { useCart } from "../../hooks/useCart";
 import { paymentApi } from "../../api/paymentApi";
 import { orderApi } from "../../api/orderApi";
+import { addressService } from "../../service/addressService";
 import { useLocation } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import { TicketPercent } from "lucide-react";
+import AddAddressModal from "../Profile/Address/Form/FormAdd";
 import "./style.scss";
 import "../../components/cart/CartEmpty.scss";
+import { formatCurrencyVN } from "../../utils/fncUtils";
 function CartEmpty() {
   return (
     <section className="cart-empty">
@@ -65,7 +67,11 @@ export default function CartPage() {
   const [appliedVoucher, setAppliedVoucher] = useState(null);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [checkoutError, setCheckoutError] = useState("");
+  const [selectedAddressId, setSelectedAddressId] = useState(null);
+  const [isAddAddressOpen, setIsAddAddressOpen] = useState(false);
+  const [voucherValidationTime] = useState(() => Date.now());
   const { isAuthenticated } = useSelector((state) => state.auth);
+  const addresses = useSelector((state) => state.user.addresses ?? []);
 
   const {
     vouchers,
@@ -79,6 +85,7 @@ export default function CartPage() {
     actionLoading,
     error,
     voucherCode,
+    subtotal,
     updateQuantity,
     applyVoucher,
     removeVoucher,
@@ -95,6 +102,7 @@ export default function CartPage() {
       dispatch(fetchCart());
       dispatch(calculateCheckoutSummary());
       dispatch(fetchVouchers({ page: 1, pageSize: 20, status: "active" }));
+      addressService.getAddress(dispatch).catch(() => undefined);
     }
   }, [dispatch, isAuthenticated]);
 
@@ -120,6 +128,9 @@ export default function CartPage() {
   );
 
   const activeVoucherCode = appliedVoucher || voucherCode;
+  const cartSubtotalForVoucherValidation = Number(
+    subtotal ?? items.reduce((total, item) => total + (item?.subtotal || 0), 0),
+  );
   const activeVoucher = useMemo(
     () =>
       (Array.isArray(vouchers) ? vouchers : []).find(
@@ -153,10 +164,78 @@ export default function CartPage() {
     return Math.min(Math.max(cappedDiscount, 0), selectedSubtotal);
   }, [activeVoucher, selectedSubtotal]);
 
+  const getVoucherApplyValidationMessage = useMemo(
+    () => (voucher) => {
+    if (!voucher?.code) {
+      return "Voucher code is required.";
+    }
+
+    if (voucher?.isActive === false) {
+      return "This voucher is not active.";
+    }
+
+    if (
+      voucher?.approvalStatus &&
+      String(voucher.approvalStatus).toLowerCase() !== "approved"
+    ) {
+      return "This voucher is not approved yet.";
+    }
+
+    const expiresAt = voucher?.expiresAtUtc || voucher?.endAtUtc;
+    if (expiresAt && new Date(expiresAt).getTime() < voucherValidationTime) {
+      return "This voucher has expired.";
+    }
+
+    const remainingQuantity = Number(
+      voucher?.remainingQuantity ??
+        ((voucher?.quantity ?? 0) - (voucher?.usedQuantity ?? 0)),
+    );
+    if (remainingQuantity <= 0) {
+      return "This voucher is out of stock.";
+    }
+
+    const minOrderAmount = Number(voucher?.minOrderAmount || 0);
+    if (cartSubtotalForVoucherValidation < minOrderAmount) {
+      return `Minimum order amount is ${formatCurrencyVN(minOrderAmount)}.`;
+    }
+
+    return "";
+    },
+    [cartSubtotalForVoucherValidation, voucherValidationTime],
+  );
+
+  const voucherDisabledReasons = useMemo(() => {
+    const entries = (Array.isArray(vouchers) ? vouchers : []).map((voucher) => [
+      voucher?.code,
+      getVoucherApplyValidationMessage(voucher),
+    ]);
+
+    return Object.fromEntries(entries.filter(([code]) => Boolean(code)));
+  }, [getVoucherApplyValidationMessage, vouchers]);
+
   const summarySubtotal = selectedSubtotal;
   const summaryFinalTotal = Math.max(
     selectedSubtotal - summaryDiscountAmount,
     0,
+  );
+  const resolvedSelectedAddressId = useMemo(() => {
+    if (!addresses.length) {
+      return null;
+    }
+
+    if (selectedAddressId && addresses.some((address) => address.id === selectedAddressId)) {
+      return selectedAddressId;
+    }
+
+    const defaultAddress = addresses.find((address) => address.isDefault);
+    return defaultAddress?.id || addresses[0]?.id || null;
+  }, [addresses, selectedAddressId]);
+
+  const selectedAddress = useMemo(
+    () =>
+      addresses.find((address) => address.id === resolvedSelectedAddressId) ||
+      null,
+    [addresses, resolvedSelectedAddressId],
   );
 
   const allSelected = items.length > 0 && selectedItems.length === items.length;
@@ -169,12 +248,6 @@ export default function CartPage() {
       headerCheckboxRef.current.indeterminate = partiallySelected;
     }
   }, [partiallySelected]);
-
-  useEffect(() => {
-    if (voucherCode) {
-      setAppliedVoucher(voucherCode);
-    }
-  }, [voucherCode]);
 
   useEffect(() => {
     if (!items.length) return;
@@ -211,23 +284,35 @@ export default function CartPage() {
     setSelectedItemIds(checked ? items.map((i) => i.cartItemId) : []);
   };
 
-  const handleApplyVoucher = async () => {
+  const handleSelectVoucher = async (code) => {
+    setSelectedVoucher(code);
+
     if (!validSelectedItemIds.length) {
       toast.error("Please select at least one item before applying a voucher.");
       return;
     }
 
-    if (!selectedVoucher) {
-      toast.error("Please select a voucher.");
+    if (!code || code === appliedVoucher) {
+      return;
+    }
+
+    const voucher = (Array.isArray(vouchers) ? vouchers : []).find(
+      (item) => item?.code === code,
+    );
+    const validationMessage = getVoucherApplyValidationMessage(voucher);
+
+    if (validationMessage) {
+      toast.error(validationMessage);
       return;
     }
 
     try {
-      await applyVoucher(selectedVoucher).unwrap();
-      setAppliedVoucher(selectedVoucher);
-      dispatch(setVoucherCode(selectedVoucher));
+      await applyVoucher(code).unwrap();
+      setAppliedVoucher(code);
+      dispatch(setVoucherCode(code));
       toast.success("Voucher applied successfully.");
     } catch (applyError) {
+      setSelectedVoucher(appliedVoucher || null);
       toast.error(
         applyError?.response?.data?.message ||
           applyError?.response?.data?.error ||
@@ -293,6 +378,11 @@ export default function CartPage() {
       return;
     }
 
+    if (!resolvedSelectedAddressId) {
+      toast.error("Please select a shipping address.");
+      return;
+    }
+
     let createdOrder;
     setCheckoutError("");
 
@@ -301,7 +391,7 @@ export default function CartPage() {
 
       const createOrderResponse = await orderApi.createOrder({
         cartItemIds: validSelectedItemIds,
-        voucherCode: appliedVoucher || voucherCode || null,
+        shippingAddressId: resolvedSelectedAddressId,
       });
 
       createdOrder = getCreatedOrder(createOrderResponse);
@@ -427,18 +517,6 @@ export default function CartPage() {
             />
 
             <div className="voucher-action">
-              <button
-                type="button"
-                onClick={handleApplyVoucher}
-                disabled={
-                  !selectedVoucher ||
-                  selectedVoucher === appliedVoucher ||
-                  actionLoading
-                }
-              >
-                <TicketPercent size={18} />
-                {actionLoading ? "Applying..." : "Apply Voucher"}
-              </button>
               {activeVoucherCode && (
                 <button
                   type="button"
@@ -456,33 +534,37 @@ export default function CartPage() {
               vouchers={vouchers}
               loading={voucherLoading}
               selectedVoucher={selectedVoucher}
-              onSelectVoucher={(code) => {
-                setSelectedVoucher(code);
-
-                if (code !== appliedVoucher) {
-                  setAppliedVoucher(null);
-                }
-              }}
+              disabledReasons={voucherDisabledReasons}
+              onSelectVoucher={handleSelectVoucher}
             />
           </div>
 
           <CartSummary
+            addresses={addresses}
+            selectedAddress={selectedAddress}
+            onSelectAddress={setSelectedAddressId}
+            onAddAddress={() => setIsAddAddressOpen(true)}
+            selectedItems={selectedItems}
             subtotal={summarySubtotal}
             discountAmount={summaryDiscountAmount}
             finalTotal={summaryFinalTotal}
             itemCount={selectedItemCount}
             disabled={
-              actionLoading || checkoutLoading || !validSelectedItemIds.length
+              actionLoading ||
+              checkoutLoading ||
+              !validSelectedItemIds.length
             }
             checkoutLoading={checkoutLoading}
             onCheckout={handleCheckout}
             selectedCount={selectedItems.length}
-            allSelected={allSelected}
-            partiallySelected={partiallySelected}
-            onSelectAll={handleSelectAll}
           />
         </div>
       </div>
+
+      <AddAddressModal
+        open={isAddAddressOpen}
+        onClose={() => setIsAddAddressOpen(false)}
+      />
     </main>
   );
 }

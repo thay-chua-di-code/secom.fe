@@ -1,11 +1,16 @@
 import "./style.scss";
 import { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import { getSellerDashboard } from "../../../api/sellerDashboardApi";
+import SellerStatus from "../../RegisterSeller/Form/Step2";
+import { sellerService } from "../../../service/sellerService";
 import { formatCurrencyVN } from "../../../utils/fncUtils";
+
 const Dashboard = () => {
   const [dashboard, setDashboard] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [sellerShopStatus, setSellerShopStatus] = useState(null);
   const hasLoadedRef = useRef(false);
 
   useEffect(() => {
@@ -23,10 +28,40 @@ const Dashboard = () => {
 
         if (isMounted) {
           setDashboard(result);
+          setSellerShopStatus(null);
         }
       } catch (requestError) {
         if (isMounted) {
           console.error("Seller dashboard error:", requestError);
+
+          if (requestError?.response?.status === 404) {
+            try {
+              const shopProfile = await sellerService.getShopProfile();
+
+              if (!isMounted) {
+                return;
+              }
+
+              setSellerShopStatus({
+                statusText: shopProfile?.statusText || "",
+                rejectionReason: shopProfile?.rejectionReason || "",
+              });
+              setError(null);
+              return;
+            } catch (shopStatusError) {
+              if (!isMounted) {
+                return;
+              }
+
+              if (shopStatusError?.response?.status === 404) {
+                setSellerShopStatus({ statusText: "UNREGISTERED" });
+                setError(null);
+                return;
+              }
+            }
+          }
+
+          setSellerShopStatus(null);
           setError(requestError?.message || "Unable to load seller dashboard.");
         }
       } finally {
@@ -80,6 +115,37 @@ const Dashboard = () => {
   const recentOrders = dashboard?.recentOrders ?? [];
   const topProducts = dashboard?.topSellingProducts ?? [];
   const recentActivities = dashboard?.recentActivities ?? [];
+
+  const normalizedSellerStatus = sellerShopStatus?.statusText?.toUpperCase?.();
+
+  if (!isLoading && normalizedSellerStatus === "UNREGISTERED") {
+    return (
+      <div className="dashboard">
+        <div className="seller-dashboard-status-card">
+          <h2>Seller dashboard is unavailable</h2>
+          <p>
+            Your account does not have an approved seller shop yet. Submit your
+            seller registration to unlock dashboard data.
+          </p>
+
+          <Link to="/seller-register" className="seller-dashboard-status-card__action">
+            Register seller shop
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isLoading && normalizedSellerStatus && normalizedSellerStatus !== "APPROVED") {
+    return (
+      <div className="dashboard">
+        <SellerStatus
+          status={normalizedSellerStatus}
+          rejectReason={sellerShopStatus?.rejectionReason}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="dashboard">

@@ -299,9 +299,18 @@ table {
   }
 
   .product-sold {
+    display: -webkit-box;
+    overflow: hidden;
+    max-width: 320px;
+
     color: #64748b;
 
     font-size: 11px;
+    line-height: 1.45;
+    text-overflow: ellipsis;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    word-break: break-word;
   }
 }
 

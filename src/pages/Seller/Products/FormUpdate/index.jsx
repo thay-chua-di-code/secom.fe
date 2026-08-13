@@ -33,32 +33,13 @@ const mapProductToForm = (product) => ({
   isPublic: product?.isPublic ?? true,
 });
 
-const extractPublicIdFromUrl = (imageUrl) => {
-  if (!imageUrl) return "";
-  const marker = "/upload/";
-  const markerIndex = imageUrl.indexOf(marker);
-  if (markerIndex < 0) return "";
-
-  const path = imageUrl.slice(markerIndex + marker.length).split(/[?#]/)[0];
-  const withoutVersion = path.replace(/^v\d+\//, "");
-  return withoutVersion.replace(/\.[^/.]+$/, "");
-};
-
-const normalizeExistingImage = (image, index, isPrimary) => {
-  const publicId =
-    image.publicId || image.public_id || extractPublicIdFromUrl(image.imageUrl);
-
-  if (!image.imageUrl || !publicId) {
-    throw new Error("Image may lack of imageUrl or publicId.");
-  }
-
-  return {
-    imageUrl: image.imageUrl,
-    publicId,
-    isPrimary,
-    displayOrder: index,
-  };
-};
+const normalizeExistingImage = (image, index, isPrimary) => ({
+  imageUrl: image?.imageUrl || "",
+  publicId: image?.publicId || image?.public_id || undefined,
+  altText: image?.altText || image?.alt_text || undefined,
+  isPrimary,
+  displayOrder: index,
+});
 
 const UpdateProductModal = ({ open, product, onClose }) => {
   const dispatch = useDispatch();
@@ -181,7 +162,7 @@ const UpdateProductModal = ({ open, product, onClose }) => {
         setSelectedPrimary(null);
       }
       await refetchImages();
-      await dispatch(fetchSellerProducts({ pageNumber: 1, pageSize: 10 }));
+      await dispatch(fetchSellerProducts({ page: 1, pageSize: 10 }));
     } catch (error) {
       toast.error(getErrorMessage(error, "Delete item image was failed."));
     } finally {
@@ -197,7 +178,7 @@ const UpdateProductModal = ({ open, product, onClose }) => {
       await setPrimaryProductImage(productId, imageId);
       toast.success("Main image was updated.");
       await refetchImages();
-      await dispatch(fetchSellerProducts({ pageNumber: 1, pageSize: 10 }));
+      await dispatch(fetchSellerProducts({ page: 1, pageSize: 10 }));
     } catch (error) {
       toast.error(getErrorMessage(error, "Update main image was failed."));
     } finally {
@@ -223,11 +204,7 @@ const UpdateProductModal = ({ open, product, onClose }) => {
       selectedPrimary?.type === "existing" ? selectedPrimary.imageId : null;
 
     const existingPayload = orderedExistingImages.map((image, index) =>
-      normalizeExistingImage(
-        image,
-        index,
-        selectedExistingPrimaryId === image.id,
-      ),
+      normalizeExistingImage(image, index, selectedExistingPrimaryId === image.id),
     );
 
     const uploadedPayload = await uploadPendingImages();
@@ -244,12 +221,11 @@ const UpdateProductModal = ({ open, product, onClose }) => {
     const hasPrimary = images.some((image) => image.isPrimary);
     const normalizedImages = images.map((image, index) => ({
       imageUrl: image.imageUrl,
-      publicId: image.publicId,
+      ...(image.publicId ? { publicId: image.publicId } : {}),
+      ...(image.altText ? { altText: image.altText } : {}),
       isPrimary: hasPrimary ? image.isPrimary : index === 0,
       displayOrder: index,
     }));
-
-    console.debug("Normalized images:", normalizedImages);
 
     return normalizedImages;
   };
@@ -308,11 +284,10 @@ const UpdateProductModal = ({ open, product, onClose }) => {
 
       clearPendingImages();
       await refetchImages();
-      await dispatch(fetchSellerProducts({ pageNumber: 1, pageSize: 10 }));
+      await dispatch(fetchSellerProducts({ page: 1, pageSize: 10 }));
       toast.success("Product updated successfully!", { duration: 2500 });
       onClose();
     } catch (error) {
-      console.error("Update product failed:", error);
       toast.error(
         metadataUpdated
           ? getErrorMessage(

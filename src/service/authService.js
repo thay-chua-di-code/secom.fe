@@ -1,35 +1,36 @@
-import axiosClient from "../api/axiosClient";
+import axiosClient, { setAuthToken } from "../api/axiosClient";
 import { API_ENDPOINTS } from "../api/endPoint";
 import { logout } from "../redux/slice/authSlice";
 import { resetSellerStatus } from "../redux/slice/sellerStatusSlice";
 import { clearUserInfo } from "../redux/slice/userSlice";
 
+const persistAuthTokens = (data) => {
+  if (data?.accessToken) {
+    localStorage.setItem("token", data.accessToken);
+    setAuthToken(data.accessToken);
+  }
+
+  if (data?.refreshToken) {
+    localStorage.setItem("refreshToken", data.refreshToken);
+  }
+};
+
 export const authService = {
   login: async (payload) => {
-    try {
-      const result = await axiosClient.post(API_ENDPOINTS.AUTH.LOGIN, payload);
+    const result = await axiosClient.post(API_ENDPOINTS.AUTH.LOGIN, payload);
+    const data = result.data.data;
 
-      const data = result.data.data;
-
-      if (data?.accessToken) {
-        localStorage.setItem("token", data.accessToken);
-      }
-
-      return data;
-    } catch (e) {
-      throw e;
-    }
+    persistAuthTokens(data);
+    return data;
   },
   loginGoogle: async (idToken) => {
-    try {
-      const result = await axiosClient.post(API_ENDPOINTS.AUTH.LOGIN_GG, {
-        idToken,
-      });
-      console.log(result);
-      return result.data;
-    } catch (e) {
-      console.log(e?.response?.data);
-    }
+    const result = await axiosClient.post(API_ENDPOINTS.AUTH.LOGIN_GG, {
+      idToken,
+    });
+    const data = result.data.data;
+
+    persistAuthTokens(data);
+    return data;
   },
   logout: async (dispatch) => {
     try {
@@ -82,7 +83,10 @@ export const authService = {
       );
       return result.data;
     } catch (e) {
-      console.error(e?.response?.data);
+      throw new Error(
+        e?.response?.data?.message || e?.response?.data?.title || e.message,
+        { cause: e },
+      );
     }
   },
   forgot_pwd: async (payload) => {
@@ -93,7 +97,10 @@ export const authService = {
       );
       return result.data;
     } catch (e) {
-      console.error(e?.response?.data);
+      throw new Error(
+        e?.response?.data?.message || e?.response?.data?.title || e.message,
+        { cause: e },
+      );
     }
   },
   verify_account: async (payload) => {
