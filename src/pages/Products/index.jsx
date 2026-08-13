@@ -79,6 +79,9 @@ export default function ProductsPage() {
   const categories = useSelector((state) => state.categories.categories || []);
 
   useEffect(() => {
+    const parsedMinPrice = minPrice !== "" ? Number(minPrice) : undefined;
+    const parsedMaxPrice = maxPrice !== "" ? Number(maxPrice) : undefined;
+
     let isMounted = true;
 
     const loadProducts = async () => {
@@ -93,12 +96,11 @@ export default function ProductsPage() {
         };
 
         if (keyword.trim()) params.keyword = keyword.trim();
-        if (minPrice !== "") params.minPrice = Number(minPrice);
-        if (maxPrice !== "") params.maxPrice = Number(maxPrice);
+        if (categoryFilter) params.categoryId = categoryFilter;
+        if (Number.isFinite(parsedMinPrice)) params.minPrice = parsedMinPrice;
+        if (Number.isFinite(parsedMaxPrice)) params.maxPrice = parsedMaxPrice;
 
-        const response = categoryFilter
-          ? await dicoveryService.getProductByCategory(categoryFilter, params)
-          : await dicoveryService.getProductByKeyWord(params);
+        const response = await dicoveryService.getProductByKeyWord(params);
 
         if (!isMounted) return;
 
