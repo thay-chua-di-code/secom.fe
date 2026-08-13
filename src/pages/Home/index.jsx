@@ -1,26 +1,83 @@
 import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import Banner from "../../components/layouts/Banner";
+
+import HomeHero from "./HomeHero";
 import CategorySidebar from "./CategoriesSideBar";
-import Policy from "./Policy";
-import SectionDivider from "../../components/layouts/SectionDivider/index";
-import { fetchHomepage } from "../../redux/slice/homeSlice";
+import RecentlyViewed from "./Product-viewed";
 import FeatureProducts from "./Products/FeatureProducts";
 import LastestProduct from "./Products/LatestProducts";
-import RecentlyViewed from "./Product-viewed/index";
+import Policy from "./Policy";
+
+import SectionDivider from "../../components/layouts/SectionDivider";
 import CompareModal from "../../components/common/CompareModal";
+
+import { fetchHomepage } from "../../redux/slice/homeSlice";
+
 import useCompare from "../../hooks/useCompare";
+import useReveal from "../../hooks/useReveal";
+
 import "./style.scss";
+
 const Home = () => {
   const dispatch = useDispatch();
+
+  /* =========================================
+     REDUX
+  ========================================= */
+
   const { isAuthenticated } = useSelector((state) => state.auth);
-  const { featuredProducts, latestProducts } = useSelector((state) => state.home);
+
+  const { featuredProducts, latestProducts } = useSelector(
+    (state) => state.home,
+  );
+
+  /* =========================================
+     COMPARE
+  ========================================= */
+
   const [openCompare, setOpenCompare] = useState(false);
+
   const { compareIds, remove, clear } = useCompare();
+
+  /* =========================================
+     REVEAL ANIMATIONS
+  ========================================= */
+
+  const discoveryReveal = useReveal({
+    threshold: 0.12,
+    rootMargin: "0px 0px -60px 0px",
+    once: true,
+  });
+
+  const featuredReveal = useReveal({
+    threshold: 0.08,
+    rootMargin: "0px 0px -70px 0px",
+    once: true,
+  });
+
+  const latestReveal = useReveal({
+    threshold: 0.08,
+    rootMargin: "0px 0px -70px 0px",
+    once: true,
+  });
+
+  const policyReveal = useReveal({
+    threshold: 0.08,
+    rootMargin: "0px 0px -60px 0px",
+    once: true,
+  });
+
+  /* =========================================
+     FETCH HOMEPAGE
+  ========================================= */
 
   useEffect(() => {
     dispatch(fetchHomepage());
   }, [dispatch]);
+
+  /* =========================================
+     MERGE PRODUCTS
+  ========================================= */
 
   const homeProducts = useMemo(() => {
     const products = [...(featuredProducts || []), ...(latestProducts || [])];
@@ -28,10 +85,16 @@ const Home = () => {
     return products.filter(
       (product, index, allProducts) =>
         allProducts.findIndex(
-          (item) => String(item.id || item.productId) === String(product.id || product.productId),
+          (item) =>
+            String(item.id || item.productId) ===
+            String(product.id || product.productId),
         ) === index,
     );
   }, [featuredProducts, latestProducts]);
+
+  /* =========================================
+     PRODUCTS SELECTED FOR COMPARE
+  ========================================= */
 
   const compareProducts = useMemo(
     () =>
@@ -42,40 +105,123 @@ const Home = () => {
   );
 
   return (
-    <div className="mx-auto w-full max-w-[1440px] px-4 py-6 lg:px-8 lg:py-10">
-      <section className="grid grid-cols-1 gap-16 lg:grid-cols-[260px_minmax(0,1fr)] lg:gap-10">
-        <Banner />
-        <aside className="hidden lg:block">
-          <CategorySidebar />
-        </aside>
+    <div className="home-page">
+      {/* =====================================================
+          HERO
+      ===================================================== */}
+
+      <section className="home-page__hero">
+        <HomeHero />
       </section>
 
-      {isAuthenticated && (
-        <section className="mt-16 lg:mt-24">
-          <SectionDivider />
-          <RecentlyViewed />
+      {/* =====================================================
+          MAIN CONTENT
+      ===================================================== */}
+
+      <div className="home-page__content">
+        {/* =================================================
+            DISCOVERY
+        ================================================= */}
+
+        <section
+          ref={discoveryReveal.ref}
+          className={`home-discovery reveal-section ${
+            discoveryReveal.visible ? "is-visible" : ""
+          }`}
+        >
+          {/* TITLE */}
+
+          <div className="home-discovery__heading">
+            <span className="home-discovery__eyebrow">DISCOVER</span>
+
+            <h2>
+              Smarter shopping,
+              <br />
+              built around you
+            </h2>
+
+            <p>
+              Explore categories, discover AI-powered suggestions and continue
+              where you left off.
+            </p>
+          </div>
+
+          {/* DISCOVERY PANEL */}
+
+          <div className="home-discovery__grid">
+            {/* LEFT - AI SUGGESTIONS */}
+            <div className="home-discovery__card home-discovery__card--ai">
+              <CategorySidebar />
+            </div>
+
+            {/* RIGHT - RECENTLY VIEWED */}
+            <div className="home-discovery__card home-discovery__card--recent">
+              {isAuthenticated ? (
+                <RecentlyViewed />
+              ) : (
+                <div className="home-discovery__guest">
+                  <span>RECENT ACTIVITY</span>
+
+                  <h3>Your browsing history lives here</h3>
+
+                  <p>
+                    Sign in to continue from products you previously viewed.
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
         </section>
-      )}
 
-      <SectionDivider />
+        {/* =================================================
+            FEATURED PRODUCTS
+        ================================================= */}
 
-      {/* Featured Products */}
-      <section className="mt-16 lg:mt-24">
-        <FeatureProducts />
-      </section>
+        <section
+          ref={featuredReveal.ref}
+          className={`home-page__section reveal-section ${
+            featuredReveal.visible ? "is-visible" : ""
+          }`}
+        >
+          <SectionDivider />
 
-      <SectionDivider />
+          <FeatureProducts />
+        </section>
 
-      {/* Latest Products */}
-      <section className="mt-16 lg:mt-24">
-        <LastestProduct />
-      </section>
+        {/* =================================================
+            LATEST PRODUCTS
+        ================================================= */}
 
-      <SectionDivider />
-      {/* Policy */}
-      <section className="mt-20 lg:mt-32">
-        <Policy />
-      </section>
+        <section
+          ref={latestReveal.ref}
+          className={`home-page__section reveal-section ${
+            latestReveal.visible ? "is-visible" : ""
+          }`}
+        >
+          <SectionDivider />
+
+          <LastestProduct />
+        </section>
+
+        {/* =================================================
+            POLICY
+        ================================================= */}
+
+        <section
+          ref={policyReveal.ref}
+          className={`home-page__policy reveal-section ${
+            policyReveal.visible ? "is-visible" : ""
+          }`}
+        >
+          <SectionDivider />
+
+          <Policy />
+        </section>
+      </div>
+
+      {/* =====================================================
+          FLOATING COMPARE BUTTON
+      ===================================================== */}
 
       {compareIds.length > 0 && (
         <button
@@ -86,6 +232,10 @@ const Home = () => {
           Compare ({compareIds.length})
         </button>
       )}
+
+      {/* =====================================================
+          COMPARE MODAL
+      ===================================================== */}
 
       <CompareModal
         open={openCompare}

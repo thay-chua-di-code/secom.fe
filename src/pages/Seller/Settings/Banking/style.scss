@@ -1,281 +1,462 @@
-.banking-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 20px;
-  margin-bottom: 25px;
+// ========================================
+// BANK SETTINGS CARD
+// ========================================
 
-  p {
-    color: #777;
-    margin-top: 5px;
-  }
-}
-
-.add-bank-btn {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-
-  border: none;
-  border-radius: 10px;
-
-  background: #e61717;
-  color: white;
-
-  padding: 10px 18px;
-
-  cursor: pointer;
-}
-
-.bank-list {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-  margin-top: 16px;
-}
-
-.bank-item {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-
-  border: 1px solid #e5e7eb;
-
-  border-radius: 12px;
-
-  padding: 18px;
-
-  transition: 0.25s;
-
-  &:hover {
-    border-color: #a31313;
-    transform: translateY(-2px);
-  }
-}
-
-.bank-icon {
-  width: 55px;
-  height: 55px;
-  border-radius: 50%;
-  background: #e0f2fe;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: #df2f2f;
-}
-
-.bank-content {
-  h3 {
-    margin-bottom: 6px;
-  }
-
-  span {
-    color: #0284c7;
-    font-weight: 600;
-  }
-
-  p {
-    margin-top: 5px;
-    color: #666;
-  }
-}
-
-.empty-bank {
-  padding: 50px 20px;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-
-  color: #888;
-
-  svg {
-    margin-bottom: 15px;
-    color: #0284c7;
-  }
-
-  h3 {
-    margin-bottom: 10px;
-  }
-}
-
-.bank-loading {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
-
-.bank-skeleton {
-  height: 90px;
-
-  border-radius: 12px;
-
-  background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 37%, #f3f4f6 63%);
-
-  background-size: 400% 100%;
-
-  animation: skeleton 1.4s infinite;
-}
-
-@keyframes skeleton {
-  0% {
-    background-position: 100% 0;
-  }
-
-  100% {
-    background-position: -100% 0;
-  }
-}
-
-@media (max-width: 768px) {
-  .banking-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 15px;
-  }
-
-  .add-bank-btn {
-    width: 100%;
-    justify-content: center;
-  }
-
-  .bank-item {
-    align-items: flex-start;
-  }
-}
-
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-
-  background: rgba(0, 0, 0, 0.45);
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  z-index: 1000;
-}
-
-.bank-modal {
+.settings-card.seller-banking-settings {
   width: 100%;
-  max-width: 520px;
 
-  background: white;
+  overflow: hidden;
 
+  border: 1px solid #20252d;
   border-radius: 16px;
 
-  padding: 28px;
+  background: #0d1117;
 
-  animation: popup 0.25s ease;
+  color: #e5e7eb;
 
-  h2 {
-    margin-bottom: 24px;
-  }
-
-  form {
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
-  }
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.14);
 }
 
-.form-group {
-  display: flex;
-  flex-direction: column;
+// ========================================
+// HEADER
+// ========================================
 
-  gap: 8px;
+.seller-banking-settings {
+  .settings-card__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
-  label {
-    font-weight: 600;
-  }
+    gap: 20px;
 
-  input {
-    border: 1px solid #d1d5db;
+    padding: 20px 24px;
 
-    border-radius: 10px;
+    border-bottom: 1px solid #20252d;
 
-    padding: 13px;
+    background: #0f172a;
 
-    font-size: 15px;
+    > div {
+      min-width: 0;
+    }
 
-    transition: 0.2s;
+    h2 {
+      display: flex;
+      align-items: center;
 
-    &:focus {
-      outline: none;
-      border-color: #c70202;
-      box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.12);
+      gap: 10px;
+
+      margin: 0;
+
+      color: #f8fafc;
+
+      font-size: 18px;
+      font-weight: 800;
+      line-height: 1.3;
+
+      svg {
+        flex-shrink: 0;
+
+        color: #93c5fd;
+
+        stroke-width: 1.8;
+      }
+    }
+
+    p {
+      margin: 5px 0 0;
+
+      color: #64748b;
+
+      font-size: 11px;
+      font-weight: 500;
+      line-height: 1.5;
     }
   }
 }
 
-.modal-footer {
-  display: flex;
-  justify-content: flex-end;
+// ========================================
+// LOADING / EMPTY / ERROR STATE
+// ========================================
 
-  gap: 12px;
+.seller-banking-settings {
+  > .settings-state {
+    margin: 22px 24px 24px;
+  }
 
-  margin-top: 10px;
+  .settings-state {
+    padding: 13px 14px;
+
+    border: 1px solid #273149;
+    border-radius: 10px;
+
+    background: #111827;
+
+    color: #94a3b8;
+
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.55;
+
+    &--error {
+      border-color: rgba(248, 113, 113, 0.25);
+
+      background: rgba(127, 29, 29, 0.16);
+
+      color: #fca5a5;
+    }
+  }
 }
 
-.cancel-btn {
-  background: #f3f4f6;
-  margin-top: 12px;
-  color: #374151;
+// ========================================
+// FORM
+// ========================================
 
-  border: none;
+.seller-banking-settings {
+  .settings-form {
+    display: grid;
 
-  width: 110px;
-  height: 55px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
 
-  border-radius: 10px;
+    gap: 16px;
 
-  cursor: pointer;
+    padding: 22px 24px 24px;
+
+    background: #0d1117;
+
+    > .settings-state,
+    > .seller-banking-settings__summary,
+    > button[type="submit"] {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      display: flex;
+      flex-direction: column;
+
+      gap: 7px;
+
+      min-width: 0;
+
+      > span {
+        color: #cbd5e1;
+
+        font-size: 11px;
+        font-weight: 800;
+      }
+    }
+
+    input {
+      width: 100%;
+      height: 42px;
+
+      box-sizing: border-box;
+
+      padding: 0 13px;
+
+      border: 1px solid #273149;
+      border-radius: 10px;
+
+      outline: none;
+
+      background: #151c2c;
+
+      color: #e5e7eb;
+
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 500;
+
+      caret-color: #60a5fa;
+
+      transition:
+        border-color 0.2s ease,
+        background 0.2s ease,
+        box-shadow 0.2s ease;
+
+      &::placeholder {
+        color: #52647f;
+      }
+
+      &:hover {
+        border-color: #334155;
+      }
+
+      &:focus {
+        border-color: #3b82f6;
+
+        background: #172033;
+
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.11);
+      }
+
+      &:autofill,
+      &:-webkit-autofill {
+        -webkit-text-fill-color: #e5e7eb;
+
+        box-shadow: 0 0 0 1000px #151c2c inset;
+
+        transition: background-color 9999s ease-in-out 0s;
+      }
+    }
+  }
 }
 
-.save-btn {
-  background: #a10303;
+// ========================================
+// CURRENT BANK ACCOUNT SUMMARY
+// ========================================
 
-  color: white;
+.seller-banking-settings__summary {
+  position: relative;
 
-  border: none;
+  display: grid;
 
-  padding: 11px 22px;
+  grid-template-columns: minmax(0, 1fr) auto;
 
-  border-radius: 10px;
+  gap: 4px 18px;
 
-  cursor: pointer;
+  padding: 16px 18px 16px 64px;
 
-  transition: 0.25s;
+  overflow: hidden;
+
+  border: 1px solid #273149;
+  border-radius: 13px;
+
+  background:
+    linear-gradient(135deg, rgba(37, 99, 235, 0.08), transparent 55%), #111827;
+
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    transform 0.2s ease;
+
+  &::before {
+    content: "🏦";
+
+    position: absolute;
+
+    top: 50%;
+    left: 16px;
+
+    width: 34px;
+    height: 34px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid #273149;
+    border-radius: 10px;
+
+    background: #151c2c;
+
+    font-size: 16px;
+
+    transform: translateY(-50%);
+  }
 
   &:hover {
-    background: #075985;
+    border-color: #3b82f6;
+
+    background:
+      linear-gradient(135deg, rgba(37, 99, 235, 0.11), transparent 55%), #151c2c;
+
+    transform: translateY(-1px);
+  }
+
+  > span {
+    grid-column: 1 / -1;
+
+    color: #64748b;
+
+    font-size: 9px;
+    font-weight: 800;
+
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  > strong {
+    min-width: 0;
+
+    overflow: hidden;
+
+    color: #f8fafc;
+
+    font-size: 13px;
+    font-weight: 800;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  > p {
+    grid-column: 1 / -1;
+
+    margin: 2px 0 0;
+
+    color: #94a3b8;
+
+    font-size: 11px;
+    font-weight: 600;
+
+    line-height: 1.5;
   }
 }
 
-@keyframes popup {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
+// ========================================
+// SAVE BUTTON
+// ========================================
 
-  to {
-    opacity: 1;
-    transform: scale(1);
+.seller-banking-settings {
+  .settings-form {
+    > button[type="submit"] {
+      justify-self: flex-end;
+
+      min-width: 165px;
+      height: 40px;
+
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+
+      gap: 7px;
+
+      margin-top: 4px;
+      padding: 0 16px;
+
+      border: 1px solid #2563eb;
+      border-radius: 10px;
+
+      background: #2563eb;
+
+      color: #ffffff;
+
+      font-family: inherit;
+      font-size: 11px;
+      font-weight: 800;
+
+      cursor: pointer;
+
+      box-shadow: 0 7px 18px rgba(37, 99, 235, 0.16);
+
+      transition:
+        border-color 0.2s ease,
+        background 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+
+      svg {
+        flex-shrink: 0;
+      }
+
+      &:hover:not(:disabled) {
+        border-color: #3b82f6;
+
+        background: #3b82f6;
+
+        box-shadow: 0 9px 24px rgba(37, 99, 235, 0.25);
+
+        transform: translateY(-1px);
+      }
+
+      &:active:not(:disabled) {
+        transform: translateY(0);
+      }
+
+      &:disabled {
+        cursor: not-allowed;
+
+        opacity: 0.55;
+
+        transform: none;
+      }
+    }
   }
 }
 
-@media (max-width: 640px) {
-  .bank-modal {
-    margin: 20px;
-    padding: 22px;
+// ========================================
+// ACCOUNT NUMBER
+// ========================================
+
+.seller-banking-settings {
+  input[name="accountNumber"] {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+
+    letter-spacing: 0.04em;
+  }
+}
+
+// ========================================
+// TABLET
+// ========================================
+
+@media (max-width: 768px) {
+  .seller-banking-settings {
+    .settings-card__header {
+      padding: 18px;
+
+      h2 {
+        font-size: 16px;
+      }
+    }
+
+    .settings-form {
+      grid-template-columns: 1fr;
+
+      padding: 18px;
+
+      > .settings-state,
+      > .seller-banking-settings__summary,
+      > button[type="submit"] {
+        grid-column: auto;
+      }
+
+      > button[type="submit"] {
+        width: 100%;
+
+        justify-self: stretch;
+      }
+    }
+
+    > .settings-state {
+      margin: 18px;
+    }
+  }
+}
+
+// ========================================
+// MOBILE
+// ========================================
+
+@media (max-width: 500px) {
+  .settings-card.seller-banking-settings {
+    border-radius: 13px;
   }
 
-  .modal-footer {
-    flex-direction: column;
+  .seller-banking-settings {
+    .settings-card__header {
+      padding: 16px;
+    }
 
-    button {
-      width: 100%;
+    .settings-form {
+      gap: 14px;
+
+      padding: 16px;
+    }
+  }
+
+  .seller-banking-settings__summary {
+    padding: 15px 14px 15px 58px;
+
+    &::before {
+      left: 13px;
+
+      width: 32px;
+      height: 32px;
+    }
+
+    > strong {
+      font-size: 12px;
     }
   }
 }

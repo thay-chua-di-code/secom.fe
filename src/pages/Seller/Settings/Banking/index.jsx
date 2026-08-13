@@ -59,7 +59,8 @@ export default function BankingSeller() {
       } catch (loadError) {
         if (!active) return;
         const status = loadError?.response?.status;
-        const message = loadError?.response?.data?.message || loadError?.message;
+        const message =
+          loadError?.response?.data?.message || loadError?.message;
 
         if (status === 404 && /bank account not found/i.test(message || "")) {
           setHasAccount(false);
@@ -150,11 +151,14 @@ export default function BankingSeller() {
         <div className="settings-state">Loading bank account...</div>
       ) : (
         <form className="settings-form" onSubmit={handleSubmit}>
-          {error && <div className="settings-state settings-state--error">{error}</div>}
+          {error && (
+            <div className="settings-state settings-state--error">{error}</div>
+          )}
 
           {!error && !hasAccount && (
             <div className="settings-state">
-              No bank account added yet. Add your payout account before creating a withdrawal.
+              No bank account added yet. Add your payout account before creating
+              a withdrawal.
             </div>
           )}
 
@@ -163,34 +167,64 @@ export default function BankingSeller() {
               <span>Current payout account</span>
               <strong>{form.bankName}</strong>
               <p>
-                {form.accountHolderName} · {maskAccountNumber(form.accountNumber)}
+                {form.accountHolderName} ·{" "}
+                {maskAccountNumber(form.accountNumber)}
               </p>
             </div>
           )}
 
           <label>
             <span>Bank name *</span>
-            <input name="bankName" value={form.bankName} onChange={handleChange} maxLength={255} required />
+            <input
+              name="bankName"
+              value={form.bankName}
+              onChange={handleChange}
+              maxLength={255}
+              required
+            />
           </label>
 
           <label>
             <span>Bank code</span>
-            <input name="bankCode" value={form.bankCode} onChange={handleChange} maxLength={50} />
+            <input
+              name="bankCode"
+              value={form.bankCode}
+              onChange={handleChange}
+              maxLength={50}
+            />
           </label>
 
           <label>
             <span>Account holder name *</span>
-            <input name="accountHolderName" value={form.accountHolderName} onChange={handleChange} maxLength={255} required />
+            <input
+              name="accountHolderName"
+              value={form.accountHolderName}
+              onChange={handleChange}
+              maxLength={255}
+              required
+            />
           </label>
 
           <label>
             <span>Account number *</span>
-            <input name="accountNumber" type="text" value={form.accountNumber} onChange={handleChange} maxLength={100} required />
+            <input
+              name="accountNumber"
+              type="text"
+              value={form.accountNumber}
+              onChange={handleChange}
+              maxLength={100}
+              required
+            />
           </label>
 
           <label>
             <span>Branch name</span>
-            <input name="branchName" value={form.branchName} onChange={handleChange} maxLength={255} />
+            <input
+              name="branchName"
+              value={form.branchName}
+              onChange={handleChange}
+              maxLength={255}
+            />
           </label>
 
           <button type="submit" disabled={saving}>

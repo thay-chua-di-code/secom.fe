@@ -1,112 +1,109 @@
-  import { useEffect, useState } from "react";
-  import { useDispatch, useSelector } from "react-redux";
-  import toast from "react-hot-toast";
-  import {
-    deleteSellerProduct,
-    fetchSellerProducts,
-    updateInventory,
-  } from "../../../redux/slice/seller/product/thunk";
-  import Button from "../../../components/common/Button/Button";
-  import { sellerService } from "../../../service/sellerService";
-  import UpdateProductModal from "./FormUpdate";
-  import AddProductModal from "./FormAdd";
-  import {
-    Plus,
-    Pencil,
-    Package,
-    TrendingUp,
-    ChevronLeft,
-    ChevronRight,
-    Trash2,
-    Boxes,
-    Upload,
-    Download,
-  } from "lucide-react";
-  import { formatCurrencyVN } from "../../../utils/fncUtils";
-  import "./style.scss";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import toast from "react-hot-toast";
+import {
+  deleteSellerProduct,
+  fetchSellerProducts,
+  updateInventory,
+} from "../../../redux/slice/seller/product/thunk";
+import Button from "../../../components/common/Button/Button";
+import { sellerService } from "../../../service/sellerService";
+import UpdateProductModal from "./FormUpdate";
+import AddProductModal from "./FormAdd";
+import {
+  Plus,
+  Pencil,
+  Package,
+  TrendingUp,
+  ChevronLeft,
+  ChevronRight,
+  Trash2,
+  Boxes,
+  Upload,
+  Download,
+} from "lucide-react";
+import { formatCurrencyVN } from "../../../utils/fncUtils";
+import "./style.scss";
 
-  const ITEMS_PER_PAGE = 8;
-  const SUPPORTED_IMPORT_EXTENSIONS = [".xls", ".csv"];
-  const INVALID_IMPORT_FILE_MESSAGE =
-    "Hiện tại hệ thống chỉ hỗ trợ file .xls và .csv.";
+const ITEMS_PER_PAGE = 8;
 
-  const isValidImportFile = (file) => {
-    const fileName = file?.name?.toLowerCase() || "";
-    return SUPPORTED_IMPORT_EXTENSIONS.some((extension) =>
-      fileName.endsWith(extension),
-    );
-  };
+const SUPPORTED_IMPORT_EXTENSIONS = [".xls", ".csv"];
 
-  const extractFileNameFromDisposition = (contentDisposition) => {
-    if (!contentDisposition) return null;
+const INVALID_IMPORT_FILE_MESSAGE =
+  "Hiện tại hệ thống chỉ hỗ trợ file .xls và .csv.";
 
-    const utf8Match = contentDisposition.match(/filename\*=UTF-8''([^;]+)/i);
-    if (utf8Match?.[1]) return decodeURIComponent(utf8Match[1]);
+const isValidImportFile = (file) => {
+  const fileName = file?.name?.toLowerCase() || "";
 
-    const fileNameMatch = contentDisposition.match(/filename="?([^";]+)"?/i);
-    return fileNameMatch?.[1] || null;
-  };
+  return SUPPORTED_IMPORT_EXTENSIONS.some((extension) =>
+    fileName.endsWith(extension),
+  );
+};
 
-  const formatErrors = (errors) => {
-    if (!errors) return [];
+const extractFileNameFromDisposition = (contentDisposition) => {
+  if (!contentDisposition) return null;
 
-    if (Array.isArray(errors)) {
-      return errors.flatMap((error) => {
-        if (typeof error === "string") return error;
+  const utf8Match = contentDisposition.match(/filename\*=UTF-8''([^;]+)/i);
 
-        const row = error.rowNumber || error.RowNumber;
-        const field = error.field || error.Field;
-        const message = error.message || error.Message;
+  if (utf8Match?.[1]) {
+    return decodeURIComponent(utf8Match[1]);
+  }
 
-        if (message) {
-          return `${row ? `Dòng ${row}` : "Dữ liệu"}${field ? ` - ${field}` : ""}: ${message}`;
-        }
+  const fileNameMatch = contentDisposition.match(/filename="?([^";]+)"?/i);
 
-        return JSON.stringify(error);
-      });
-    }
+  return fileNameMatch?.[1] || null;
+};
 
-    if (typeof errors === "object") {
-      return Object.entries(errors).flatMap(([field, messages]) => {
-        if (Array.isArray(messages)) {
-          return messages.map((message) => `${field}: ${message}`);
-        }
+const formatErrors = (errors) => {
+  if (!errors) return [];
 
-        return `${field}: ${messages}`;
-      });
-    }
+  if (Array.isArray(errors)) {
+    return errors.flatMap((error) => {
+      if (typeof error === "string") {
+        return error;
+      }
 
-    return [String(errors)];
-  };
+      const row = error?.rowNumber || error?.RowNumber;
+      const field = error?.field || error?.Field;
+      const message = error?.message || error?.Message;
 
-  const getErrorDetails = (error) => {
-    const data = error?.response?.data;
-    const message =
-      data?.message || data?.title || error?.message || "Thao tác thất bại.";
-    return {
-      message,
-      errors: formatErrors(data?.errors || data?.data?.errors),
-    };
-  };
+      if (message) {
+        return `${
+          row ? `Dòng ${row}` : "Dữ liệu"
+        }${field ? ` - ${field}` : ""}: ${message}`;
+      }
 
-  const Products = () => {
-    const dispatch = useDispatch();
-
-    const [currentPage, setCurrentPage] = useState(1);
-    const [openAdd, setOpenAdd] = useState(false);
-    const [openUpdate, setOpenUpdate] = useState(false);
-    const [selectedProduct, setSelectedProduct] = useState(null);
-    const [deleteTarget, setDeleteTarget] = useState(null);
-    const [inventoryTarget, setInventoryTarget] = useState(null);
-    const [inventoryForm, setInventoryForm] = useState({
-      stockQuantity: 0,
-      lowStockThreshold: 0,
+      return JSON.stringify(error);
     });
-    const [openImport, setOpenImport] = useState(false);
-    const [selectedImportFile, setSelectedImportFile] = useState(null);
-    const [importing, setImporting] = useState(false);
-    const [exporting, setExporting] = useState(false);
-    const [importError, setImportError] = useState(null);
+  }
+
+  if (typeof errors === "object") {
+    return Object.entries(errors).flatMap(([field, value]) => {
+      if (Array.isArray(value)) {
+        return value.map((message) => `${field}: ${message}`);
+      }
+
+      return `${field}: ${String(value)}`;
+    });
+  }
+
+  return [String(errors)];
+};
+
+const getErrorDetails = (error) => {
+  const data = error?.response?.data;
+
+  const message =
+    data?.message || data?.title || error?.message || "Thao tác thất bại.";
+
+  return {
+    message,
+    errors: formatErrors(data?.errors || data?.data?.errors),
+  };
+};
+
+const Products = () => {
+  const dispatch = useDispatch();
 
   const {
     products = [],
@@ -116,351 +113,534 @@
     pagination,
   } = useSelector((state) => state.sellerProduct);
 
-  const totalCount = Number(pagination?.totalCount || 0);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const [openAdd, setOpenAdd] = useState(false);
+
+  const [openUpdate, setOpenUpdate] = useState(false);
+
+  const [selectedProduct, setSelectedProduct] = useState(null);
+
+  const [deleteTarget, setDeleteTarget] = useState(null);
+
+  const [inventoryTarget, setInventoryTarget] = useState(null);
+
+  const [inventoryForm, setInventoryForm] = useState({
+    stockQuantity: 0,
+    lowStockThreshold: 0,
+  });
+
+  const [openImport, setOpenImport] = useState(false);
+
+  const [selectedImportFile, setSelectedImportFile] = useState(null);
+
+  const [importing, setImporting] = useState(false);
+
+  const [exporting, setExporting] = useState(false);
+
+  const [importError, setImportError] = useState(null);
+
+  const totalCount = Number(pagination?.totalCount ?? products?.length ?? 0);
+
   const totalPages = Math.max(
-    Number(pagination?.totalPages || Math.ceil(totalCount / ITEMS_PER_PAGE) || 0),
+    Number(
+      pagination?.totalPages ?? Math.ceil(totalCount / ITEMS_PER_PAGE) ?? 1,
+    ),
     1,
   );
 
-  const refreshProducts = () => {
+  // ========================================
+  // LOAD PRODUCTS
+  // ========================================
+
+  const refreshProducts = (page = currentPage) => {
     dispatch(
       fetchSellerProducts({
-        page: currentPage,
+        page,
+        pageNumber: page,
         pageSize: ITEMS_PER_PAGE,
       }),
     );
   };
 
-    const handleOpenUpdate = (product) => {
-      setSelectedProduct(product);
-      setOpenUpdate(true);
-    };
+  useEffect(() => {
+    dispatch(
+      fetchSellerProducts({
+        page: currentPage,
+        pageNumber: currentPage,
+        pageSize: ITEMS_PER_PAGE,
+      }),
+    );
+  }, [currentPage, dispatch]);
 
-    const handleCloseUpdate = () => {
-      setSelectedProduct(null);
-      setOpenUpdate(false);
-    };
+  // ========================================
+  // PRODUCT HELPERS
+  // ========================================
 
-    const getProductId = (product) => product?.productId || product?.id;
+  const getProductId = (product) => product?.productId || product?.id;
 
-    const getProductStock = (product) =>
-      Number(product?.stockQuantity ?? product?.stock ?? product?.quantity ?? 0);
+  const getProductStock = (product) =>
+    Number(product?.stockQuantity ?? product?.stock ?? product?.quantity ?? 0);
 
-    const handleOpenInventory = (product) => {
-      setInventoryTarget(product);
-      setInventoryForm({
-        stockQuantity: getProductStock(product),
-        lowStockThreshold: Number(product?.lowStockThreshold ?? 0),
-      });
-    };
+  // ========================================
+  // ADD PRODUCT
+  // ========================================
 
-    const handleDeleteProduct = async () => {
-      const productId = getProductId(deleteTarget);
+  const handleCloseAdd = () => {
+    setOpenAdd(false);
 
-      if (!productId) {
-        toast.error("Product id is missing");
-        return;
+    refreshProducts();
+  };
+
+  // ========================================
+  // UPDATE PRODUCT
+  // ========================================
+
+  const handleOpenUpdate = (product) => {
+    setSelectedProduct(product);
+
+    setOpenUpdate(true);
+  };
+
+  const handleCloseUpdate = () => {
+    setSelectedProduct(null);
+
+    setOpenUpdate(false);
+
+    refreshProducts();
+  };
+
+  // ========================================
+  // DELETE PRODUCT
+  // ========================================
+
+  const handleDeleteProduct = async () => {
+    const productId = getProductId(deleteTarget);
+
+    if (!productId) {
+      toast.error("Product id is missing");
+      return;
+    }
+
+    try {
+      await dispatch(deleteSellerProduct(productId)).unwrap();
+
+      toast.success("Product deleted successfully");
+
+      setDeleteTarget(null);
+
+      const nextTotal = Math.max(totalCount - 1, 0);
+
+      const nextTotalPages = Math.max(Math.ceil(nextTotal / ITEMS_PER_PAGE), 1);
+
+      const nextPage = Math.min(currentPage, nextTotalPages);
+
+      if (nextPage !== currentPage) {
+        setCurrentPage(nextPage);
+      } else {
+        refreshProducts(nextPage);
       }
+    } catch (err) {
+      toast.error(
+        typeof err === "string" ? err : err?.message || "Delete product failed",
+      );
+    }
+  };
 
-      try {
-        await dispatch(deleteSellerProduct(productId)).unwrap();
-        toast.success("Product deleted successfully");
-        setDeleteTarget(null);
-        const nextTotal = Math.max(totalCount - 1, 0);
-        const nextTotalPages = Math.max(Math.ceil(nextTotal / ITEMS_PER_PAGE), 1);
-        setCurrentPage((page) => Math.min(page, nextTotalPages));
-      } catch (err) {
-        toast.error(err || "Delete product failed");
-      }
-    };
+  // ========================================
+  // INVENTORY
+  // ========================================
 
-    const handleSaveInventory = async (event) => {
-      event.preventDefault();
+  const handleOpenInventory = (product) => {
+    setInventoryTarget(product);
 
-      const productId = getProductId(inventoryTarget);
-      const stockQuantity = Number(inventoryForm.stockQuantity);
-      const lowStockThreshold = Number(inventoryForm.lowStockThreshold || 0);
+    setInventoryForm({
+      stockQuantity: getProductStock(product),
+      lowStockThreshold: Number(product?.lowStockThreshold ?? 0),
+    });
+  };
 
-      if (!productId) {
-        toast.error("Product id is missing");
-        return;
-      }
+  const handleSaveInventory = async (event) => {
+    event.preventDefault();
 
-      if (!Number.isInteger(stockQuantity) || stockQuantity < 0) {
-        toast.error("Stock quantity must be a non-negative integer");
-        return;
-      }
+    const productId = getProductId(inventoryTarget);
 
-      if (!Number.isInteger(lowStockThreshold) || lowStockThreshold < 0) {
-        toast.error("Low stock threshold must be a non-negative integer");
-        return;
-      }
+    const stockQuantity = Number(inventoryForm.stockQuantity);
 
-      try {
-        await dispatch(
-          updateInventory({
-            productId,
-            stockQuantity,
-            lowStockThreshold,
-          }),
-        ).unwrap();
-        toast.success("Inventory updated successfully");
-        setInventoryTarget(null);
-        refreshProducts();
-      } catch (err) {
-        toast.error(err || "Update inventory failed");
-      }
-    };
+    const lowStockThreshold = Number(inventoryForm.lowStockThreshold || 0);
 
-    const handleImportFileChange = (event) => {
-      const file = event.target.files?.[0] || null;
-      setImportError(null);
+    if (!productId) {
+      toast.error("Product id is missing");
+      return;
+    }
 
-      if (!file) {
-        setSelectedImportFile(null);
-        return;
-      }
+    if (!Number.isInteger(stockQuantity) || stockQuantity < 0) {
+      toast.error("Stock quantity must be a non-negative integer");
+      return;
+    }
 
-      if (!isValidImportFile(file)) {
-        setSelectedImportFile(null);
-        setImportError({ message: INVALID_IMPORT_FILE_MESSAGE, errors: [] });
-        event.target.value = "";
-        return;
-      }
+    if (!Number.isInteger(lowStockThreshold) || lowStockThreshold < 0) {
+      toast.error("Low stock threshold must be a non-negative integer");
+      return;
+    }
 
-      setSelectedImportFile(file);
-    };
-
-    const handleCloseImport = () => {
-      if (importing) return;
-      setOpenImport(false);
-      setSelectedImportFile(null);
-      setImportError(null);
-    };
-
-    const handleImportProducts = async (event) => {
-      event.preventDefault();
-
-      if (importing) return;
-
-      if (!selectedImportFile) {
-        setImportError({ message: "Vui lòng chọn file .xls hoặc .csv.", errors: [] });
-        return;
-      }
-
-      if (!isValidImportFile(selectedImportFile)) {
-        setImportError({ message: INVALID_IMPORT_FILE_MESSAGE, errors: [] });
-        return;
-      }
-
-      if (selectedImportFile.size === 0) {
-        setImportError({ message: "File import đang rỗng.", errors: [] });
-        return;
-      }
-
-      try {
-        setImporting(true);
-        setImportError(null);
-        const result = await sellerService.importProducts(selectedImportFile);
-        const errors = formatErrors(result?.errors || result?.Errors);
-
-        if (errors.length > 0 || Number(result?.failedRows || result?.FailedRows || 0) > 0) {
-          setImportError({
-            message: `Import hoàn tất với ${result?.failedRows ?? result?.FailedRows ?? 0} dòng lỗi.`,
-            errors,
-          });
-          return;
-        }
-
-        toast.success(
-          result?.successRows || result?.SuccessRows
-            ? `Import sản phẩm thành công: ${result.successRows ?? result.SuccessRows} dòng.`
-            : "Import sản phẩm thành công.",
-        );
-        setSelectedImportFile(null);
-        setOpenImport(false);
-        refreshProducts();
-      } catch (err) {
-        setImportError(getErrorDetails(err));
-      } finally {
-        setImporting(false);
-      }
-    };
-
-    const handleExportProducts = async () => {
-      if (exporting) return;
-
-      try {
-        setExporting(true);
-        const response = await sellerService.exportProducts();
-        const fileName =
-          extractFileNameFromDisposition(response.headers?.["content-disposition"]) ||
-          "seller-products.xls";
-        const blob = new Blob([response.data], {
-          type: response.headers?.["content-type"] || "application/vnd.ms-excel",
-        });
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = fileName;
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-        window.URL.revokeObjectURL(url);
-        toast.success("Xuất danh sách sản phẩm thành công.");
-      } catch (err) {
-        const { message, errors } = getErrorDetails(err);
-        toast.error(errors.length > 0 ? errors[0] : message);
-      } finally {
-        setExporting(false);
-      }
-    };
-
-    useEffect(() => {
-      dispatch(
-        fetchSellerProducts({
-          page: currentPage,
-          pageSize: ITEMS_PER_PAGE,
+    try {
+      await dispatch(
+        updateInventory({
+          productId,
+          stockQuantity,
+          lowStockThreshold,
         }),
-      );
-    }, [currentPage, dispatch]);
+      ).unwrap();
 
-    const handlePreviousPage = () => {
-      setCurrentPage((prev) => Math.max(prev - 1, 1));
-    };
+      toast.success("Inventory updated successfully");
 
-    const handleNextPage = () => {
-      setCurrentPage((prev) => Math.min(prev + 1, totalPages));
-    };
+      setInventoryTarget(null);
 
-    if (loading) {
-      return (
-        <div className="seller-products__loading">
-          <div className="seller-products__loading-spinner" />
-          <span>Loading products...</span>
-        </div>
+      refreshProducts();
+    } catch (err) {
+      toast.error(
+        typeof err === "string"
+          ? err
+          : err?.message || "Update inventory failed",
       );
     }
+  };
 
-    {
-      /* ERROR */
-    }
-    {
-      error && <div className="seller-products__error">{error}</div>;
+  // ========================================
+  // IMPORT
+  // ========================================
+
+  const handleImportFileChange = (event) => {
+    const file = event.target.files?.[0] || null;
+
+    setImportError(null);
+
+    if (!file) {
+      setSelectedImportFile(null);
+      return;
     }
 
+    if (!isValidImportFile(file)) {
+      setSelectedImportFile(null);
+
+      setImportError({
+        message: INVALID_IMPORT_FILE_MESSAGE,
+        errors: [],
+      });
+
+      event.target.value = "";
+
+      return;
+    }
+
+    setSelectedImportFile(file);
+  };
+
+  const handleCloseImport = () => {
+    if (importing) return;
+
+    setOpenImport(false);
+
+    setSelectedImportFile(null);
+
+    setImportError(null);
+  };
+
+  const handleImportProducts = async (event) => {
+    event.preventDefault();
+
+    if (importing) return;
+
+    if (!selectedImportFile) {
+      setImportError({
+        message: "Vui lòng chọn file .xls hoặc .csv.",
+        errors: [],
+      });
+
+      return;
+    }
+
+    if (!isValidImportFile(selectedImportFile)) {
+      setImportError({
+        message: INVALID_IMPORT_FILE_MESSAGE,
+        errors: [],
+      });
+
+      return;
+    }
+
+    if (selectedImportFile.size === 0) {
+      setImportError({
+        message: "File import đang rỗng.",
+        errors: [],
+      });
+
+      return;
+    }
+
+    try {
+      setImporting(true);
+
+      setImportError(null);
+
+      const result = await sellerService.importProducts(selectedImportFile);
+
+      const errors = formatErrors(result?.errors || result?.Errors);
+
+      const failedRows = Number(result?.failedRows ?? result?.FailedRows ?? 0);
+
+      if (errors.length > 0 || failedRows > 0) {
+        setImportError({
+          message: `Import hoàn tất với ${failedRows} dòng lỗi.`,
+          errors,
+        });
+
+        return;
+      }
+
+      const successRows = result?.successRows ?? result?.SuccessRows ?? 0;
+
+      toast.success(
+        successRows
+          ? `Import sản phẩm thành công: ${successRows} dòng.`
+          : "Import sản phẩm thành công.",
+      );
+
+      setSelectedImportFile(null);
+
+      setOpenImport(false);
+
+      setCurrentPage(1);
+
+      refreshProducts(1);
+    } catch (err) {
+      setImportError(getErrorDetails(err));
+    } finally {
+      setImporting(false);
+    }
+  };
+
+  // ========================================
+  // EXPORT
+  // ========================================
+
+  const handleExportProducts = async () => {
+    if (exporting) return;
+
+    try {
+      setExporting(true);
+
+      const response = await sellerService.exportProducts();
+
+      const fileName =
+        extractFileNameFromDisposition(
+          response?.headers?.["content-disposition"],
+        ) || "seller-products.xls";
+
+      const blob = new Blob([response.data], {
+        type: response?.headers?.["content-type"] || "application/vnd.ms-excel",
+      });
+
+      const url = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+
+      link.href = url;
+
+      link.download = fileName;
+
+      document.body.appendChild(link);
+
+      link.click();
+
+      link.remove();
+
+      window.URL.revokeObjectURL(url);
+
+      toast.success("Xuất danh sách sản phẩm thành công.");
+    } catch (err) {
+      const { message, errors } = getErrorDetails(err);
+
+      toast.error(errors.length > 0 ? errors[0] : message);
+    } finally {
+      setExporting(false);
+    }
+  };
+
+  // ========================================
+  // PAGINATION
+  // ========================================
+
+  const handlePreviousPage = () => {
+    setCurrentPage((prev) => Math.max(prev - 1, 1));
+  };
+
+  const handleNextPage = () => {
+    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+  };
+
+  // ========================================
+  // LOADING
+  // ========================================
+
+  if (loading && products.length === 0) {
     return (
-      <div className="seller-products">
-        {/* HEADER */}
-        <div className="seller-products__header">
-          <div className="seller-products__heading">
-            <div className="seller-products__heading-icon">
-              <Package size={24} />
-            </div>
+      <div className="seller-products__loading">
+        <div className="seller-products__loading-spinner" />
 
-            <div>
-              <span className="seller-products__eyebrow">
-                Inventory Management
-              </span>
+        <span>Loading products...</span>
+      </div>
+    );
+  }
 
-              <h1>Product Management</h1>
+  // ========================================
+  // RENDER
+  // ========================================
 
-              <p>Manage and monitor all products in your store</p>
-            </div>
+  return (
+    <div className="seller-products">
+      {/* =========================
+          HEADER
+      ========================= */}
+
+      <div className="seller-products__header">
+        <div className="seller-products__heading">
+          <div className="seller-products__heading-icon">
+            <Package size={24} />
           </div>
 
-          <div className="seller-products__toolbar">
-            <Button
-              className="seller-products__add-btn seller-products__toolbar-btn"
-              disabled={importing}
-              onClick={() => setOpenImport(true)}
-            >
-              <Upload size={18} />
-              {importing ? "Đang nhập sản phẩm..." : "Import Excel"}
-            </Button>
-
-            <Button
-              className="seller-products__add-btn seller-products__toolbar-btn"
-              disabled={exporting}
-              onClick={handleExportProducts}
-            >
-              <Download size={18} />
-              {exporting ? "Đang xuất file..." : "Export Excel"}
-            </Button>
-
-            <Button
-              className="seller-products__add-btn seller-products__toolbar-btn"
-              onClick={() => setOpenAdd(true)}
-            >
-              <Plus size={18} />
-              Add Product
-            </Button>
-          </div>
-        </div>
-
-        {/* STATS */}
-        <div className="seller-products__stats">
-          <div className="seller-products__stat-card">
-            <div className="seller-products__stat-icon">
-              <Package size={20} />
-            </div>
-
-            <div className="seller-products__stat-content">
-              <span>Total Products</span>
-              <strong>{totalCount}</strong>
-            </div>
-          </div>
-
-          <div className="seller-products__stat-card">
-            <div className="seller-products__stat-icon seller-products__stat-icon--success">
-              <TrendingUp size={20} />
-            </div>
-
-            <div className="seller-products__stat-content">
-              <span>Active Products</span>
-
-              <strong>{products.filter((item) => item.isActive).length}</strong>
-            </div>
-          </div>
-        </div>
-
-        {/* PRODUCTS CARD */}
-        <div className="seller-products__card">
-          {/* CARD HEADER */}
-          <div className="seller-products__card-header">
-            <div>
-              <span className="seller-products__section-label">
-                Product Inventory
-              </span>
-
-              <h2>Your Products</h2>
-
-              <p>View and manage your product inventory</p>
-            </div>
-
-            <span className="seller-products__count">
-              {totalCount} Products
+          <div>
+            <span className="seller-products__section-label">
+              Product Management
             </span>
+
+            <h1>Products</h1>
+
+            <p>Manage and monitor all products in your store.</p>
+          </div>
+        </div>
+
+        <div className="seller-products__toolbar">
+          <Button
+            className="seller-products__add-btn seller-products__toolbar-btn"
+            disabled={importing}
+            onClick={() => setOpenImport(true)}
+          >
+            <Upload size={18} />
+
+            {importing ? "Đang nhập sản phẩm..." : "Import Excel"}
+          </Button>
+
+          <Button
+            className="seller-products__add-btn seller-products__toolbar-btn"
+            disabled={exporting}
+            onClick={handleExportProducts}
+          >
+            <Download size={18} />
+
+            {exporting ? "Đang xuất file..." : "Export Excel"}
+          </Button>
+
+          <Button
+            className="seller-products__add-btn seller-products__toolbar-btn"
+            onClick={() => setOpenAdd(true)}
+          >
+            <Plus size={18} />
+            Add Product
+          </Button>
+        </div>
+      </div>
+
+      {/* =========================
+          ERROR
+      ========================= */}
+
+      {error && (
+        <div className="seller-products__error">
+          {typeof error === "string"
+            ? error
+            : error?.message || "Unable to load products."}
+        </div>
+      )}
+
+      {/* =========================
+          STATS
+      ========================= */}
+
+      <div className="seller-products__stats">
+        <div className="seller-products__stat-card">
+          <div className="seller-products__stat-icon">
+            <Package size={20} />
           </div>
 
-          {/* TABLE */}
-          <div className="seller-products__table-wrapper">
-            <table className="seller-products__table">
-              <thead>
-                <tr>
-                  <th>Product</th>
-                  <th>Category</th>
-                  <th>Price</th>
-                  <th>Stock</th>
-                  <th>Status</th>
-                  <th className="seller-products__action-column">Action</th>
-                </tr>
-              </thead>
+          <div className="seller-products__stat-content">
+            <span>Total Products</span>
 
-              <tbody>
-                {products.map((item) => (
-                  <tr key={item.id}>
-                    {/* PRODUCT */}
+            <strong>{totalCount}</strong>
+          </div>
+        </div>
+
+        <div className="seller-products__stat-card">
+          <div className="seller-products__stat-icon seller-products__stat-icon--success">
+            <TrendingUp size={20} />
+          </div>
+
+          <div className="seller-products__stat-content">
+            <span>Active Products</span>
+
+            <strong>{products.filter((item) => item.isActive).length}</strong>
+          </div>
+        </div>
+      </div>
+
+      {/* =========================
+          PRODUCTS CARD
+      ========================= */}
+
+      <div className="seller-products__card">
+        <div className="seller-products__card-header">
+          <div>
+            <span className="seller-products__section-label">
+              Product Inventory
+            </span>
+
+            <h2>Your Products</h2>
+
+            <p>View and manage your product inventory.</p>
+          </div>
+
+          <span className="seller-products__count">{totalCount} Products</span>
+        </div>
+
+        {/* =========================
+            TABLE
+        ========================= */}
+
+        <div className="seller-products__table-wrapper">
+          <table className="seller-products__table">
+            <thead>
+              <tr>
+                <th>Product</th>
+
+                <th>Category</th>
+
+                <th>Price</th>
+
+                <th>Stock</th>
+
+                <th>Status</th>
+
+                <th className="seller-products__action-column">Action</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {products.map((item) => {
+                const productId = getProductId(item);
+
+                return (
+                  <tr key={productId || item.name}>
                     <td data-label="Product">
                       <div className="seller-products__product-info">
                         <div className="seller-products__product-avatar">
@@ -470,22 +650,25 @@
                         <div className="seller-products__product-details">
                           <strong>{item.name}</strong>
 
-                          <span>ID: {item.id?.slice(0, 8)?.toUpperCase()}</span>
+                          <span>
+                            ID:{" "}
+                            {productId
+                              ? String(productId).slice(0, 8).toUpperCase()
+                              : "-"}
+                          </span>
                         </div>
                       </div>
                     </td>
 
-                    {/* CATEGORY */}
                     <td data-label="Category">
                       <span className="seller-products__category">
                         {item.categoryName || "-"}
                       </span>
                     </td>
 
-                    {/* PRICE */}
                     <td data-label="Price">
                       <strong className="seller-products__price">
-                        {formatCurrencyVN(item.price)}
+                        {formatCurrencyVN(item.price || 0)}
                       </strong>
                     </td>
 
@@ -495,7 +678,6 @@
                       </span>
                     </td>
 
-                    {/* STATUS */}
                     <td data-label="Status">
                       <span
                         className={`seller-products__status ${
@@ -510,7 +692,6 @@
                       </span>
                     </td>
 
-                    {/* ACTION */}
                     <td data-label="Action">
                       <div className="seller-products__actions">
                         <button
@@ -521,6 +702,7 @@
                         >
                           <Pencil size={17} />
                         </button>
+
                         <button
                           type="button"
                           className="seller-products__action-btn seller-products__action-btn--inventory"
@@ -529,6 +711,7 @@
                         >
                           <Boxes size={17} />
                         </button>
+
                         <button
                           type="button"
                           className="seller-products__action-btn seller-products__action-btn--delete"
@@ -540,246 +723,289 @@
                       </div>
                     </td>
                   </tr>
-                ))}
+                );
+              })}
 
-                {products.length === 0 && (
-                  <tr>
-                    <td colSpan={6}>
-                      <div className="seller-products__empty">
-                        <div className="seller-products__empty-icon">
-                          <Package size={38} />
-                        </div>
-
-                        <h3>No products found</h3>
-
-                        <p>Start by adding your first product.</p>
-
-                        <button
-                          type="button"
-                          className="seller-products__empty-btn"
-                          onClick={() => setOpenAdd(true)}
-                        >
-                          <Plus size={16} />
-                          Add Product
-                        </button>
+              {!loading && products.length === 0 && (
+                <tr>
+                  <td colSpan={6}>
+                    <div className="seller-products__empty">
+                      <div className="seller-products__empty-icon">
+                        <Package size={38} />
                       </div>
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
 
-          {/* PAGINATION */}
-          {products.length > 0 && (
-            <div className="seller-products__pagination">
-              <button
-                type="button"
-                className="seller-products__pagination-btn seller-products__pagination-btn--prev"
-                disabled={currentPage === 1}
-                onClick={handlePreviousPage}
-              >
-                <ChevronLeft size={18} />
-                <span>Previous</span>
-              </button>
+                      <h3>No products found</h3>
 
-              <span className="seller-products__pagination-info">
-                Page <strong>{currentPage}</strong> of{" "}
-                <strong>{totalPages}</strong>
-              </span>
+                      <p>Start by adding your first product.</p>
 
-              <button
-                type="button"
-                className="seller-products__pagination-btn seller-products__pagination-btn--next"
-                disabled={currentPage === totalPages}
-                onClick={handleNextPage}
-              >
-                <span>Next</span>
-                <ChevronRight size={18} />
-              </button>
-            </div>
-          )}
+                      <button
+                        type="button"
+                        className="seller-products__empty-btn"
+                        onClick={() => setOpenAdd(true)}
+                      >
+                        <Plus size={16} />
+                        Add Product
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
 
-        {/* ADD MODAL */}
-        {openAdd && (
-          <AddProductModal open={openAdd} onClose={() => setOpenAdd(false)} />
-        )}
+        {/* =========================
+            PAGINATION
+        ========================= */}
 
-        {/* UPDATE MODAL */}
-        {openUpdate && selectedProduct && (
-          <UpdateProductModal
-            key={selectedProduct.id}
-            open={openUpdate}
-            product={selectedProduct}
-            onClose={handleCloseUpdate}
-          />
-        )}
-
-        {openImport && (
-          <div className="seller-products__modal-backdrop" role="presentation">
-            <form
-              className="seller-products__confirm seller-products__import-modal"
-              role="dialog"
-              aria-modal="true"
-              onSubmit={handleImportProducts}
+        {totalCount > 0 && (
+          <div className="seller-products__pagination">
+            <button
+              type="button"
+              className="seller-products__pagination-btn seller-products__pagination-btn--prev"
+              disabled={currentPage <= 1 || loading}
+              onClick={handlePreviousPage}
             >
-              <h3>Import Excel</h3>
-              <p>
-                Chọn file <strong>.xls</strong> hoặc <strong>.csv</strong> để
-                nhập sản phẩm. Hệ thống chưa hỗ trợ file .xlsx.
-              </p>
+              <ChevronLeft size={18} />
 
-              <label className="seller-products__field">
-                <span>File sản phẩm</span>
-                <input
-                  type="file"
-                  accept=".xls,.csv,application/vnd.ms-excel,text/csv"
-                  disabled={importing}
-                  onChange={handleImportFileChange}
-                />
-              </label>
+              <span>Previous</span>
+            </button>
 
-              {selectedImportFile && (
-                <div className="seller-products__file-info">
-                  {selectedImportFile.name} · {Math.ceil(selectedImportFile.size / 1024)} KB
-                </div>
-              )}
+            <span className="seller-products__pagination-info">
+              Page <strong>{currentPage}</strong> of{" "}
+              <strong>{totalPages}</strong>
+            </span>
 
-              {importError && (
-                <div className="seller-products__import-error" role="alert">
-                  <strong>{importError.message}</strong>
-                  {importError.errors.length > 0 && (
-                    <ul>
-                      {importError.errors.slice(0, 20).map((item) => (
-                        <li key={item}>{item}</li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-              )}
-
-              {importing && (
-                <div className="seller-products__inline-loading">
-                  <span className="seller-products__inline-spinner" />
-                  Đang nhập sản phẩm...
-                </div>
-              )}
-
-              <div className="seller-products__modal-actions">
-                <button
-                  type="button"
-                  className="seller-products__modal-btn"
-                  disabled={importing}
-                  onClick={handleCloseImport}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="seller-products__modal-btn seller-products__modal-btn--primary"
-                  disabled={importing}
-                >
-                  {importing ? "Đang nhập sản phẩm..." : "Import"}
-                </button>
-              </div>
-            </form>
-          </div>
-        )}
-
-        {deleteTarget && (
-          <div className="seller-products__modal-backdrop" role="presentation">
-            <div className="seller-products__confirm" role="dialog" aria-modal="true">
-              <h3>Delete product?</h3>
-              <p>
-                This will remove <strong>{deleteTarget.name}</strong> from your
-                shop. Products linked to existing orders may be rejected by the
-                server.
-              </p>
-              <div className="seller-products__modal-actions">
-                <button
-                  type="button"
-                  className="seller-products__modal-btn"
-                  disabled={actionLoading}
-                  onClick={() => setDeleteTarget(null)}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  className="seller-products__modal-btn seller-products__modal-btn--danger"
-                  disabled={actionLoading}
-                  onClick={handleDeleteProduct}
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {inventoryTarget && (
-          <div className="seller-products__modal-backdrop" role="presentation">
-            <form
-              className="seller-products__confirm"
-              role="dialog"
-              aria-modal="true"
-              onSubmit={handleSaveInventory}
+            <button
+              type="button"
+              className="seller-products__pagination-btn seller-products__pagination-btn--next"
+              disabled={currentPage >= totalPages || loading}
+              onClick={handleNextPage}
             >
-              <h3>Edit inventory</h3>
-              <p>Update stock levels for <strong>{inventoryTarget.name}</strong>.</p>
-              <label className="seller-products__field">
-                <span>Stock quantity</span>
-                <input
-                  type="number"
-                  min="0"
-                  step="1"
-                  value={inventoryForm.stockQuantity}
-                  onChange={(event) =>
-                    setInventoryForm((prev) => ({
-                      ...prev,
-                      stockQuantity: event.target.value,
-                    }))
-                  }
-                />
-              </label>
-              <label className="seller-products__field">
-                <span>Low stock threshold</span>
-                <input
-                  type="number"
-                  min="0"
-                  step="1"
-                  value={inventoryForm.lowStockThreshold}
-                  onChange={(event) =>
-                    setInventoryForm((prev) => ({
-                      ...prev,
-                      lowStockThreshold: event.target.value,
-                    }))
-                  }
-                />
-              </label>
-              <div className="seller-products__modal-actions">
-                <button
-                  type="button"
-                  className="seller-products__modal-btn"
-                  disabled={actionLoading}
-                  onClick={() => setInventoryTarget(null)}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="seller-products__modal-btn seller-products__modal-btn--primary"
-                  disabled={actionLoading}
-                >
-                  Save
-                </button>
-              </div>
-            </form>
+              <span>Next</span>
+
+              <ChevronRight size={18} />
+            </button>
           </div>
         )}
       </div>
-    );
-  };
 
-  export default Products;
+      {/* =========================
+          ADD MODAL
+      ========================= */}
+
+      {openAdd && <AddProductModal open={openAdd} onClose={handleCloseAdd} />}
+
+      {/* =========================
+          UPDATE MODAL
+      ========================= */}
+
+      {openUpdate && selectedProduct && (
+        <UpdateProductModal
+          key={getProductId(selectedProduct) || selectedProduct.name}
+          open={openUpdate}
+          product={selectedProduct}
+          onClose={handleCloseUpdate}
+        />
+      )}
+
+      {/* =========================
+          IMPORT MODAL
+      ========================= */}
+
+      {openImport && (
+        <div className="seller-products__modal-backdrop" role="presentation">
+          <form
+            className="seller-products__confirm seller-products__import-modal"
+            role="dialog"
+            aria-modal="true"
+            onSubmit={handleImportProducts}
+          >
+            <h3>Import Excel</h3>
+
+            <p>
+              Chọn file <strong>.xls</strong> hoặc <strong>.csv</strong> để nhập
+              sản phẩm. Hệ thống chưa hỗ trợ file .xlsx.
+            </p>
+
+            <label className="seller-products__field">
+              <span>File sản phẩm</span>
+
+              <input
+                type="file"
+                accept=".xls,.csv,application/vnd.ms-excel,text/csv"
+                disabled={importing}
+                onChange={handleImportFileChange}
+              />
+            </label>
+
+            {selectedImportFile && (
+              <div className="seller-products__file-info">
+                {selectedImportFile.name} ·{" "}
+                {Math.ceil(selectedImportFile.size / 1024)} KB
+              </div>
+            )}
+
+            {importError && (
+              <div className="seller-products__import-error" role="alert">
+                <strong>{importError.message}</strong>
+
+                {importError.errors?.length > 0 && (
+                  <ul>
+                    {importError.errors.slice(0, 20).map((item, index) => (
+                      <li key={`${item}-${index}`}>{item}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            )}
+
+            {importing && (
+              <div className="seller-products__inline-loading">
+                <span className="seller-products__inline-spinner" />
+                Đang nhập sản phẩm...
+              </div>
+            )}
+
+            <div className="seller-products__modal-actions">
+              <button
+                type="button"
+                className="seller-products__modal-btn"
+                disabled={importing}
+                onClick={handleCloseImport}
+              >
+                Cancel
+              </button>
+
+              <button
+                type="submit"
+                className="seller-products__modal-btn seller-products__modal-btn--primary"
+                disabled={importing}
+              >
+                {importing ? "Đang nhập sản phẩm..." : "Import"}
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {/* =========================
+          DELETE MODAL
+      ========================= */}
+
+      {deleteTarget && (
+        <div className="seller-products__modal-backdrop" role="presentation">
+          <div
+            className="seller-products__confirm"
+            role="dialog"
+            aria-modal="true"
+          >
+            <h3>Delete product?</h3>
+
+            <p>
+              This will remove <strong>{deleteTarget.name}</strong> from your
+              shop. Products linked to existing orders may be rejected by the
+              server.
+            </p>
+
+            <div className="seller-products__modal-actions">
+              <button
+                type="button"
+                className="seller-products__modal-btn"
+                disabled={actionLoading}
+                onClick={() => setDeleteTarget(null)}
+              >
+                Cancel
+              </button>
+
+              <button
+                type="button"
+                className="seller-products__modal-btn seller-products__modal-btn--danger"
+                disabled={actionLoading}
+                onClick={handleDeleteProduct}
+              >
+                {actionLoading ? "Deleting..." : "Delete"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* =========================
+          INVENTORY MODAL
+      ========================= */}
+
+      {inventoryTarget && (
+        <div className="seller-products__modal-backdrop" role="presentation">
+          <form
+            className="seller-products__confirm"
+            role="dialog"
+            aria-modal="true"
+            onSubmit={handleSaveInventory}
+          >
+            <h3>Edit inventory</h3>
+
+            <p>
+              Update stock levels for <strong>{inventoryTarget.name}</strong>.
+            </p>
+
+            <label className="seller-products__field">
+              <span>Stock quantity</span>
+
+              <input
+                type="number"
+                min="0"
+                step="1"
+                value={inventoryForm.stockQuantity}
+                onChange={(event) =>
+                  setInventoryForm((prev) => ({
+                    ...prev,
+                    stockQuantity: event.target.value,
+                  }))
+                }
+              />
+            </label>
+
+            <label className="seller-products__field">
+              <span>Low stock threshold</span>
+
+              <input
+                type="number"
+                min="0"
+                step="1"
+                value={inventoryForm.lowStockThreshold}
+                onChange={(event) =>
+                  setInventoryForm((prev) => ({
+                    ...prev,
+                    lowStockThreshold: event.target.value,
+                  }))
+                }
+              />
+            </label>
+
+            <div className="seller-products__modal-actions">
+              <button
+                type="button"
+                className="seller-products__modal-btn"
+                disabled={actionLoading}
+                onClick={() => setInventoryTarget(null)}
+              >
+                Cancel
+              </button>
+
+              <button
+                type="submit"
+                className="seller-products__modal-btn seller-products__modal-btn--primary"
+                disabled={actionLoading}
+              >
+                {actionLoading ? "Saving..." : "Save"}
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default Products;

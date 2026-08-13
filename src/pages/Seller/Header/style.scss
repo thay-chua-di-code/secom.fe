@@ -1,0 +1,448 @@
+// ========================================
+// SELLER HEADER
+// ========================================
+
+.seller-header {
+  position: sticky;
+
+  top: 0;
+
+  z-index: 100;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 25px 30px;
+
+  background: #0d1117;
+
+  border-bottom: 1px solid #20252d;
+
+  // =========================
+  // PAGE INFO
+  // =========================
+
+  &__page-info {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 3px;
+
+    h1 {
+      margin: 0;
+
+      color: #e5e7eb;
+
+      font-size: 18px;
+      font-weight: 700;
+
+      line-height: 1.2;
+    }
+
+    span {
+      color: #52647f;
+
+      font-size: 14px;
+      font-weight: 400;
+    }
+  }
+
+  // =========================
+  // ACTIONS
+  // =========================
+
+  &__actions {
+    display: flex;
+
+    align-items: center;
+
+    gap: 16px;
+  }
+
+  // =========================
+  // SEARCH
+  // =========================
+
+  &__search {
+    position: relative;
+
+    width: min(360px, 36vw);
+
+    height: auto;
+
+    display: flex;
+
+    align-items: center;
+
+    padding: 0;
+
+    border: 0;
+
+    border-radius: 999px;
+
+    background: transparent;
+
+    color: inherit;
+
+    pointer-events: auto;
+
+    &:focus-within {
+      border-color: transparent;
+
+      box-shadow: none;
+    }
+
+    .custom-input__wrapper {
+      height: 40px;
+
+      border: 1px solid #273149;
+
+      border-radius: 999px;
+
+      background: #151c2c;
+
+      box-shadow: none;
+
+      &:focus-within {
+        border-color: #3b82f6;
+
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+      }
+    }
+
+    .custom-input__icon {
+      width: 40px;
+
+      color: #718096;
+    }
+
+    .custom-input__field {
+      color: #dbeafe;
+
+      font-size: 12px;
+
+      &::placeholder {
+        color: #5b6b85;
+      }
+    }
+
+    .custom-input__action {
+      width: 34px;
+      height: 34px;
+
+      color: #718096;
+
+      &:hover {
+        background: #1f2937;
+
+        color: #dbeafe;
+      }
+    }
+
+    button {
+      display: inline-flex;
+
+      align-items: center;
+      justify-content: center;
+
+      padding: 0;
+
+      border: 0;
+
+      background: transparent;
+
+      color: inherit;
+
+      cursor: pointer;
+    }
+
+    svg {
+      flex-shrink: 0;
+
+      pointer-events: none;
+    }
+
+    input {
+      width: 100%;
+
+      min-width: 0;
+
+      border: none;
+
+      outline: none;
+
+      background: transparent;
+
+      color: #dbeafe;
+
+      font-size: 12px;
+
+      pointer-events: auto;
+
+      &::placeholder {
+        color: #5b6b85;
+      }
+    }
+  }
+
+  // =========================
+  // NOTIFICATION
+  // =========================
+
+  &__notification-home {
+    .notification-trigger {
+      width: auto;
+
+      height: 40px;
+
+      padding: 0 12px;
+
+      border: 1px solid #273149;
+
+      border-radius: 999px;
+
+      background: #151c2c;
+
+      color: #dbeafe;
+
+      font-size: 12px;
+      font-weight: 700;
+
+      &:hover {
+        border-color: #3b82f6;
+
+        background: #172033;
+
+        color: #ffffff;
+      }
+    }
+
+    .notification-badge {
+      top: -7px;
+
+      right: -7px;
+    }
+
+    .notification-dropdown {
+      border: 1px solid #273149;
+
+      background: #111827;
+
+      box-shadow: 0 18px 48px rgba(0, 0, 0, 0.34);
+    }
+
+    .notification-dropdown__header {
+      border-bottom-color: #273149;
+
+      h3 {
+        color: #f8fafc;
+      }
+    }
+
+    .notification-dropdown__list {
+      background: #111827;
+    }
+
+    .notification-empty {
+      color: #94a3b8;
+    }
+
+    .notification-dropdown__footer {
+      border-top-color: #273149;
+
+      background: #111827;
+
+      a {
+        color: #93c5fd;
+
+        &:hover {
+          color: #bfdbfe;
+        }
+      }
+    }
+  }
+}
+
+// ========================================
+// SEARCH DROPDOWN
+// ========================================
+
+.seller-search-dropdown {
+  position: absolute;
+
+  top: calc(100% + 10px);
+  left: 0;
+
+  z-index: 999;
+
+  width: min(420px, 80vw);
+
+  overflow: hidden;
+
+  border: 1px solid #273149;
+
+  border-radius: 16px;
+
+  background: #111827;
+
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.34);
+
+  animation: sellerDropdown 0.25s ease;
+}
+
+.seller-search-dropdown__section {
+  padding: 16px;
+
+  h4 {
+    margin: 0 0 12px;
+
+    color: #f8fafc;
+
+    font-size: 13px;
+    font-weight: 800;
+  }
+}
+
+.seller-search-dropdown__targets {
+  display: grid;
+
+  gap: 8px;
+
+  a {
+    display: grid;
+
+    gap: 4px;
+
+    padding: 10px 12px;
+
+    border: 1px solid #1f2937;
+
+    border-radius: 12px;
+
+    background: #172033;
+
+    text-decoration: none;
+
+    transition:
+      border-color 0.2s ease,
+      background 0.2s ease,
+      transform 0.2s ease;
+
+    strong {
+      color: #e5e7eb;
+
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    span {
+      color: #94a3b8;
+
+      font-size: 11px;
+
+      line-height: 1.35;
+    }
+
+    &:hover {
+      border-color: #3b82f6;
+
+      background: #1e293b;
+
+      transform: translateY(-1px);
+
+      strong {
+        color: #bfdbfe;
+      }
+    }
+  }
+}
+
+.seller-search-dropdown__empty {
+  padding: 20px 12px;
+
+  color: #94a3b8;
+
+  text-align: center;
+
+  font-size: 12px;
+}
+
+.seller-search-dropdown__footer {
+  padding: 11px 16px;
+
+  border-top: 1px solid #273149;
+
+  background: #0f172a;
+
+  color: #64748b;
+
+  font-size: 11px;
+  font-weight: 700;
+}
+
+@keyframes sellerDropdown {
+  from {
+    opacity: 0;
+
+    transform: translateY(-6px);
+  }
+
+  to {
+    opacity: 1;
+
+    transform: translateY(0);
+  }
+}
+
+// ========================================
+// RESPONSIVE
+// ========================================
+
+@media (max-width: 768px) {
+  .seller-header {
+    padding: 0 16px;
+
+    min-height: 62px;
+
+    &__page-info {
+      margin-left: 52px;
+
+      h1 {
+        font-size: 13px;
+      }
+
+      span {
+        display: none;
+      }
+    }
+
+    &__actions {
+      gap: 10px;
+    }
+
+    &__search {
+      width: 220px;
+    }
+  }
+}
+
+@media (max-width: 500px) {
+  .seller-header {
+    &__search {
+      display: block;
+
+      width: 170px;
+    }
+
+    &__notification-home {
+      .notification-trigger {
+        span {
+          display: none;
+        }
+      }
+    }
+  }
+}
