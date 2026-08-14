@@ -113,7 +113,17 @@ export const sellerService = {
         },
       });
 
-      return result.data.data;
+      const payload = result?.data?.data ?? result?.data ?? {};
+
+      return {
+        items: Array.isArray(payload?.items) ? payload.items : [],
+        pagination: {
+          pageNumber: Number(payload?.pageNumber ?? page),
+          pageSize: Number(payload?.pageSize ?? pageSize),
+          totalCount: Number(payload?.totalCount ?? 0),
+          totalPages: Number(payload?.totalPages ?? 0),
+        },
+      };
     } catch (e) {
       throw new Error(e?.response?.data?.message || "Get products failed");
     }

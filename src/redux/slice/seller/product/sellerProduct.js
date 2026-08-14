@@ -135,9 +135,14 @@ const sellerProductSlice = createSlice({
       .addCase(fetchSellerProducts.fulfilled, (state, action) => {
         state.loading = false;
 
-        state.products = action.payload.items || [];
+        state.products = Array.isArray(action.payload?.items)
+          ? action.payload.items
+          : [];
 
-        state.pagination = action.payload.pagination || initialState.pagination;
+        state.pagination = {
+          ...initialState.pagination,
+          ...action.payload?.pagination,
+        };
       })
       .addCase(fetchSellerProducts.rejected, (state, action) => {
         state.loading = false;

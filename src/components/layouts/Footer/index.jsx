@@ -50,23 +50,23 @@ export default function Footer() {
 
             <ul className="footer__links">
               <li>
-                <Link to="/">About us</Link>
+                <Link to="/about">About us</Link>
               </li>
 
               <li>
-                <Link to="/">Customers</Link>
+                <Link to="/faq">FAQ</Link>
               </li>
 
               <li>
-                <Link to="/">Seller channel</Link>
+                <Link to="/seller-register">Seller channel</Link>
               </li>
 
               <li>
-                <Link to="/">Newsroom</Link>
+                <Link to="/products">Newsroom</Link>
               </li>
 
               <li>
-                <Link to="/">Contact</Link>
+                <Link to="/contact">Contact</Link>
               </li>
             </ul>
           </div>
@@ -127,11 +127,11 @@ export default function Footer() {
           <div className="footer__legal">
             <span>© 2026 AIDR. All rights reserved.</span>
 
-            <Link to="/">Privacy policy</Link>
+            <Link to="/policy/privacy">Privacy policy</Link>
 
-            <Link to="/">Terms of use</Link>
+            <Link to="/policy/terms">Terms of use</Link>
 
-            <Link to="/">Contact</Link>
+            <Link to="/contact">Contact</Link>
           </div>
 
           <div className="footer__social">

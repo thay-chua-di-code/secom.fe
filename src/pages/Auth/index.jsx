@@ -8,7 +8,7 @@ import ResetPassWord from "./Form/ResetPassWord/index";
 import "./style.scss";
 
 const AuthPage = () => {
-  const pathname = location.pathname;
+  const { pathname } = useLocation();
 
   return (
     <div className="auth-page">

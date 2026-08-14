@@ -113,7 +113,7 @@ const AddProductModal = ({ open, onClose }) => {
       await dispatch(createSellerProduct(payload)).unwrap();
 
       toast.success("Product has been submitted and is pending admin approval.", { duration: 2500 });
-      await dispatch(fetchSellerProducts({ pageNumber: 1, pageSize: 10 }));
+      await dispatch(fetchSellerProducts({ pageNumber: 1, pageSize: 8 }));
       resetModalState();
       onClose();
     } catch (error) {

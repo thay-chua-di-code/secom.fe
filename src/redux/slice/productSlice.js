@@ -64,11 +64,21 @@ export const fetchProductDetailThunk = createAsyncThunk(
 
 export const fetchProductsByCategory = createAsyncThunk(
   "product/fetchProductsByCategory",
-  async (categoryId, thunkAPI) => {
+  async ({ categoryId, page = 1, pageSize = 20 } = {}, thunkAPI) => {
     try {
+      if (!categoryId) {
+        return {
+          items: [],
+          pageNumber: page,
+          pageSize,
+          totalCount: 0,
+          totalPages: 0,
+        };
+      }
+
       const response = await dicoveryService.getProductByCategory(categoryId, {
-        page: 1,
-        pageSize: 20,
+        page,
+        pageSize,
       });
       return response;
     } catch (error) {
@@ -85,15 +95,7 @@ export const searchProductsThunk = createAsyncThunk(
     try {
       const response = await dicoveryService.getProductByKeyWord(params);
 
-      return {
-        items: response.items,
-        pagination: {
-          page: response.pageNumber,
-          limit: response.pageSize,
-          totalPages: response.totalPages,
-          totalItems: response.totalCount,
-        },
-      };
+      return response;
     } catch (error) {
       return thunkAPI.rejectWithValue(
         error.response?.data?.message || "Failed to search products",
@@ -214,8 +216,15 @@ const productSlice = createSlice({
       })
       .addCase(searchProductsThunk.fulfilled, (state, action) => {
         state.loading = false;
-        state.productSearch = action.payload.items;
-        state.pagination = action.payload.pagination;
+        state.productSearch = Array.isArray(action.payload?.items)
+          ? action.payload.items
+          : [];
+        state.pagination = {
+          page: Number(action.payload?.pageNumber ?? 1),
+          limit: Number(action.payload?.pageSize ?? 20),
+          totalPages: Number(action.payload?.totalPages ?? 0),
+          totalItems: Number(action.payload?.totalCount ?? 0),
+        };
       })
       .addCase(searchProductsThunk.rejected, (state, action) => {
         state.loading = false;

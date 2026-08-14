@@ -8,6 +8,13 @@ export const ROUTES = {
   RS_PWD: "/reset-password",
   // [NORMAL]
   HOME: "/",
+  ABOUT: "/about",
+  CONTACT: "/contact",
+  FAQ: "/faq",
+  POLICY: {
+    PRIVACY: "/policy/privacy",
+    TERMS: "/policy/terms",
+  },
   CART: "/cart",
   DASHBOARD: "/dashboard",
   // [Need fix] => /:id

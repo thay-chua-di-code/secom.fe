@@ -35,7 +35,7 @@ const NAV_ITEMS = [
       {
         title: "Categories",
         description: "Browse products by category",
-        to: "/categories",
+        to: "/products",
       },
       {
         title: "Smart Recommendations",
@@ -67,13 +67,13 @@ const NAV_ITEMS = [
   },
   {
     key: "customers",
-    label: "Customers",
-    to: "/products",
+    label: "FAQ",
+    to: "/faq",
   },
   {
     key: "pricing",
-    label: "Pricing",
-    to: "/",
+    label: "Policies",
+    to: "/policy/privacy",
   },
   {
     key: "company",
@@ -152,7 +152,7 @@ export default function MainHeader() {
   const isExpanded =
     Boolean(activeNavItem?.dropdown) && !mobileOpen && !openSearch;
 
-  const isLoginPage = pathname === "/login" || pathname === "/register";
+  const isLoginPage = ["/login", "/register", "/forgot-password", "/reset-password", "/verify-email"].includes(pathname);
 
   /* =========================
      USER

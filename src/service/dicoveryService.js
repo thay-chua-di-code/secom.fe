@@ -45,4 +45,13 @@ export const dicoveryService = {
 
     return normalizePagedResult(res);
   },
+
+  getSellerShopProducts: async (sellerShopId, params = {}) => {
+    const res = await axiosClient.get(`/seller-shops/${sellerShopId}/products`, {
+      params,
+      skipAuth: true,
+    });
+
+    return normalizePagedResult(res);
+  },
 };

@@ -8,6 +8,7 @@ import ProductsPage from "../pages/Products";
 import SellerDetail from "../pages/SellerDetail";
 import PaymentReturn from "../pages/PaymentReturn/PaymentReturn";
 import PaymentCancel from "../pages/PaymentCancel/PaymentCancel";
+import StaticPage from "../pages/Static/StaticPage";
 
 export const publicRoutes = [
   {
@@ -62,6 +63,26 @@ export const publicRoutes = [
       {
         path: ROUTES.SELLER.DETAIL,
         element: <SellerDetail />,
+      },
+      {
+        path: ROUTES.ABOUT,
+        element: <StaticPage variant="about" />,
+      },
+      {
+        path: ROUTES.CONTACT,
+        element: <StaticPage variant="contact" />,
+      },
+      {
+        path: ROUTES.FAQ,
+        element: <StaticPage variant="faq" />,
+      },
+      {
+        path: ROUTES.POLICY.PRIVACY,
+        element: <StaticPage variant="privacy" />,
+      },
+      {
+        path: ROUTES.POLICY.TERMS,
+        element: <StaticPage variant="terms" />,
       },
     ],
   },

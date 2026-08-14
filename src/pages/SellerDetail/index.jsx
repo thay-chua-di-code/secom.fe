@@ -20,7 +20,7 @@ import sellerRatingApi, {
   normalizeSellerRatings,
   normalizeSellerRatingSummary,
 } from "../../api/sellerRatingApi";
-import productApi from "../../api/productApi";
+import { dicoveryService } from "../../service/dicoveryService";
 
 function formatCompactNumber(value) {
   const numericValue = Number(value);
@@ -165,10 +165,9 @@ export default function SellerDetail() {
         setSellerProductsLoading(true);
         setSellerProductsError("");
 
-        const response = await productApi.searchProducts({
-          SellerId: id,
-          Page: 1,
-          PageSize: 12,
+        const response = await dicoveryService.getSellerShopProducts(id, {
+          page: 1,
+          pageSize: 12,
         });
         const items = unwrapProductItems(response);
         const filteredItems = items.filter((product) => {
