@@ -58,3 +58,27 @@
     color: #0f172a;
   }
 }
+
+.payment-cancel {
+  background: var(--aidr-bg);
+
+  &__card {
+    background: linear-gradient(180deg, rgba(13, 18, 29, 0.98), rgba(9, 12, 19, 0.98));
+    border: 1px solid var(--aidr-border);
+    box-shadow: var(--aidr-shadow);
+  }
+
+  h1 {
+    color: var(--aidr-text);
+  }
+
+  p {
+    color: var(--aidr-text-secondary);
+  }
+
+  &__secondary {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--aidr-border);
+    color: var(--aidr-text);
+  }
+}

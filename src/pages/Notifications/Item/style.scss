@@ -264,6 +264,56 @@
   }
 }
 
+.notification-item {
+  background: rgba(255, 255, 255, 0.025) !important;
+  border-color: var(--aidr-border) !important;
+  color: var(--aidr-text) !important;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.045) !important;
+  }
+
+  &.unread,
+  &--unread,
+  &.is-unread {
+    background: rgba(59, 130, 246, 0.08) !important;
+    border-color: rgba(59, 130, 246, 0.22) !important;
+  }
+
+  .notification-item__icon,
+  .icon,
+  .notification-type-icon {
+    background: rgba(59, 130, 246, 0.12) !important;
+    color: #93c5fd !important;
+    border-color: rgba(59, 130, 246, 0.18) !important;
+  }
+
+  .notification-item__badge,
+  .badge,
+  .new-badge {
+    background: rgba(59, 130, 246, 0.14) !important;
+    border-color: rgba(59, 130, 246, 0.22) !important;
+    color: #93c5fd !important;
+  }
+
+  .notification-item__type,
+  .type-chip,
+  .notification-type {
+    background: rgba(255, 255, 255, 0.04) !important;
+    border-color: var(--aidr-border) !important;
+    color: var(--aidr-text-secondary) !important;
+  }
+
+  .notification-item__delete,
+  .delete-btn {
+    &:hover {
+      background: rgba(239, 68, 68, 0.1) !important;
+      border-color: rgba(239, 68, 68, 0.2) !important;
+      color: #fca5a5 !important;
+    }
+  }
+}
+
 // ============================================================
 // TABLET
 // ============================================================

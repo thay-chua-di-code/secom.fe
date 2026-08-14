@@ -1,37 +1,34 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   ArrowLeft,
   ArrowRight,
   ArrowUpRight,
+  Search,
   Sparkles,
   WandSparkles,
 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 import { categoriesService } from "../../../service/categoriesService";
 import { aiService } from "../../../service/aiService";
 import Card from "../../../components/common/Card";
+import useCompare from "../../../hooks/useCompare";
+import { ROUTES } from "../../../constants/routes";
 
 import "./style.scss";
 
 export default function CategorySideBar() {
   const dispatch = useDispatch();
   const categoryListRef = useRef(null);
+  const resultRef = useRef(null);
+
   const [activeCategory, setActiveCategory] = useState(null);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const resultRef = useRef(null);
-  const handleCategoryScroll = (direction) => {
-    if (!categoryListRef.current) return;
+  const { compareIds } = useCompare();
 
-    const scrollAmount = 360;
-
-    categoryListRef.current.scrollBy({
-      left: direction === "left" ? -scrollAmount : scrollAmount,
-      behavior: "smooth",
-    });
-  };
   const categories = useSelector((state) => {
     const items =
       state.categories.categories?.items ?? state.categories.categories;
@@ -39,9 +36,26 @@ export default function CategorySideBar() {
     return Array.isArray(items) ? items : [];
   });
 
+  const activeCategoryName = useMemo(() => {
+    const active = categories.find(
+      (category) => String(category.id) === String(activeCategory),
+    );
+
+    return active?.name || active?.categoryName || active?.title || "Selected";
+  }, [activeCategory, categories]);
+
   useEffect(() => {
     categoriesService.getCategories(dispatch);
   }, [dispatch]);
+
+  const handleCategoryScroll = (direction) => {
+    if (!categoryListRef.current) return;
+
+    categoryListRef.current.scrollBy({
+      left: direction === "left" ? -320 : 320,
+      behavior: "smooth",
+    });
+  };
 
   const handleSelectCategory = async (categoryId) => {
     setActiveCategory(categoryId);
@@ -49,8 +63,11 @@ export default function CategorySideBar() {
 
     try {
       const res = await aiService.recommendByCategories(categoryId);
+      const nextProducts = Array.isArray(res?.data?.items)
+        ? res.data.items.slice(0, 4)
+        : [];
 
-      setProducts(res?.data?.items || []);
+      setProducts(nextProducts);
 
       setTimeout(() => {
         resultRef.current?.scrollIntoView({
@@ -60,7 +77,6 @@ export default function CategorySideBar() {
       }, 100);
     } catch (err) {
       console.error(err);
-
       setProducts([]);
     } finally {
       setLoading(false);
@@ -69,16 +85,11 @@ export default function CategorySideBar() {
 
   return (
     <section className="category-section">
-      {/* =====================================
-          HEADER
-      ====================================== */}
       <div className="category-section__top">
         <div>
           <span className="category-section__eyebrow">AI SMART PICKS</span>
-
           <h3>Find what fits you</h3>
-
-          <p>Choose a category and let AI discover products for you.</p>
+          <p>Choose a category and let AI surface compact product picks fast.</p>
         </div>
 
         <div className="category-section__ai-badge">
@@ -87,19 +98,29 @@ export default function CategorySideBar() {
         </div>
       </div>
 
-      {/* =====================================
-          CATEGORY HORIZONTAL SCROLL
-      ====================================== */}
-      <div className="category-section__category-area">
-        <button
-          type="button"
-          className="category-section__scroll-btn category-section__scroll-btn--left"
-          onClick={() => handleCategoryScroll("left")}
-          aria-label="Previous categories"
-        >
-          <ArrowLeft size={17} />
-        </button>
+      <div className="category-section__category-toolbar">
+        <p>Browse categories to get a focused shortlist.</p>
+        <div className="category-section__scroll-actions">
+          <button
+            type="button"
+            className="category-section__scroll-btn category-section__scroll-btn--left"
+            onClick={() => handleCategoryScroll("left")}
+            aria-label="Previous categories"
+          >
+            <ArrowLeft size={17} />
+          </button>
+          <button
+            type="button"
+            className="category-section__scroll-btn category-section__scroll-btn--right"
+            onClick={() => handleCategoryScroll("right")}
+            aria-label="Next categories"
+          >
+            <ArrowRight size={17} />
+          </button>
+        </div>
+      </div>
 
+      <div className="category-section__category-area">
         <div ref={categoryListRef} className="category-section__list">
           {categories.map((category) => {
             const categoryName =
@@ -122,35 +143,24 @@ export default function CategorySideBar() {
                 <span className="category-card__icon">
                   {categoryName.charAt(0).toUpperCase()}
                 </span>
-
                 <span className="category-card__name">{categoryName}</span>
-
                 <ArrowUpRight size={14} className="category-card__arrow" />
               </button>
             );
           })}
         </div>
-
-        <button
-          type="button"
-          className="category-section__scroll-btn category-section__scroll-btn--right"
-          onClick={() => handleCategoryScroll("right")}
-          aria-label="Next categories"
-        >
-          <ArrowRight size={17} />
-        </button>
       </div>
 
-      {/* =====================================
-          AI RESULT
-          LUÔN HIỂN THỊ
-      ====================================== */}
       <div className="category-section__result" ref={resultRef}>
         <div className="category-section__result-header">
           <div>
             <span>AI RECOMMENDATIONS</span>
-
             <h3>Selected for you</h3>
+            <p>
+              {activeCategory
+                ? `Showing quick picks for ${activeCategoryName}.`
+                : "Pick a category to generate a shortlist."}
+            </p>
           </div>
 
           <div className="category-section__result-icon">
@@ -159,58 +169,62 @@ export default function CategorySideBar() {
         </div>
 
         <div className="category-section__result-body">
-          {/* CHƯA CHỌN CATEGORY */}
           {!activeCategory ? (
-            <div className="category-section__state">
+            <div className="category-section__state category-section__state--rich">
               <div className="category-section__state-icon">
                 <Sparkles size={22} />
               </div>
-
-              <strong>Select a category</strong>
-
+              <strong>Start with a category</strong>
               <p>
-                Choose one of the categories above and AI will recommend
-                matching products.
+                Electronics, fashion, home or collectibles — AI will narrow
+                the space and hand you a compact shortlist.
               </p>
+              <div className="category-section__state-features">
+                <span>Focused picks</span>
+                <span>Compact cards</span>
+                <span>Compare-ready</span>
+              </div>
             </div>
           ) : loading ? (
-            /* LOADING */
-            <div className="category-section__state">
-              <span className="category-section__loader" />
-
-              <strong>Finding products</strong>
-
-              <p>AI is analyzing products in your selected category.</p>
-            </div>
-          ) : products.length > 0 ? (
-            /* PRODUCTS */
-            <div className="category-section__products">
-              {products.map((item, index) => (
-                <div
-                  key={item.productId || item.id || index}
-                  className="category-section__product"
-                  style={{
-                    "--product-index": index,
-                  }}
-                >
-                  <Card item={item} />
-                </div>
-              ))}
-            </div>
-          ) : (
-            /* EMPTY RESULT */
             <div className="category-section__state">
               <div className="category-section__state-icon">
-                <Sparkles size={22} />
+                <WandSparkles size={20} />
               </div>
-
-              <strong>No products found</strong>
-
-              <p>
-                AI could not find matching products for this category. Try
-                another one.
-              </p>
+              <strong>Generating recommendations</strong>
+              <p>Finding the best matches for {activeCategoryName}.</p>
             </div>
+          ) : products.length === 0 ? (
+            <div className="category-section__state category-section__state--rich">
+              <div className="category-section__state-icon">
+                <Search size={22} />
+              </div>
+              <strong>No recommendations yet</strong>
+              <p>
+                We could not find a strong AI shortlist for this category right
+                now. Try another category or explore the marketplace directly.
+              </p>
+              <div className="category-section__state-actions">
+                <Link to={ROUTES.PRODUCT.PRODUCTS}>Browse products</Link>
+              </div>
+            </div>
+          ) : (
+            <>
+              <div className="category-section__result-actions">
+                <Link to={ROUTES.PRODUCT.PRODUCTS}>View all recommendations</Link>
+                {compareIds.length > 0 ? <Link to={ROUTES.COMPARE}>Compare</Link> : null}
+              </div>
+              <div className="category-section__products">
+                {products.map((item, index) => (
+                  <div
+                    key={item.id || item.productId || index}
+                    className="category-section__product"
+                    style={{ "--product-index": index }}
+                  >
+                    <Card item={item} />
+                  </div>
+                ))}
+              </div>
+            </>
           )}
         </div>
       </div>

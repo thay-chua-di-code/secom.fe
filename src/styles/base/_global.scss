@@ -1,5 +1,24 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto+Mono:wght@400;500;600&display=swap");
 
+:root {
+  --aidr-bg: #05070d;
+  --aidr-surface: #0b111b;
+  --aidr-surface-2: #101827;
+  --aidr-surface-3: #141f31;
+  --aidr-surface-hover: #182437;
+  --aidr-border: rgba(255, 255, 255, 0.08);
+  --aidr-border-strong: rgba(255, 255, 255, 0.14);
+  --aidr-text: #f7f9fc;
+  --aidr-text-secondary: #98a2b3;
+  --aidr-text-muted: #6b7280;
+  --aidr-primary: #3b82f6;
+  --aidr-primary-hover: #2563eb;
+  --aidr-success: #22c55e;
+  --aidr-danger: #ef4444;
+  --aidr-warning: #f59e0b;
+  --aidr-shadow: 0 22px 60px rgba(0, 0, 0, 0.28);
+}
+
 /* =========================================================
    CONTAINER
 ========================================================= */

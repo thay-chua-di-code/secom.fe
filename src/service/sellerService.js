@@ -38,6 +38,25 @@ const getApiErrorMessage = (error, fallbackMessage) => {
 };
 
 export const sellerService = {
+  getPublicSellerShopProfile: async (sellerId) => {
+    try {
+      const res = await axiosClient.get(
+        API_ENDPOINTS.SELLER.PUBLIC_SHOP_PROFILE(sellerId),
+        {
+          skipAuth: true,
+        },
+      );
+
+      return res.data?.data ?? res.data;
+    } catch (e) {
+      const error = new Error(
+        e?.response?.data?.message || e?.message || "Unable to load seller shop.",
+      );
+      error.response = e?.response;
+      throw error;
+    }
+  },
+
   becomeSeller: async (payload) => {
     try {
       const result = await axiosClient.post(

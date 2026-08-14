@@ -256,6 +256,39 @@
   }
 }
 
+.notification-nav__trigger {
+  background: rgba(13, 18, 29, 0.92);
+  border-color: var(--aidr-border);
+  color: var(--aidr-text);
+}
+
+.notification-dropdown {
+  background: linear-gradient(180deg, rgba(13, 18, 29, 0.99), rgba(9, 12, 19, 0.99));
+  border-color: var(--aidr-border);
+  box-shadow: var(--aidr-shadow);
+}
+
+.notification-dropdown__header,
+.notification-dropdown__list,
+.notification-dropdown__footer,
+.notification-empty,
+.notification-empty__icon {
+  background: transparent !important;
+  color: var(--aidr-text);
+  border-color: var(--aidr-border) !important;
+}
+
+.notification-dropdown__header p,
+.notification-empty span,
+.notification-dropdown__footer a {
+  color: var(--aidr-text-secondary) !important;
+}
+
+.notification-dropdown__footer a:hover {
+  background: rgba(59, 130, 246, 0.08);
+  color: #dbeafe !important;
+}
+
 // ============================================================
 // ANIMATION
 // ============================================================

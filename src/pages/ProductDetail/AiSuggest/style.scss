@@ -9,6 +9,14 @@
 
   color: #ffffff;
 
+  .title,
+  .title-main,
+  h2,
+  h3,
+  h4 {
+    color: var(--aidr-text);
+  }
+
   &__list {
     width: 100%;
 
@@ -355,6 +363,25 @@
 
         font-weight: 500;
       }
+    }
+  }
+}
+
+.ai-product-card {
+  border: 1px solid var(--aidr-border);
+  border-radius: 22px;
+  overflow: hidden;
+  background: linear-gradient(180deg, rgba(14, 19, 28, 0.98), rgba(10, 13, 20, 0.98));
+  box-shadow: var(--aidr-shadow);
+
+  &__actions .icon-btn {
+    border-color: var(--aidr-border);
+    background: rgba(8, 12, 18, 0.82);
+    color: var(--aidr-text-secondary);
+
+    &:hover {
+      background: rgba(59, 130, 246, 0.16);
+      color: #dbeafe;
     }
   }
 }

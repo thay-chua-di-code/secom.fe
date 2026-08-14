@@ -398,6 +398,37 @@
   line-height: 1.6;
 }
 
+.store-information,
+.form-card {
+  color: var(--aidr-text);
+}
+
+.form-card {
+  background: linear-gradient(180deg, rgba(13, 18, 29, 0.98), rgba(9, 12, 19, 0.98)) !important;
+  border-color: var(--aidr-border) !important;
+  box-shadow: var(--aidr-shadow);
+
+  h2,
+  .subtitle,
+  label,
+  p,
+  span {
+    color: var(--aidr-text-secondary);
+  }
+
+  h2 {
+    color: var(--aidr-text) !important;
+  }
+
+  input,
+  textarea,
+  select {
+    background: rgba(255, 255, 255, 0.04) !important;
+    border-color: var(--aidr-border) !important;
+    color: var(--aidr-text) !important;
+  }
+}
+
 // ============================================================
 // TABLET
 // ============================================================

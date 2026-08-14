@@ -250,6 +250,20 @@
   }
 }
 
+.seller-status {
+  background: linear-gradient(180deg, rgba(13, 18, 29, 0.98), rgba(9, 12, 19, 0.98)) !important;
+  border-color: var(--aidr-border) !important;
+  box-shadow: var(--aidr-shadow);
+
+  h2 {
+    color: var(--aidr-text) !important;
+  }
+
+  p {
+    color: var(--aidr-text-secondary) !important;
+  }
+}
+
 // ============================================================
 // TABLET
 // ============================================================

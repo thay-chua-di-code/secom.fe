@@ -534,6 +534,23 @@
   }
 }
 
+.order-history {
+  .order-card,
+  .order-item,
+  .order-summary,
+  .order-empty,
+  .order-detail,
+  .order-timeline,
+  .status-card,
+  .order-header,
+  .order-filter,
+  .order-search {
+    background: linear-gradient(180deg, rgba(13, 18, 29, 0.98), rgba(9, 12, 19, 0.98)) !important;
+    border-color: var(--aidr-border) !important;
+    color: var(--aidr-text) !important;
+  }
+}
+
 /* =========================================================
    MUTED / ERROR
 ========================================================= */
