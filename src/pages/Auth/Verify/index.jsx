@@ -1,62 +1,83 @@
-import { useNavigate, useSearchParams } from "react-router-dom";
-import "./style.scss";
+import { useState } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import toast from "react-hot-toast";
+
 import Button from "../../../components/common/Button/Button";
+import AuthShell from "../components/AuthShell";
 import { authService } from "../../../service/authService";
 
-const Verify = () => {
+import "../shared.scss";
+import "./style.scss";
+
+export default function Verify() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const email = searchParams.get("email");
   const token = searchParams.get("token");
-  const handleResend = () => {};
+  const [verifying, setVerifying] = useState(false);
+  const [status, setStatus] = useState(null);
 
-  const handleBackLogin = async () => {
-    const result = await authService.verify_account({
-      email: email,
-      token: token,
-    });
-    if (result.data.success) {
-      navigate("/login");
+  const handleVerify = async () => {
+    try {
+      setVerifying(true);
+      const result = await authService.verify_account({ email, token });
+
+      if (result?.data?.success) {
+        setStatus({
+          tone: "success",
+          message: "Your email has been verified successfully. You can log in now.",
+        });
+        toast.success("Email verification successful.");
+        navigate("/login");
+        return;
+      }
+
+      setStatus({
+        tone: "error",
+        message: result?.data?.message || "Verification could not be completed.",
+      });
+    } catch (error) {
+      const message = error?.message || "Verification could not be completed.";
+      setStatus({ tone: "error", message });
+      toast.error(message);
+    } finally {
+      setVerifying(false);
     }
   };
+
   return (
-    <div className="verify-page">
-      <div className="verify-container flex-row-g">
-        {/* LEFT DECOR (hidden on mobile via Tailwind) */}
-        <div className="verify-left hidden md:flex">
-          <div className="blob" />
-          <h2>Verify Your Account</h2>
-          <p>
-            We’ve sent a verification link to your email. Please check your
-            inbox to activate your SECOM account.
-          </p>
+    <AuthShell
+      eyebrow="Email Verification"
+      title="Verify your account"
+      subtitle="Check your inbox and complete the final verification step to activate your AIDR account."
+      visualTitle="Activate your retail workspace"
+      visualDescription="Verification protects buyer and seller access, keeps account recovery secure and ensures your AIDR experience starts smoothly."
+    >
+      <div className="auth-form">
+        <div className="auth-status auth-status--success">
+          We sent a verification link to <strong>{email || "your email address"}</strong>.
         </div>
 
-        {/* RIGHT CONTENT */}
-        <div className="verify-right w-full md:w-1/2 flex flex-col justify-center items-center px-6 py-10">
-          <div className="icon">📩</div>
+        {status ? <div className={`auth-status auth-status--${status.tone}`}>{status.message}</div> : null}
 
-          <h1 className="title">Email Verification</h1>
-
-          <p className="subtitle">
-            We sent a link to
-            <span>{email}</span>
-          </p>
-
-          <Button className="btn-primary w-full max-w-[280px]">
-            Resend Email
+        <div className="auth-form__actions">
+          <Button className="auth-button" fullWidth onClick={handleVerify} disabled={verifying}>
+            {verifying ? "Verifying..." : "Verify email"}
           </Button>
 
-          <Button
-            className="btn-outline w-full max-w-[280px]"
-            onClick={handleBackLogin}
-          >
-            Back to Login
+          <Button className="auth-button--secondary" fullWidth onClick={() => navigate("/login")}>
+            Back to login
           </Button>
         </div>
+
+        <p className="auth-form__note">
+          Didn&apos;t receive a message? Check your spam folder or use the original verification email again.
+        </p>
       </div>
-    </div>
-  );
-};
 
-export default Verify;
+      <div className="auth-ui__footer">
+        Need to start over? <Link to="/register">Create a new account</Link>
+      </div>
+    </AuthShell>
+  );
+}

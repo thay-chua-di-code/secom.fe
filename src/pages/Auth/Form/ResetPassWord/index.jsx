@@ -1,55 +1,52 @@
 import { useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { Eye, EyeOff, Mail } from "lucide-react";
-import logo from "../../../../assets/icons/logo.jpg";
+import { toast } from "react-hot-toast";
+
 import { authService } from "../../../../service/authService";
 import Button from "../../../../components/common/Button/Button";
-import { toast } from "react-hot-toast";
+import AuthShell from "../../components/AuthShell";
+import PasswordField from "../../components/PasswordField";
+
+import "../../shared.scss";
 import "./style.scss";
 
-const ResetPassWord = () => {
+const PASSWORD_RULES = [
+  "At least 8 characters",
+  "Contains uppercase and lowercase letters",
+  "Contains at least one number",
+  "Contains at least one special character",
+];
+
+export default function ResetPassWord() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const token = searchParams.get("token");
   const [newPwd, setPwd] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [status, setStatus] = useState(null);
 
-  const handleSubmitResetPassword = async (e) => {
-    e.preventDefault();
+  const handleSubmitResetPassword = async (event) => {
+    event.preventDefault();
 
     if (!token) {
-      toast.error("Reset token is missing or invalid.");
+      const message = "Reset token is missing or invalid.";
+      setStatus({ tone: "error", message });
+      toast.error(message);
       return;
     }
 
     if (!newPwd) {
-      toast.error("Please enter your password!");
+      const message = "Please enter your password!";
+      setStatus({ tone: "error", message });
+      toast.error(message);
       return;
     }
 
-    if (newPwd.length < 8) {
-      toast.error("Password must be at least 8 characters!");
-      return;
-    }
-
-    if (!/[A-Z]/.test(newPwd)) {
-      toast.error("Password must contain at least 1 uppercase letter!");
-      return;
-    }
-
-    if (!/[a-z]/.test(newPwd)) {
-      toast.error("Password must contain at least 1 lowercase letter!");
-      return;
-    }
-
-    if (!/[0-9]/.test(newPwd)) {
-      toast.error("Password must contain at least 1 number!");
-      return;
-    }
-
-    if (!/[!@#$%^&*(),.?":{}|<>[\]\\/'`~_+=;-]/.test(newPwd)) {
-      toast.error("Password must contain at least 1 special character!");
+    if (newPwd.length < 8 || !/[A-Z]/.test(newPwd) || !/[a-z]/.test(newPwd) || !/[0-9]/.test(newPwd) || !/[!@#$%^&*(),.?":{}|<>[\]\\/'`~_+=;-]/.test(newPwd)) {
+      const message = "Your new password does not meet the required security rules.";
+      setStatus({ tone: "error", message });
+      toast.error(message);
       return;
     }
 
@@ -58,82 +55,57 @@ const ResetPassWord = () => {
       const result = await authService.reset_pwd({ token, newPassword: newPwd });
 
       if (result?.success) {
-      toast.success(
-        "Password reset successful! Please log in with your new password.",
-      );
+        const message = "Password reset successful! Please log in with your new password.";
+        setStatus({ tone: "success", message });
+        toast.success(message);
         navigate("/login", { replace: true });
       }
     } catch (error) {
-      toast.error(error.message || "Password reset failed.");
+      const message = error.message || "Password reset failed.";
+      setStatus({ tone: "error", message });
+      toast.error(message);
     } finally {
       setSubmitting(false);
     }
   };
 
   return (
-    <div className="forgot_password_container">
-      <form
-        className="forgot_password_wrapper"
-        onSubmit={handleSubmitResetPassword}
-      >
-        {/* LOGO */}
-        <div className="form_header">
-          <Link to="/" className="form_logo">
-            <img src={logo} alt="Logo" />
-          </Link>
+    <AuthShell
+      eyebrow="Set New Password"
+      title="Create a new password"
+      subtitle="Choose a strong password for your AIDR account. Once updated, use it the next time you sign in."
+    >
+      <form className="auth-form" onSubmit={handleSubmitResetPassword}>
+        <PasswordField
+          id="reset-password"
+          name="newPassword"
+          label="New password"
+          value={newPwd}
+          onChange={(event) => setPwd(event.target.value)}
+          placeholder="Enter your new password"
+          showPassword={showPassword}
+          onToggle={() => setShowPassword((current) => !current)}
+          autoComplete="new-password"
+        />
 
-          <h2>Reset Your Password?</h2>
+        <ul className="auth-password-rules">
+          {PASSWORD_RULES.map((rule) => (
+            <li key={rule}>{rule}</li>
+          ))}
+        </ul>
 
-          <p>
-            Enter your new password and confirm it to reset your password. Make
-            sure to choose a strong and secure password to protect your account.
-          </p>
-        </div>
+        {status ? <div className={`auth-status auth-status--${status.tone}`}>{status.message}</div> : null}
 
-        {/* NEW PASSWORD */}
-        <div className="form_group">
-          <label>New Password</label>
-
-          <div className="input_wrapper">
-            <Mail size={18} />
-
-            <input
-              type={showPassword ? "text" : "password"}
-              placeholder="Enter your new password"
-              required
-              value={newPwd}
-              onChange={(e) => setPwd(e.target.value)}
-            />
-
-            <button
-              type="button"
-              className="password-toggle-btn"
-              onClick={() => setShowPassword((current) => !current)}
-              aria-label={showPassword ? "Hide password" : "Show password"}
-              title={showPassword ? "Hide password" : "Show password"}
-            >
-              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-            </button>
-          </div>
-        </div>
-
-        {/* BUTTON */}
-        <div className="form_actions">
-          <Button type="submit" fullWidth={true} disabled={submitting}>
-            {submitting ? "Resetting Password..." : "Reset Password"}
+        <div className="auth-form__actions">
+          <Button className="auth-button" type="submit" fullWidth disabled={submitting}>
+            {submitting ? "Resetting password..." : "Reset password"}
           </Button>
         </div>
-
-        {/* FOOTER */}
-        <div className="form_footer">
-          <p>
-            Remember your password?
-            <Link to="/login">Back to Login</Link>
-          </p>
-        </div>
       </form>
-    </div>
-  );
-};
 
-export default ResetPassWord;
+      <div className="auth-ui__footer">
+        Remember your password? <Link to="/login">Back to login</Link>
+      </div>
+    </AuthShell>
+  );
+}
