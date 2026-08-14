@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import "./style.scss";
 import Button from "../../../components/common/Button/Button";
@@ -15,8 +15,6 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-
-const ITEMS_PER_PAGE = 7;
 
 const getProductId = (product) => product?.productId || product?.id;
 const getProductModerationStatus = (product) => {
@@ -49,7 +47,7 @@ const unwrapApiData = (response) => response?.data ?? response;
 const Products = () => {
   const dispatch = useDispatch();
 
-  const { products, loading, error } = useSelector(
+  const { products, loading, error, pagination } = useSelector(
     (state) => state.productsAdmin,
   );
 
@@ -71,31 +69,13 @@ const Products = () => {
   useEffect(() => {
     dispatch(
       fetchProducts({
-        pageNumber: 1,
-        pageSize: 1000,
+        page,
+        pageSize: 20,
+        searchTerm: search.trim() || undefined,
+        status: status || undefined,
       }),
     );
-  }, [dispatch]);
-
-  // ========================================
-  // SEARCH + FILTER ON FRONTEND
-  // ========================================
-  const filteredProducts = useMemo(() => {
-    const keyword = search.trim().toLowerCase();
-
-    return products.filter((product) => {
-      const matchesSearch =
-        !keyword ||
-        product.name?.toLowerCase().includes(keyword) ||
-        product.categoryName?.toLowerCase().includes(keyword) ||
-        product.sellerFullName?.toLowerCase().includes(keyword);
-
-      const matchesStatus =
-        !status || getProductModerationStatus(product) === status.toLowerCase();
-
-      return matchesSearch && matchesStatus;
-    });
-  }, [products, search, status]);
+  }, [dispatch, page, search, status]);
 
   // ========================================
   // SEARCH
@@ -115,27 +95,17 @@ const Products = () => {
     setPage(1);
   };
 
-  // ========================================
-  // PAGINATION FRONTEND
-  // ========================================
-
-  const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
-
-  const currentPage = Math.min(page, Math.max(totalPages, 1));
-
-  const paginatedProducts = useMemo(() => {
-    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-
-    const endIndex = startIndex + ITEMS_PER_PAGE;
-
-    return filteredProducts.slice(startIndex, endIndex);
-  }, [filteredProducts, currentPage]);
+  const currentPage = Number(pagination?.pageNumber ?? page);
+  const totalPages = Math.max(Number(pagination?.totalPages ?? 1), 1);
+  const totalCount = Number(pagination?.totalCount ?? products?.length ?? 0);
 
   const refreshProducts = () => {
     dispatch(
       fetchProducts({
-        pageNumber: 1,
-        pageSize: 1000,
+        page: currentPage,
+        pageSize: Number(pagination?.pageSize ?? 20),
+        searchTerm: search.trim() || undefined,
+        status: status || undefined,
       }),
     );
   };
@@ -264,7 +234,7 @@ const Products = () => {
       <div className="admin-products__header">
         <div>
           <h1>Products</h1>
-          <p>{filteredProducts.length} listings</p>
+          <p>{totalCount} listings</p>
         </div>
       </div>
 
@@ -287,10 +257,9 @@ const Products = () => {
           {/* STATUS */}
           <select value={status} onChange={handleStatusChange}>
             <option value="">All Statuses</option>
-            <option value="PENDING">Pending</option>
-            <option value="APPROVED">Approved</option>
-            <option value="REJECTED">Rejected</option>
-            <option value="INVALID">Invalid state</option>
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
           </select>
         </div>
 
@@ -311,8 +280,8 @@ const Products = () => {
             </thead>
 
             <tbody>
-              {paginatedProducts.length > 0 ? (
-                paginatedProducts.map((product) => {
+              {products.length > 0 ? (
+                products.map((product) => {
                   const moderationStatus = getProductModerationStatus(product);
                   const productId = getProductId(product);
                   const isActionLoading = actionLoading === productId;

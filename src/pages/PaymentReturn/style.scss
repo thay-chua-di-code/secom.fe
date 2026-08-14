@@ -173,6 +173,36 @@
   }
 }
 
+.payment-return {
+  color: var(--aidr-text);
+
+  &__card,
+  &__section {
+    background: linear-gradient(180deg, rgba(13, 18, 29, 0.98), rgba(9, 12, 19, 0.98));
+    border-color: var(--aidr-border);
+    box-shadow: var(--aidr-shadow);
+  }
+
+  h1,
+  h2,
+  h3,
+  strong {
+    color: var(--aidr-text);
+  }
+
+  p,
+  span,
+  li {
+    color: var(--aidr-text-secondary);
+  }
+
+  &__secondary {
+    background: rgba(255, 255, 255, 0.05) !important;
+    color: var(--aidr-text) !important;
+    border: 1px solid var(--aidr-border);
+  }
+}
+
 @keyframes payment-pop {
   from {
     opacity: 0;

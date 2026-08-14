@@ -1,12 +1,15 @@
 import { useState } from "react";
-import { X } from "lucide-react";
+import { createPortal } from "react-dom";
+import { MapPin, X } from "lucide-react";
 import Button from "../../../../../components/common/Button/Button";
 import { addressService } from "../../../../../service/addressService";
 import "./style.scss";
 import { useDispatch } from "react-redux";
 import toast from "react-hot-toast";
+
 export default function AddressModal({ open, onClose }) {
   const dispatch = useDispatch();
+
   const [formData, setFormData] = useState({
     receiverName: "",
     phoneNumber: "",
@@ -28,9 +31,21 @@ export default function AddressModal({ open, onClose }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     const result = await addressService.createAddress(formData, dispatch);
+
     if (result.success) {
       toast.success("Address added successfully!");
+
+      setFormData({
+        receiverName: "",
+        phoneNumber: "",
+        province: "",
+        district: "",
+        ward: "",
+        detailAddress: "",
+        isDefault: false,
+      });
 
       onClose();
     } else {
@@ -40,13 +55,20 @@ export default function AddressModal({ open, onClose }) {
 
   if (!open) return null;
 
-  return (
+  const modal = (
     <div className="address-modal">
       <div className="address-modal__overlay" onClick={onClose} />
 
-      <div className="address-modal__container w-full max-w-3xl mx-4">
+      <div
+        className="address-modal__container"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Add New Address"
+      >
         <div className="address-modal__header">
-          <div>
+          <div className="address-modal__heading">
+            <span>SHIPPING ADDRESS</span>
+
             <h2>Add New Address</h2>
 
             <p>Create a shipping address for your orders.</p>
@@ -57,7 +79,7 @@ export default function AddressModal({ open, onClose }) {
             className="address-modal__close"
             onClick={onClose}
           >
-            <X size={20} />
+            <X size={18} />
           </button>
         </div>
 
@@ -66,8 +88,8 @@ export default function AddressModal({ open, onClose }) {
           className="address-form"
           data-testid="address-form"
         >
-          <div className="grid gap-6 md:grid-cols-2">
-            <div className="form-group">
+          <div className="address-form__grid address-form__grid--2">
+            <div className="address-form__group">
               <label>Receiver Name</label>
 
               <input
@@ -77,11 +99,11 @@ export default function AddressModal({ open, onClose }) {
                 data-testid="address-receiver-input"
                 value={formData.receiverName}
                 onChange={handleChange}
-                placeholder="Enter receiver name"
+                placeholder="Receiver name"
               />
             </div>
 
-            <div className="form-group">
+            <div className="address-form__group">
               <label>Phone Number</label>
 
               <input
@@ -91,13 +113,13 @@ export default function AddressModal({ open, onClose }) {
                 data-testid="address-phone-input"
                 value={formData.phoneNumber}
                 onChange={handleChange}
-                placeholder="Enter phone number"
+                placeholder="Phone number"
               />
             </div>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-3">
-            <div className="form-group">
+          <div className="address-form__grid address-form__grid--3">
+            <div className="address-form__group">
               <label>Province</label>
 
               <input
@@ -111,7 +133,7 @@ export default function AddressModal({ open, onClose }) {
               />
             </div>
 
-            <div className="form-group">
+            <div className="address-form__group">
               <label>District</label>
 
               <input
@@ -125,7 +147,7 @@ export default function AddressModal({ open, onClose }) {
               />
             </div>
 
-            <div className="form-group">
+            <div className="address-form__group">
               <label>Ward</label>
 
               <input
@@ -140,7 +162,7 @@ export default function AddressModal({ open, onClose }) {
             </div>
           </div>
 
-          <div className="form-group">
+          <div className="address-form__group">
             <label>Detail Address</label>
 
             <textarea
@@ -154,7 +176,7 @@ export default function AddressModal({ open, onClose }) {
             />
           </div>
 
-          <div className="default-checkbox">
+          <label className="default-checkbox">
             <input
               type="checkbox"
               id="defaultAddress"
@@ -163,10 +185,26 @@ export default function AddressModal({ open, onClose }) {
               onChange={handleChange}
             />
 
-            <label htmlFor="defaultAddress">Set as default address</label>
-          </div>
+            <span className="default-checkbox__icon">
+              <MapPin size={15} />
+            </span>
+
+            <span>
+              <strong>Set as default address</strong>
+
+              <small>Use this address by default during checkout.</small>
+            </span>
+          </label>
 
           <div className="address-modal__footer">
+            <button
+              type="button"
+              className="address-btn address-btn--cancel"
+              onClick={onClose}
+            >
+              Cancel
+            </button>
+
             <Button
               type="submit"
               data-testid="address-save-btn"
@@ -179,4 +217,6 @@ export default function AddressModal({ open, onClose }) {
       </div>
     </div>
   );
+
+  return createPortal(modal, document.body);
 }

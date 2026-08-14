@@ -4,36 +4,58 @@ import { NOTIFICATION_HUB_URL } from "../config/api";
 class SignalRService {
   constructor() {
     this.connection = null;
+    this.handlers = new Map();
   }
 
-  async startConnection(token) {
+  async startConnection(getToken) {
+    if (this.connection) {
+      const state = this.connection.state;
+      if (
+        state === signalR.HubConnectionState.Connected ||
+        state === signalR.HubConnectionState.Connecting ||
+        state === signalR.HubConnectionState.Reconnecting
+      ) {
+        return this.connection;
+      }
+    }
+
     this.connection = new signalR.HubConnectionBuilder()
       .withUrl(NOTIFICATION_HUB_URL, {
-        accessTokenFactory: () => token ?? "",
+        accessTokenFactory: () => getToken?.() ?? "",
       })
-      .withAutomaticReconnect()
+      .withAutomaticReconnect([0, 2000, 5000, 10000, 30000])
       .build();
 
     try {
       await this.connection.start();
-      console.log("SignalR Connected");
+      return this.connection;
     } catch (err) {
-      console.error(err);
+      console.error("SignalR connection failed", err);
+      throw err;
     }
   }
 
-  stopConnection() {
+  async stopConnection() {
     if (this.connection) {
-      this.connection.stop();
+      const connection = this.connection;
+      this.connection = null;
+      this.handlers.clear();
+      await connection.stop();
     }
   }
 
-  onReceiveMessage(callback) {
-    this.connection.on("ReceiveMessage", callback);
+  on(eventName, callback) {
+    if (!this.connection) return;
+
+    this.connection.off(eventName);
+    this.connection.on(eventName, callback);
+    this.handlers.set(eventName, callback);
   }
 
-  async sendMessage(receiverId, content) {
-    await this.connection.invoke("SendMessage", receiverId, content);
+  off(eventName) {
+    if (!this.connection) return;
+    this.connection.off(eventName);
+    this.handlers.delete(eventName);
   }
 }
 

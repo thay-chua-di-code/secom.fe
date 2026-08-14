@@ -29,6 +29,33 @@
   }
 }
 
+.profile-page {
+  .profile-main,
+  .profile-panel,
+  .profile-card,
+  .profile-box,
+  .profile-content,
+  .profile-tab,
+  .profile-section,
+  .profile-form,
+  .profile-address,
+  .profile-empty,
+  .profile-sidebar__card {
+    background: linear-gradient(180deg, rgba(13, 18, 29, 0.98), rgba(9, 12, 19, 0.98)) !important;
+    border-color: var(--aidr-border) !important;
+    color: var(--aidr-text) !important;
+  }
+
+  input,
+  textarea,
+  select,
+  button:not(.main-header__nav-link) {
+    &:not(.google-auth-button) {
+      border-color: var(--aidr-border);
+    }
+  }
+}
+
 /* =========================================================
    LAYOUT
 ========================================================= */

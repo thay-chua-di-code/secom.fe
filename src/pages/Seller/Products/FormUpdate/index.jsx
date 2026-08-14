@@ -162,7 +162,7 @@ const UpdateProductModal = ({ open, product, onClose }) => {
         setSelectedPrimary(null);
       }
       await refetchImages();
-      await dispatch(fetchSellerProducts({ page: 1, pageSize: 10 }));
+      await dispatch(fetchSellerProducts({ page: 1, pageSize: 8 }));
     } catch (error) {
       toast.error(getErrorMessage(error, "Delete item image was failed."));
     } finally {
@@ -178,7 +178,7 @@ const UpdateProductModal = ({ open, product, onClose }) => {
       await setPrimaryProductImage(productId, imageId);
       toast.success("Main image was updated.");
       await refetchImages();
-      await dispatch(fetchSellerProducts({ page: 1, pageSize: 10 }));
+      await dispatch(fetchSellerProducts({ page: 1, pageSize: 8 }));
     } catch (error) {
       toast.error(getErrorMessage(error, "Update main image was failed."));
     } finally {
@@ -187,9 +187,13 @@ const UpdateProductModal = ({ open, product, onClose }) => {
   };
 
   const uploadPendingImages = async () => {
-    if (!pendingImages.length) return [];
+    const fileImages = pendingImages.filter(
+      (image) => image?.file instanceof File,
+    );
 
-    const imagesForUpload = pendingImages.map((image, index) => ({
+    if (!fileImages.length) return [];
+
+    const imagesForUpload = fileImages.map((image, index) => ({
       ...image,
       isPrimary: pendingPrimaryIndex === index,
     }));
@@ -203,9 +207,15 @@ const UpdateProductModal = ({ open, product, onClose }) => {
     const selectedExistingPrimaryId =
       selectedPrimary?.type === "existing" ? selectedPrimary.imageId : null;
 
-    const existingPayload = orderedExistingImages.map((image, index) =>
-      normalizeExistingImage(image, index, selectedExistingPrimaryId === image.id),
-    );
+    const existingPayload = orderedExistingImages
+      .filter((image) => typeof image?.imageUrl === "string" && image.imageUrl.trim())
+      .map((image, index) =>
+        normalizeExistingImage(
+          image,
+          index,
+          selectedExistingPrimaryId === image.id,
+        ),
+      );
 
     const uploadedPayload = await uploadPendingImages();
     const offset = existingPayload.length;
@@ -284,7 +294,7 @@ const UpdateProductModal = ({ open, product, onClose }) => {
 
       clearPendingImages();
       await refetchImages();
-      await dispatch(fetchSellerProducts({ page: 1, pageSize: 10 }));
+      await dispatch(fetchSellerProducts({ page: 1, pageSize: 8 }));
       toast.success("Product updated successfully!", { duration: 2500 });
       onClose();
     } catch (error) {

@@ -405,6 +405,25 @@ $background: #f8fafc;
   pointer-events: none;
 }
 
+.register-seller-container {
+  color: var(--aidr-text);
+}
+
+.seller-feature,
+.seller-banner__image-card,
+.seller-banner__image-top,
+.seller-banner__image-status {
+  background: linear-gradient(180deg, rgba(13, 18, 29, 0.98), rgba(9, 12, 19, 0.98)) !important;
+  border-color: var(--aidr-border) !important;
+  color: var(--aidr-text) !important;
+}
+
+.seller-feature p,
+.seller-banner__description,
+.seller-banner__image-label {
+  color: var(--aidr-text-secondary) !important;
+}
+
 // ============================================================
 // IMAGE CARD
 // ============================================================

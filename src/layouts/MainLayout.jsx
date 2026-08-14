@@ -14,7 +14,7 @@ export default function MainLayout() {
 
   return (
     <div className="main-layout">
-      {pathname !== "/" && <Header />}
+      {pathname !== "/" && !pathname.includes("/product-detail") && <Header />}
       <main
         className={`main-layout__content ${
           isHomePage ? "main-layout__content--home" : ""

@@ -106,6 +106,20 @@
   }
 }
 
+.cart-page {
+  .cart-list,
+  .cart-item,
+  .cart-summary,
+  .voucher-action,
+  .cart-empty,
+  .cart-box,
+  .cart-panel {
+    background: linear-gradient(180deg, rgba(13, 18, 29, 0.98), rgba(9, 12, 19, 0.98)) !important;
+    border-color: var(--aidr-border) !important;
+    color: var(--aidr-text) !important;
+  }
+}
+
 /* =========================================================
    VOUCHER ACTION
 ========================================================= */

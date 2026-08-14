@@ -28,6 +28,72 @@
   box-shadow: none;
 }
 
+.product-review {
+  box-shadow: var(--aidr-shadow);
+
+  .average-rating,
+  .review-form,
+  .review-item,
+  .review-modal,
+  .review-empty {
+    background: var(--aidr-surface-2) !important;
+    border-color: var(--aidr-border) !important;
+    color: var(--aidr-text);
+  }
+
+  .review-summary,
+  .review-filter {
+    background: transparent;
+  }
+
+  .review-form textarea,
+  .review-modal textarea {
+    background: rgba(255, 255, 255, 0.04) !important;
+    border: 1px solid var(--aidr-border) !important;
+    color: var(--aidr-text) !important;
+
+    &::placeholder {
+      color: var(--aidr-text-secondary) !important;
+    }
+
+    &:focus {
+      border-color: var(--aidr-primary) !important;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.14);
+      outline: none;
+    }
+  }
+
+  .review-form button,
+  .review-filter button,
+  .review-modal__actions button {
+    border-radius: 14px;
+  }
+
+  .review-form button,
+  .review-modal__actions button[type="submit"] {
+    background: var(--aidr-primary) !important;
+    border-color: var(--aidr-primary) !important;
+    color: #fff !important;
+  }
+
+  .review-filter button {
+    background: transparent !important;
+    border: 1px solid var(--aidr-border) !important;
+    color: var(--aidr-text-secondary) !important;
+
+    &.active,
+    &:hover {
+      background: rgba(59, 130, 246, 0.14) !important;
+      border-color: rgba(59, 130, 246, 0.3) !important;
+      color: #dbeafe !important;
+    }
+  }
+
+  .review-empty {
+    color: var(--aidr-text-secondary);
+  }
+}
+
 /* =========================================================
    HEADER
 ========================================================= */

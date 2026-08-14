@@ -1,11 +1,8 @@
-import TopHeader from "./TopHeader";
 import MainHeader from "./MainHeader";
-import { useState } from "react";
 
 export default function Header() {
   return (
-    <header>
-      {/* <TopHeader /> */}
+    <header className="site-header">
       <MainHeader />
     </header>
   );

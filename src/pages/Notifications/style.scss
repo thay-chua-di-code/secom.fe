@@ -417,6 +417,53 @@
   }
 }
 
+.notification-page {
+  color: var(--aidr-text);
+
+  &__wrapper,
+  &__header,
+  &__filter,
+  &__content,
+  &__empty,
+  &__loading {
+    background: linear-gradient(180deg, rgba(13, 18, 29, 0.98), rgba(9, 12, 19, 0.98)) !important;
+    border-color: var(--aidr-border) !important;
+    color: var(--aidr-text);
+    box-shadow: var(--aidr-shadow);
+  }
+
+  &__icon {
+    background: rgba(59, 130, 246, 0.12) !important;
+    border-color: rgba(59, 130, 246, 0.2) !important;
+    color: #93c5fd !important;
+    box-shadow: none !important;
+  }
+
+  &__title {
+    color: var(--aidr-text) !important;
+  }
+
+  &__subtitle,
+  &__empty span {
+    color: var(--aidr-text-secondary) !important;
+  }
+
+  &__mark-read-btn,
+  &__filter-btn {
+    background: rgba(255, 255, 255, 0.03) !important;
+    border-color: var(--aidr-border) !important;
+    color: var(--aidr-text-secondary) !important;
+    box-shadow: none !important;
+
+    &:hover,
+    &.active {
+      background: rgba(59, 130, 246, 0.14) !important;
+      border-color: rgba(59, 130, 246, 0.28) !important;
+      color: #dbeafe !important;
+    }
+  }
+}
+
 // ============================================================
 // SPINNER
 // ============================================================

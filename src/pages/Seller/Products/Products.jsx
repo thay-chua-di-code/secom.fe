@@ -30,7 +30,7 @@ const ITEMS_PER_PAGE = 8;
 const SUPPORTED_IMPORT_EXTENSIONS = [".xls", ".csv"];
 
 const INVALID_IMPORT_FILE_MESSAGE =
-  "Hiện tại hệ thống chỉ hỗ trợ file .xls và .csv.";
+  "Hiện tại hệ thống chỉ hỗ trợ file .xls và .csv theo đúng template import.";
 
 const isValidImportFile = (file) => {
   const fileName = file?.name?.toLowerCase() || "";
@@ -436,10 +436,10 @@ const Products = () => {
       const fileName =
         extractFileNameFromDisposition(
           response?.headers?.["content-disposition"],
-        ) || "seller-products.xls";
+        ) || "seller-product-import-template.csv";
 
       const blob = new Blob([response.data], {
-        type: response?.headers?.["content-type"] || "application/vnd.ms-excel",
+        type: response?.headers?.["content-type"] || "text/csv;charset=utf-8",
       });
 
       const url = window.URL.createObjectURL(blob);
@@ -458,7 +458,7 @@ const Products = () => {
 
       window.URL.revokeObjectURL(url);
 
-      toast.success("Xuất danh sách sản phẩm thành công.");
+      toast.success("Tải template import thành công.");
     } catch (err) {
       const { message, errors } = getErrorDetails(err);
 
@@ -529,7 +529,7 @@ const Products = () => {
           >
             <Upload size={18} />
 
-            {importing ? "Importing..." : "Import Excel"}
+{importing ? "Importing products..." : "Import Products"}
           </Button>
 
           <Button
@@ -539,7 +539,7 @@ const Products = () => {
           >
             <Download size={18} />
 
-            {exporting ? "Exporting..." : "Export Excel"}
+{exporting ? "Downloading template..." : "Download Template"}
           </Button>
 
           <Button
@@ -821,11 +821,11 @@ const Products = () => {
             aria-modal="true"
             onSubmit={handleImportProducts}
           >
-            <h3>Import Excel</h3>
+            <h3>Import Products</h3>
 
             <p>
-              Chọn file <strong>.xls</strong> hoặc <strong>.csv</strong> để nhập
-              sản phẩm. Hệ thống chưa hỗ trợ file .xlsx.
+              Chọn file <strong>.xls</strong> hoặc <strong>.csv</strong> theo
+              đúng template để nhập sản phẩm. Hệ thống chưa hỗ trợ file .xlsx.
             </p>
 
             <label className="seller-products__field">

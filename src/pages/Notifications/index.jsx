@@ -1,19 +1,18 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-
 import { Bell, CheckCheck } from "lucide-react";
 
 import NotificationItem from "./Item";
-
-import { getNotifications } from "../../redux/slice/notificationSlice";
+import {
+  getNotifications,
+  markAllNotificationsAsRead,
+} from "../../redux/slice/notificationSlice";
 
 import "./style.scss";
 
 export default function NotificationPage() {
   const dispatch = useDispatch();
-
   const [activeTab, setActiveTab] = useState("all");
-
   const { items, loading, unreadCount, pagination } = useSelector(
     (state) => state.notification,
   );
@@ -33,7 +32,6 @@ export default function NotificationPage() {
   return (
     <div className="notification-page mx-auto max-w-5xl">
       <div className="notification-page__wrapper">
-        {/* HEADER */}
         <div className="notification-page__header">
           <div className="notification-page__header-left">
             <div className="notification-page__icon">
@@ -42,42 +40,41 @@ export default function NotificationPage() {
 
             <div>
               <h1 className="notification-page__title">Notifications</h1>
-
               <p className="notification-page__subtitle">
                 You have <span>{unreadCount}</span> unread notifications
               </p>
             </div>
           </div>
 
-          <button className="notification-page__mark-read-btn">
+          <button
+            type="button"
+            className="notification-page__mark-read-btn"
+            onClick={() => dispatch(markAllNotificationsAsRead())}
+            disabled={unreadCount === 0}
+          >
             <CheckCheck size={16} />
-
             <span>Mark all as read</span>
           </button>
         </div>
 
-        {/* FILTER */}
         <div className="notification-page__filter">
           <button
+            type="button"
             onClick={() => setActiveTab("all")}
-            className={`notification-page__filter-btn ${
-              activeTab === "all" ? "active" : ""
-            }`}
+            className={`notification-page__filter-btn ${activeTab === "all" ? "active" : ""}`}
           >
             All
           </button>
 
           <button
+            type="button"
             onClick={() => setActiveTab("unread")}
-            className={`notification-page__filter-btn ${
-              activeTab === "unread" ? "active" : ""
-            }`}
+            className={`notification-page__filter-btn ${activeTab === "unread" ? "active" : ""}`}
           >
             Unread
           </button>
         </div>
 
-        {/* CONTENT */}
         <div className="notification-page__content">
           {loading ? (
             <div className="notification-page__loading">
@@ -90,6 +87,7 @@ export default function NotificationPage() {
                   key={notification.id}
                   notification={notification}
                   showDelete
+                  variant="page"
                 />
               ))}
             </div>
@@ -98,19 +96,14 @@ export default function NotificationPage() {
               <div className="notification-page__empty-icon">
                 <Bell size={42} />
               </div>
-
-              <h3 className="notification-page__empty-title">
-                No notifications
-              </h3>
-
+              <h3 className="notification-page__empty-title">No notifications yet</h3>
               <p className="notification-page__empty-text">
-                You currently don't have any notifications at the moment.
+                We&apos;ll let you know when something needs your attention.
               </p>
             </div>
           )}
         </div>
 
-        {/* FOOTER */}
         {pagination.totalPages > 1 && (
           <div className="notification-page__footer">
             <p className="notification-page__footer-text">
@@ -118,11 +111,14 @@ export default function NotificationPage() {
             </p>
 
             <div className="notification-page__pagination">
-              <button className="notification-page__pagination-btn">
+              <button type="button" className="notification-page__pagination-btn">
                 Previous
               </button>
 
-              <button className="notification-page__pagination-btn notification-page__pagination-btn--active">
+              <button
+                type="button"
+                className="notification-page__pagination-btn notification-page__pagination-btn--active"
+              >
                 Next
               </button>
             </div>

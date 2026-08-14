@@ -1,6 +1,6 @@
 const COMPARE_STORAGE_KEY = "secom_compare_products";
 
-const MAX_COMPARE_PRODUCTS = 4;
+const MAX_COMPARE_PRODUCTS = 2;
 
 export const getCompareProductIds = () => {
   try {
@@ -35,7 +35,7 @@ export const addCompareProductId = (id) => {
   }
 
   if (current.length >= MAX_COMPARE_PRODUCTS) {
-    throw new Error("You can compare maximum 4 products");
+    throw new Error("You can compare up to 2 products at a time. Remove one before adding another.");
   }
 
   return saveCompareProductIds([...current, String(id)]);

@@ -35,7 +35,7 @@ const NAV_ITEMS = [
       {
         title: "Categories",
         description: "Browse products by category",
-        to: "/categories",
+        to: "/products",
       },
       {
         title: "Smart Recommendations",
@@ -67,13 +67,13 @@ const NAV_ITEMS = [
   },
   {
     key: "customers",
-    label: "Customers",
-    to: "/products",
+    label: "FAQ",
+    to: "/faq",
   },
   {
     key: "pricing",
-    label: "Pricing",
-    to: "/",
+    label: "Policies",
+    to: "/policy/privacy",
   },
   {
     key: "company",
@@ -129,6 +129,7 @@ export default function MainHeader() {
   const [openCart, setOpenCart] = useState(false);
 
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   /* SEARCH */
 
@@ -152,7 +153,7 @@ export default function MainHeader() {
   const isExpanded =
     Boolean(activeNavItem?.dropdown) && !mobileOpen && !openSearch;
 
-  const isLoginPage = pathname === "/login" || pathname === "/register";
+  const isLoginPage = ["/login", "/register", "/forgot-password", "/reset-password", "/verify-email"].includes(pathname);
 
   /* =========================
      USER
@@ -267,6 +268,19 @@ export default function MainHeader() {
     };
   }, []);
 
+  useEffect(() => {
+    const updateScrolled = () => {
+      setIsScrolled(window.scrollY > 16);
+    };
+
+    updateScrolled();
+    window.addEventListener("scroll", updateScrolled, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", updateScrolled);
+    };
+  }, []);
+
   /* =========================
      NAV
   ========================== */
@@ -287,6 +301,8 @@ export default function MainHeader() {
     <>
       <div
         className={`main-header ${isExpanded ? "main-header--expanded" : ""} ${
+          isScrolled ? "main-header--scrolled" : ""
+        } ${
           openSearch ? "main-header--search-open" : ""
         }`}
         onMouseLeave={closeMenus}

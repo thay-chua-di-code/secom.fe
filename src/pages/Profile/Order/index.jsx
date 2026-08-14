@@ -2,6 +2,7 @@ import { Clock3, PackageCheck, Search, ShoppingBag, Truck } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
+import { createPortal } from "react-dom";
 import { orderApi, unwrapApiData } from "../../../api/orderApi";
 import { paymentApi } from "../../../api/paymentApi";
 import { formatCurrencyVN } from "../../../utils/fncUtils";
@@ -293,16 +294,24 @@ function StatusBadge({ status }) {
 
 function OrderDetailModal({ order, payment, loading, onClose }) {
   if (!order) return null;
+
   const items = getOrderItems(order);
   const returnRefundRequest = getLatestReturnRefundRequest(order);
   const returnRefundStatus = getReturnRequestStatus(returnRefundRequest, order);
   const orderStatus = normalizeStatus(order.status);
   const canRateSeller = orderStatus === "completed";
-  return (
+
+  const modalContent = (
     <div className="order-detail-backdrop">
-      <div className="order-detail-panel">
+      <div
+        className="order-detail-panel"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Order Detail"
+      >
         <div className="order-detail-panel__header">
           <h2>Order Detail</h2>
+
           <button type="button" onClick={onClose}>
             ×
           </button>
@@ -312,15 +321,18 @@ function OrderDetailModal({ order, payment, loading, onClose }) {
 
         <section>
           <h3>Order</h3>
+
           <div className="detail-grid">
             <div>
               <span>Order ID</span>
               <strong>{getOrderId(order)}</strong>
             </div>
+
             <div>
               <span>Status</span>
               <StatusBadge status={order.status} />
             </div>
+
             <div>
               <span>Created At</span>
               <strong>
@@ -331,30 +343,37 @@ function OrderDetailModal({ order, payment, loading, onClose }) {
                   : "--"}
               </strong>
             </div>
+
             <div>
               <span>Subtotal</span>
               <strong>{formatCurrencyVN(order.subtotal || 0)}</strong>
             </div>
+
             <div>
               <span>Shipping Fee</span>
               <strong>{formatCurrencyVN(order.shippingFee || 0)}</strong>
             </div>
+
             <div>
               <span>Service Fee</span>
               <strong>{formatCurrencyVN(order.serviceFee || 0)}</strong>
             </div>
+
             <div>
               <span>Discount Amount</span>
               <strong>{formatCurrencyVN(order.discountAmount || 0)}</strong>
             </div>
+
             <div>
               <span>Final Total</span>
               <strong>{formatCurrencyVN(getFinalTotal(order))}</strong>
             </div>
+
             <div>
               <span>Total Items</span>
               <strong>{items.length}</strong>
             </div>
+
             <div>
               <span>Voucher Code</span>
               <strong>{order.voucherCode || "--"}</strong>
@@ -364,6 +383,7 @@ function OrderDetailModal({ order, payment, loading, onClose }) {
 
         <section>
           <h3>Exchanges / Warranty</h3>
+
           {returnRefundStatus || returnRefundRequest ? (
             <div className="detail-grid return-refund-grid">
               <div>
@@ -372,18 +392,24 @@ function OrderDetailModal({ order, payment, loading, onClose }) {
                   {getReturnRequestId(returnRefundRequest) || "--"}
                 </strong>
               </div>
+
               <div>
                 <span>Type</span>
                 <strong>{getReturnRequestType(returnRefundRequest)}</strong>
               </div>
+
               <div>
                 <span>Return/Refund Status</span>
+
                 <span
-                  className={`return-refund-badge ${getReturnStatusBadgeClass(returnRefundStatus)}`}
+                  className={`return-refund-badge ${getReturnStatusBadgeClass(
+                    returnRefundStatus,
+                  )}`}
                 >
                   {getReturnStatusLabel(returnRefundStatus)}
                 </span>
               </div>
+
               <div>
                 <span>Requested At</span>
                 <strong>
@@ -394,6 +420,7 @@ function OrderDetailModal({ order, payment, loading, onClose }) {
                     : "--"}
                 </strong>
               </div>
+
               <div>
                 <span>Reviewed At</span>
                 <strong>
@@ -404,13 +431,16 @@ function OrderDetailModal({ order, payment, loading, onClose }) {
                     : "--"}
                 </strong>
               </div>
+
               <div>
                 <span>Reason</span>
                 <strong>{getReturnRequestReason(returnRefundRequest)}</strong>
               </div>
+
               {normalizeReturnStatus(returnRefundStatus) === "rejected" && (
                 <div className="return-refund-grid__full">
                   <span>Reject Reason</span>
+
                   <strong>
                     {getReturnRequestRejectReason(returnRefundRequest) ||
                       "No rejection reason provided."}
@@ -427,14 +457,17 @@ function OrderDetailModal({ order, payment, loading, onClose }) {
 
         <section>
           <h3>Items</h3>
+
           <div className="order-detail-items">
             {items.length === 0 && <p className="order-muted">No items.</p>}
+
             {items.map((item) => {
               const quantity = getOrderItemQuantity(item);
               const unitPrice = getOrderItemUnitPrice(item);
               const subtotal = getOrderItemTotalPrice(item);
               const productPath = getOrderItemProductPath(item);
               const productName = getOrderItemName(item);
+
               const productImage = (
                 <OrderProductImage
                   item={item}
@@ -442,6 +475,7 @@ function OrderDetailModal({ order, payment, loading, onClose }) {
                   alt={productName}
                 />
               );
+
               const productTitle = <strong>{productName}</strong>;
 
               return (
@@ -459,6 +493,7 @@ function OrderDetailModal({ order, payment, loading, onClose }) {
                   ) : (
                     productImage
                   )}
+
                   <div className="order-detail-item__info">
                     {productPath ? (
                       <Link
@@ -470,19 +505,25 @@ function OrderDetailModal({ order, payment, loading, onClose }) {
                     ) : (
                       productTitle
                     )}
+
                     <span>Product ID: {getOrderItemProductId(item)}</span>
+
                     <span>
                       Status: {item.status || item.itemStatus || "--"}
                     </span>
+
                     <div className="order-detail-item__actions">
                       {productPath && (
                         <Link to={productPath} onClick={onClose}>
                           Review product
                         </Link>
                       )}
+
                       {item.sellerId && canRateSeller && (
                         <Link
-                          to={`/seller/detail/${item.sellerId}?orderId=${encodeURIComponent(getOrderId(order))}`}
+                          to={`/seller/detail/${
+                            item.sellerId
+                          }?orderId=${encodeURIComponent(getOrderId(order))}`}
                           onClick={onClose}
                         >
                           Rate seller
@@ -490,6 +531,7 @@ function OrderDetailModal({ order, payment, loading, onClose }) {
                       )}
                     </div>
                   </div>
+
                   <div className="order-detail-item__price">
                     <span>Qty: {quantity}</span>
                     <span>Unit: {formatCurrencyVN(unitPrice)}</span>
@@ -503,15 +545,18 @@ function OrderDetailModal({ order, payment, loading, onClose }) {
 
         <section>
           <h3>Payment</h3>
+
           <div className="detail-grid">
             <div>
               <span>Gateway</span>
               <strong>{payment?.gateway || "Omise"}</strong>
             </div>
+
             <div>
               <span>Payment Status</span>
               <StatusBadge status={payment?.status || order.paymentStatus} />
             </div>
+
             <div>
               <span>Amount</span>
               <strong>
@@ -523,6 +568,8 @@ function OrderDetailModal({ order, payment, loading, onClose }) {
       </div>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 }
 
 function OrderActionModal({ type, order, actionLoading, onClose, onConfirm }) {
@@ -783,7 +830,11 @@ export default function OrderHistory() {
   const [orderAction, setOrderAction] = useState(null);
 
   const loadOrders = useCallback(
-    async ({ page = 1, status = activeStatus, search = debouncedOrderKeyword } = {}) => {
+    async ({
+      page = 1,
+      status = activeStatus,
+      search = debouncedOrderKeyword,
+    } = {}) => {
       try {
         setLoading(true);
         const response = await orderApi.getPurchasedOrdersPaged({
@@ -883,7 +934,8 @@ export default function OrderHistory() {
         throw new Error("Missing amount");
       }
 
-      const response = await paymentApi.createPaymentTransaction(paymentRequest);
+      const response =
+        await paymentApi.createPaymentTransaction(paymentRequest);
       const data = unwrapApiData(response);
       const payment = data?.data ?? data;
       const paymentUrl =

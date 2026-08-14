@@ -66,6 +66,25 @@ $surface-soft: #f8fafc;
   }
 }
 
+.seller-step,
+.seller-form,
+.step-content,
+.step-item,
+.step-progress {
+  color: var(--aidr-text);
+}
+
+.step-content,
+.seller-form {
+  background: transparent;
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border-color: var(--aidr-border) !important;
+  color: var(--aidr-text) !important;
+}
+
 // ============================================================
 // STEP PROGRESS
 // ============================================================

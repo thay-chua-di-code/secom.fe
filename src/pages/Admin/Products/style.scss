@@ -517,6 +517,24 @@ table {
   text-align: center !important;
 }
 
+.admin-products,
+.table-wrapper,
+.table-toolbar,
+.table-scroll,
+.empty-state {
+  background: linear-gradient(180deg, rgba(13, 18, 29, 0.98), rgba(9, 12, 19, 0.98)) !important;
+  border-color: var(--aidr-border) !important;
+  color: var(--aidr-text) !important;
+}
+
+.admin-products table th,
+.admin-products table td,
+.table-toolbar select,
+.search-box {
+  border-color: var(--aidr-border) !important;
+  color: var(--aidr-text) !important;
+}
+
 // =====================================================
 // PAGINATION
 // =====================================================

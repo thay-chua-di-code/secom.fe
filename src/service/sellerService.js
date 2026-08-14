@@ -38,6 +38,25 @@ const getApiErrorMessage = (error, fallbackMessage) => {
 };
 
 export const sellerService = {
+  getPublicSellerShopProfile: async (sellerId) => {
+    try {
+      const res = await axiosClient.get(
+        API_ENDPOINTS.SELLER.PUBLIC_SHOP_PROFILE(sellerId),
+        {
+          skipAuth: true,
+        },
+      );
+
+      return res.data?.data ?? res.data;
+    } catch (e) {
+      const error = new Error(
+        e?.response?.data?.message || e?.message || "Unable to load seller shop.",
+      );
+      error.response = e?.response;
+      throw error;
+    }
+  },
+
   becomeSeller: async (payload) => {
     try {
       const result = await axiosClient.post(
@@ -113,7 +132,17 @@ export const sellerService = {
         },
       });
 
-      return result.data.data;
+      const payload = result?.data?.data ?? result?.data ?? {};
+
+      return {
+        items: Array.isArray(payload?.items) ? payload.items : [],
+        pagination: {
+          pageNumber: Number(payload?.pageNumber ?? page),
+          pageSize: Number(payload?.pageSize ?? pageSize),
+          totalCount: Number(payload?.totalCount ?? 0),
+          totalPages: Number(payload?.totalPages ?? 0),
+        },
+      };
     } catch (e) {
       throw new Error(e?.response?.data?.message || "Get products failed");
     }

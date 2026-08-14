@@ -1,5 +1,5 @@
+import { createPortal } from "react-dom";
 import { MapPin, X } from "lucide-react";
-
 import { useEffect, useState } from "react";
 
 import Button from "../../../../../components/common/Button/Button";
@@ -42,7 +42,6 @@ export default function AddressUpdateModal({ open, onClose, initialData }) {
 
     setFormData((prev) => ({
       ...prev,
-
       [name]: type === "checkbox" ? checked : value,
     }));
   };
@@ -52,7 +51,6 @@ export default function AddressUpdateModal({ open, onClose, initialData }) {
 
     if (!initialData?.id) {
       toast.error("Address information is missing.");
-
       return;
     }
 
@@ -64,7 +62,6 @@ export default function AddressUpdateModal({ open, onClose, initialData }) {
 
     if (result?.success) {
       toast.success("Update address success!");
-
       onClose();
     } else {
       toast.error("Update failed!");
@@ -73,11 +70,16 @@ export default function AddressUpdateModal({ open, onClose, initialData }) {
 
   if (!open) return null;
 
-  return (
+  const modal = (
     <div className="address-modal">
       <div className="address-modal__overlay" onClick={onClose} />
 
-      <div className="address-modal__container">
+      <div
+        className="address-modal__container"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Update Address"
+      >
         <div className="address-modal__header">
           <div className="address-modal__heading">
             <span>SHIPPING ADDRESS</span>
@@ -132,6 +134,7 @@ export default function AddressUpdateModal({ open, onClose, initialData }) {
                 required
                 value={formData.province}
                 onChange={handleChange}
+                placeholder="Province"
               />
             </div>
 
@@ -143,6 +146,7 @@ export default function AddressUpdateModal({ open, onClose, initialData }) {
                 required
                 value={formData.district}
                 onChange={handleChange}
+                placeholder="District"
               />
             </div>
 
@@ -154,6 +158,7 @@ export default function AddressUpdateModal({ open, onClose, initialData }) {
                 required
                 value={formData.ward}
                 onChange={handleChange}
+                placeholder="Ward"
               />
             </div>
           </div>
@@ -207,4 +212,6 @@ export default function AddressUpdateModal({ open, onClose, initialData }) {
       </div>
     </div>
   );
+
+  return createPortal(modal, document.body);
 }

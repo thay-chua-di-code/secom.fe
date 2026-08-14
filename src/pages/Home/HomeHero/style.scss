@@ -1,284 +1,181 @@
-/* =========================================================
-   OUTER AREA
-   Khu vực phía sau hero khi component co lại
-========================================================= */
-
 .home-page__hero {
   width: 100%;
-
   background: #050505;
-
-  overflow: hidden;
+  overflow: clip;
+  margin-bottom: 28px;
 }
-
-/* =========================================================
-   HERO COMPONENT
-   CHÍNH THẰNG NÀY SẼ CO WIDTH
-========================================================= */
 
 .home-hero-stage {
+  --header-overlay-height: 108px;
+
   position: relative;
-
-  /*
-    Đây mới là width của toàn bộ component.
-    
-    scroll = 0:
-      width = 100%
-
-    scroll hết:
-      width = 100% - 64px
-  */
-  width: calc(100% - var(--hero-inset));
-
+  width: 100%;
   max-width: none;
-
-  margin-left: auto;
-  margin-right: auto;
-
-  padding-top: var(--hero-top-space);
+  margin: 0;
+  padding-top: 0;
   padding-bottom: var(--hero-bottom-space);
-
   box-sizing: border-box;
-
-  /*
-    QUAN TRỌNG:
-    không để background đen ở stage nữa,
-    nếu không bạn vẫn cảm giác nó full width.
-  */
   background: transparent;
-
-  will-change: width;
-
-  transition: none;
 }
-
-/* =========================================================
-   ACTUAL VIDEO CONTAINER
-========================================================= */
 
 .home-hero {
   position: relative;
-
-  /*
-    Hero luôn full 100% của stage.
-    Không animate width ở đây nữa.
-  */
   width: 100%;
   max-width: none;
-
   margin: 0;
-
-  height: calc(min(860px, 96vh) - (var(--hero-progress) * 60px));
-
-  min-height: 680px;
-
+  min-height: 100vh;
+  min-height: 100svh;
   overflow: hidden;
-
   background: #080808;
-
-  /*
-    scroll = 0:
-    radius gần như 0
-
-    scroll = 1:
-    radius 28px
-  */
-  border-radius: var(--hero-radius);
-
-  transform: none;
-
-  will-change: border-radius, height;
-
-  /* ===============================
-     VIDEO
-  =============================== */
+  border-radius: 0 0 var(--hero-radius) var(--hero-radius);
+  will-change: border-radius;
 
   &__video {
     position: absolute;
-
     inset: 0;
-
     z-index: 0;
-
     display: block;
-
     width: 100%;
     height: 100%;
-
     object-fit: cover;
-    object-position: center;
-
+    object-position: center center;
     pointer-events: none;
   }
-
-  /* ===============================
-     OVERLAY
-  =============================== */
 
   &__overlay {
     position: absolute;
-
     inset: 0;
-
     z-index: 1;
-
     pointer-events: none;
-
     background:
-      linear-gradient(
-        180deg,
-        rgba(0, 0, 0, 0.2) 0%,
-        rgba(0, 0, 0, 0.14) 30%,
-        rgba(0, 0, 0, 0.28) 68%,
-        rgba(0, 0, 0, 0.4) 100%
-      ),
-      rgba(0, 0, 0, calc(var(--hero-progress) * 0.08));
+      radial-gradient(circle at center, rgba(0, 0, 0, 0.06), transparent 42%),
+      linear-gradient(180deg, rgba(0, 0, 0, 0.34) 0%, rgba(0, 0, 0, 0.18) 24%, rgba(0, 0, 0, 0.24) 58%, rgba(0, 0, 0, 0.52) 100%);
   }
-
-  /* ===============================
-     HEADER
-  =============================== */
-
-  &__header {
-    position: absolute;
-
-    top: 0;
-    left: 0;
-    right: 0;
-
-    width: 100%;
-
-    z-index: 20;
-  }
-
-  /* ===============================
-     CONTENT
-  =============================== */
 
   &__content {
     position: relative;
-
     z-index: 5;
-
     width: min(920px, calc(100% - 40px));
-    height: 100%;
-
+    min-height: 100vh;
+    min-height: 100svh;
     margin: 0 auto;
-
-    padding-top: 98px;
-
+    padding-top: calc(var(--header-overlay-height) + 36px);
+    padding-bottom: 80px;
     display: flex;
     flex-direction: column;
-
     align-items: center;
     justify-content: center;
-
     text-align: center;
-
     color: #ffffff;
-
-    /*
-      Không scale content riêng nữa.
-      Chỉ cho dịch nhẹ lên.
-    */
     transform: translateY(calc(var(--hero-progress) * -6px));
   }
 
-  /* ===============================
-     EYEBROW
-  =============================== */
-
   &__eyebrow {
     margin-bottom: 22px;
-
     font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
-
     font-size: 13px;
     font-weight: 600;
-
     letter-spacing: 1.2px;
-
     text-transform: uppercase;
-
     color: rgba(255, 255, 255, 0.58);
   }
 
-  /* ===============================
-     TITLE
-  =============================== */
-
   &__title {
     width: 100%;
-    max-width: 920px;
-
+    max-width: 900px;
     margin: 0;
-
-    font-size: clamp(52px, 5vw, 78px);
-
+    font-size: clamp(50px, 5vw, 78px);
     font-weight: 400;
-
     line-height: 0.98;
-
     letter-spacing: -3.6px;
-
     color: #ffffff;
   }
 
-  /* ===============================
-     DESCRIPTION
-  =============================== */
-
   &__description {
     max-width: 620px;
-
     margin: 28px auto 0;
-
     font-size: 17px;
-
     line-height: 1.5;
-
     color: rgba(255, 255, 255, 0.82);
   }
-
-  /* ===============================
-     BUTTON
-  =============================== */
 
   &__button {
     min-width: 138px;
     height: 52px;
-
     margin-top: 34px;
     padding: 0 26px;
-
     display: inline-flex;
     align-items: center;
     justify-content: center;
-
     border-radius: 999px;
-
     background: #0b73ef;
-
     color: #ffffff;
-
     text-decoration: none;
-
     font-size: 15px;
     font-weight: 600;
-
     transition:
       transform 0.2s ease,
       background 0.2s ease,
       box-shadow 0.2s ease;
-
     box-shadow: 0 10px 30px rgba(11, 115, 239, 0.24);
 
     &:hover {
       transform: translateY(-2px);
-
       background: #1683ff;
-
       box-shadow: 0 14px 36px rgba(11, 115, 239, 0.32);
+    }
+  }
+}
+
+@media (max-width: 1024px) {
+  .home-page__hero {
+    margin-bottom: 22px;
+  }
+
+  .home-hero-stage {
+    --header-overlay-height: 100px;
+  }
+
+  .home-hero {
+    min-height: 88vh;
+    min-height: 88svh;
+
+    &__content {
+      padding-top: calc(var(--header-overlay-height) + 28px);
+      padding-bottom: 56px;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .home-page__hero {
+    margin-bottom: 18px;
+  }
+
+  .home-hero-stage {
+    --header-overlay-height: 92px;
+    padding-bottom: 0;
+  }
+
+  .home-hero {
+    min-height: 82vh;
+    min-height: 82svh;
+    border-radius: 0 0 20px 20px;
+
+    &__content {
+      width: min(100%, calc(100% - 28px));
+      padding-top: calc(var(--header-overlay-height) + 18px);
+      padding-bottom: 42px;
+    }
+
+    &__title {
+      font-size: clamp(38px, 10vw, 56px);
+      letter-spacing: -2.4px;
+    }
+
+    &__description {
+      margin-top: 22px;
+      font-size: 15px;
     }
   }
 }

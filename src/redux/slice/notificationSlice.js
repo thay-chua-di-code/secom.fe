@@ -39,6 +39,20 @@ export const markNotificationAsRead = createAsyncThunk(
   },
 );
 
+export const markAllNotificationsAsRead = createAsyncThunk(
+  "notification/markAllAsRead",
+  async (_, thunkAPI) => {
+    try {
+      await notificationService.markAllAsRead();
+      return true;
+    } catch (e) {
+      return thunkAPI.rejectWithValue(
+        e?.message || "Mark all notifications failed",
+      );
+    }
+  },
+);
+
 export const deleteNotification = createAsyncThunk(
   "notification/deleteNotification",
   async (id, thunkAPI) => {
@@ -62,11 +76,57 @@ const notificationSlice = createSlice({
     resetNotificationState: () => initialState,
 
     addNotificationLocal: (state, action) => {
-      state.items.unshift(action.payload);
+      const incoming = action.payload;
+      const existingIndex = state.items.findIndex((item) => item.id === incoming.id);
 
-      if (!action.payload.isRead) {
+      if (existingIndex >= 0) {
+        const previous = state.items[existingIndex];
+        state.items[existingIndex] = {
+          ...previous,
+          ...incoming,
+        };
+
+        if (previous.isRead && incoming.isRead === false) {
+          state.unreadCount += 1;
+        }
+
+        return;
+      }
+
+      state.items.unshift(incoming);
+      state.pagination.totalCount = Number(state.pagination.totalCount || 0) + 1;
+
+      if (!incoming.isRead) {
         state.unreadCount += 1;
       }
+    },
+
+    markNotificationReadRealtime: (state, action) => {
+      const notification = state.items.find((item) => item.id === action.payload);
+
+      if (notification && !notification.isRead) {
+        notification.isRead = true;
+        state.unreadCount = Math.max(Number(state.unreadCount || 0) - 1, 0);
+      }
+    },
+
+    markAllNotificationsReadRealtime: (state) => {
+      state.items = state.items.map((item) => ({
+        ...item,
+        isRead: true,
+      }));
+      state.unreadCount = 0;
+    },
+
+    deleteNotificationRealtime: (state, action) => {
+      const deletedNotification = state.items.find((item) => item.id === action.payload);
+
+      if (deletedNotification && !deletedNotification.isRead) {
+        state.unreadCount = Math.max(Number(state.unreadCount || 0) - 1, 0);
+      }
+
+      state.items = state.items.filter((item) => item.id !== action.payload);
+      state.pagination.totalCount = Math.max(Number(state.pagination.totalCount || 0) - 1, 0);
     },
   },
 
@@ -116,6 +176,14 @@ const notificationSlice = createSlice({
         }
       })
 
+      .addCase(markAllNotificationsAsRead.fulfilled, (state) => {
+        state.items = state.items.map((item) => ({
+          ...item,
+          isRead: true,
+        }));
+        state.unreadCount = 0;
+      })
+
       .addCase(deleteNotification.fulfilled, (state, action) => {
         const deletedNotification = state.items.find(
           (item) => item.id === action.payload,
@@ -129,7 +197,13 @@ const notificationSlice = createSlice({
   },
 });
 
-export const { resetNotificationState, addNotificationLocal } =
+export const {
+  resetNotificationState,
+  addNotificationLocal,
+  markNotificationReadRealtime,
+  markAllNotificationsReadRealtime,
+  deleteNotificationRealtime,
+} =
   notificationSlice.actions;
 
 export default notificationSlice.reducer;

@@ -34,6 +34,96 @@ const sellerProductSlice = createSlice({
     clearSellerError(state) {
       state.error = null;
     },
+
+    productCreatedRealtime(state, action) {
+      const incoming = action.payload;
+      const incomingId = incoming?.productId || incoming?.id;
+      if (!incomingId) return;
+
+      const index = state.products.findIndex(
+        (product) => (product.productId || product.id) === incomingId,
+      );
+
+      if (index >= 0) {
+        state.products[index] = {
+          ...state.products[index],
+          ...incoming,
+        };
+        return;
+      }
+
+      if (state.products.length < Number(state.pagination.pageSize || 10)) {
+        state.products.unshift(incoming);
+      }
+
+      state.pagination.totalCount = Number(state.pagination.totalCount || 0) + 1;
+    },
+
+    productUpdatedRealtime(state, action) {
+      const incoming = action.payload;
+      const incomingId = incoming?.productId || incoming?.id;
+      if (!incomingId) return;
+
+      const index = state.products.findIndex(
+        (product) => (product.productId || product.id) === incomingId,
+      );
+
+      if (index >= 0) {
+        state.products[index] = {
+          ...state.products[index],
+          ...incoming,
+        };
+      }
+
+      if (state.productDetail && (state.productDetail.productId || state.productDetail.id) === incomingId) {
+        state.productDetail = {
+          ...state.productDetail,
+          ...incoming,
+        };
+      }
+    },
+
+    productDeletedRealtime(state, action) {
+      const payload = action.payload;
+      const productId = payload?.productId || payload;
+      if (!productId) return;
+
+      const hadProduct = state.products.some(
+        (product) => (product.productId || product.id) === productId,
+      );
+
+      state.products = state.products.filter(
+        (product) => (product.productId || product.id) !== productId,
+      );
+
+      if (state.productDetail && (state.productDetail.productId || state.productDetail.id) === productId) {
+        state.productDetail = null;
+      }
+
+      if (hadProduct) {
+        state.pagination.totalCount = Math.max(Number(state.pagination.totalCount || 0) - 1, 0);
+      }
+    },
+
+    productStockUpdatedRealtime(state, action) {
+      const { productId, stockQuantity, lowStockThreshold, isLowStock } = action.payload || {};
+      if (!productId) return;
+
+      const product = state.products.find((item) => (item.productId || item.id) === productId);
+      if (product) {
+        product.stock = stockQuantity;
+        product.stockQuantity = stockQuantity;
+        product.lowStockThreshold = lowStockThreshold;
+        product.isLowStock = isLowStock;
+      }
+
+      if (state.productDetail && (state.productDetail.productId || state.productDetail.id) === productId) {
+        state.productDetail.stock = stockQuantity;
+        state.productDetail.stockQuantity = stockQuantity;
+        state.productDetail.lowStockThreshold = lowStockThreshold;
+        state.productDetail.isLowStock = isLowStock;
+      }
+    },
   },
 
   extraReducers: (builder) => {
@@ -45,9 +135,14 @@ const sellerProductSlice = createSlice({
       .addCase(fetchSellerProducts.fulfilled, (state, action) => {
         state.loading = false;
 
-        state.products = action.payload.items || [];
+        state.products = Array.isArray(action.payload?.items)
+          ? action.payload.items
+          : [];
 
-        state.pagination = action.payload.pagination || initialState.pagination;
+        state.pagination = {
+          ...initialState.pagination,
+          ...action.payload?.pagination,
+        };
       })
       .addCase(fetchSellerProducts.rejected, (state, action) => {
         state.loading = false;
@@ -174,7 +269,14 @@ const sellerProductSlice = createSlice({
   },
 });
 
-export const { clearProductDetail, clearSellerError } =
+export const {
+  clearProductDetail,
+  clearSellerError,
+  productCreatedRealtime,
+  productUpdatedRealtime,
+  productDeletedRealtime,
+  productStockUpdatedRealtime,
+} =
   sellerProductSlice.actions;
 
 export default sellerProductSlice.reducer;

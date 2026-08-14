@@ -21,6 +21,21 @@ export const notificationService = {
     }
   },
 
+  markAllAsRead: async () => {
+    try {
+      const result = await axiosClient.patch(`/notifications/read-all`);
+
+      return result.data;
+    } catch (e) {
+      throw new Error(
+        e?.response?.data?.message || "Mark all notifications failed",
+        {
+          cause: e,
+        },
+      );
+    }
+  },
+
   deleteNotification: async (id) => {
     try {
       const result = await axiosClient.delete(`/notifications/${id}`);

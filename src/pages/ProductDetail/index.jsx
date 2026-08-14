@@ -29,6 +29,7 @@ import { fetchProductDetailThunk } from "../../redux/slice/productSlice";
 import { formatCurrencyVN } from "../../utils/fncUtils";
 
 import "./style.scss";
+import MainHeader from "../../components/layouts/Header/MainHeader";
 
 const getApiErrorMessage = (error) =>
   error?.response?.data?.message ||
@@ -300,6 +301,9 @@ export default function ProductDetail() {
 
   return (
     <main className="product-detail-page">
+      <header>
+        <MainHeader />
+      </header>
       <div className="product-detail" data-testid="product-detail">
         {/* =================================================
             GALLERY

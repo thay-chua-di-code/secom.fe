@@ -52,8 +52,16 @@ export const uploadImageToCloudinary = async (file, options = {}) => {
 };
 
 export const uploadProductImagesToCloudinary = async (images, options = {}) => {
+  const fileImages = (Array.isArray(images) ? images : []).filter(
+    (image) => image?.file instanceof File,
+  );
+
+  if (!fileImages.length) {
+    return [];
+  }
+
   const uploadedImages = await Promise.all(
-    images.map(async (image, index) => {
+    fileImages.map(async (image, index) => {
       const result = await uploadImageToCloudinary(image.file, {
         folder: options.folder ?? "secom/products",
       });
@@ -66,8 +74,6 @@ export const uploadProductImagesToCloudinary = async (images, options = {}) => {
       };
     }),
   );
-
-  console.debug("Normalized images:", uploadedImages);
 
   return uploadedImages;
 };

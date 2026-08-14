@@ -1,15 +1,19 @@
-import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import toast from "react-hot-toast";
+
 import { googleLoginThunk, loginThunk } from "../../../../redux/slice/authSlice";
 import { getMyInfoThunk } from "../../../../redux/slice/userSlice";
-import banner from "../../../../assets/images/SideImage.png";
-import toast from "react-hot-toast";
-import "./LoginForm.scss";
-import Button from "../../../../components/common/Button/Button";
-import { Eye, EyeOff } from "lucide-react";
 import { isSeller } from "../../../../utils/auth";
+import Button from "../../../../components/common/Button/Button";
+import AuthShell from "../../components/AuthShell";
+import PasswordField from "../../components/PasswordField";
+import GoogleAuthButton from "../../components/GoogleAuthButton";
+
+import "../../shared.scss";
+import "./LoginForm.scss";
 
 export default function LoginForm() {
   const dispatch = useDispatch();
@@ -20,6 +24,7 @@ export default function LoginForm() {
     password: "",
   });
   const [showPassword, setShowPassword] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const handleAuthSuccess = async (result) => {
     await dispatch(getMyInfoThunk()).unwrap();
@@ -38,10 +43,11 @@ export default function LoginForm() {
     navigate("/");
   };
 
-  const handleSubmitLogin = async (e) => {
-    e.preventDefault();
+  const handleSubmitLogin = async (event) => {
+    event.preventDefault();
 
     try {
+      setSubmitting(true);
       const result = await dispatch(
         loginThunk({
           email: loginData.email,
@@ -53,11 +59,11 @@ export default function LoginForm() {
     } catch (error) {
       const token = localStorage.getItem("token");
 
-      if (token) {
-        return;
+      if (!token) {
+        toast.error(error || "Login failed!");
       }
-
-      toast.error(error || "Login failed!");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -79,91 +85,75 @@ export default function LoginForm() {
   };
 
   return (
-    <GoogleOAuthProvider
-      clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}
-      locale="en"
-    >
-      <div className="form_login_container">
-        <div className="login_layout">
-          <div className="login_banner">
-            <img src={banner} alt="Login Banner" />
+    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID} locale="en">
+      <AuthShell
+        eyebrow="Welcome Back"
+        title="Log in to AIDR"
+        subtitle="Access your buyer, seller or admin workspace with the same modern AIDR retail experience."
+      >
+        <form className="auth-form" onSubmit={handleSubmitLogin}>
+          <label className="auth-field" htmlFor="login-email">
+            <span className="auth-field__label">Email address</span>
+            <div className="auth-field__control">
+              <input
+                id="login-email"
+                name="email"
+                type="email"
+                placeholder="name@example.com"
+                value={loginData.email}
+                autoComplete="email"
+                onChange={(event) =>
+                  setLoginData((prev) => ({
+                    ...prev,
+                    email: event.target.value,
+                  }))
+                }
+                required
+              />
+            </div>
+          </label>
+
+          <PasswordField
+            id="login-password"
+            name="password"
+            label="Password"
+            value={loginData.password}
+            onChange={(event) =>
+              setLoginData((prev) => ({
+                ...prev,
+                password: event.target.value,
+              }))
+            }
+            placeholder="Enter your password"
+            showPassword={showPassword}
+            onToggle={() => setShowPassword((current) => !current)}
+          />
+
+          <div className="auth-form__links">
+            <span>Use the account linked to your marketplace profile.</span>
+            <Link to="/forgot-password">Forgot password?</Link>
           </div>
 
-          <form onSubmit={handleSubmitLogin} className="form_login_wrapper">
-            <div className="form_header">
-              <h2>Log in to Secom</h2>
-              <p>Enter your details below</p>
-            </div>
+          <div className="auth-form__actions">
+            <Button className="auth-button" fullWidth type="submit" disabled={submitting}>
+              {submitting ? "Signing in..." : "Log in"}
+            </Button>
 
-            <div className="form_group">
-              <div className="input_wrapper">
-                <input
-                  type="email"
-                  placeholder="Email or Phone Number"
-                  value={loginData.email}
-                  onChange={(e) =>
-                    setLoginData((prev) => ({
-                      ...prev,
-                      email: e.target.value,
-                    }))
-                  }
-                />
-              </div>
-            </div>
+            <div className="auth-form__divider">or</div>
 
-            <div className="form_group">
-              <div className="input_wrapper">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Password"
-                  value={loginData.password}
-                  onChange={(e) =>
-                    setLoginData((prev) => ({
-                      ...prev,
-                      password: e.target.value,
-                    }))
-                  }
-                />
+            <GoogleAuthButton
+              onSuccess={handleLoginGoogle}
+              onError={() => toast.error("Google login failed.")}
+              text="continue_with"
+              label="Continue with Google"
+            />
+          </div>
+        </form>
 
-                <button
-                  type="button"
-                  className="password-toggle-btn"
-                  onClick={() => setShowPassword((current) => !current)}
-                  aria-label={showPassword ? "Hide password" : "Show password"}
-                  title={showPassword ? "Hide password" : "Show password"}
-                >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                </button>
-              </div>
-
-              <div className="forgot_password">
-                <Link to="/forgot-password">Forgot password?</Link>
-              </div>
-            </div>
-
-            <div className="form_login_btn flex-col-g">
-              <Button type="submit">Log In</Button>
-
-              <div className="google_btn_wrapper">
-                <GoogleLogin
-                  width="100%"
-                  onSuccess={handleLoginGoogle}
-                  onError={() => toast.error("Google login failed.")}
-                  text="signin_with"
-                  locale="en"
-                />
-              </div>
-            </div>
-
-            <div className="form_footer">
-              <p>
-                Don't have an account?
-                <Link to="/register">Create Account</Link>
-              </p>
-            </div>
-          </form>
+        <div className="auth-ui__footer">
+          Don&apos;t have an account? <Link to="/register">Create account</Link>
         </div>
-      </div>
+      </AuthShell>
     </GoogleOAuthProvider>
   );
 }

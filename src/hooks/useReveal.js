@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export default function useReveal(options = {}) {
   const {
@@ -7,15 +7,16 @@ export default function useReveal(options = {}) {
     once = true,
   } = options;
 
-  const ref = useRef(null);
-
+  const [element, setElement] = useState(null);
   const [visible, setVisible] = useState(false);
 
-  useEffect(() => {
-    const element = ref.current;
+  const ref = useCallback((node) => {
+    setElement(node);
+  }, []);
 
+  useEffect(() => {
     if (!element) {
-      return;
+      return undefined;
     }
 
     const observer = new IntersectionObserver(
@@ -41,7 +42,7 @@ export default function useReveal(options = {}) {
     return () => {
       observer.disconnect();
     };
-  }, [threshold, rootMargin, once]);
+  }, [element, threshold, rootMargin, once]);
 
   return {
     ref,

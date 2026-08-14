@@ -282,3 +282,57 @@
     animation: none;
   }
 }
+
+/* Home rhythm refinements */
+.featured-products {
+  &__grid {
+    gap: 24px 18px;
+  }
+
+  &__footer {
+    margin-top: 42px;
+
+    a {
+      min-width: 168px;
+      height: 44px;
+      font-size: 12px;
+    }
+  }
+
+  &__empty {
+    min-height: 240px;
+  }
+}
+
+@media (max-width: 768px) {
+  .featured-products {
+    &__grid {
+      gap: 18px 14px;
+    }
+
+    &__footer {
+      margin-top: 28px;
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .featured-products {
+    &__grid {
+      gap: 18px;
+    }
+
+    &__footer {
+      margin-top: 22px;
+
+      a {
+        max-width: none;
+      }
+    }
+
+    &__empty {
+      min-height: 200px;
+      padding: 20px;
+    }
+  }
+}

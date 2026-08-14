@@ -53,6 +53,7 @@ export const API_ENDPOINTS = {
 
   PRODUCT: {
     SEARCH: "/products/search",
+    SEARCH_INTENT: "/products/search-intent",
     LIST: "/products",
     DETAIL: (id) => `/products/${id}`,
     COMPARE_DESCRIPTIONS: "/products/compare-descriptions",
@@ -74,6 +75,7 @@ export const API_ENDPOINTS = {
     REGISTER: "/seller/shop/register",
     SHOP_STATUS: "/seller/shop/status",
     SHOP_PROFILE: "/seller/shop/profile",
+    PUBLIC_SHOP_PROFILE: (id) => `/sellers/${id}/shop-profile`,
     DASHBOARD: "/seller/dashboard",
     STATISTICS: (id) => `/sellers/${id}/statistics`,
     FOLLOW: (id) => `/sellers/${id}/follow`,
