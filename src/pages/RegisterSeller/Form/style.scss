@@ -1,33 +1,82 @@
+// ============================================================
+// COLORS
+// ============================================================
+
+$primary: #2563eb;
+$primary-dark: #1d4ed8;
+$primary-light: #eff6ff;
+$primary-soft: #dbeafe;
+
+$text: #111827;
+$text-secondary: #4b5563;
+$text-muted: #94a3b8;
+
+$border: #e5e7eb;
+$border-dark: #d1d5db;
+
+$surface: #ffffff;
+$surface-soft: #f8fafc;
+
+// ============================================================
+// MAIN CONTAINER
+// ============================================================
+
 .seller-step {
   width: 100%;
   max-width: 1180px;
-  margin: 0 auto;
 
-  background: #fff;
-  border-radius: 28px;
+  margin: 0 auto;
 
   padding: 45px;
 
-  border: 1px solid #edf2f7;
+  box-sizing: border-box;
 
-  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.08);
+  background: rgba(255, 255, 255, 0.92);
+
+  border: 1px solid rgba(226, 232, 240, 0.9);
+
+  border-radius: 28px;
+
+  box-shadow:
+    0 20px 50px rgba(15, 23, 42, 0.06),
+    0 4px 14px rgba(15, 23, 42, 0.025);
+
+  backdrop-filter: blur(14px);
+
+  transition:
+    box-shadow 0.3s ease,
+    transform 0.3s ease;
+
+  &:hover {
+    box-shadow:
+      0 24px 60px rgba(15, 23, 42, 0.08),
+      0 5px 18px rgba(15, 23, 42, 0.03);
+  }
 
   @media (max-width: 768px) {
     padding: 24px;
+
     border-radius: 20px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 18px;
+
+    border-radius: 18px;
   }
 }
 
-/* =======================================
-            Progress
-======================================= */
+// ============================================================
+// STEP PROGRESS
+// ============================================================
 
 .step-progress {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-
   position: relative;
+
+  display: flex;
+
+  align-items: flex-start;
+  justify-content: space-between;
 
   margin-bottom: 50px;
 
@@ -37,25 +86,56 @@
     position: absolute;
 
     top: 22px;
+
     left: 12%;
     right: 12%;
 
-    height: 4px;
+    height: 3px;
 
-    background: #eceff3;
+    background: #e5e7eb;
 
     border-radius: 999px;
+
+    z-index: 0;
+  }
+
+  @media (max-width: 992px) {
+    gap: 25px;
+
+    &::before {
+      left: 15%;
+      right: 15%;
+    }
+  }
+
+  @media (max-width: 576px) {
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    gap: 24px;
+
+    &::before {
+      display: none;
+    }
   }
 }
 
-.step-item {
-  flex: 1;
+// ============================================================
+// STEP ITEM
+// ============================================================
 
+.step-item {
   position: relative;
+
   z-index: 2;
 
+  flex: 1;
+
   display: flex;
+
   flex-direction: column;
+
   align-items: center;
 
   text-align: center;
@@ -64,22 +144,30 @@
     width: 46px;
     height: 46px;
 
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
     border-radius: 50%;
 
-    background: #f1f5f9;
+    background: #f8fafc;
 
     border: 2px solid #dbe3ec;
 
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    color: #64748b;
 
     font-size: 16px;
     font-weight: 700;
 
-    color: #64748b;
-
-    transition: 0.3s;
+    transition:
+      background 0.3s ease,
+      color 0.3s ease,
+      border-color 0.3s ease,
+      box-shadow 0.3s ease,
+      transform 0.3s ease;
   }
 
   span {
@@ -87,59 +175,116 @@
 
     max-width: 150px;
 
+    color: #94a3b8;
+
     font-size: 15px;
 
     font-weight: 500;
 
-    color: #94a3b8;
-
     line-height: 1.5;
 
-    transition: 0.3s;
+    transition:
+      color 0.3s ease,
+      font-weight 0.3s ease;
   }
+
+  // ==========================================================
+  // ACTIVE
+  // ==========================================================
 
   &.active {
     .circle {
-      background: linear-gradient(135deg, #ef4444, #db4444);
+      background: linear-gradient(135deg, $primary 0%, $primary-dark 100%);
 
-      color: white;
+      color: #ffffff;
 
       border-color: transparent;
 
-      box-shadow: 0 12px 25px rgba(219, 68, 68, 0.3);
+      box-shadow:
+        0 10px 24px rgba(37, 99, 235, 0.25),
+        0 0 0 5px rgba(37, 99, 235, 0.08);
 
       transform: scale(1.08);
     }
 
     span {
-      color: #111827;
+      color: $text;
 
       font-weight: 700;
     }
   }
+
+  @media (max-width: 576px) {
+    flex-direction: row;
+
+    align-items: center;
+
+    gap: 16px;
+
+    text-align: left;
+
+    width: 100%;
+
+    .circle {
+      width: 42px;
+      height: 42px;
+
+      font-size: 14px;
+    }
+
+    span {
+      margin-top: 0;
+
+      max-width: none;
+    }
+  }
 }
 
-/* =======================================
-          Content
-======================================= */
+// ============================================================
+// STEP CONTENT
+// ============================================================
 
 .step-content {
-  border-top: 1px solid #edf2f7;
+  min-height: 420px;
 
   padding-top: 40px;
 
-  min-height: 420px;
+  border-top: 1px solid #edf2f7;
+
+  color: $text;
+
+  animation: sellerStepContentReveal 0.5s ease both;
 }
 
-/* =======================================
-            Form
-======================================= */
+@keyframes sellerStepContentReveal {
+  from {
+    opacity: 0;
+
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+
+    transform: translateY(0);
+  }
+}
+
+// ============================================================
+// SELLER FORM
+// ============================================================
 
 .seller-form {
+  width: 100%;
+
   max-width: 760px;
 
-  margin: auto;
+  margin: 0 auto;
 }
+
+// ============================================================
+// FORM ROW
+// ============================================================
 
 .form-row {
   display: grid;
@@ -152,21 +297,19 @@
 
   margin-bottom: 24px;
 
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-
-    gap: 10px;
-  }
-
   label {
+    color: #374151;
+
     font-size: 15px;
 
     font-weight: 600;
 
-    color: #374151;
+    line-height: 1.5;
 
     span {
-      color: #ef4444;
+      color: $primary;
+
+      margin-left: 3px;
     }
   }
 
@@ -177,30 +320,56 @@
 
     min-height: 54px;
 
-    border: 1px solid #dbe3ec;
+    box-sizing: border-box;
+
+    padding: 0 18px;
+
+    border: 1px solid $border-dark;
 
     border-radius: 14px;
 
     background: #fafafa;
 
-    padding: 0 18px;
+    color: $text;
 
-    transition: 0.25s;
+    font-family: inherit;
 
     font-size: 15px;
 
+    transition:
+      border-color 0.25s ease,
+      background 0.25s ease,
+      box-shadow 0.25s ease,
+      transform 0.25s ease;
+
+    &::placeholder {
+      color: #a1a1aa;
+    }
+
     &:hover {
-      border-color: #db4444;
+      border-color: #93c5fd;
+
+      background: #ffffff;
     }
 
     &:focus {
       outline: none;
 
-      background: white;
+      background: #ffffff;
 
-      border-color: #db4444;
+      border-color: $primary;
 
-      box-shadow: 0 0 0 4px rgba(219, 68, 68, 0.08);
+      box-shadow:
+        0 0 0 4px rgba(37, 99, 235, 0.08),
+        0 5px 15px rgba(15, 23, 42, 0.03);
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+
+      background: #f1f5f9;
+
+      color: #94a3b8;
     }
   }
 
@@ -209,19 +378,38 @@
 
     padding-top: 16px;
 
+    padding-bottom: 16px;
+
     resize: vertical;
+
+    line-height: 1.6;
+  }
+
+  select {
+    cursor: pointer;
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+
+    gap: 10px;
+
+    margin-bottom: 20px;
+
+    label {
+      font-size: 14px;
+    }
   }
 }
 
-/* =======================================
-          Add Button
-======================================= */
+// ============================================================
+// ADD BUTTON
+// ============================================================
 
 .add-btn {
   display: inline-flex;
 
   align-items: center;
-
   justify-content: center;
 
   gap: 10px;
@@ -230,36 +418,52 @@
 
   padding: 12px 20px;
 
+  border: 1px solid $primary;
+
   border-radius: 14px;
 
-  border: 1px solid #db4444;
+  background: #ffffff;
 
-  background: white;
+  color: $primary;
 
-  color: #db4444;
+  font-size: 14px;
 
   font-weight: 600;
 
-  transition: 0.25s;
-
   cursor: pointer;
 
-  &:hover {
-    background: #db4444;
+  transition:
+    background 0.25s ease,
+    color 0.25s ease,
+    border-color 0.25s ease,
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
 
-    color: white;
+  &:hover {
+    background: $primary;
+
+    border-color: $primary;
+
+    color: #ffffff;
 
     transform: translateY(-2px);
+
+    box-shadow: 0 10px 22px rgba(37, 99, 235, 0.18);
+  }
+
+  &:active {
+    transform: translateY(0);
   }
 }
 
-/* =======================================
-          Actions
-======================================= */
+// ============================================================
+// STEP ACTIONS
+// ============================================================
 
 .step-actions {
   display: flex;
 
+  align-items: center;
   justify-content: flex-end;
 
   gap: 16px;
@@ -268,21 +472,31 @@
 
   @media (max-width: 768px) {
     flex-direction: column;
+
+    width: 100%;
   }
 }
+
+// ============================================================
+// PRIMARY BUTTON
+// ============================================================
 
 .btn-primary {
   min-width: 180px;
 
   height: 52px;
 
-  border: none;
+  padding: 0 24px;
+
+  border: 0;
 
   border-radius: 14px;
 
-  background: linear-gradient(135deg, #ef4444, #db4444);
+  background: linear-gradient(135deg, $primary 0%, $primary-dark 100%);
 
-  color: white;
+  color: #ffffff;
+
+  font-family: inherit;
 
   font-size: 15px;
 
@@ -290,59 +504,249 @@
 
   cursor: pointer;
 
-  transition: 0.25s;
+  box-shadow: 0 12px 25px rgba(37, 99, 235, 0.18);
 
-  box-shadow: 0 15px 30px rgba(219, 68, 68, 0.25);
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    filter 0.25s ease;
 
   &:hover {
     transform: translateY(-2px);
 
-    box-shadow: 0 20px 36px rgba(219, 68, 68, 0.35);
+    filter: brightness(1.03);
+
+    box-shadow: 0 17px 34px rgba(37, 99, 235, 0.25);
+  }
+
+  &:active {
+    transform: translateY(0);
+
+    box-shadow: 0 8px 18px rgba(37, 99, 235, 0.18);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+
+    opacity: 0.6;
+
+    transform: none;
+
+    box-shadow: none;
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+
+    min-width: 0;
   }
 }
 
-/* =======================================
-            Responsive
-======================================= */
+// ============================================================
+// SECONDARY BUTTON
+// ============================================================
+
+.btn-secondary {
+  min-width: 150px;
+
+  height: 52px;
+
+  padding: 0 22px;
+
+  border: 1px solid $border-dark;
+
+  border-radius: 14px;
+
+  background: #ffffff;
+
+  color: $text;
+
+  font-size: 15px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    border-color 0.25s ease,
+    background 0.25s ease,
+    color 0.25s ease,
+    transform 0.25s ease;
+
+  &:hover {
+    border-color: #93c5fd;
+
+    background: $primary-light;
+
+    color: $primary;
+
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+
+    min-width: 0;
+  }
+}
+
+// ============================================================
+// STATUS / LOADING
+// ============================================================
+
+.step-content > p {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  min-height: 300px;
+
+  margin: 0;
+
+  color: $text-muted;
+
+  font-size: 14px;
+}
+
+// ============================================================
+// RESPONSIVE - TABLET
+// ============================================================
 
 @media (max-width: 992px) {
-  .step-progress {
-    gap: 25px;
+  .seller-step {
+    max-width: calc(100% - 40px);
   }
 
-  .step-progress::before {
-    left: 15%;
+  .step-progress {
+    margin-bottom: 42px;
+  }
 
-    right: 15%;
+  .step-content {
+    padding-top: 32px;
   }
 }
 
+// ============================================================
+// RESPONSIVE - MOBILE
+// ============================================================
+
 @media (max-width: 576px) {
-  .step-progress {
-    flex-direction: column;
-
-    align-items: flex-start;
-
-    gap: 24px;
+  .seller-step {
+    max-width: calc(100% - 24px);
   }
 
-  .step-progress::before {
-    display: none;
+  .step-content {
+    min-height: 350px;
+
+    padding-top: 28px;
+  }
+
+  .step-progress {
+    margin-bottom: 32px;
+  }
+
+  .seller-form {
+    max-width: 100%;
+  }
+
+  .form-row {
+    input,
+    textarea,
+    select {
+      min-height: 50px;
+
+      padding-left: 15px;
+      padding-right: 15px;
+
+      border-radius: 12px;
+
+      font-size: 14px;
+    }
+  }
+
+  .step-actions {
+    margin-top: 30px;
+  }
+}
+
+// ============================================================
+// SMALL MOBILE
+// ============================================================
+
+@media (max-width: 420px) {
+  .seller-step {
+    max-width: calc(100% - 16px);
+
+    padding: 16px;
   }
 
   .step-item {
-    flex-direction: row;
+    gap: 12px;
 
-    gap: 16px;
-
-    align-items: center;
-
-    text-align: left;
+    .circle {
+      width: 40px;
+      height: 40px;
+    }
 
     span {
-      margin-top: 0;
-
-      max-width: none;
+      font-size: 13px;
     }
+  }
+
+  .step-content {
+    padding-top: 24px;
+  }
+}
+
+// ============================================================
+// REVEAL
+// ============================================================
+
+.seller-step {
+  opacity: 0;
+
+  transform: translateY(25px);
+
+  animation: sellerStepReveal 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes sellerStepReveal {
+  from {
+    opacity: 0;
+
+    transform: translateY(25px);
+  }
+
+  to {
+    opacity: 1;
+
+    transform: translateY(0);
+  }
+}
+
+// ============================================================
+// ACCESSIBILITY / REDUCED MOTION
+// ============================================================
+
+@media (prefers-reduced-motion: reduce) {
+  .seller-step,
+  .step-content {
+    opacity: 1;
+
+    transform: none;
+
+    animation: none;
+  }
+
+  .step-item .circle,
+  .step-item span,
+  .form-row input,
+  .form-row textarea,
+  .form-row select,
+  .add-btn,
+  .btn-primary,
+  .btn-secondary {
+    transition: none;
   }
 }

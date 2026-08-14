@@ -2,8 +2,10 @@ import { Bell } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+
 import { getNotifications } from "../../../redux/slice/notificationSlice";
 import NotificationItem from "../Item";
+
 import "./style.scss";
 
 const NotificationDropdown = () => {
@@ -13,7 +15,13 @@ const NotificationDropdown = () => {
 
   const [open, setOpen] = useState(false);
 
-  const { items, unreadCount } = useSelector((state) => state.notification);
+  const { items = [], unreadCount = 0 } = useSelector(
+    (state) => state.notification,
+  );
+
+  // =========================
+  // LOAD NOTIFICATIONS
+  // =========================
 
   useEffect(() => {
     dispatch(
@@ -24,9 +32,13 @@ const NotificationDropdown = () => {
     );
   }, [dispatch]);
 
+  // =========================
+  // CLICK OUTSIDE
+  // =========================
+
   useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setOpen(false);
       }
     };
@@ -39,23 +51,47 @@ const NotificationDropdown = () => {
   }, []);
 
   return (
-    <div className="notification" ref={dropdownRef}>
-      <button className="notification-trigger" onClick={() => setOpen(!open)}>
-        <Bell size={16} />
+    <div
+      className={`notification-nav ${open ? "notification-nav--open" : ""}`}
+      ref={dropdownRef}
+    >
+      {/* =========================
+          NAV ITEM
+      ========================== */}
 
+      <button
+        type="button"
+        className="notification-nav__trigger"
+        onClick={() => setOpen((current) => !current)}
+        aria-expanded={open}
+      >
         <span>Notifications</span>
 
         {unreadCount > 0 && (
-          <div className="notification-badge">
+          <span className="notification-nav__badge">
             {unreadCount > 99 ? "99+" : unreadCount}
-          </div>
+          </span>
         )}
       </button>
+
+      {/* =========================
+          POPUP
+      ========================== */}
 
       {open && (
         <div className="notification-dropdown">
           <div className="notification-dropdown__header">
-            <h3>Notifications</h3>
+            <div>
+              <h3>Notifications</h3>
+
+              <p>
+                {unreadCount > 0
+                  ? `${unreadCount} unread ${
+                      unreadCount === 1 ? "notification" : "notifications"
+                    }`
+                  : "You're all caught up"}
+              </p>
+            </div>
           </div>
 
           <div className="notification-dropdown__list">
@@ -64,12 +100,22 @@ const NotificationDropdown = () => {
                 <NotificationItem key={item.id} notification={item} />
               ))
             ) : (
-              <div className="notification-empty">No notifications</div>
+              <div className="notification-empty">
+                <div className="notification-empty__icon">
+                  <Bell size={22} />
+                </div>
+
+                <strong>No notifications</strong>
+
+                <span>You don't have any notifications yet.</span>
+              </div>
             )}
           </div>
 
           <div className="notification-dropdown__footer">
-            <Link to="/notifications">View All</Link>
+            <Link to="/notifications" onClick={() => setOpen(false)}>
+              View all notifications
+            </Link>
           </div>
         </div>
       )}

@@ -10,6 +10,7 @@ import {
   X,
 } from "lucide-react";
 
+import NotificationDropdown from "../../../../pages/Notifications/Popup";
 import UserDropdown from "../../../common/UserDropDown";
 import SearchDropdown from "../../../common/SearchDropDown";
 import Input from "../../../common/Input";
@@ -369,6 +370,16 @@ export default function MainHeader() {
                   </button>
                 );
               })}
+
+              {/* =========================
+        NOTIFICATION NAV ITEM
+    ========================== */}
+
+              {isAuthenticated && (
+                <div className="main-header__notification-nav">
+                  <NotificationDropdown />
+                </div>
+              )}
             </nav>
           )}
 
@@ -377,7 +388,9 @@ export default function MainHeader() {
           ========================== */}
 
           <div className="main-header__actions">
-            {/* SEARCH LUÔN CÓ */}
+            {/* =========================
+      SEARCH
+  ========================== */}
 
             {!isLoginPage && (
               <button
@@ -397,6 +410,14 @@ export default function MainHeader() {
                 {openSearch ? <X size={19} /> : <Search size={19} />}
               </button>
             )}
+
+            {/* =========================
+      AUTHENTICATED USER
+  ========================== */}
+
+            {/* =========================
+    AUTHENTICATED USER
+========================== */}
 
             {!isAuthenticated ? (
               <>
@@ -433,6 +454,10 @@ export default function MainHeader() {
                   </div>
                 )}
 
+                {/* =========================
+        USER
+    ========================== */}
+
                 <div
                   className="main-header__user"
                   onMouseEnter={handleUserEnter}
@@ -453,6 +478,10 @@ export default function MainHeader() {
                 </div>
               </>
             )}
+
+            {/* =========================
+      MOBILE
+  ========================== */}
 
             <button
               type="button"
