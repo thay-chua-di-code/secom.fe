@@ -1,15 +1,13 @@
+import { Link, useSearchParams } from "react-router-dom";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useSearchParams } from "react-router-dom";
 import { ChevronLeft, ChevronRight, Search } from "lucide-react";
 
 import Filter from "./Filter";
 import Card from "../../components/common/Card/index";
-import CompareModal from "../../components/common/CompareModal";
-
 import useCompare from "../../hooks/useCompare";
 
 import { dicoveryService } from "../../service/dicoveryService";
-
+import { ROUTES } from "../../constants/routes";
 import "./style.scss";
 
 /* =========================================================
@@ -213,15 +211,13 @@ export default function ProductsPage() {
 
   const [error, setError] = useState("");
 
-  const [openCompare, setOpenCompare] = useState(false);
-
   const listRef = useRef(null);
 
   /* =====================================================
      COMPARE
   ===================================================== */
 
-  const { compareIds, remove, clear } = useCompare();
+  const { compareIds } = useCompare();
 
   /* =====================================================
      SEARCH PARAM HELPER
@@ -666,26 +662,10 @@ export default function ProductsPage() {
         ================================================= */}
 
         {compareIds.length > 0 && (
-          <button
-            type="button"
-            className="compare-floating-btn"
-            onClick={() => setOpenCompare(true)}
-          >
-            Compare ({compareIds.length})
-          </button>
+          <Link to={ROUTES.COMPARE} className="compare-floating-btn">
+            View Compare ({compareIds.length})
+          </Link>
         )}
-
-        {/* =================================================
-            COMPARE MODAL
-        ================================================= */}
-
-        <CompareModal
-          open={openCompare}
-          products={compareProducts}
-          onClose={() => setOpenCompare(false)}
-          onRemove={remove}
-          onClear={clear}
-        />
       </div>
     </div>
   );

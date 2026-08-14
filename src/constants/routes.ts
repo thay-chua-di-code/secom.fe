@@ -23,6 +23,7 @@ export const ROUTES = {
     PRODUCT_DETAIL: "/product-detail/:id",
     PRODUCTS: "/products",
   },
+  COMPARE: "/compare",
 
   PROFILE: "/profile",
   SELF: {

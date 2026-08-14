@@ -1,5 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 
 import HomeHero from "./HomeHero";
 import CategorySidebar from "./CategoriesSideBar";
@@ -9,12 +10,12 @@ import LastestProduct from "./Products/LatestProducts";
 import Policy from "./Policy";
 import HomeAbout from "./About";
 import SectionDivider from "../../components/layouts/SectionDivider";
-import CompareModal from "../../components/common/CompareModal";
 
 import { fetchHomepage } from "../../redux/slice/homeSlice";
 
 import useCompare from "../../hooks/useCompare";
 import useReveal from "../../hooks/useReveal";
+import { ROUTES } from "../../constants/routes";
 
 import "./style.scss";
 
@@ -27,17 +28,11 @@ const Home = () => {
 
   const { isAuthenticated } = useSelector((state) => state.auth);
 
-  const { featuredProducts, latestProducts } = useSelector(
-    (state) => state.home,
-  );
-
   /* =========================================
      COMPARE
   ========================================= */
 
-  const [openCompare, setOpenCompare] = useState(false);
-
-  const { compareIds, remove, clear } = useCompare();
+  const { compareIds } = useCompare();
 
   /* =========================================
      REVEAL ANIMATIONS
@@ -74,35 +69,6 @@ const Home = () => {
   useEffect(() => {
     dispatch(fetchHomepage());
   }, [dispatch]);
-
-  /* =========================================
-     MERGE PRODUCTS
-  ========================================= */
-
-  const homeProducts = useMemo(() => {
-    const products = [...(featuredProducts || []), ...(latestProducts || [])];
-
-    return products.filter(
-      (product, index, allProducts) =>
-        allProducts.findIndex(
-          (item) =>
-            String(item.id || item.productId) ===
-            String(product.id || product.productId),
-        ) === index,
-    );
-  }, [featuredProducts, latestProducts]);
-
-  /* =========================================
-     PRODUCTS SELECTED FOR COMPARE
-  ========================================= */
-
-  const compareProducts = useMemo(
-    () =>
-      homeProducts.filter((product) =>
-        compareIds.includes(String(product.id || product.productId)),
-      ),
-    [compareIds, homeProducts],
-  );
 
   return (
     <div className="home-page">
@@ -234,26 +200,13 @@ const Home = () => {
       ===================================================== */}
 
       {compareIds.length > 0 && (
-        <button
-          type="button"
+        <Link
+          to={ROUTES.COMPARE}
           className="home-compare-floating-btn"
-          onClick={() => setOpenCompare(true)}
         >
-          Compare ({compareIds.length})
-        </button>
+          View Compare ({compareIds.length})
+        </Link>
       )}
-
-      {/* =====================================================
-          COMPARE MODAL
-      ===================================================== */}
-
-      <CompareModal
-        open={openCompare}
-        products={compareProducts}
-        onClose={() => setOpenCompare(false)}
-        onRemove={remove}
-        onClear={clear}
-      />
     </div>
   );
 };

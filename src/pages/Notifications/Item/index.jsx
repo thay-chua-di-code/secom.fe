@@ -1,30 +1,56 @@
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
-import {
-  markNotificationAsRead,
-  deleteNotification,
-} from "../../../redux/slice/notificationSlice";
-import "./style.scss";
 import { Bell, CreditCard, Package, ShoppingBag, Trash2 } from "lucide-react";
 
-const getNotificationIcon = (type) => {
-  switch (type) {
+import {
+  deleteNotification,
+  markNotificationAsRead,
+} from "../../../redux/slice/notificationSlice";
+
+import "./style.scss";
+
+const getNotificationMeta = (type) => {
+  switch (String(type || "").toUpperCase()) {
     case "ORDER":
-      return <Package size={20} />;
-
+      return {
+        icon: <Package size={18} />,
+        accent: "order",
+        label: "Order",
+      };
     case "PAYMENT":
-      return <CreditCard size={20} />;
-
+      return {
+        icon: <CreditCard size={18} />,
+        accent: "payment",
+        label: "Payment",
+      };
     case "PRODUCT":
-      return <ShoppingBag size={20} />;
-
+      return {
+        icon: <ShoppingBag size={18} />,
+        accent: "product",
+        label: "Product",
+      };
+    case "SELLER_SHOP":
+      return {
+        icon: <ShoppingBag size={18} />,
+        accent: "seller-shop",
+        label: "Seller shop",
+      };
     default:
-      return <Bell size={20} />;
+      return {
+        icon: <Bell size={18} />,
+        accent: "system",
+        label: "System",
+      };
   }
 };
 
-export default function NotificationItem({ notification, showDelete = false }) {
+export default function NotificationItem({
+  notification,
+  showDelete = false,
+  variant = "page",
+}) {
   const dispatch = useDispatch();
+  const meta = getNotificationMeta(notification.type || notification.referenceType);
 
   const handleRead = () => {
     if (!notification.isRead) {
@@ -32,10 +58,9 @@ export default function NotificationItem({ notification, showDelete = false }) {
     }
   };
 
-  const handleDelete = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-
+  const handleDelete = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
     dispatch(deleteNotification(notification.id));
   };
 
@@ -43,10 +68,14 @@ export default function NotificationItem({ notification, showDelete = false }) {
     <Link
       to="/"
       onClick={handleRead}
-      className={`notification-item ${!notification.isRead ? "unread" : ""}`}
+      className={`notification-item notification-item--${variant} ${
+        notification.isRead ? "is-read" : "is-unread"
+      }`}
     >
-      <div className="notification-item__icon">
-        {getNotificationIcon(notification.type)}
+      <div
+        className={`notification-item__icon notification-item__icon--${meta.accent}`}
+      >
+        {meta.icon}
       </div>
 
       <div className="notification-item__content">
@@ -61,16 +90,20 @@ export default function NotificationItem({ notification, showDelete = false }) {
         <p>{notification.message}</p>
 
         <div className="notification-item__meta">
-          <span>{notification.referenceType}</span>
-
-          <span>
+          <span className="notification-item__type">{meta.label}</span>
+          <span className="notification-item__time">
             {new Date(notification.createdAtUtc).toLocaleString("en-US")}
           </span>
         </div>
       </div>
 
       {showDelete && (
-        <button className="notification-item__delete" onClick={handleDelete}>
+        <button
+          type="button"
+          className="notification-item__delete"
+          onClick={handleDelete}
+          aria-label="Delete notification"
+        >
           <Trash2 size={16} />
         </button>
       )}

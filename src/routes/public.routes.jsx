@@ -5,6 +5,7 @@ import Home from "../pages/Home";
 import AuthPage from "../pages/Auth";
 import ProductDetail from "../pages/ProductDetail";
 import ProductsPage from "../pages/Products";
+import ComparePage from "../pages/Compare";
 import SellerDetail from "../pages/SellerDetail";
 import PaymentReturn from "../pages/PaymentReturn/PaymentReturn";
 import PaymentCancel from "../pages/PaymentCancel/PaymentCancel";
@@ -51,6 +52,10 @@ export const publicRoutes = [
       {
         path: ROUTES.PRODUCT.PRODUCTS,
         element: <ProductsPage />,
+      },
+      {
+        path: ROUTES.COMPARE,
+        element: <ComparePage />,
       },
       {
         path: "/payment-return",

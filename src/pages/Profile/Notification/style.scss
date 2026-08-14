@@ -9,12 +9,12 @@
     h2 {
       font-size: 24px;
       font-weight: 600;
-      color: #111827;
+      color: #f8fafc;
       margin-bottom: 6px;
     }
 
     p {
-      color: #6b7280;
+      color: #8291aa;
       font-size: 14px;
     }
   }
@@ -24,12 +24,9 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-
   max-height: 650px;
   overflow-y: auto;
-
   padding-right: 8px;
-
   scrollbar-width: thin;
 
   &::-webkit-scrollbar {
@@ -37,11 +34,11 @@
   }
 
   &::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
+    background: #334155;
     border-radius: 999px;
   }
 
   &::-webkit-scrollbar-thumb:hover {
-    background: #94a3b8;
+    background: #475569;
   }
 }
