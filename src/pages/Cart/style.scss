@@ -1,17 +1,48 @@
+/* =========================================================
+   CART PAGE
+========================================================= */
+
 .cart-page {
-  margin-top: 20px;
+  width: 100%;
+
+  min-height: calc(100vh - 80px);
+
+  margin: 0;
+
+  padding: 54px 0 100px;
+
+  // background:
+  //   radial-gradient(circle at 6% 4%, rgba(70, 126, 255, 0.07), transparent 26%),
+  //   #050505;
+
+  color: #ffffff;
 
   &__container {
-    max-width: 1400px;
+    width: 100%;
+
+    max-width: 1440px;
+
     margin: 0 auto;
-    padding: 0 16px;
+
+    padding: 0 24px;
   }
 
+  /* =====================================================
+     MAIN LAYOUT
+  ===================================================== */
+
   &__content {
+    width: 100%;
+
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 360px;
-    gap: 32px;
+
+    grid-template-columns:
+      minmax(0, 1fr)
+      360px;
+
     align-items: flex-start;
+
+    gap: 24px;
 
     > div:first-child {
       min-width: 0;
@@ -19,36 +50,435 @@
 
     > :last-child {
       position: sticky;
-      top: 100px;
+
+      top: 96px;
+
       align-self: flex-start;
     }
   }
 
+  /* =====================================================
+     ERROR
+  ===================================================== */
+
   &__error {
-    margin-bottom: 20px;
-    padding: 14px 18px;
-    border-radius: 12px;
-    background: #fef2f2;
-    border: 1px solid #fecaca;
-    color: #dc2626;
+    margin-bottom: 14px;
+
+    padding: 12px 14px;
+
+    border: 1px solid rgba(255, 82, 82, 0.16);
+
+    border-radius: 14px;
+
+    background: rgba(255, 63, 63, 0.055);
+
+    color: #ff8a8a;
+
+    font-size: 10px;
+
     font-weight: 500;
+
+    line-height: 1.5;
   }
 
+  /* =====================================================
+     WARNING
+  ===================================================== */
+
   &__warning {
-    margin-bottom: 20px;
-    padding: 14px 18px;
-    border-radius: 12px;
-    background: #fffbeb;
-    border: 1px solid #fde68a;
-    color: #b45309;
+    margin-bottom: 14px;
+
+    padding: 12px 14px;
+
+    border: 1px solid rgba(230, 184, 93, 0.16);
+
+    border-radius: 14px;
+
+    background: rgba(230, 184, 93, 0.055);
+
+    color: #e8c474;
+
+    font-size: 10px;
+
     font-weight: 500;
+
+    line-height: 1.5;
   }
 }
-@media (max-width: 1024px) {
+
+/* =========================================================
+   VOUCHER ACTION
+========================================================= */
+
+.voucher-action {
+  width: 100%;
+
+  margin: 14px 0 18px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: flex-end;
+
+  gap: 8px;
+
+  button {
+    position: relative;
+
+    min-width: 142px;
+    height: 40px;
+
+    padding: 0 15px;
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    overflow: hidden;
+
+    border: 1px solid rgba(255, 83, 83, 0.15);
+
+    border-radius: 999px;
+
+    background: rgba(255, 70, 70, 0.055);
+
+    color: #ff8585;
+
+    font-family: "Inter", sans-serif;
+
+    font-size: 9px;
+
+    font-weight: 500;
+
+    cursor: pointer;
+
+    box-shadow: none;
+
+    transition:
+      background 0.2s ease,
+      border-color 0.2s ease,
+      color 0.2s ease,
+      transform 0.2s ease;
+
+    /* bỏ hiệu ứng ánh sáng cũ */
+    &::before {
+      display: none;
+    }
+
+    svg {
+      position: static;
+
+      width: 14px;
+      height: 14px;
+
+      z-index: auto;
+
+      transition: none;
+    }
+
+    &:hover:not(:disabled) {
+      background: rgba(255, 70, 70, 0.11);
+
+      border-color: rgba(255, 83, 83, 0.3);
+
+      color: #ffaaaa;
+
+      transform: translateY(-1px);
+
+      box-shadow: none;
+
+      svg {
+        transform: none;
+      }
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    &:disabled {
+      border-color: rgba(255, 255, 255, 0.06);
+
+      background: rgba(255, 255, 255, 0.025);
+
+      color: rgba(255, 255, 255, 0.25);
+
+      cursor: not-allowed;
+
+      box-shadow: none;
+
+      opacity: 0.6;
+    }
+  }
+}
+
+/* =========================================================
+   CART SKELETON
+========================================================= */
+
+.cart-skeleton {
+  width: 100%;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 12px;
+
+  &__item {
+    width: 100%;
+
+    min-height: 140px;
+
+    border: 1px solid rgba(255, 255, 255, 0.055);
+
+    border-radius: 18px;
+
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.02),
+      rgba(255, 255, 255, 0.055),
+      rgba(255, 255, 255, 0.02)
+    );
+
+    background-size: 280% 100%;
+
+    animation: cartSkeletonShimmer 1.35s linear infinite;
+  }
+}
+
+@keyframes cartSkeletonShimmer {
+  from {
+    background-position: 180% 0;
+  }
+
+  to {
+    background-position: -180% 0;
+  }
+}
+
+/* =========================================================
+   CART EMPTY
+   Override CartEmpty.scss cũ nếu còn style trắng
+========================================================= */
+
+.cart-page {
+  .cart-empty {
+    width: 100%;
+
+    padding: 30px 0;
+
+    background: transparent !important;
+
+    &__card {
+      min-height: 520px;
+
+      padding: 48px 28px;
+
+      display: flex;
+
+      flex-direction: column;
+
+      align-items: center;
+      justify-content: center;
+
+      text-align: center;
+
+      border: 1px dashed rgba(255, 255, 255, 0.09) !important;
+
+      border-radius: 24px !important;
+
+      background: rgba(255, 255, 255, 0.018) !important;
+
+      box-shadow: none !important;
+    }
+
+    &__icon {
+      width: 78px;
+      height: 78px;
+
+      margin-bottom: 18px;
+
+      display: flex;
+
+      align-items: center;
+      justify-content: center;
+
+      border: 1px solid rgba(83, 137, 255, 0.15);
+
+      border-radius: 22px;
+
+      background: rgba(73, 129, 255, 0.07);
+
+      color: #82a8ff;
+
+      svg {
+        width: 34px;
+        height: 34px;
+      }
+    }
+
+    &__title {
+      margin: 0;
+
+      color: #ffffff !important;
+
+      font-size: 27px !important;
+
+      font-weight: 400 !important;
+
+      letter-spacing: -1.1px !important;
+    }
+
+    &__description {
+      max-width: 470px;
+
+      margin: 13px 0 0;
+
+      color: rgba(255, 255, 255, 0.32) !important;
+
+      font-size: 11px !important;
+
+      line-height: 1.65;
+    }
+
+    &__button {
+      min-height: 42px;
+
+      margin-top: 20px;
+
+      padding: 0 17px;
+
+      display: inline-flex;
+
+      align-items: center;
+      justify-content: center;
+
+      gap: 7px;
+
+      border: 1px solid #ffffff;
+
+      border-radius: 999px;
+
+      background: #ffffff;
+
+      color: #090909;
+
+      font-size: 9px;
+
+      font-weight: 600;
+
+      text-decoration: none;
+
+      transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+
+      &:hover {
+        background: #82a8ff;
+
+        border-color: #82a8ff;
+
+        color: #071020;
+
+        transform: translateY(-1px);
+      }
+    }
+  }
+}
+
+/* =========================================================
+   OVERRIDE CHILD CART COMPONENTS
+   để CartList / Summary / Voucher ăn cùng hệ dark
+========================================================= */
+
+.cart-page {
+  /* =====================================================
+     CART LIST WRAPPER
+  ===================================================== */
+
+  .cart-list {
+    width: 100%;
+
+    overflow: hidden;
+
+    border: 1px solid rgba(255, 255, 255, 0.065);
+
+    border-radius: 22px;
+
+    background: rgba(255, 255, 255, 0.02);
+
+    box-shadow: none;
+  }
+
+  /* =====================================================
+     CART SUMMARY
+  ===================================================== */
+
+  .cart-summary {
+    border: 1px solid rgba(255, 255, 255, 0.07) !important;
+
+    border-radius: 22px !important;
+
+    background: linear-gradient(
+      180deg,
+      rgba(18, 20, 24, 0.98),
+      rgba(10, 11, 13, 0.98)
+    ) !important;
+
+    color: #ffffff !important;
+
+    box-shadow: none !important;
+  }
+
+  /* =====================================================
+     VOUCHER LIST
+  ===================================================== */
+
+  .voucher-list {
+    border-color: rgba(255, 255, 255, 0.06);
+
+    background: transparent;
+  }
+}
+
+/* =========================================================
+   LARGE
+========================================================= */
+
+@media (max-width: 1200px) {
   .cart-page {
     &__content {
+      grid-template-columns:
+        minmax(0, 1fr)
+        330px;
+
+      gap: 20px;
+    }
+  }
+}
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 1024px) {
+  .cart-page {
+    padding: 40px 0 80px;
+
+    &__container {
+      padding: 0 20px;
+    }
+
+    &__content {
       grid-template-columns: 1fr;
-      gap: 24px;
+
+      gap: 20px;
 
       > :last-child {
         position: static;
@@ -57,128 +487,73 @@
   }
 }
 
+/* =========================================================
+   MOBILE
+========================================================= */
+
 @media (max-width: 768px) {
+  .cart-page {
+    padding: 30px 0 60px;
+
+    &__container {
+      padding: 0 14px;
+    }
+  }
+
   .voucher-action {
-    margin-top: 20px;
+    margin: 12px 0 16px;
 
     button {
       width: 100%;
+
       min-width: 0;
-      height: 52px;
+
+      height: 42px;
+    }
+  }
+
+  .cart-page {
+    .cart-empty {
+      &__card {
+        min-height: 420px;
+
+        padding: 38px 20px;
+      }
+
+      &__title {
+        font-size: 23px !important;
+      }
     }
   }
 }
 
-.voucher-action {
-  display: flex;
-  justify-content: flex-end;
-  gap: 20px;
-  margin: 16px 0 24px;
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
 
-  button {
-    position: relative;
-
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 9px;
-
-    min-width: 190px;
-    height: 46px;
-
-    padding: 0 20px;
-
-    border: 1px solid #ef4444;
-    border-radius: 12px;
-
-    background: #ef4444;
-    color: #fff;
-
-    font-size: 14px;
-    font-weight: 700;
-
-    cursor: pointer;
-
-    overflow: hidden;
-
-    transition:
-      transform 0.2s ease,
-      box-shadow 0.2s ease,
-      background 0.2s ease;
-
-    box-shadow:
-      0 6px 14px rgba(239, 68, 68, 0.18),
-      inset 0 1px 0 rgba(255, 255, 255, 0.2);
-    &::before {
-      content: "";
-
-      position: absolute;
-
-      top: 0;
-      left: -100%;
-
-      width: 60%;
-      height: 100%;
-
-      background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(255, 255, 255, 0.18),
-        transparent
-      );
-
-      transform: skewX(-20deg);
-
-      transition: left 0.5s ease;
+@media (max-width: 480px) {
+  .cart-page {
+    &__container {
+      padding: 0 10px;
     }
 
-    svg {
-      position: relative;
-      z-index: 1;
-
-      width: 18px;
-      height: 18px;
-
-      transition:
-        transform 0.25s ease,
-        rotate 0.25s ease;
+    &__content {
+      gap: 16px;
     }
+  }
+}
 
-    &:hover:not(:disabled) {
-      background: #dc2626;
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
 
-      transform: translateY(-2px);
+@media (prefers-reduced-motion: reduce) {
+  .voucher-action button,
+  .cart-empty__button {
+    transition: none !important;
+  }
 
-      box-shadow:
-        0 10px 20px rgba(239, 68, 68, 0.25),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2);
-
-      &::before {
-        left: 130%;
-      }
-
-      svg {
-        transform: rotate(-8deg) scale(1.08);
-      }
-    }
-
-    &:active:not(:disabled) {
-      transform: translateY(0) scale(0.98);
-    }
-
-    &:disabled {
-      border-color: #e5e7eb;
-
-      background: #f1f5f9;
-      color: #94a3b8;
-
-      cursor: not-allowed;
-
-      box-shadow: none;
-
-      svg {
-        opacity: 0.6;
-      }
-    }
+  .cart-skeleton__item {
+    animation-duration: 2s;
   }
 }

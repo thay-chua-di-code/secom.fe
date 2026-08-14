@@ -9,6 +9,20 @@ const currencyFormatter = new Intl.NumberFormat("en-US", {
   currency: "USD",
 });
 
+const FALLBACK_IMAGE = "/favicon.svg";
+
+const getCartItemImage = (item = {}) =>
+  item.productImageUrl ||
+  item.primaryImageUrl ||
+  item.imageUrl ||
+  item.thumbnailUrl ||
+  item.productThumbnailUrl ||
+  item.image ||
+  item.product?.primaryImageUrl ||
+  item.product?.imageUrl ||
+  item.product?.thumbnailUrl ||
+  FALLBACK_IMAGE;
+
 export default function Cart({ open }) {
   const { isAuthenticated } = useSelector((state) => state.auth);
   const { items, loading, error } = useCart();
@@ -23,6 +37,7 @@ export default function Cart({ open }) {
         <div className="cart-dropdown__header">
           <div>
             <span className="cart-dropdown__eyebrow">SHOPPING BAG</span>
+
             <h3>Your Cart</h3>
           </div>
         </div>
@@ -52,6 +67,7 @@ export default function Cart({ open }) {
         <div className="cart-dropdown__header">
           <div>
             <span className="cart-dropdown__eyebrow">SHOPPING BAG</span>
+
             <h3>Your Cart</h3>
           </div>
         </div>
@@ -59,7 +75,9 @@ export default function Cart({ open }) {
         <div className="cart-dropdown__body">
           <div className="cart-dropdown__empty-state">
             <span className="cart-dropdown__spinner" />
+
             <strong>Loading cart</strong>
+
             <p>Please wait a moment...</p>
           </div>
         </div>
@@ -73,6 +91,7 @@ export default function Cart({ open }) {
         <div className="cart-dropdown__header">
           <div>
             <span className="cart-dropdown__eyebrow">SHOPPING BAG</span>
+
             <h3>Your Cart</h3>
           </div>
         </div>
@@ -84,6 +103,7 @@ export default function Cart({ open }) {
             </div>
 
             <strong>Unable to load cart</strong>
+
             <p>{error}</p>
           </div>
         </div>
@@ -108,6 +128,7 @@ export default function Cart({ open }) {
       <div className="cart-dropdown__header">
         <div>
           <span className="cart-dropdown__eyebrow">SHOPPING BAG</span>
+
           <h3>Your Cart</h3>
         </div>
 
@@ -130,32 +151,51 @@ export default function Cart({ open }) {
             </Link>
           </div>
         ) : (
-          items.map((item) => (
-            <div className="cart-item" key={item.cartItemId}>
-              <div className="cart-item__content">
-                <h4>{item.productName || "Product"}</h4>
-
-                <div className="cart-item__meta">
-                  <span>Qty {item.quantity}</span>
-
-                  <span>{currencyFormatter.format(item.unitPrice || 0)}</span>
+          <div className="cart-dropdown__items">
+            {items.map((item) => (
+              <Link
+                key={item.cartItemId}
+                to={`/product-detail/${item.productId}`}
+                className="cart-dropdown-item"
+              >
+                <div className="cart-dropdown-item__image">
+                  <img
+                    src={getCartItemImage(item)}
+                    alt={item.productName || "Product"}
+                    onError={(event) => {
+                      event.currentTarget.src = FALLBACK_IMAGE;
+                    }}
+                  />
                 </div>
 
-                <div className="cart-item__bottom">
-                  <span className="price">
-                    {currencyFormatter.format(item.subtotal || 0)}
-                  </span>
+                <div className="cart-dropdown-item__content">
+                  <h4>{item.productName || "Product"}</h4>
+
+                  <div className="cart-dropdown-item__meta">
+                    <span>Qty {item.quantity || 0}</span>
+
+                    <span>{currencyFormatter.format(item.unitPrice || 0)}</span>
+                  </div>
+
+                  <div className="cart-dropdown-item__bottom">
+                    <span>Subtotal</span>
+
+                    <strong>
+                      {currencyFormatter.format(item.subtotal || 0)}
+                    </strong>
+                  </div>
                 </div>
-              </div>
-            </div>
-          ))
+              </Link>
+            ))}
+          </div>
         )}
       </div>
 
       {items.length > 0 && (
         <div className="cart-dropdown__footer">
           <span className="cart-dropdown__summary">
-            {totalQuantity} item{totalQuantity !== 1 ? "s" : ""}
+            {totalQuantity} item
+            {totalQuantity !== 1 ? "s" : ""}
           </span>
 
           <Link to="/cart" className="view-cart-btn">

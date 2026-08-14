@@ -1,89 +1,50 @@
+/* =========================================================
+   VOUCHER LIST
+========================================================= */
+
 .voucher-list {
   width: 100%;
   max-width: 100%;
-  margin: 20px 0;
-  padding: 16px;
-  box-sizing: border-box;
-  background: #ffffff;
+
+  margin: 18px 0 0;
+
+  padding: 18px;
+
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  border: 1px solid #ffe4e6;
-  border-radius: 16px;
-  box-shadow: 0 6px 18px rgba(239, 68, 68, 0.06);
+
+  gap: 14px;
+
   overflow: visible;
 
-  &__content {
-    position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.065);
 
-    width: 100%;
-    max-width: 100%;
-  }
+  border-radius: 20px;
 
-  &__nav {
-    position: absolute;
-    top: 50%;
-    z-index: 10;
+  background:
+    radial-gradient(
+      circle at 0% 0%,
+      rgba(72, 127, 255, 0.055),
+      transparent 30%
+    ),
+    linear-gradient(180deg, rgba(17, 19, 23, 0.98), rgba(10, 11, 13, 0.98));
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  color: #ffffff;
 
-    width: 32px;
-    height: 32px;
+  box-shadow: none;
 
-    padding: 0;
-
-    border: 1px solid #fecdd3;
-    border-radius: 50%;
-
-    background: #ffffff;
-
-    color: #ef4444;
-
-    font-size: 28px;
-    font-weight: 400;
-    line-height: 1;
-
-    cursor: pointer;
-
-    transform: translateY(-50%);
-
-    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.14);
-
-    transition:
-      background 0.2s ease,
-      color 0.2s ease,
-      transform 0.2s ease;
-
-    &:hover {
-      background: #ef4444;
-      color: #ffffff;
-
-      transform: translateY(-50%) scale(1.08);
-    }
-
-    &:active {
-      transform: translateY(-50%) scale(0.95);
-    }
-
-    &--prev {
-      left: -10px;
-    }
-
-    &--next {
-      right: -10px;
-    }
-  }
+  /* =====================================================
+     HEADER
+  ===================================================== */
 
   &__header {
+    margin-bottom: 2px;
+
     display: flex;
     align-items: center;
     justify-content: space-between;
 
-    gap: 16px;
-
-    margin-bottom: 16px;
+    gap: 14px;
   }
 
   &__title {
@@ -92,10 +53,15 @@
     h3 {
       margin: 0;
 
-      color: #1e293b;
+      color: #ffffff;
 
-      font-size: 17px;
-      font-weight: 700;
+      font-size: 15px;
+
+      font-weight: 500;
+
+      line-height: 1.2;
+
+      letter-spacing: -0.35px;
     }
 
     span {
@@ -103,51 +69,100 @@
 
       margin-top: 4px;
 
-      color: #94a3b8;
+      color: rgba(255, 255, 255, 0.28);
 
-      font-size: 12px;
+      font-size: 8px;
+
+      line-height: 1.4;
     }
   }
 
   &__count {
     flex-shrink: 0;
 
-    padding: 5px 10px;
+    min-height: 28px;
+
+    padding: 0 10px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid rgba(255, 255, 255, 0.07);
 
     border-radius: 999px;
 
-    background: #fff1f2;
+    background: rgba(255, 255, 255, 0.025);
 
-    color: #ef4444;
+    color: rgba(255, 255, 255, 0.38);
 
-    font-size: 12px;
-    font-weight: 600;
+    font-family: "Roboto Mono", monospace;
+
+    font-size: 7px;
+
+    font-weight: 500;
+
     white-space: nowrap;
   }
 
+  /* =====================================================
+     EMPTY / LOADING
+  ===================================================== */
+
   &__empty {
+    min-height: 110px;
+
+    padding: 20px;
+
     display: flex;
     align-items: center;
     justify-content: center;
 
-    min-height: 100px;
+    border: 1px dashed rgba(255, 255, 255, 0.075);
 
-    color: #94a3b8;
+    border-radius: 15px;
 
-    font-size: 13px;
+    background: rgba(255, 255, 255, 0.014);
+
+    color: rgba(255, 255, 255, 0.3);
+
+    font-size: 9px;
+
+    text-align: center;
   }
+
+  /* =====================================================
+     CONTENT
+  ===================================================== */
+
+  &__content {
+    position: relative;
+
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* =====================================================
+     VIEWPORT
+  ===================================================== */
 
   &__viewport {
     width: 100%;
     max-width: 100%;
-    padding-top: 14px;
+
+    padding: 6px 2px 8px;
+
     overflow-x: auto;
-    overflow-y: hidden;
+    overflow-y: visible;
+
+    scroll-behavior: smooth;
+
     scrollbar-width: thin;
-    scrollbar-color: #fca5a5 transparent;
+
+    scrollbar-color: rgba(255, 255, 255, 0.12) transparent;
 
     &::-webkit-scrollbar {
-      height: 5px;
+      height: 4px;
     }
 
     &::-webkit-scrollbar-track {
@@ -155,53 +170,185 @@
     }
 
     &::-webkit-scrollbar-thumb {
-      background: #fca5a5;
       border-radius: 999px;
+
+      background: rgba(255, 255, 255, 0.12);
     }
   }
 
+  /* =====================================================
+     GRID
+  ===================================================== */
+
   &__grid {
-    display: flex;
-
-    gap: 12px;
-
     width: 100%;
 
-    padding: 6px 4px 8px;
+    display: flex;
+
+    gap: 10px;
+
+    padding: 3px 1px 6px;
 
     box-sizing: border-box;
 
     &--count-3 {
-      .voucher-card {
-        flex: 0 0 calc((100% - 24px) / 3);
+      .voucher-item {
+        flex: 0 0 calc((100% - 20px) / 3);
       }
     }
   }
+
+  /* =====================================================
+     NAV
+  ===================================================== */
+
+  &__nav {
+    position: absolute;
+
+    top: 50%;
+
+    z-index: 6;
+
+    width: 34px;
+    height: 34px;
+
+    padding: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid rgba(255, 255, 255, 0.1);
+
+    border-radius: 50%;
+
+    background: rgba(14, 16, 19, 0.92);
+
+    color: rgba(255, 255, 255, 0.62);
+
+    font-size: 21px;
+
+    line-height: 1;
+
+    cursor: pointer;
+
+    transform: translateY(-50%);
+
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.25);
+
+    transition:
+      background 0.2s ease,
+      border-color 0.2s ease,
+      color 0.2s ease,
+      transform 0.2s ease;
+
+    &:hover {
+      background: #ffffff;
+
+      border-color: #ffffff;
+
+      color: #090909;
+
+      transform: translateY(-50%) scale(1.03);
+    }
+
+    &:active {
+      transform: translateY(-50%) scale(0.96);
+    }
+
+    &--prev {
+      left: -9px;
+    }
+
+    &--next {
+      right: -9px;
+    }
+  }
 }
-.voucher-card {
-  width: 100%;
+
+/* =========================================================
+   VOUCHER ITEM
+========================================================= */
+
+.voucher-item {
   position: relative;
 
-  display: flex;
+  flex: 0 0 calc((100% - 20px) / 3);
 
-  flex: 0 0 100%;
+  min-width: 0;
+}
+
+/* =========================================================
+   SELECTED BADGE
+========================================================= */
+
+.voucher-item__selected {
+  position: absolute;
+
+  top: -8px;
+  right: -7px;
+
+  z-index: 8;
+
+  width: 25px;
+  height: 25px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 2px solid #111317;
+
+  border-radius: 50%;
+
+  background: #65d79b;
+
+  color: #07130d;
+
+  font-size: 10px;
+
+  font-weight: 700;
+
+  box-shadow: 0 8px 20px rgba(69, 209, 133, 0.22);
+}
+
+/* =========================================================
+   VOUCHER CARD
+========================================================= */
+
+.voucher-card {
+  position: relative;
+
+  width: 100%;
+
+  min-width: 0;
+
+  min-height: 118px;
+
+  padding: 14px;
+
+  display: flex;
 
   flex-direction: column;
 
   justify-content: space-between;
 
-  min-width: 0;
+  overflow: hidden;
 
-  min-height: 112px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
 
-  padding: 14px;
+  border-radius: 15px;
 
-  box-sizing: border-box;
-
-  border: 1px solid transparent;
-  border-radius: 13px;
-
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  background:
+    radial-gradient(
+      circle at 100% 0%,
+      rgba(82, 139, 255, 0.09),
+      transparent 38%
+    ),
+    rgba(255, 255, 255, 0.025);
 
   color: #ffffff;
 
@@ -209,97 +356,103 @@
 
   cursor: pointer;
 
-  overflow: visible;
-
-  box-shadow: 0 5px 12px rgba(239, 68, 68, 0.14);
+  box-shadow: none;
 
   transition:
-    transform 0.25s ease,
-    box-shadow 0.25s ease,
-    border-color 0.25s ease,
-    filter 0.25s ease;
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.22s ease,
+    opacity 0.2s ease;
 
-  // =========================
-  // CUTOUT
-  // =========================
+  /* =====================================================
+     TICKET CUTOUT
+  ===================================================== */
 
   &::before,
   &::after {
     content: "";
 
     position: absolute;
+
     top: 50%;
 
-    width: 14px;
-    height: 14px;
-
-    background: #ffffff;
+    width: 12px;
+    height: 12px;
 
     border-radius: 50%;
+
+    background: #0d0f12;
 
     transform: translateY(-50%);
   }
 
   &::before {
-    left: -7px;
+    left: -6px;
   }
 
   &::after {
-    right: -7px;
+    right: -6px;
   }
 
-  // =========================
-  // HOVER
-  // =========================
+  &:hover:not(:disabled) {
+    background:
+      radial-gradient(
+        circle at 100% 0%,
+        rgba(82, 139, 255, 0.13),
+        transparent 42%
+      ),
+      rgba(255, 255, 255, 0.04);
 
-  &:hover {
-    transform: translateY(-3px);
+    border-color: rgba(255, 255, 255, 0.12);
 
-    box-shadow: 0 8px 18px rgba(239, 68, 68, 0.24);
+    transform: translateY(-2px);
   }
 
-  &--disabled {
-    cursor: not-allowed;
-    opacity: 0.65;
-    transform: none !important;
-    box-shadow: 0 5px 12px rgba(239, 68, 68, 0.08);
-  }
-
-  &__hint {
-    display: block;
-    margin-top: 10px;
-    color: #ffe4e6;
-    font-size: 11px;
-    line-height: 1.4;
-    text-align: left;
-  }
-
-  // =========================
-  // ACTIVE
-  // =========================
+  /* =====================================================
+     ACTIVE
+  ===================================================== */
 
   &--active {
-    border: 2px solid #ffffff;
+    border-color: rgba(130, 168, 255, 0.42);
 
-    transform: translateY(-4px) scale(1.02);
+    background:
+      radial-gradient(
+        circle at 100% 0%,
+        rgba(92, 146, 255, 0.17),
+        transparent 44%
+      ),
+      rgba(71, 126, 255, 0.06);
 
-    box-shadow:
-      0 0 0 4px rgba(239, 68, 68, 0.18),
-      0 14px 30px rgba(239, 68, 68, 0.35);
+    box-shadow: 0 0 0 1px rgba(130, 168, 255, 0.08);
 
-    animation: voucherPop 0.25s ease;
+    transform: translateY(-1px);
   }
 
-  // =========================
-  // TOP
-  // =========================
+  /* =====================================================
+     DISABLED
+  ===================================================== */
+
+  &--disabled {
+    opacity: 0.32;
+
+    cursor: not-allowed;
+
+    filter: grayscale(0.2);
+
+    transform: none !important;
+  }
+
+  /* =====================================================
+     TOP
+  ===================================================== */
 
   &__top {
     display: flex;
-    align-items: center;
+
+    align-items: flex-start;
     justify-content: space-between;
 
-    gap: 12px;
+    gap: 10px;
   }
 
   &__code {
@@ -307,14 +460,21 @@
 
     overflow: hidden;
 
-    color: #ffffff;
+    color: rgba(255, 255, 255, 0.76);
 
-    font-size: 12px;
-    font-weight: 800;
-    letter-spacing: 0.5px;
+    font-family: "Roboto Mono", monospace;
+
+    font-size: 8px;
+
+    font-weight: 600;
+
+    letter-spacing: 0.08em;
 
     white-space: nowrap;
+
     text-overflow: ellipsis;
+
+    text-transform: uppercase;
   }
 
   &__discount {
@@ -322,47 +482,60 @@
 
     color: #ffffff;
 
-    font-size: 17px;
-    font-weight: 800;
+    font-size: 18px;
+
+    font-weight: 600;
+
+    line-height: 1;
+
+    letter-spacing: -0.5px;
+
     white-space: nowrap;
   }
 
-  // =========================
-  // DESCRIPTION
-  // =========================
+  /* =====================================================
+     DESCRIPTION
+  ===================================================== */
 
   &__description {
-    display: block;
-
     min-width: 0;
 
     margin: 12px 0 10px;
 
+    display: block;
+
     overflow: hidden;
 
-    color: rgba(255, 255, 255, 0.86);
+    color: rgba(255, 255, 255, 0.36);
 
-    font-size: 11px;
-    line-height: 1.4;
+    font-size: 8px;
+
+    line-height: 1.45;
 
     white-space: nowrap;
+
     text-overflow: ellipsis;
   }
 
-  // =========================
-  // META
-  // =========================
+  /* =====================================================
+     META
+  ===================================================== */
 
   &__meta {
+    padding-top: 9px;
+
     display: flex;
+
     align-items: center;
     justify-content: space-between;
 
-    gap: 10px;
+    gap: 8px;
 
-    color: rgba(255, 255, 255, 0.72);
+    border-top: 1px dashed rgba(255, 255, 255, 0.065);
 
-    font-size: 10px;
+    color: rgba(255, 255, 255, 0.25);
+
+    font-size: 7px;
 
     span {
       min-width: 0;
@@ -370,83 +543,140 @@
       overflow: hidden;
 
       white-space: nowrap;
+
       text-overflow: ellipsis;
     }
   }
+
+  /* =====================================================
+     HINT
+  ===================================================== */
+
+  &__hint {
+    display: block;
+
+    margin-top: 8px;
+
+    color: rgba(255, 255, 255, 0.28);
+
+    font-size: 7px;
+
+    line-height: 1.4;
+  }
 }
-@media (max-width: 768px) {
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 900px) {
   .voucher-list {
-    padding: 14px;
+    &__grid {
+      .voucher-item {
+        flex: 0 0 calc((100% - 10px) / 2);
+      }
+
+      &--count-3 {
+        .voucher-item {
+          flex: 0 0 calc((100% - 10px) / 2);
+        }
+      }
+    }
+  }
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 640px) {
+  .voucher-list {
+    padding: 15px;
+
+    border-radius: 18px;
 
     &__header {
-      gap: 10px;
-    }
+      align-items: flex-start;
 
-    &__title {
-      h3 {
-        font-size: 16px;
-      }
+      flex-direction: column;
 
-      span {
-        font-size: 11px;
-      }
+      gap: 8px;
     }
 
     &__count {
-      font-size: 11px;
+      min-height: 25px;
+    }
+
+    &__nav {
+      width: 31px;
+      height: 31px;
+
+      font-size: 18px;
+
+      &--prev {
+        left: -7px;
+      }
+
+      &--next {
+        right: -7px;
+      }
     }
 
     &__grid {
-      gap: 10px;
+      .voucher-item {
+        flex: 0 0 84%;
+      }
 
       &--count-3 {
-        .voucher-card {
-          flex-basis: calc((100% - 20px) / 3);
+        .voucher-item {
+          flex: 0 0 84%;
         }
       }
     }
   }
 
   .voucher-card {
-    min-height: 105px;
+    min-height: 112px;
 
-    padding: 12px;
+    padding: 13px;
 
     &__discount {
-      font-size: 15px;
+      font-size: 16px;
     }
   }
 }
 
-.voucher-item {
-  position: relative;
+/* =========================================================
+   VERY SMALL MOBILE
+========================================================= */
 
-  flex: 0 0 calc((100% - 24px) / 3);
+@media (max-width: 420px) {
+  .voucher-list {
+    &__grid {
+      .voucher-item,
+      &--count-3 .voucher-item {
+        flex-basis: 92%;
+      }
+    }
+  }
 }
 
-.voucher-item__selected {
-  position: absolute;
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
 
-  top: -12px;
-  right: -12px;
+@media (prefers-reduced-motion: reduce) {
+  .voucher-card,
+  .voucher-list__nav {
+    transition: none !important;
 
-  z-index: 100;
+    transform: none !important;
+  }
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  width: 34px;
-  height: 34px;
-
-  border-radius: 50%;
-  border: 3px solid #fff;
-
-  background: #22c55e;
-  color: #fff;
-
-  font-size: 15px;
-  font-weight: 700;
-
-  box-shadow: 0 8px 18px rgba(34, 197, 94, 0.35);
+  .voucher-list__nav {
+    &:hover,
+    &:active {
+      transform: translateY(-50%) !important;
+    }
+  }
 }

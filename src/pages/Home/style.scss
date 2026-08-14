@@ -1,6 +1,5 @@
 .home-discovery {
   width: 100%;
-
   &__heading {
     max-width: 760px;
 
@@ -175,5 +174,168 @@
 
       line-height: 1.6;
     }
+  }
+}
+
+/* =========================================================
+   HOME COMPARE FLOATING BUTTON
+========================================================= */
+
+.home-compare-floating-btn {
+  position: fixed;
+
+  right: 28px;
+  bottom: 86px;
+
+  /*
+    Cố tình để thấp hơn:
+    - cart dropdown
+    - chat
+    - modal
+    - header popup
+  */
+  z-index: 120;
+
+  min-width: 132px;
+  height: 44px;
+
+  padding: 0 17px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
+
+  border-radius: 999px;
+
+  background: rgba(14, 16, 19, 0.9);
+
+  color: #ffffff;
+
+  font-family: "Inter", sans-serif;
+
+  font-size: 10px;
+  font-weight: 600;
+
+  line-height: 1;
+
+  cursor: pointer;
+
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+
+  box-shadow: 0 16px 38px rgba(0, 0, 0, 0.34);
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+
+  &::before {
+    content: "";
+
+    width: 7px;
+    height: 7px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background: #82a8ff;
+
+    box-shadow: 0 0 0 4px rgba(130, 168, 255, 0.08);
+  }
+
+  &:hover {
+    background: #ffffff;
+
+    border-color: #ffffff;
+
+    color: #090909;
+
+    transform: translateY(-2px);
+
+    box-shadow: 0 20px 46px rgba(0, 0, 0, 0.4);
+
+    &::before {
+      background: #0b73ef;
+    }
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 768px) {
+  .home-compare-floating-btn {
+    right: 16px;
+    bottom: 76px;
+
+    min-width: 120px;
+    height: 42px;
+
+    padding: 0 15px;
+
+    font-size: 9px;
+  }
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 480px) {
+  .home-compare-floating-btn {
+    right: 12px;
+    bottom: 70px;
+
+    min-width: 112px;
+    height: 40px;
+
+    padding: 0 13px;
+
+    font-size: 8px;
+  }
+}
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .home-compare-floating-btn {
+    transition: none;
+  }
+}
+
+/* =========================================================
+   GENERAL SCROLL REVEAL
+========================================================= */
+
+.reveal-section {
+  opacity: 0;
+
+  transform: translateY(48px);
+
+  transition:
+    opacity 0.85s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.85s cubic-bezier(0.22, 1, 0.36, 1);
+
+  will-change: opacity, transform;
+
+  &.is-visible {
+    opacity: 1;
+
+    transform: translateY(0);
   }
 }

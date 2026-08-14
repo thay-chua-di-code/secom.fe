@@ -3,12 +3,17 @@ import { formatCurrencyVN } from "../../../utils/fncUtils";
 import "./style.scss";
 import { aiService } from "../../../service/aiService";
 import { useEffect, useState } from "react";
-import { Eye, Heart, Star } from "lucide-react"; // Add Star icon
+import { Eye, Heart, Star } from "lucide-react";
 import Title from "../../../components/common/Title";
-
+import useReveal from "../../../hooks/useReveal";
 const ProductSuggestion = ({ productId }) => {
   const [products, setProducts] = useState([]);
 
+  const reveal = useReveal({
+    threshold: 0.08,
+    rootMargin: "0px 0px -60px 0px",
+    once: false,
+  });
   const handleGetProductAi = async () => {
     try {
       const res = await aiService.similarProduct(productId);
@@ -23,7 +28,10 @@ const ProductSuggestion = ({ productId }) => {
   }, [productId]);
 
   return (
-    <div className="ai-products">
+    <div
+      ref={reveal.ref}
+      className={`ai-products ${reveal.visible ? "is-visible" : ""}`}
+    >
       <Title title={"Recommended products"} />
 
       <div className="ai-products__list">

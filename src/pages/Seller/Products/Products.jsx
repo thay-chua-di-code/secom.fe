@@ -529,7 +529,7 @@ const Products = () => {
           >
             <Upload size={18} />
 
-            {importing ? "Đang nhập sản phẩm..." : "Import Excel"}
+            {importing ? "Importing..." : "Import Excel"}
           </Button>
 
           <Button
@@ -539,7 +539,7 @@ const Products = () => {
           >
             <Download size={18} />
 
-            {exporting ? "Đang xuất file..." : "Export Excel"}
+            {exporting ? "Exporting..." : "Export Excel"}
           </Button>
 
           <Button

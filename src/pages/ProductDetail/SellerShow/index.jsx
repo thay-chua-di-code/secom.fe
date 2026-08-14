@@ -16,25 +16,48 @@ import placeholderAvatar from "../../../assets/icons/logo.jpg";
 import { chatService } from "../../../service/chatService";
 import sellerFollowApi from "../../../api/sellerFollowApi";
 import { getSellerStatistics } from "../../../api/sellerStatisticsApi";
+import useReveal from "../../../hooks/useReveal";
 
 export default function SellerShow({ seller, shop }) {
   const navigate = useNavigate();
+
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+
   const userInfo = useSelector((state) => state.user.userInfo);
+
   const [chatLoading, setChatLoading] = useState(false);
+
   const [followLoading, setFollowLoading] = useState(false);
+
   const [followStatusLoading, setFollowStatusLoading] = useState(false);
+
   const [isFollowing, setIsFollowing] = useState(false);
+
   const [followerCount, setFollowerCount] = useState(0);
+
+  const reveal = useReveal({
+    threshold: 0.08,
+    rootMargin: "0px 0px -60px 0px",
+    once: false,
+  });
+
   const sellerInfo = seller || shop || {};
+
   const sellerId = sellerInfo.sellerId || sellerInfo.id;
+
   const sellerName = sellerInfo.fullName || sellerInfo.name || "Unknown seller";
+
   const avatarUrl =
     sellerInfo.avatarUrl || sellerInfo.avatar || placeholderAvatar;
+
   const rating = sellerInfo.rating ?? "N/A";
+
   const totalProducts = sellerInfo.totalProducts ?? "N/A";
+
   const followers = followerCount || sellerInfo.followers || 0;
+
   const joined = sellerInfo.joined ?? "N/A";
+
   const isOwnSeller =
     sellerId &&
     (String(userInfo?.sellerId) === String(sellerId) ||
@@ -61,6 +84,7 @@ export default function SellerShow({ seller, shop }) {
 
       try {
         setFollowStatusLoading(true);
+
         const status = await sellerFollowApi.getSellerFollowStatus(sellerId);
 
         if (isMounted) {
@@ -78,9 +102,12 @@ export default function SellerShow({ seller, shop }) {
     loadSellerFollowData();
 
     const handleFollowChanged = (event) => {
-      if (String(event.detail?.sellerId) !== String(sellerId)) return;
+      if (String(event.detail?.sellerId) !== String(sellerId)) {
+        return;
+      }
 
       setIsFollowing(Boolean(event.detail?.isFollowing));
+
       setFollowerCount((currentCount) =>
         Number.isFinite(event.detail?.totalFollowers)
           ? event.detail.totalFollowers
@@ -94,6 +121,7 @@ export default function SellerShow({ seller, shop }) {
 
     return () => {
       isMounted = false;
+
       window.removeEventListener(
         "secom:seller-follow-changed",
         handleFollowChanged,
@@ -102,13 +130,15 @@ export default function SellerShow({ seller, shop }) {
   }, [isAuthenticated, sellerId]);
 
   const handleToggleFollow = async () => {
-    if (!sellerId || followLoading || followStatusLoading || isOwnSeller)
+    if (!sellerId || followLoading || followStatusLoading || isOwnSeller) {
       return;
+    }
 
     if (!isAuthenticated) {
       navigate(
         `/login?returnUrl=${encodeURIComponent(window.location.pathname)}`,
       );
+
       return;
     }
 
@@ -122,6 +152,7 @@ export default function SellerShow({ seller, shop }) {
         : await sellerFollowApi.unfollowSeller(sellerId);
 
       const confirmedFollowing = result?.isFollowing ?? nextFollowing;
+
       let nextFollowerCount = followerCount;
 
       setFollowerCount((currentCount) => {
@@ -155,6 +186,7 @@ export default function SellerShow({ seller, shop }) {
   const handleChatWithSeller = async () => {
     if (!sellerId) {
       toast.error("Seller not found");
+
       return;
     }
 
@@ -162,12 +194,17 @@ export default function SellerShow({ seller, shop }) {
       navigate(
         `/login?returnUrl=${encodeURIComponent(window.location.pathname)}`,
       );
+
       return;
     }
 
     try {
       setChatLoading(true);
-      const thread = await chatService.createChatThread({ sellerId });
+
+      const thread = await chatService.createChatThread({
+        sellerId,
+      });
+
       const chatId = thread?.chatId || thread?.id;
 
       if (!chatId) {
@@ -180,7 +217,8 @@ export default function SellerShow({ seller, shop }) {
             chatId,
             sellerId: thread.sellerId || sellerId,
             shopName: thread.shopName,
-            sellerName: thread.shopName || thread.sellerName || sellerName || "Seller",
+            sellerName:
+              thread.shopName || thread.sellerName || sellerName || "Seller",
             sellerAvatarUrl: thread.sellerAvatarUrl || avatarUrl,
           },
         }),
@@ -193,24 +231,36 @@ export default function SellerShow({ seller, shop }) {
   };
 
   return (
-    <div className="seller-showcase">
+    <section
+      ref={reveal.ref}
+      className={`seller-showcase reveal-section ${
+        reveal.visible ? "is-visible" : ""
+      }`}
+    >
       <div className="seller-showcase__header">
         <div className="seller-showcase__profile">
-          <img
-            className="seller-showcase__avatar"
-            src={avatarUrl}
-            alt={sellerName}
-          />
+          <div className="seller-showcase__avatar-wrap">
+            <img
+              className="seller-showcase__avatar"
+              src={avatarUrl}
+              alt={sellerName}
+            />
+
+            <span className="seller-showcase__online-dot" />
+          </div>
 
           <div className="seller-showcase__info">
+            <span className="seller-showcase__eyebrow">SELLER PROFILE</span>
+
             <h3>
               {sellerName}
+
               {sellerInfo.verified && (
-                <BadgeCheck size={18} color="#ef4444" fill="#fee2e2" />
+                <BadgeCheck size={17} className="seller-showcase__verified" />
               )}
             </h3>
 
-            <span>🟢 Online 10 minutes ago</span>
+            <p>Online 10 minutes ago</p>
           </div>
         </div>
 
@@ -220,13 +270,16 @@ export default function SellerShow({ seller, shop }) {
             onClick={handleChatWithSeller}
             disabled={chatLoading}
           >
-            <MessageCircle size={18} />
+            <MessageCircle size={16} />
+
             {chatLoading ? "Opening..." : "Chat"}
           </Button>
 
           {!isOwnSeller && (
             <Button
-              className="seller-showcase__follow"
+              className={`seller-showcase__follow ${
+                isFollowing ? "is-following" : ""
+              }`}
               onClick={handleToggleFollow}
               disabled={followLoading || followStatusLoading}
             >
@@ -244,7 +297,7 @@ export default function SellerShow({ seller, shop }) {
             to={sellerId ? `/seller/detail/${sellerId}` : "#"}
             className="seller-showcase__shop"
           >
-            <Store size={18} />
+            <Store size={16} />
             View Shop
           </Link>
         </div>
@@ -252,29 +305,50 @@ export default function SellerShow({ seller, shop }) {
 
       <div className="seller-showcase__stats">
         <div className="seller-showcase__stat">
-          <Star size={18} />
-          <span>Rating</span>
-          <strong>{rating}</strong>
+          <div className="seller-showcase__stat-icon">
+            <Star size={17} />
+          </div>
+
+          <div>
+            <span>Rating</span>
+            <strong>{rating}</strong>
+          </div>
         </div>
 
         <div className="seller-showcase__stat">
-          <Package size={18} />
-          <span>Products</span>
-          <strong>{totalProducts}</strong>
+          <div className="seller-showcase__stat-icon">
+            <Package size={17} />
+          </div>
+
+          <div>
+            <span>Products</span>
+            <strong>{totalProducts}</strong>
+          </div>
         </div>
 
         <div className="seller-showcase__stat">
-          <Users size={18} />
-          <span>Followers</span>
-          <strong>{Number(followers).toLocaleString()}</strong>
+          <div className="seller-showcase__stat-icon">
+            <Users size={17} />
+          </div>
+
+          <div>
+            <span>Followers</span>
+
+            <strong>{Number(followers).toLocaleString()}</strong>
+          </div>
         </div>
 
         <div className="seller-showcase__stat">
-          <Store size={18} />
-          <span>Joined</span>
-          <strong>{joined}</strong>
+          <div className="seller-showcase__stat-icon">
+            <Store size={17} />
+          </div>
+
+          <div>
+            <span>Joined</span>
+            <strong>{joined}</strong>
+          </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 }
