@@ -545,7 +545,11 @@
   .order-header,
   .order-filter,
   .order-search {
-    background: linear-gradient(180deg, rgba(13, 18, 29, 0.98), rgba(9, 12, 19, 0.98)) !important;
+    background: linear-gradient(
+      180deg,
+      rgba(13, 18, 29, 0.98),
+      rgba(9, 12, 19, 0.98)
+    ) !important;
     border-color: var(--aidr-border) !important;
     color: var(--aidr-text) !important;
   }
@@ -831,20 +835,24 @@
 
   inset: 0;
 
-  z-index: 99999;
+  z-index: 2147483647;
 
-  padding: 28px;
+  width: 100vw;
+  height: 100vh;
+
+  padding: 18px 28px 28px;
 
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
 
   overflow-y: auto;
+  overflow-x: hidden;
 
-  background: rgba(0, 0, 0, 0.66);
+  background: rgba(3, 6, 14, 0.92);
 
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
 
   animation: orderBackdropReveal 0.2s ease both;
 }
@@ -852,12 +860,45 @@
 /* =========================================================
    DETAIL PANEL + ACTION PANEL
 ========================================================= */
+.order-detail-panel {
+  position: relative;
+
+  width: min(980px, 100%);
+
+  max-height: calc(100vh - 36px);
+
+  margin: 0 auto;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  padding: 25px;
+
+  border: 1px solid rgba(255, 255, 255, 0.085);
+
+  border-radius: 25px;
+
+  background: linear-gradient(180deg, rgba(18, 20, 24, 1), rgba(9, 10, 12, 1));
+
+  color: #ffffff;
+
+  box-shadow: 0 35px 100px rgba(0, 0, 0, 0.7);
+}
 
 .order-detail-panel,
 .order-action-panel {
   width: min(980px, 100%);
 
-  max-height: 90vh;
+  /*
+   * Giữ modal cách mép trên một chút
+   */
+  margin: 0 auto;
+
+  /*
+   * Vì modal đã nằm trên nên cho phép chiếm
+   * gần toàn bộ chiều cao màn hình.
+   */
+  max-height: calc(100vh - 36px);
 
   overflow-y: auto;
   overflow-x: hidden;
@@ -1522,13 +1563,11 @@
 @keyframes orderModalReveal {
   from {
     opacity: 0;
-
-    transform: translateY(20px) scale(0.98);
+    transform: translateY(-14px) scale(0.985);
   }
 
   to {
     opacity: 1;
-
     transform: translateY(0) scale(1);
   }
 }
@@ -1538,52 +1577,16 @@
 ========================================================= */
 
 @media (max-width: 768px) {
-  .order-history {
-    .order-header {
-      grid-template-columns: 1fr;
-
-      .filter-btn {
-        width: fit-content;
-      }
-    }
-
-    .order-card {
-      .card-top {
-        padding: 15px;
-
-        align-items: flex-start;
-
-        flex-direction: column;
-      }
-
-      .card-body {
-        padding: 15px;
-      }
-
-      .order-card-summary {
-        grid-template-columns: 1fr;
-      }
-
-      .card-footer {
-        padding: 15px;
-
-        flex-direction: column;
-
-        align-items: stretch;
-
-        .actions {
-          justify-content: flex-start;
-        }
-      }
-    }
-  }
-
   .order-detail-backdrop {
-    padding: 14px;
+    padding: 10px 14px 14px;
+
+    align-items: flex-start;
   }
 
   .order-detail-panel,
   .order-action-panel {
+    max-height: calc(100vh - 24px);
+
     padding: 18px;
 
     border-radius: 20px;

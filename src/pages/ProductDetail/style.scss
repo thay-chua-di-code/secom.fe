@@ -4,20 +4,12 @@
 
 .product-detail-page {
   width: 100%;
-
   min-height: 100vh;
-
   padding: 52px 0 100px;
-
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
   overflow-x: hidden;
-
-  // background:
-  //   radial-gradient(
-  //     circle at 8% 1%,
-  //     rgba(70, 126, 255, 0.065),
-  //     transparent 25%
-  //   ),
-  //   #050505;
 
   color: #ffffff;
 }
