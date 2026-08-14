@@ -1,19 +1,16 @@
-import { Filter as FilterIcon, Tags, Wallet } from "lucide-react";
-
+import { Filter as FilterIcon, MapPin, PackageSearch, Tags, Wallet } from "lucide-react";
 import { useSelector } from "react-redux";
 
 import { formatCurrencyVN, truncateText } from "../../../utils/fncUtils";
 
 import "./style.scss";
 
-const sanitizePriceInput = (value) => value.replace(/[^\d]/g, "");
-
 const getFormattedPriceInput = (value) => {
   if (value === "" || value === null || value === undefined) {
     return "";
   }
 
-  const normalized = sanitizePriceInput(String(value));
+  const normalized = String(value).replace(/[^\d]/g, "");
 
   if (!normalized) {
     return "";
@@ -22,6 +19,13 @@ const getFormattedPriceInput = (value) => {
   return formatCurrencyVN(normalized);
 };
 
+const CONDITION_OPTIONS = [
+  { value: "", label: "All conditions" },
+  { value: "new", label: "New" },
+  { value: "used", label: "Used" },
+  { value: "refurbished", label: "Refurbished" },
+];
+
 export default function Filter({
   categoryFilter,
   onCategoryChange,
@@ -29,12 +33,16 @@ export default function Filter({
   maxPrice,
   onMinPriceChange,
   onMaxPriceChange,
+  condition,
+  onConditionChange,
+  location,
+  onLocationChange,
+  onClearAll,
 }) {
   const { categories } = useSelector((state) => state.categories);
 
   return (
     <aside className="filter">
-      {/* HEADER */}
       <div className="filter__header">
         <div className="filter__header-icon">
           <FilterIcon size={17} />
@@ -42,12 +50,16 @@ export default function Filter({
 
         <div>
           <span className="filter__eyebrow">PRODUCT FILTER</span>
-
           <h2>Filters</h2>
         </div>
       </div>
 
-      {/* CATEGORY */}
+      <div className="filter__actions">
+        <button type="button" className="filter__clear-all" onClick={onClearAll}>
+          Clear all
+        </button>
+      </div>
+
       <div className="filter__section">
         <div className="filter__title">
           <div className="filter__title-icon">
@@ -69,35 +81,28 @@ export default function Filter({
                 checked={!categoryFilter}
                 onChange={() => onCategoryChange(null)}
               />
-
               <span className="radio" />
-
-              <span className="category-name">All Products</span>
+              <span className="category-name">All categories</span>
             </label>
           </li>
 
-          {categories.map((category) => (
+          {(Array.isArray(categories?.items) ? categories.items : categories || []).map((category) => (
             <li key={category.id}>
-              <label className={categoryFilter === category.id ? "active" : ""}>
+              <label className={String(categoryFilter) === String(category.id) ? "active" : ""}>
                 <input
                   type="radio"
                   name="category"
-                  checked={categoryFilter === category.id}
+                  checked={String(categoryFilter) === String(category.id)}
                   onChange={() => onCategoryChange(category.id)}
                 />
-
                 <span className="radio" />
-
-                <span className="category-name">
-                  {truncateText(category.name, 20)}
-                </span>
+                <span className="category-name">{truncateText(category.name, 32)}</span>
               </label>
             </li>
           ))}
         </ul>
       </div>
 
-      {/* PRICE */}
       <div className="filter__section filter__section--price">
         <div className="filter__title">
           <div className="filter__title-icon">
@@ -105,44 +110,81 @@ export default function Filter({
           </div>
 
           <div>
-            <span>Price Range</span>
-
+            <span>Price range</span>
             <small>Set your budget</small>
           </div>
         </div>
 
-        <div className="price-range">
-          <div className="price-range__field">
-            <label>Minimum</label>
-
+        <div className="filter__price-grid">
+          <label>
+            <span>Min</span>
             <input
               type="text"
               inputMode="numeric"
-              placeholder="Min Price"
               value={getFormattedPriceInput(minPrice)}
-              onChange={(e) =>
-                onMinPriceChange(sanitizePriceInput(e.target.value))
-              }
+              onChange={(event) => onMinPriceChange(event.target.value.replace(/[^\d]/g, ""))}
+              placeholder="0"
             />
-          </div>
+          </label>
 
-          <div className="price-range__divider">
-            <span />
-          </div>
-
-          <div className="price-range__field">
-            <label>Maximum</label>
-
+          <label>
+            <span>Max</span>
             <input
               type="text"
               inputMode="numeric"
-              placeholder="Max Price"
               value={getFormattedPriceInput(maxPrice)}
-              onChange={(e) =>
-                onMaxPriceChange(sanitizePriceInput(e.target.value))
-              }
+              onChange={(event) => onMaxPriceChange(event.target.value.replace(/[^\d]/g, ""))}
+              placeholder="25,000,000"
             />
+          </label>
+        </div>
+      </div>
+
+      <div className="filter__section">
+        <div className="filter__title">
+          <div className="filter__title-icon">
+            <PackageSearch size={15} />
           </div>
+
+          <div>
+            <span>Condition</span>
+            <small>Choose product status</small>
+          </div>
+        </div>
+
+        <div className="filter__condition-list">
+          {CONDITION_OPTIONS.map((option) => (
+            <button
+              key={option.value || 'all'}
+              type="button"
+              className={`filter__chip ${condition === option.value ? "is-active" : ""}`}
+              onClick={() => onConditionChange(option.value || null)}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="filter__section">
+        <div className="filter__title">
+          <div className="filter__title-icon">
+            <MapPin size={15} />
+          </div>
+
+          <div>
+            <span>Location</span>
+            <small>Filter seller location</small>
+          </div>
+        </div>
+
+        <div className="filter__location-field">
+          <input
+            type="text"
+            value={location || ""}
+            onChange={(event) => onLocationChange(event.target.value)}
+            placeholder="Da Nang, Hanoi, Ho Chi Minh City"
+          />
         </div>
       </div>
     </aside>

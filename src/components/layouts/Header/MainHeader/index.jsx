@@ -129,6 +129,7 @@ export default function MainHeader() {
   const [openCart, setOpenCart] = useState(false);
 
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   /* SEARCH */
 
@@ -267,6 +268,19 @@ export default function MainHeader() {
     };
   }, []);
 
+  useEffect(() => {
+    const updateScrolled = () => {
+      setIsScrolled(window.scrollY > 16);
+    };
+
+    updateScrolled();
+    window.addEventListener("scroll", updateScrolled, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", updateScrolled);
+    };
+  }, []);
+
   /* =========================
      NAV
   ========================== */
@@ -287,6 +301,8 @@ export default function MainHeader() {
     <>
       <div
         className={`main-header ${isExpanded ? "main-header--expanded" : ""} ${
+          isScrolled ? "main-header--scrolled" : ""
+        } ${
           openSearch ? "main-header--search-open" : ""
         }`}
         onMouseLeave={closeMenus}

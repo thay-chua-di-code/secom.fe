@@ -317,3 +317,30 @@
     }
   }
 }
+
+/* Home section wrapper rhythm */
+.home-page {
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  &__section {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .home-discovery {
+    margin-bottom: 4px;
+  }
+}
+
+@media (max-width: 576px) {
+  .home-discovery {
+    &__heading {
+      margin-bottom: 28px;
+    }
+  }
+}

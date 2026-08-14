@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
-import Header from "../../../components/layouts/Header/index";
 import video from "../../../assets/video/hero-video.mp4";
 
 import "./style.scss";
@@ -43,16 +42,16 @@ export default function HomeHero() {
   }, []);
 
   const heroInset = progress * 64;
-  const heroRadius = 28 * progress;
-  const heroTopSpace = progress * 16;
-  const heroBottomSpace = progress * 16;
+  const heroRadius = 24 * Math.min(progress, 0.85);
+  const heroTopSpace = 0;
+  const heroBottomSpace = progress * 12;
 
   return (
     <section
       className="home-hero-stage"
       style={{
         "--hero-progress": progress,
-        "--hero-inset": `${heroInset}px`,
+        "--hero-inset": `${Math.min(heroInset, 24)}px`,
         "--hero-radius": `${heroRadius}px`,
         "--hero-top-space": `${heroTopSpace}px`,
         "--hero-bottom-space": `${heroBottomSpace}px`,
@@ -71,11 +70,6 @@ export default function HomeHero() {
         </video>
 
         <div className="home-hero__overlay" />
-
-        <div className="home-hero__header">
-          <Header />
-        </div>
-
         <div className="home-hero__content">
           <span className="home-hero__eyebrow">AIDR INTELLIGENCE</span>
 

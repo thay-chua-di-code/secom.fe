@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
+import Header from "../../components/layouts/Header";
 import HomeHero from "./HomeHero";
 import CategorySidebar from "./CategoriesSideBar";
 import RecentlyViewed from "./Product-viewed";
@@ -71,6 +72,8 @@ const Home = () => {
 
   return (
     <div className="home-page">
+      <Header />
+
       <section className="home-page__hero">
         <HomeHero />
       </section>

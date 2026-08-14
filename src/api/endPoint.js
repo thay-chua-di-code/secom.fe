@@ -53,6 +53,7 @@ export const API_ENDPOINTS = {
 
   PRODUCT: {
     SEARCH: "/products/search",
+    SEARCH_INTENT: "/products/search-intent",
     LIST: "/products",
     DETAIL: (id) => `/products/${id}`,
     COMPARE_DESCRIPTIONS: "/products/compare-descriptions",

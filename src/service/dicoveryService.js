@@ -46,6 +46,17 @@ export const dicoveryService = {
     return normalizePagedResult(res);
   },
 
+
+  parseSearchIntent: async (query) => {
+    const res = await axiosClient.post(
+      API_ENDPOINTS.PRODUCT.SEARCH_INTENT,
+      { query },
+      { skipAuth: true },
+    );
+
+    return unwrapData(res);
+  },
+
   getSellerShopProducts: async (sellerShopId, params = {}) => {
     const res = await axiosClient.get(`/seller-shops/${sellerShopId}/products`, {
       params,
