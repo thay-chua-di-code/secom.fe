@@ -3,7 +3,7 @@ import { Eye, Heart, Scale, Star } from "lucide-react";
 import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import placeholderImage from "../../../../assets/icons/logo.jpg";
+import placeholderImage from "../../../../assets/icons/favicon-aidr.svg";
 import "./style.scss";
 
 import {

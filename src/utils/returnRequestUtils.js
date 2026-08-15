@@ -2,10 +2,15 @@ export const RETURN_REQUEST_STATUSES = {
   PENDING: "pending",
   APPROVED: "approved",
   REJECTED: "rejected",
+  WAITING_BUYER_RETURN: "waiting_buyer_return",
   ITEM_RETURNED: "item_returned",
+  SELLER_RECEIVED_RETURN: "seller_received_return",
+  INSPECTION_PASSED: "inspection_passed",
+  INSPECTION_FAILED: "inspection_failed",
+  REPLACEMENT_SHIPPED: "replacement_shipped",
+  COMPLETED: "completed",
   REFUND_PROCESSING: "refund_processing",
   PROCESSING: "processing",
-  COMPLETED: "completed",
   REFUNDED: "refunded",
   RETURNED: "returned",
   CANCELLED: "cancelled",
@@ -21,11 +26,21 @@ export function getReturnStatusLabel(status) {
     case RETURN_REQUEST_STATUSES.PENDING:
       return "Return request pending approval";
     case RETURN_REQUEST_STATUSES.APPROVED:
-      return "Return request approved";
+      return "Waiting for seller review";
     case RETURN_REQUEST_STATUSES.REJECTED:
       return "Return request rejected";
+    case RETURN_REQUEST_STATUSES.WAITING_BUYER_RETURN:
+      return "Waiting for buyer return";
     case RETURN_REQUEST_STATUSES.ITEM_RETURNED:
-      return "Item returned";
+      return "Buyer returned item";
+    case RETURN_REQUEST_STATUSES.SELLER_RECEIVED_RETURN:
+      return "Seller received return";
+    case RETURN_REQUEST_STATUSES.INSPECTION_PASSED:
+      return "Inspection passed";
+    case RETURN_REQUEST_STATUSES.INSPECTION_FAILED:
+      return "Inspection failed";
+    case RETURN_REQUEST_STATUSES.REPLACEMENT_SHIPPED:
+      return "Replacement shipped";
     case RETURN_REQUEST_STATUSES.REFUND_PROCESSING:
       return "Refund processing";
     case RETURN_REQUEST_STATUSES.PROCESSING:
@@ -51,10 +66,14 @@ export function getReturnStatusBadgeClass(status) {
 
 export function getSellerReturnActions(status) {
   switch (normalizeReturnStatus(status)) {
-    case RETURN_REQUEST_STATUSES.PENDING:
-      return ["approve", "reject"];
     case RETURN_REQUEST_STATUSES.APPROVED:
+      return ["approve", "reject"];
+    case RETURN_REQUEST_STATUSES.ITEM_RETURNED:
       return ["confirm-received"];
+    case RETURN_REQUEST_STATUSES.SELLER_RECEIVED_RETURN:
+      return ["inspection-pass", "inspection-fail"];
+    case RETURN_REQUEST_STATUSES.INSPECTION_PASSED:
+      return ["ship-replacement"];
     default:
       return [];
   }
@@ -64,6 +83,9 @@ export const sellerReturnActionLabels = {
   approve: "Approve",
   reject: "Reject",
   "confirm-received": "Confirm returned item received",
+  "inspection-pass": "Inspection passed",
+  "inspection-fail": "Inspection failed",
+  "ship-replacement": "Ship replacement",
 };
 
 export const getReturnRequestApiErrorMessage = (error, fallback = "Return/refund request action failed") => {

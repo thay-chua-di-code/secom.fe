@@ -9,7 +9,7 @@ import productApi from "../../api/productApi";
 import useCompare from "../../hooks/useCompare";
 import { ROUTES } from "../../constants/routes";
 import { formatCurrencyVN } from "../../utils/fncUtils";
-import placeholderImage from "../../assets/icons/logo.jpg";
+import placeholderImage from "../../assets/icons/favicon-aidr.svg";
 
 import "./style.scss";
 

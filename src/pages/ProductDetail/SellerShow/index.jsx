@@ -12,7 +12,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
-import placeholderAvatar from "../../../assets/icons/logo.jpg";
+import placeholderAvatar from "../../../assets/icons/favicon-aidr.svg";
 import { chatService } from "../../../service/chatService";
 import sellerFollowApi from "../../../api/sellerFollowApi";
 import { getSellerStatistics } from "../../../api/sellerStatisticsApi";

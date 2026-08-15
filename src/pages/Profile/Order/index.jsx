@@ -99,8 +99,11 @@ const RETURN_LOCKED_ORDER_STATUSES = new Set([
 const ACTIVE_RETURN_STATUSES = new Set([
   "pending",
   "approved",
+  "waiting_buyer_return",
   "item_returned",
-  "refund_processing",
+  "seller_received_return",
+  "inspection_passed",
+  "replacement_shipped",
 ]);
 
 const ORDER_STATUS_LABELS = {
@@ -149,6 +152,12 @@ const canRequestReturn = (order) => {
   const status = normalizeStatus(order?.status);
   return status === "delivered" || status === "completed";
 };
+
+const canConfirmBuyerReturned = (request) =>
+  normalizeReturnStatus(request?.status) === "waiting_buyer_return";
+
+const canConfirmReplacementReceived = (request) =>
+  normalizeReturnStatus(request?.status) === "replacement_shipped";
 
 const getOrderId = (order) => order?.orderId || order?.id;
 const getFinalTotal = (order) =>
@@ -292,7 +301,7 @@ function StatusBadge({ status }) {
   );
 }
 
-function OrderDetailModal({ order, payment, loading, onClose }) {
+function OrderDetailModal({ order, payment, loading, actionLoading, onClose, onConfirmBuyerReturned, onCompleteReturnRequest }) {
   if (!order) return null;
 
   const items = getOrderItems(order);
@@ -437,7 +446,10 @@ function OrderDetailModal({ order, payment, loading, onClose }) {
                 <strong>{getReturnRequestReason(returnRefundRequest)}</strong>
               </div>
 
-              {normalizeReturnStatus(returnRefundStatus) === "rejected" && (
+              {[
+                "rejected",
+                "inspection_failed",
+              ].includes(normalizeReturnStatus(returnRefundStatus)) && (
                 <div className="return-refund-grid__full">
                   <span>Reject Reason</span>
 
@@ -445,6 +457,35 @@ function OrderDetailModal({ order, payment, loading, onClose }) {
                     {getReturnRequestRejectReason(returnRefundRequest) ||
                       "No rejection reason provided."}
                   </strong>
+                </div>
+              )}
+
+              {(canConfirmBuyerReturned(returnRefundRequest) ||
+                canConfirmReplacementReceived(returnRefundRequest)) && (
+                <div className="return-refund-grid__full">
+                  <div className="order-detail-item__actions">
+                    {canConfirmBuyerReturned(returnRefundRequest) && (
+                      <button
+                        type="button"
+                        className="primary-btn"
+                        disabled={actionLoading}
+                        onClick={() => onConfirmBuyerReturned?.(order)}
+                      >
+                        {actionLoading ? "Processing..." : "Confirm item returned"}
+                      </button>
+                    )}
+
+                    {canConfirmReplacementReceived(returnRefundRequest) && (
+                      <button
+                        type="button"
+                        className="primary-btn"
+                        disabled={actionLoading}
+                        onClick={() => onCompleteReturnRequest?.(order)}
+                      >
+                        {actionLoading ? "Processing..." : "Confirm replacement received"}
+                      </button>
+                    )}
+                  </div>
                 </div>
               )}
             </div>
@@ -1086,6 +1127,58 @@ export default function OrderHistory() {
     }
   };
 
+  const handleConfirmBuyerReturned = async (order) => {
+    const orderId = getOrderId(order);
+    const request = getLatestReturnRefundRequest(order);
+    const requestId = getReturnRequestId(request);
+
+    if (!orderId || !requestId) {
+      toast.error("Return request is missing");
+      return;
+    }
+
+    try {
+      setActionLoading(orderId);
+      await orderApi.confirmBuyerReturned(orderId, requestId, {});
+      toast.success("Return shipment confirmed");
+      await refreshAfterOrderAction(orderId);
+      if (selectedOrder && getOrderId(selectedOrder) === orderId) {
+        await loadDetail(orderId);
+      }
+    } catch (actionError) {
+      setError(getApiErrorMessage(actionError));
+      toast.error(getApiErrorMessage(actionError));
+    } finally {
+      setActionLoading("");
+    }
+  };
+
+  const handleCompleteReturnRequest = async (order) => {
+    const orderId = getOrderId(order);
+    const request = getLatestReturnRefundRequest(order);
+    const requestId = getReturnRequestId(request);
+
+    if (!orderId || !requestId) {
+      toast.error("Return request is missing");
+      return;
+    }
+
+    try {
+      setActionLoading(orderId);
+      await orderApi.completeReturnRequest(orderId, requestId, {});
+      toast.success("Exchange completed");
+      await refreshAfterOrderAction(orderId);
+      if (selectedOrder && getOrderId(selectedOrder) === orderId) {
+        await loadDetail(orderId);
+      }
+    } catch (actionError) {
+      setError(getApiErrorMessage(actionError));
+      toast.error(getApiErrorMessage(actionError));
+    } finally {
+      setActionLoading("");
+    }
+  };
+
   const handleConfirmOrderAction = (values) => {
     if (!orderAction?.order) return;
 
@@ -1284,6 +1377,9 @@ export default function OrderHistory() {
           order={selectedOrder}
           payment={selectedPayment}
           loading={detailLoading}
+          actionLoading={actionLoading === getOrderId(selectedOrder)}
+          onConfirmBuyerReturned={handleConfirmBuyerReturned}
+          onCompleteReturnRequest={handleCompleteReturnRequest}
           onClose={() => {
             setSelectedOrder(null);
             setSelectedPayment(null);

@@ -213,30 +213,6 @@ const Products = () => {
     }
   };
 
-  // ========================================
-  // LOADING
-  // ========================================
-
-  if (loading) {
-    return (
-      <div className="admin-products">
-        <div className="products-state">Loading products...</div>
-      </div>
-    );
-  }
-
-  // ========================================
-  // ERROR
-  // ========================================
-
-  if (error) {
-    return (
-      <div className="admin-products">
-        <div className="products-state products-state--error">{error}</div>
-      </div>
-    );
-  }
-
   return (
     <div className="admin-products">
       {/* HEADER */}
@@ -249,6 +225,10 @@ const Products = () => {
 
       {/* TABLE CARD */}
       <div className="table-wrapper">
+        {error ? (
+          <div className="products-state products-state--error">{error}</div>
+        ) : null}
+
         {/* FILTER */}
         <div className="table-toolbar">
           {/* SEARCH */}
@@ -289,7 +269,13 @@ const Products = () => {
             </thead>
 
             <tbody>
-              {products.length > 0 ? (
+              {loading ? (
+                <tr>
+                  <td colSpan={8} className="empty-state">
+                    Loading products...
+                  </td>
+                </tr>
+              ) : products.length > 0 ? (
                 products.map((product) => {
                   const moderationStatus = getProductModerationStatus(product);
                   const productId = getProductId(product);

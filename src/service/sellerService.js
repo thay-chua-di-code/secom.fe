@@ -611,4 +611,52 @@ export const sellerService = {
       throw error;
     }
   },
+
+  passReturnInspection: async (requestId, payload = {}) => {
+    try {
+      const res = await axiosClient.patch(
+        `/seller/return-requests/${requestId}/inspection-pass`,
+        payload,
+        { headers: { "Content-Type": "application/json" } },
+      );
+
+      return res.data;
+    } catch (e) {
+      const error = new Error(e?.response?.data?.message || e.message);
+      error.response = e.response;
+      throw error;
+    }
+  },
+
+  failReturnInspection: async (requestId, payload = {}) => {
+    try {
+      const res = await axiosClient.patch(
+        `/seller/return-requests/${requestId}/inspection-fail`,
+        payload,
+        { headers: { "Content-Type": "application/json" } },
+      );
+
+      return res.data;
+    } catch (e) {
+      const error = new Error(e?.response?.data?.message || e.message);
+      error.response = e.response;
+      throw error;
+    }
+  },
+
+  shipReplacement: async (requestId, payload = {}) => {
+    try {
+      const res = await axiosClient.patch(
+        `/seller/return-requests/${requestId}/ship-replacement`,
+        payload,
+        { headers: { "Content-Type": "application/json" } },
+      );
+
+      return res.data;
+    } catch (e) {
+      const error = new Error(e?.response?.data?.message || e.message);
+      error.response = e.response;
+      throw error;
+    }
+  },
 };

@@ -20,18 +20,10 @@ import "./style.scss";
 const actionLabels = {
   approve: "Approve",
   reject: "Reject",
-  "mark-item-returned": "Mark item returned",
-  "start-refund": "Start refund",
-  "complete-refund": "Complete refund",
-  close: "Close request",
 };
 
 const statusActions = {
   [RETURN_REQUEST_STATUSES.PENDING]: ["approve", "reject"],
-  [RETURN_REQUEST_STATUSES.APPROVED]: ["mark-item-returned", "reject"],
-  [RETURN_REQUEST_STATUSES.ITEM_RETURNED]: ["start-refund"],
-  [RETURN_REQUEST_STATUSES.REFUND_PROCESSING]: ["complete-refund"],
-  [RETURN_REQUEST_STATUSES.REFUNDED]: ["close"],
 };
 
 const getApiErrorMessage = (error) =>

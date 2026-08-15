@@ -3,7 +3,7 @@ import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { userService } from "../../../service/userService";
-import placeholderAvatar from "../../../assets/icons/logo.jpg";
+import placeholderAvatar from "../../../assets/icons/favicon-aidr.svg";
 import "./style.scss";
 
 export default function Follow() {

@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 import "./style.scss";
 import { formatCurrencyVN } from "../../../utils/fncUtils";
 import { productComparisonApi } from "../../../api/productComparisonApi";
-import placeholderImage from "../../../assets/icons/logo.jpg";
+import placeholderImage from "../../../assets/icons/favicon-aidr.svg";
 
 const ATTRIBUTES = [
   { key: "image", label: "Image" },

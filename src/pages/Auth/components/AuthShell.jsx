@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import banner from "../../../assets/images/SideImage.png";
-import logo from "../../../assets/icons/logo.jpg";
+import logo from "../../../assets/icons/favicon-aidr.svg";
 
 export default function AuthShell({
   eyebrow,

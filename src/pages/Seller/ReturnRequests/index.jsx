@@ -33,7 +33,7 @@ const buildSellerActionPayload = (action, { note, reason }) => {
   const payload = {};
 
   if (note) payload.note = note;
-  if (action === "reject") payload.reason = reason;
+  if (action === "reject" || action === "inspection-fail") payload.reason = reason;
 
   return payload;
 };
@@ -50,7 +50,28 @@ const statusOptions = [
   { value: RETURN_REQUEST_STATUSES.PENDING, label: "Pending" },
   { value: RETURN_REQUEST_STATUSES.APPROVED, label: "Approved" },
   { value: RETURN_REQUEST_STATUSES.REJECTED, label: "Rejected" },
+  {
+    value: RETURN_REQUEST_STATUSES.WAITING_BUYER_RETURN,
+    label: "Waiting buyer return",
+  },
   { value: RETURN_REQUEST_STATUSES.ITEM_RETURNED, label: "Item Returned" },
+  {
+    value: RETURN_REQUEST_STATUSES.SELLER_RECEIVED_RETURN,
+    label: "Seller received return",
+  },
+  {
+    value: RETURN_REQUEST_STATUSES.INSPECTION_PASSED,
+    label: "Inspection passed",
+  },
+  {
+    value: RETURN_REQUEST_STATUSES.INSPECTION_FAILED,
+    label: "Inspection failed",
+  },
+  {
+    value: RETURN_REQUEST_STATUSES.REPLACEMENT_SHIPPED,
+    label: "Replacement shipped",
+  },
+  { value: RETURN_REQUEST_STATUSES.COMPLETED, label: "Completed" },
   {
     value: RETURN_REQUEST_STATUSES.REFUND_PROCESSING,
     label: "Refund Processing",
@@ -224,7 +245,7 @@ function SellerReturnActionModal({
 
   if (!action || !request) return null;
 
-  const isReject = action === "reject";
+  const isReject = action === "reject" || action === "inspection-fail";
   const isConfirmReceived = action === "confirm-received";
 
   const handleSubmit = (event) => {
@@ -234,7 +255,7 @@ function SellerReturnActionModal({
     const trimmedReason = reason.trim();
 
     if (isReject && !trimmedReason) {
-      toast.error("Reject reason is required");
+      toast.error("Reason is required");
       return;
     }
 
@@ -423,6 +444,12 @@ export default function SellerReturnRequests() {
         await sellerService.rejectReturnRequest(requestId, payload);
       } else if (reviewAction.action === "confirm-received") {
         await sellerService.confirmReturnReceived(requestId, payload);
+      } else if (reviewAction.action === "inspection-pass") {
+        await sellerService.passReturnInspection(requestId, payload);
+      } else if (reviewAction.action === "inspection-fail") {
+        await sellerService.failReturnInspection(requestId, payload);
+      } else if (reviewAction.action === "ship-replacement") {
+        await sellerService.shipReplacement(requestId, payload);
       }
 
       toast.success(

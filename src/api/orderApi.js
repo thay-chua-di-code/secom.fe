@@ -38,4 +38,18 @@ export const orderApi = {
     axiosClient.post(API_ENDPOINTS.ORDER.RETURN_REQUESTS(orderId), payload, {
       headers: { "Content-Type": "application/json" },
     }),
+
+  confirmBuyerReturned: (orderId, returnRequestId, payload = {}) =>
+    axiosClient.patch(
+      `/orders/${orderId}/return-requests/${returnRequestId}/buyer-returned`,
+      payload,
+      { headers: { "Content-Type": "application/json" } },
+    ),
+
+  completeReturnRequest: (orderId, returnRequestId, payload = {}) =>
+    axiosClient.patch(
+      `/orders/${orderId}/return-requests/${returnRequestId}/complete`,
+      payload,
+      { headers: { "Content-Type": "application/json" } },
+    ),
 };
