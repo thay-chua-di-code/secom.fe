@@ -23,6 +23,13 @@ export const setLogoutHandler = (fn) => {
 };
 
 axiosClient.interceptors.request.use((config) => {
+  const isFormData = typeof FormData !== "undefined" && config?.data instanceof FormData;
+
+  if (isFormData && config.headers) {
+    delete config.headers["Content-Type"];
+    delete config.headers["content-type"];
+  }
+
   if (config?.skipAuth) {
     if (config.headers) {
       delete config.headers.Authorization;

@@ -516,19 +516,26 @@ export default function CartPage() {
               headerCheckboxRef={headerCheckboxRef}
             />
 
-            <div className="voucher-action">
-              {activeVoucherCode && (
-                <button
-                  type="button"
-                  onClick={handleRemoveVoucher}
-                  disabled={actionLoading || checkoutLoading}
-                  aria-label="Remove applied voucher"
-                  title="Remove applied voucher"
-                >
-                  Remove Voucher
-                </button>
-              )}
-            </div>
+            {activeVoucherCode && (
+              <div className="voucher-action">
+                <div className="voucher-action__content">
+                  <div className="voucher-action__meta">
+                    <span className="voucher-action__label">Applied voucher</span>
+                    <strong className="voucher-action__code">{activeVoucherCode}</strong>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={handleRemoveVoucher}
+                    disabled={actionLoading || checkoutLoading}
+                    aria-label="Remove applied voucher"
+                    title="Remove applied voucher"
+                  >
+                    Remove voucher
+                  </button>
+                </div>
+              </div>
+            )}
 
             <VoucherList
               vouchers={vouchers}

@@ -99,86 +99,117 @@ const SellerDetailModal = ({ open, sellerId, onClose }) => {
           </div>
         </div>
 
-        <div className="seller-detail-grid">
-          <div className="item">
-            <User size={18} />
-            <div>
-              <label>Owner</label>
-              <p>{seller.userFullName}</p>
-            </div>
-          </div>
-
-          <div className="item">
-            <Mail size={18} />
-            <div>
-              <label>Email</label>
-              <p>{seller.userEmail}</p>
-            </div>
-          </div>
-
-          <div className="item">
-            <Phone size={18} />
-            <div>
-              <label>Phone</label>
-              <p>{seller.phoneNumber}</p>
-            </div>
-          </div>
-
-          <div className="item">
-            <MapPin size={18} />
-            <div>
-              <label>Address</label>
-              <p>{seller.address}</p>
-            </div>
-          </div>
-
-          <div className="item full">
-            <Store size={18} />
-            <div>
-              <label>Description</label>
-              <p>{seller.description || "No description"}</p>
-            </div>
-          </div>
-
-          <div className="item">
-            <div>
-              <label>Submitted At</label>
-              <p>{formatDate(seller.submittedAtUtc)}</p>
-            </div>
-          </div>
-
-          {seller.approvedAtUtc && (
+        <div className="seller-detail-body">
+          <div className="seller-detail-grid">
             <div className="item">
+              <User size={18} />
               <div>
-                <label>Approved At</label>
-                <p>{formatDate(seller.approvedAtUtc)}</p>
+                <label>Owner</label>
+                <p>{seller.userFullName}</p>
               </div>
             </div>
-          )}
 
-          {seller.rejectedAtUtc && (
             <div className="item">
+              <Mail size={18} />
               <div>
-                <label>Rejected At</label>
-                <p>{formatDate(seller.rejectedAtUtc)}</p>
+                <label>Email</label>
+                <p>{seller.userEmail}</p>
               </div>
             </div>
-          )}
 
-          {seller.rejectionReason && (
+            <div className="item">
+              <Phone size={18} />
+              <div>
+                <label>Phone</label>
+                <p>{seller.phoneNumber}</p>
+              </div>
+            </div>
+
+            <div className="item">
+              <MapPin size={18} />
+              <div>
+                <label>Address</label>
+                <p>{seller.address}</p>
+              </div>
+            </div>
+
             <div className="item full">
+              <Store size={18} />
               <div>
-                <label>Rejection Reason</label>
-                <p>{seller.rejectionReason}</p>
+                <label>Description</label>
+                <p>{seller.description || "No description"}</p>
+              </div>
+            </div>
+
+            <div className="item">
+              <div>
+                <label>Submitted At</label>
+                <p>{formatDate(seller.submittedAtUtc)}</p>
+              </div>
+            </div>
+
+            {seller.approvedAtUtc && (
+              <div className="item">
+                <div>
+                  <label>Approved At</label>
+                  <p>{formatDate(seller.approvedAtUtc)}</p>
+                </div>
+              </div>
+            )}
+
+            {seller.rejectedAtUtc && (
+              <div className="item">
+                <div>
+                  <label>Rejected At</label>
+                  <p>{formatDate(seller.rejectedAtUtc)}</p>
+                </div>
+              </div>
+            )}
+
+            {seller.rejectionReason && (
+              <div className="item full">
+                <div>
+                  <label>Rejection Reason</label>
+                  <p>{seller.rejectionReason}</p>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="verification-image">
+            <h3>Verification Image</h3>
+
+            <img src={seller.verificationImageUrl} alt="Verification" />
+          </div>
+
+          {showRejectBox && (
+            <div className="reject-box">
+              <h3>Reject Seller</h3>
+
+              <textarea
+                rows={4}
+                placeholder="Enter rejection reason..."
+                value={rejectReason}
+                onChange={(e) => setRejectReason(e.target.value)}
+              />
+
+              <div className="reject-actions">
+                <button
+                  className="cancel"
+                  onClick={() => {
+                    setShowRejectBox(false);
+                    setRejectReason("");
+                  }}
+                >
+                  Cancel
+                </button>
+
+                <button className="confirm" onClick={handleReject}>
+                  Confirm Reject
+                </button>
               </div>
             </div>
           )}
-        </div>
-
-        <div className="verification-image">
-          <h3>Verification Image</h3>
-
-          <img src={seller.verificationImageUrl} alt="Verification" />
         </div>
 
         <div className="footer">
@@ -198,35 +229,6 @@ const SellerDetailModal = ({ open, sellerId, onClose }) => {
             </>
           )}
         </div>
-
-        {showRejectBox && (
-          <div className="reject-box">
-            <h3>Reject Seller</h3>
-
-            <textarea
-              rows={4}
-              placeholder="Enter rejection reason..."
-              value={rejectReason}
-              onChange={(e) => setRejectReason(e.target.value)}
-            />
-
-            <div className="reject-actions">
-              <button
-                className="cancel"
-                onClick={() => {
-                  setShowRejectBox(false);
-                  setRejectReason("");
-                }}
-              >
-                Cancel
-              </button>
-
-              <button className="confirm" onClick={handleReject}>
-                Confirm Reject
-              </button>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );
