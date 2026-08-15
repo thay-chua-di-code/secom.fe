@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import "./style.scss";
 import AdminDashboardCharts from "./Chart";
+import { formatCurrencyVN } from "../../../utils/fncUtils";
 
 const formatGrowth = (value) => {
   const safeValue = Number(value ?? 0);
@@ -37,12 +38,6 @@ const Dashboard = () => {
     dispatch(fetchDashboardStatistics());
   }, [dispatch]);
 
-  const formatMoney = (value) =>
-    new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "VND",
-    }).format(value || 0);
-
   const revenueGrowth = formatGrowth(overview?.revenueGrowthPercentage);
   const orderGrowth = formatGrowth(overview?.orderGrowthPercentage);
   const userGrowth = formatGrowth(overview?.userGrowthPercentage);
@@ -61,7 +56,7 @@ const Dashboard = () => {
             </span>
           </div>
           <div className="kpi-card__body">
-            <h3>{formatMoney(overview?.totalRevenue)}</h3>
+            <h3>{formatCurrencyVN(overview?.totalRevenue)}</h3>
             <label>Total Revenue</label>
           </div>
         </div>

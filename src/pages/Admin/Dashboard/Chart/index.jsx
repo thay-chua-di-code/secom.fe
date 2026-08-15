@@ -263,10 +263,8 @@ const LegendItem = ({ icon, label, value, color }) => {
 };
 
 const formatMoney = (value = 0) => {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "VND",
-  }).format(value);
+  return formatCurrencyVN(value);
 };
 
 export default AdminDashboardCharts;
+import { formatCurrencyVN } from "../../../../utils/fncUtils";

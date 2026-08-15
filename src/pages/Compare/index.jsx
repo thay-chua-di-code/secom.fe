@@ -94,6 +94,23 @@ const formatSimilarityScore = (score) => {
   return `${numericScore.toFixed(1)}%`;
 };
 
+const getCriterionStatusMeta = (status) => {
+  const normalized = String(status || "").toLowerCase();
+
+  if (normalized === "same") {
+    return { label: "Same", className: "compare-page__status-badge compare-page__status-badge--same" };
+  }
+
+  if (normalized === "different") {
+    return { label: "Different", className: "compare-page__status-badge compare-page__status-badge--different" };
+  }
+
+  return { label: "Insight", className: "compare-page__status-badge" };
+};
+
+const findInsightItemsByProduct = (groups, productId) =>
+  groups.find((item) => String(item.productId) === String(productId))?.items || [];
+
 const renderList = (items, emptyText) => {
   if (!items?.length) return <p className="compare-page__empty-copy">{emptyText}</p>;
 
@@ -214,11 +231,14 @@ export default function ComparePage() {
     const criteria = comparison?.criteria || [];
     const uniqueContentByProduct = comparison?.uniqueContentByProduct || [];
     const commonContent = comparison?.commonContent || [];
+    const advantagesByProduct = comparison?.advantagesByProduct || [];
+    const disadvantagesByProduct = comparison?.disadvantagesByProduct || [];
+    const bestForByProduct = comparison?.bestForByProduct || [];
 
     return (
       <section className="compare-page__results">
         <div className="compare-page__section-header">
-          <h2>AI Comparison</h2>
+          <h2>Compare With AI</h2>
           <span>
             {formatSimilarityScore(comparison?.similarityScore)} · {getSimilarityLabel(comparison?.similarityScore)}
           </span>
@@ -226,7 +246,7 @@ export default function ComparePage() {
 
         {comparison?.summary ? (
           <article className="compare-page__result-card">
-            <h3>Summary</h3>
+            <h3>Quick Summary</h3>
             <p className="compare-page__result-text">{comparison.summary}</p>
           </article>
         ) : null}
@@ -237,15 +257,26 @@ export default function ComparePage() {
             <div className="compare-page__criteria-grid">
               {criteria.map((criterion) => (
                 <div key={criterion.name} className="compare-page__criteria-card">
-                  <h4>{criterion.name}</h4>
+                  <div className="compare-page__criteria-head">
+                    <h4>{criterion.name}</h4>
+                    <span className={getCriterionStatusMeta(criterion.status).className}>
+                      {getCriterionStatusMeta(criterion.status).label}
+                    </span>
+                  </div>
                   <div className="compare-page__criteria-values">
                     {criterion.values.map((value) => (
-                      <div key={`${criterion.name}-${value.productId}`}>
+                      <div
+                        key={`${criterion.name}-${value.productId}`}
+                        className={`compare-page__criteria-value ${criterion.betterProductIds?.includes?.(String(value.productId)) ? "compare-page__criteria-value--better" : ""}`}
+                      >
                         <strong>{getProductNameById(comparedProducts, value.productId)}</strong>
-                        <span>{value.value || "No information"}</span>
+                        <span>{value.value || "Unavailable"}</span>
                       </div>
                     ))}
                   </div>
+                  {criterion.insight ? (
+                    <p className="compare-page__criteria-note">{criterion.insight}</p>
+                  ) : null}
                 </div>
               ))}
             </div>
@@ -255,18 +286,18 @@ export default function ComparePage() {
         <div className="compare-page__result-grid">
           <article className="compare-page__result-card">
             <h3>Key Similarities</h3>
-            {renderList(similarities, "No major similarities were highlighted by AI.")}
+            {renderList(similarities, "No key similarities highlighted.")}
           </article>
 
           <article className="compare-page__result-card">
             <h3>Key Differences</h3>
-            {renderList(differences, "No major differences were highlighted by AI.")}
+            {renderList(differences, "No key differences highlighted.")}
           </article>
         </div>
 
         {commonContent.length > 0 ? (
           <article className="compare-page__result-card">
-            <h3>Shared Content Highlights</h3>
+            <h3>Shared Highlights</h3>
             {renderList(commonContent, "No common content available.")}
           </article>
         ) : null}
@@ -278,7 +309,32 @@ export default function ComparePage() {
               {uniqueContentByProduct.map((item) => (
                 <div key={item.productId} className="compare-page__criteria-card">
                   <h4>{getProductNameById(comparedProducts, item.productId)}</h4>
-                  {renderList(item.contents, "No significant unique content.")}
+                  {renderList(item.contents, "No unique strength highlighted.")}
+                </div>
+              ))}
+            </div>
+          </article>
+        ) : null}
+
+        {(advantagesByProduct.length > 0 || disadvantagesByProduct.length > 0 || bestForByProduct.length > 0) ? (
+          <article className="compare-page__result-card">
+            <h3>Product Guidance</h3>
+            <div className="compare-page__criteria-grid">
+              {comparedProducts.map((product) => (
+                <div key={product.productId} className="compare-page__criteria-card compare-page__criteria-card--product-guide">
+                  <h4>{product.name}</h4>
+                  <div className="compare-page__guide-section">
+                    <span className="compare-page__guide-label">Pros</span>
+                    {renderList(findInsightItemsByProduct(advantagesByProduct, product.productId), "No standout advantage highlighted.")}
+                  </div>
+                  <div className="compare-page__guide-section">
+                    <span className="compare-page__guide-label">Cons</span>
+                    {renderList(findInsightItemsByProduct(disadvantagesByProduct, product.productId), "No major drawback highlighted.")}
+                  </div>
+                  <div className="compare-page__guide-section">
+                    <span className="compare-page__guide-label">Best for</span>
+                    {renderList(findInsightItemsByProduct(bestForByProduct, product.productId), "No best-fit use case highlighted.")}
+                  </div>
                 </div>
               ))}
             </div>
@@ -287,7 +343,7 @@ export default function ComparePage() {
 
         {recommendations.length > 0 ? (
           <article className="compare-page__result-card compare-page__result-card--recommendation">
-            <h3>Recommendations</h3>
+            <h3>Final Recommendation</h3>
             <div className="compare-page__recommendations">
               {recommendations.map((recommendation, index) => (
                 <div key={`${recommendation.productId}-${index}`} className="compare-page__recommendation-item">
@@ -303,7 +359,7 @@ export default function ComparePage() {
         ) : null}
 
         <article className="compare-page__result-card">
-          <h3>Note</h3>
+          <h3>Notes</h3>
           <p className="compare-page__result-text">
             {comparison?.disclaimer ||
               "The result is generated from the current product descriptions available in the system."}

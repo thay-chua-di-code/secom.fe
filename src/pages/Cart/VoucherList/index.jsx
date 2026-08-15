@@ -1,17 +1,9 @@
 import { useRef } from "react";
 import "./style.scss";
 import { formatCurrencyVN } from "../../../utils/fncUtils";
+import { formatVoucherDiscountValue } from "../../../utils/voucherUtils";
 
-const formatDiscount = (voucher) => {
-  const type = String(voucher.discountType || "").toLowerCase();
-  const value = voucher.discountValue ?? 0;
-
-  if (type.includes("percent")) {
-    return `${value}%`;
-  }
-
-  return formatCurrencyVN(value);
-};
+const formatDiscount = (voucher) => formatVoucherDiscountValue(voucher);
 
 const formatDate = (value) => {
   if (!value) {

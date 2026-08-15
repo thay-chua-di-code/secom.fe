@@ -21,6 +21,22 @@ const initialForm = {
   location: "",
 };
 
+const createEmptyAttribute = () => ({
+  name: "",
+  valuesText: "",
+});
+
+const buildAttributesPayload = (attributes) =>
+  attributes
+    .map((attribute) => ({
+      name: attribute.name.trim(),
+      values: attribute.valuesText
+        .split(/\r?\n|,/)
+        .map((value) => value.trim())
+        .filter(Boolean),
+    }))
+    .filter((attribute) => attribute.name && attribute.values.length > 0);
+
 const getErrorMessage = (error, fallback) =>
   error?.response?.data?.message ||
   error?.data?.message ||
@@ -33,6 +49,7 @@ const AddProductModal = ({ open, onClose }) => {
   const [form, setForm] = useState(initialForm);
   const [pendingImages, setPendingImages] = useState([]);
   const [selectedPrimary, setSelectedPrimary] = useState(null);
+  const [attributes, setAttributes] = useState([createEmptyAttribute()]);
   const [submitting, setSubmitting] = useState(false);
   const [uploadingImages, setUploadingImages] = useState(false);
 
@@ -41,6 +58,7 @@ const AddProductModal = ({ open, onClose }) => {
     setForm(initialForm);
     setPendingImages([]);
     setSelectedPrimary(null);
+    setAttributes([createEmptyAttribute()]);
   };
 
   const handleClose = () => {
@@ -56,6 +74,28 @@ const AddProductModal = ({ open, onClose }) => {
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }));
+  };
+
+  const handleAttributeChange = (index, field, value) => {
+    setAttributes((prev) =>
+      prev.map((attribute, attributeIndex) =>
+        attributeIndex === index
+          ? { ...attribute, [field]: value }
+          : attribute,
+      ),
+    );
+  };
+
+  const handleAddAttribute = () => {
+    setAttributes((prev) => [...prev, createEmptyAttribute()]);
+  };
+
+  const handleRemoveAttribute = (index) => {
+    setAttributes((prev) =>
+      prev.length === 1
+        ? [createEmptyAttribute()]
+        : prev.filter((_, attributeIndex) => attributeIndex !== index),
+    );
   };
 
   const buildImagePayload = async () => {
@@ -99,6 +139,7 @@ const AddProductModal = ({ open, onClose }) => {
         ...form,
         price: Number(form.price),
         stockQuantity: Number(form.stockQuantity),
+        attributes: buildAttributesPayload(attributes),
         images,
       };
 
@@ -250,16 +291,62 @@ const AddProductModal = ({ open, onClose }) => {
               </select>
             </div>
 
-            <div className="form-group">
-              <label>Location</label>
-              <input
+          <div className="form-group">
+            <label>Location</label>
+            <input
                 name="location"
                 placeholder="Ha Noi"
                 value={form.location}
                 onChange={handleChange}
+              disabled={isBusy}
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Product Attributes</label>
+            <div className="product-attribute-editor">
+              {attributes.map((attribute, index) => (
+                <div key={`attribute-${index}`} className="product-attribute-editor__item">
+                  <input
+                    placeholder="Attribute name (e.g. Color)"
+                    value={attribute.name}
+                    onChange={(event) =>
+                      handleAttributeChange(index, "name", event.target.value)
+                    }
+                    disabled={isBusy}
+                  />
+
+                  <textarea
+                    placeholder="Values, one per line or comma separated (e.g. Purple, Black, Silver)"
+                    value={attribute.valuesText}
+                    onChange={(event) =>
+                      handleAttributeChange(index, "valuesText", event.target.value)
+                    }
+                    rows={3}
+                    disabled={isBusy}
+                  />
+
+                  <button
+                    type="button"
+                    className="product-attribute-editor__remove"
+                    onClick={() => handleRemoveAttribute(index)}
+                    disabled={isBusy}
+                  >
+                    Remove attribute
+                  </button>
+                </div>
+              ))}
+
+              <button
+                type="button"
+                className="product-attribute-editor__add"
+                onClick={handleAddAttribute}
                 disabled={isBusy}
-              />
+              >
+                + Add attribute
+              </button>
             </div>
+          </div>
           </div>
 
           <ProductImageManager

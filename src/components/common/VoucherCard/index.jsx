@@ -1,6 +1,8 @@
 import toast from "react-hot-toast";
 import { Copy } from "lucide-react";
 import Button from "../Button/Button";
+import { formatCurrencyVN } from "../../../utils/fncUtils";
+import { formatVoucherDiscountValue } from "../../../utils/voucherUtils";
 import "./style.scss";
 export default function VoucherCard({ voucher }) {
   const handleCopy = () => {
@@ -8,16 +10,13 @@ export default function VoucherCard({ voucher }) {
 
     toast.success("Voucher copied");
   };
-
-  const formatMoney = (value) => value.toLocaleString("en-US") + " VND";
+  const formatMoney = (value) => formatCurrencyVN(value);
 
   return (
     <div className="voucher-card">
       <div className="voucher-card__left">
         <div className="discount">
-          {voucher.discountType === "PERCENT"
-            ? `${voucher.discountValue}%`
-            : formatMoney(voucher?.discountValue)}
+          {formatVoucherDiscountValue(voucher)}
         </div>
 
         <span>OFF</span>

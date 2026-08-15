@@ -3,7 +3,7 @@
 ========================================================= */
 
 .profile-page {
-  min-height: 100vh;
+  min-height: calc(100dvh - var(--main-navbar-height, 0px));
 
   padding: 54px 0 100px;
 
@@ -79,7 +79,7 @@
 .profile-sidebar {
   position: sticky;
 
-  top: 92px;
+  top: calc(var(--main-navbar-height, 0px) + 16px);
 
   min-width: 0;
 

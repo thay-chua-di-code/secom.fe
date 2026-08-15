@@ -11,10 +11,11 @@ export default function MainLayout() {
   const { pathname } = useLocation();
 
   const isHomePage = pathname === "/";
+  const hasBuyerHeader = pathname !== "/" && !pathname.includes("/product-detail");
 
   return (
-    <div className="main-layout">
-      {pathname !== "/" && !pathname.includes("/product-detail") && <Header />}
+    <div className={`main-layout ${hasBuyerHeader ? "main-layout--with-header" : ""}`}>
+      {hasBuyerHeader && <Header />}
       <main
         className={`main-layout__content ${
           isHomePage ? "main-layout__content--home" : ""

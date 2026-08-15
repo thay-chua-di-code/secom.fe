@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Star } from "lucide-react";
+import { formatCurrencyVN } from "../../../utils/fncUtils";
 
 const toNumber = (value) => {
   if (typeof value === "number") return value;
@@ -14,10 +15,7 @@ const formatVnd = (value) => {
   const numberValue = toNumber(value);
   if (numberValue === null) return null;
 
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "VND",
-  }).format(numberValue);
+  return formatCurrencyVN(numberValue);
 };
 
 const ProductRecommendationCard = ({ product }) => {

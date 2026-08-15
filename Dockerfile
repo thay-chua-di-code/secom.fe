@@ -6,7 +6,7 @@ FROM node:18.18-alpine AS build
 WORKDIR /app
 
 ARG VITE_API_BASE_URL=https://api.aidr.io.vn
-ARG VITE_SIGNALR_URL=https://api.aidr.io.vn/notifications
+ARG VITE_SIGNALR_URL=https://api.aidr.io.vn/hubs/realtime
 ARG VITE_CHAT_SOCKET_URL=wss://api.aidr.io.vn/chat
 
 ENV VITE_API_BASE_URL=${VITE_API_BASE_URL}

@@ -37,9 +37,9 @@ export const adminService = {
     }
   },
   // [USER]
-  getUsers: (pageNumber, pageSize) => {
+  getUsers: (pageNumber, pageSize, searchTerm) => {
     return axiosClient.get(API_ENDPOINTS.ADMIN.USER.GET, {
-      params: { pageNumber, pageSize },
+      params: { pageNumber, pageSize, searchTerm: searchTerm || undefined },
     });
   },
   banUser: async (id) => {

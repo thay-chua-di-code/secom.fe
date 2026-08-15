@@ -91,6 +91,11 @@ const mapCriterionValue = (value) => ({
 
 const mapCriterion = (criterion) => ({
   name: getField(criterion, ["name", "Name", "criterion", "Criterion", "attribute", "Attribute"], "Criterion"),
+  status: getField(criterion, ["status", "Status"], ""),
+  insight: getField(criterion, ["insight", "Insight"], ""),
+  betterProductIds: normalizeStringArray(
+    getField(criterion, ["betterProductIds", "BetterProductIds"], []),
+  ),
   values: normalizeArray(getField(criterion, ["values", "Values"], [])).map(mapCriterionValue),
 });
 
@@ -98,6 +103,11 @@ const mapRecommendation = (recommendation) => ({
   useCase: getField(recommendation, ["useCase", "UseCase", "title", "Title"], "Recommendation"),
   productId: String(getField(recommendation, ["productId", "ProductId", "id", "Id"], "")),
   reason: getField(recommendation, ["reason", "Reason", "description", "Description"], ""),
+});
+
+const mapInsightGroup = (group) => ({
+  productId: String(getField(group, ["productId", "ProductId", "id", "Id"], "")),
+  items: normalizeStringArray(getField(group, ["items", "Items", "contents", "Contents"], [])),
 });
 
 export const mapCompareProductDescriptionsResponse = (response) => {
@@ -122,6 +132,15 @@ export const mapCompareProductDescriptionsResponse = (response) => {
       recommendations: normalizeArray(
         getField(comparison, ["recommendations", "Recommendations"], []),
       ).map(mapRecommendation),
+      advantagesByProduct: normalizeArray(
+        getField(comparison, ["advantagesByProduct", "AdvantagesByProduct"], []),
+      ).map(mapInsightGroup),
+      disadvantagesByProduct: normalizeArray(
+        getField(comparison, ["disadvantagesByProduct", "DisadvantagesByProduct"], []),
+      ).map(mapInsightGroup),
+      bestForByProduct: normalizeArray(
+        getField(comparison, ["bestForByProduct", "BestForByProduct"], []),
+      ).map(mapInsightGroup),
       disclaimer: getField(comparison, ["disclaimer", "Disclaimer"], ""),
       similarityScore: getField(
         comparison,

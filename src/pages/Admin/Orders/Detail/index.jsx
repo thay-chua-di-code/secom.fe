@@ -1,5 +1,6 @@
 import { X } from "lucide-react";
 import { Link } from "react-router-dom";
+import { formatCurrencyVN } from "../../../../utils/fncUtils";
 import "./style.scss";
 import OrderProductImage from "../../../../components/order/OrderProductImage";
 import {
@@ -15,11 +16,6 @@ import {
 export default function OrderDetailModal({ open, onClose, order, loading = false, error = null }) {
   if (!open || !order) return null;
 
-  const formatMoney = (value) =>
-    new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "VND",
-    }).format(value);
   const items = getOrderItems(order);
 
   return (
@@ -95,7 +91,7 @@ export default function OrderDetailModal({ open, onClose, order, loading = false
                         <span>Quantity: {getOrderItemQuantity(item)}</span>
                         <span>Seller: {item.sellerName || item.shopName || "--"}</span>
                       </div>
-                      <strong>{formatMoney(getOrderItemTotalPrice(item))}</strong>
+                      <strong>{formatCurrencyVN(getOrderItemTotalPrice(item))}</strong>
                     </div>
                   );
                 })}
@@ -109,7 +105,7 @@ export default function OrderDetailModal({ open, onClose, order, loading = false
           <div className="info-card full-width total-row">
             <div>
               <label>Total Amount</label>
-              <p className="price-amount">{formatMoney(order.finalTotal)}</p>
+              <p className="price-amount">{formatCurrencyVN(order.finalTotal)}</p>
             </div>
             <span
               className={`status-badge ${order.status?.toLowerCase() || ""}`}

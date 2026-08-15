@@ -1,10 +1,8 @@
 import {
-  Bell,
   CreditCard,
   Lock,
   MapPin,
   Settings,
-  Ticket,
   User,
   UserRoundCheck,
 } from "lucide-react";
@@ -20,8 +18,6 @@ import { uploadImageToCloudinary } from "../../utils/uploadImgCloud";
 import ChangePassword from "./ChangePwd";
 import OrderHistory from "./Order";
 import AddressList from "./Address/List";
-import VoucherList from "./Voucher";
-import NotificationList from "./Notification";
 import Follow from "./Follows";
 
 import Button from "../../components/common/Button/Button";
@@ -54,11 +50,6 @@ const menus = [
   //   icon: <Bell size={18} />,
   //   key: "notification",
   // },
-  {
-    title: "Voucher",
-    icon: <Ticket size={18} />,
-    key: "voucher",
-  },
   {
     title: "Follows",
     icon: <UserRoundCheck size={18} />,
@@ -305,9 +296,6 @@ const ProfilePage = () => {
 
       case "password":
         return <ChangePassword />;
-
-      case "voucher":
-        return <VoucherList />;
 
       case "follows":
         return <Follow />;

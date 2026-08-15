@@ -52,6 +52,7 @@ const Products = () => {
   );
 
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [status, setStatus] = useState("");
   const [page, setPage] = useState(1);
   const [actionLoading, setActionLoading] = useState("");
@@ -62,6 +63,14 @@ const Products = () => {
   const [historyItems, setHistoryItems] = useState([]);
   const [historyLoading, setHistoryLoading] = useState(false);
 
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      setDebouncedSearch(search.trim());
+    }, 300);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [search]);
+
   // ========================================
   // FETCH PRODUCTS
   // ========================================
@@ -71,11 +80,11 @@ const Products = () => {
       fetchProducts({
         page,
         pageSize: 20,
-        searchTerm: search.trim() || undefined,
+        searchTerm: debouncedSearch || undefined,
         status: status || undefined,
       }),
     );
-  }, [dispatch, page, search, status]);
+  }, [debouncedSearch, dispatch, page, status]);
 
   // ========================================
   // SEARCH
@@ -104,7 +113,7 @@ const Products = () => {
       fetchProducts({
         page: currentPage,
         pageSize: Number(pagination?.pageSize ?? 20),
-        searchTerm: search.trim() || undefined,
+        searchTerm: debouncedSearch || undefined,
         status: status || undefined,
       }),
     );

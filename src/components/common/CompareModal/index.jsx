@@ -64,6 +64,30 @@ const getProductNameById = (products, productId) => {
   return product?.name || productId || "Unknown product";
 };
 
+const getCriterionStatusMeta = (status) => {
+  const normalized = String(status || "").toLowerCase();
+
+  if (normalized === "same") {
+    return {
+      label: "Same",
+      className: "ai-compare-status-badge ai-compare-status-badge--same",
+    };
+  }
+
+  if (normalized === "different") {
+    return {
+      label: "Different",
+      className:
+        "ai-compare-status-badge ai-compare-status-badge--different",
+    };
+  }
+
+  return {
+    label: "Insight",
+    className: "ai-compare-status-badge",
+  };
+};
+
 const getLocalComparisonProduct = (product) => ({
   productId: getProductId(product),
   name: product?.name || product?.productName || "Unknown product",
@@ -79,6 +103,10 @@ const getLocalComparisonProduct = (product) => ({
   extractedAttributes: {},
   warnings: [],
 });
+
+const findInsightItemsByProduct = (groups, productId) =>
+  groups.find((item) => String(item.productId) === String(productId))?.items ||
+  [];
 
 const renderList = (items, emptyText) => {
   if (!items?.length) return <p className="ai-compare-empty">{emptyText}</p>;
@@ -213,317 +241,382 @@ const CompareModal = ({ open, products = [], onClose, onRemove, onClear }) => {
     }
   };
 
-  const renderAiComparison = () => {
-    if (!activeComparisonResult) return null;
+const renderAiComparison = () => {
+  if (!activeComparisonResult) return null;
 
-    const { comparison } = activeComparisonResult;
-    const comparedProducts = activeComparisonResult.products?.length
-      ? activeComparisonResult.products
-      : products.map(getLocalComparisonProduct);
-    const summary = comparison?.summary || "";
-    const criteria = comparison?.criteria || [];
-    const similarities = comparison?.similarities || [];
-    const differences = comparison?.differences || [];
-    const recommendations = comparison?.recommendations || [];
-    const sameAttributes = comparison?.sameAttributes || [];
-    const differentAttributes = comparison?.differentAttributes || [];
-    const missingAttributes = comparison?.missingAttributes || [];
-    const commonContent = comparison?.commonContent || [];
-    const uniqueContentByProduct = comparison?.uniqueContentByProduct || [];
-    const hasStructuredResult = Boolean(
-      summary ||
+  const { comparison } = activeComparisonResult;
+  const comparedProducts = activeComparisonResult.products?.length
+    ? activeComparisonResult.products
+    : products.map(getLocalComparisonProduct);
+  const summary = comparison?.summary || "";
+  const criteria = comparison?.criteria || [];
+  const similarities = comparison?.similarities || [];
+  const differences = comparison?.differences || [];
+  const recommendations = comparison?.recommendations || [];
+  const advantagesByProduct = comparison?.advantagesByProduct || [];
+  const disadvantagesByProduct = comparison?.disadvantagesByProduct || [];
+  const bestForByProduct = comparison?.bestForByProduct || [];
+  const sameAttributes = comparison?.sameAttributes || [];
+  const differentAttributes = comparison?.differentAttributes || [];
+  const missingAttributes = comparison?.missingAttributes || [];
+  const commonContent = comparison?.commonContent || [];
+  const uniqueContentByProduct = comparison?.uniqueContentByProduct || [];
+  const hasStructuredResult = Boolean(
+    summary ||
       criteria.length ||
       similarities.length ||
       differences.length ||
       recommendations.length ||
+      advantagesByProduct.length ||
+      disadvantagesByProduct.length ||
+      bestForByProduct.length ||
       sameAttributes.length ||
       differentAttributes.length ||
       missingAttributes.length ||
       commonContent.length ||
       uniqueContentByProduct.length,
-    );
+  );
 
-    return (
-      <div className="ai-compare-result" aria-live="polite">
-        <section className="ai-compare-section ai-compare-overview">
-          <div>
-            <h3>Kết quả Compare with AI</h3>
-            <p>
-              The result is generated from the current product descriptions.
-            </p>
-          </div>
+  return (
+    <div className="ai-compare-result" aria-live="polite">
+      <section className="ai-compare-section ai-compare-overview">
+        <div>
+            <h3>Compare With AI</h3>
+          <p>
+              The analysis highlights what matches, what differs, and which
+              product fits each use case best.
+          </p>
+        </div>
 
-          <div className="ai-compare-score">
-            <strong>
-              {formatSimilarityScore(comparison?.similarityScore)}
-            </strong>
-            <span>{getSimilarityLabel(comparison?.similarityScore)}</span>
-            <small>{comparedProducts.length} products compared</small>
+        <div className="ai-compare-score">
+          <strong>
+            {formatSimilarityScore(comparison?.similarityScore)}
+          </strong>
+          <span>{getSimilarityLabel(comparison?.similarityScore)}</span>
+          <small>{comparedProducts.length} products compared</small>
+        </div>
+      </section>
+
+      {!hasStructuredResult && (
+        <section className="ai-compare-section">
+          <h4>Empty result</h4>
+          <p className="ai-compare-empty">
+            The backend processed the request but did not return valid
+            comparison content to display.
+          </p>
+        </section>
+      )}
+
+      {summary ? (
+        <section className="ai-compare-section">
+            <h4>Quick Summary</h4>
+          <p className="ai-compare-summary">{summary}</p>
+        </section>
+      ) : null}
+
+      <section className="ai-compare-section">
+          <h4>Product Details</h4>
+        <div className="ai-compare-products">
+          {comparedProducts.map((product) => (
+            <article className="ai-compare-product" key={product.productId}>
+              <img
+                src={product.imageUrl || placeholderImage}
+                alt={product.name || "Product image"}
+                onError={(event) => {
+                  event.currentTarget.src = placeholderImage;
+                }}
+              />
+              <div>
+                <h5>{product.name}</h5>
+                <p>
+                  {product.description || "This product has no description."}
+                </p>
+
+                {product.warnings?.length > 0 && (
+                  <div className="ai-compare-warnings">
+                    {product.warnings.map((warning, index) => (
+                      <span key={`${warning}-${index}`}>
+                        <AlertTriangle size={14} /> {warning}
+                      </span>
+                    ))}
+                  </div>
+                )}
+
+                <dl className="ai-compare-attributes">
+                  {Object.entries(product.extractedAttributes || {}).length >
+                  0 ? (
+                    Object.entries(product.extractedAttributes).map(
+                      ([key, value]) => (
+                        <div key={key}>
+                          <dt>{key}</dt>
+                            <dd>{value || "Unavailable"}</dd>
+                        </div>
+                      ),
+                    )
+                  ) : (
+                    <p className="ai-compare-empty">
+                      No extracted attributes.
+                    </p>
+                  )}
+                </dl>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      {criteria.length > 0 ? (
+        <section className="ai-compare-section">
+            <h4>Criteria Comparison</h4>
+          <div className="ai-compare-criteria-grid">
+            {criteria.map((criterion) => {
+              const statusMeta = getCriterionStatusMeta(criterion.status);
+
+              return (
+                <article
+                  key={criterion.name}
+                  className="ai-compare-criteria-card"
+                >
+                  <div className="ai-compare-criteria-head">
+                    <h5>{criterion.name}</h5>
+                    <span className={statusMeta.className}>
+                      {statusMeta.label}
+                    </span>
+                  </div>
+
+                  <div className="ai-compare-criteria-values">
+                    {criterion.values.map((value) => {
+                      const isBetter = criterion.betterProductIds?.includes?.(
+                        String(value.productId),
+                      );
+
+                      return (
+                        <div
+                          key={`${criterion.name}-${value.productId}`}
+                          className={`ai-compare-criteria-value ${isBetter ? "ai-compare-criteria-value--better" : ""}`}
+                        >
+                          <strong>
+                            {getProductNameById(
+                              comparedProducts,
+                              value.productId,
+                            )}
+                          </strong>
+                            <span>{value.value || "Unavailable"}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {criterion.insight ? (
+                    <p className="ai-compare-criteria-note">
+                      {criterion.insight}
+                    </p>
+                  ) : null}
+                </article>
+              );
+            })}
           </div>
         </section>
+      ) : null}
 
-        {!hasStructuredResult && (
-          <section className="ai-compare-section">
-            <h4>Empty result</h4>
-            <p className="ai-compare-empty">
-              The backend processed the request but did not return valid
-              comparison content to display.
-            </p>
-          </section>
-        )}
-
-        {summary && (
-          <section className="ai-compare-section">
-            <h4>Comparison summary</h4>
-            <p className="ai-compare-summary">{summary}</p>
-          </section>
-        )}
+      <div className="ai-compare-grid ai-compare-grid--insights">
+        <section className="ai-compare-section">
+            <h4>Key Similarities</h4>
+          {renderList(
+            similarities.length ? similarities : commonContent,
+              "No key similarities highlighted.",
+          )}
+        </section>
 
         <section className="ai-compare-section">
-          <h4>Product information</h4>
-          <div className="ai-compare-products">
+            <h4>Key Differences</h4>
+            {renderList(differences, "No key differences highlighted.")}
+        </section>
+      </div>
+
+      {(advantagesByProduct.length > 0 ||
+        disadvantagesByProduct.length > 0 ||
+        bestForByProduct.length > 0) && (
+        <section className="ai-compare-section">
+            <h4>Product Guidance</h4>
+          <div className="ai-compare-guide-grid">
             {comparedProducts.map((product) => (
-              <article className="ai-compare-product" key={product.productId}>
-                <img
-                  src={product.imageUrl || placeholderImage}
-                  alt={product.name || "Product image"}
-                  onError={(event) => {
-                    event.currentTarget.src = placeholderImage;
-                  }}
-                />
-                <div>
-                  <h5>{product.name}</h5>
-                  <p>
-                    {product.description || "This product has no description."}
-                  </p>
+              <article
+                key={product.productId}
+                className="ai-compare-guide-card"
+              >
+                <h5>{product.name}</h5>
 
-                  {product.warnings?.length > 0 && (
-                    <div className="ai-compare-warnings">
-                      {product.warnings.map((warning, index) => (
-                        <span key={`${warning}-${index}`}>
-                          <AlertTriangle size={14} /> {warning}
-                        </span>
-                      ))}
-                    </div>
+                <div className="ai-compare-guide-section">
+                  <span className="ai-compare-guide-label">Pros</span>
+                  {renderList(
+                    findInsightItemsByProduct(
+                      advantagesByProduct,
+                      product.productId,
+                    ),
+                      "No standout advantage highlighted.",
                   )}
+                </div>
 
-                  <dl className="ai-compare-attributes">
-                    {Object.entries(product.extractedAttributes || {}).length >
-                    0 ? (
-                      Object.entries(product.extractedAttributes).map(
-                        ([key, value]) => (
-                          <div key={key}>
-                            <dt>{key}</dt>
-                            <dd>{value || "No information"}</dd>
-                          </div>
-                        ),
-                      )
-                    ) : (
-                      <p className="ai-compare-empty">
-                        No extracted attributes.
-                      </p>
-                    )}
-                  </dl>
+                <div className="ai-compare-guide-section">
+                  <span className="ai-compare-guide-label">Cons</span>
+                  {renderList(
+                    findInsightItemsByProduct(
+                      disadvantagesByProduct,
+                      product.productId,
+                    ),
+                      "No major drawback highlighted.",
+                  )}
+                </div>
+
+                <div className="ai-compare-guide-section">
+                  <span className="ai-compare-guide-label">Best for</span>
+                  {renderList(
+                    findInsightItemsByProduct(
+                      bestForByProduct,
+                      product.productId,
+                    ),
+                      "No best-fit use case highlighted.",
+                  )}
                 </div>
               </article>
             ))}
           </div>
         </section>
+      )}
 
+      {sameAttributes.length > 0 ? (
         <section className="ai-compare-section">
-          <h4>Matching attributes</h4>
-          {sameAttributes.length > 0 ? (
-            <div className="ai-compare-table-wrap">
-              <table className="ai-compare-table">
-                <thead>
-                  <tr>
-                    <th>Attribute</th>
-                    <th>Value</th>
+            <h4>Matching Attributes</h4>
+          <div className="ai-compare-table-wrap">
+            <table className="ai-compare-table">
+              <thead>
+                <tr>
+                  <th>Attribute</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                {sameAttributes.map((item) => (
+                  <tr key={item.attribute}>
+                    <td>{item.attribute}</td>
+                      <td>{item.value || "Unavailable"}</td>
                   </tr>
-                </thead>
-                <tbody>
-                  {sameAttributes.map((item) => (
-                    <tr key={item.attribute}>
-                      <td>{item.attribute}</td>
-                      <td>{item.value || "No information"}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          ) : (
-            <p className="ai-compare-empty">
-              No clear matching attributes found.
-            </p>
-          )}
+                ))}
+              </tbody>
+            </table>
+          </div>
         </section>
+      ) : null}
 
-        {criteria.length > 0 && (
-          <section className="ai-compare-section">
-            <h4>AI criteria table</h4>
-            <div className="ai-compare-table-wrap">
-              <table className="ai-compare-table ai-compare-table--dynamic">
-                <thead>
-                  <tr>
-                    <th>Criterion</th>
-                    {comparedProducts.map((product) => (
-                      <th key={product.productId}>{product.name}</th>
-                    ))}
+      {differentAttributes.length > 0 ? (
+        <section className="ai-compare-section">
+            <h4>Detailed Differences</h4>
+          <div className="ai-compare-table-wrap">
+            <table className="ai-compare-table ai-compare-table--dynamic">
+              <thead>
+                <tr>
+                  <th>Attribute</th>
+                  {comparedProducts.map((product) => (
+                    <th key={product.productId}>{product.name}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {differentAttributes.map((attribute) => (
+                  <tr key={attribute.attribute}>
+                    <td>{attribute.attribute}</td>
+                    {comparedProducts.map((product) => {
+                      const value = attribute.values.find(
+                        (item) =>
+                          String(item.productId) ===
+                          String(product.productId),
+                      )?.value;
+
+                      return (
+                        <td key={product.productId}>
+                            {value || "Unavailable"}
+                        </td>
+                      );
+                    })}
                   </tr>
-                </thead>
-                <tbody>
-                  {criteria.map((criterion) => (
-                    <tr key={criterion.name}>
-                      <td>{criterion.name}</td>
-                      {comparedProducts.map((product) => {
-                        const value = criterion.values.find(
-                          (item) =>
-                            String(item.productId) ===
-                            String(product.productId),
-                        )?.value;
-
-                        return (
-                          <td key={product.productId}>
-                            {value || "No information"}
-                          </td>
-                        );
-                      })}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </section>
-        )}
-
-        <section className="ai-compare-section">
-          <h4>Different attributes</h4>
-          {differentAttributes.length > 0 ? (
-            <div className="ai-compare-table-wrap">
-              <table className="ai-compare-table ai-compare-table--dynamic">
-                <thead>
-                  <tr>
-                    <th>Attribute</th>
-                    {comparedProducts.map((product) => (
-                      <th key={product.productId}>{product.name}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {differentAttributes.map((attribute) => (
-                    <tr key={attribute.attribute}>
-                      <td>{attribute.attribute}</td>
-                      {comparedProducts.map((product) => {
-                        const value = attribute.values.find(
-                          (item) =>
-                            String(item.productId) ===
-                            String(product.productId),
-                        )?.value;
-
-                        return (
-                          <td key={product.productId}>
-                            {value || "No information"}
-                          </td>
-                        );
-                      })}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          ) : (
-            <p className="ai-compare-empty">
-              No clear different attributes found.
-            </p>
-          )}
+                ))}
+              </tbody>
+            </table>
+          </div>
         </section>
+      ) : null}
 
+      {missingAttributes.length > 0 ? (
         <section className="ai-compare-section">
-          <h4>Missing attributes</h4>
-          {missingAttributes.length > 0 ? (
-            <ul className="ai-compare-list">
-              {missingAttributes.map((item) => (
-                <li key={item.attribute}>
-                  <strong>{item.attribute}</strong> is available in{" "}
-                  {item.availableInProductIds
-                    .map((id) => getProductNameById(comparedProducts, id))
-                    .join(", ") || "--"}{" "}
-                  but missing in{" "}
-                  {item.missingInProductIds
-                    .map((id) => getProductNameById(comparedProducts, id))
-                    .join(", ") || "--"}
-                  .
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="ai-compare-empty">No notable missing attributes.</p>
-          )}
+            <h4>Missing Attributes</h4>
+          <ul className="ai-compare-list">
+            {missingAttributes.map((item) => (
+              <li key={item.attribute}>
+                <strong>{item.attribute}</strong> is available in{" "}
+                {item.availableInProductIds
+                  .map((id) => getProductNameById(comparedProducts, id))
+                  .join(", ") || "--"}{" "}
+                but missing in{" "}
+                {item.missingInProductIds
+                  .map((id) => getProductNameById(comparedProducts, id))
+                  .join(", ") || "--"}
+                .
+              </li>
+            ))}
+          </ul>
         </section>
+      ) : null}
 
+      {uniqueContentByProduct.length > 0 ? (
         <section className="ai-compare-section">
-          <h4>Common content</h4>
-          {renderList(
-            commonContent.length ? commonContent : similarities,
-            "No significant common content found.",
-          )}
+            <h4>Unique Strengths</h4>
+          <div className="ai-compare-unique-grid">
+            {uniqueContentByProduct.map((item) => (
+              <article key={item.productId}>
+                <h5>
+                  {getProductNameById(comparedProducts, item.productId)}
+                </h5>
+                  {renderList(item.contents, "No unique strength highlighted.")}
+              </article>
+            ))}
+          </div>
         </section>
+      ) : null}
 
-        <section className="ai-compare-section">
-          <h4>Differences</h4>
-          {renderList(differences, "No significant differences found.")}
+      {recommendations.length > 0 ? (
+        <section className="ai-compare-section ai-compare-section--recommendation">
+            <h4>Final Recommendation</h4>
+          <div className="ai-compare-unique-grid">
+            {recommendations.map((recommendation, index) => (
+              <article key={`${recommendation.productId}-${index}`}>
+                <h5>{recommendation.useCase}</h5>
+                <p className="ai-compare-empty">
+                  <strong>
+                    {getProductNameById(
+                      comparedProducts,
+                      recommendation.productId,
+                    )}
+                  </strong>
+                  {recommendation.reason ? ` — ${recommendation.reason}` : ""}
+                </p>
+              </article>
+            ))}
+          </div>
         </section>
+      ) : null}
 
-        <section className="ai-compare-section">
-          <h4>Unique content by product</h4>
-          {uniqueContentByProduct.length > 0 ? (
-            <div className="ai-compare-unique-grid">
-              {uniqueContentByProduct.map((item) => (
-                <article key={item.productId}>
-                  <h5>
-                    {getProductNameById(comparedProducts, item.productId)}
-                  </h5>
-                  {renderList(item.contents, "No significant unique content.")}
-                </article>
-              ))}
-            </div>
-          ) : (
-            <p className="ai-compare-empty">No significant unique content.</p>
-          )}
-        </section>
+      <section className="ai-compare-section">
+          <h4>Notes</h4>
+        <p className="ai-compare-empty">
+          {comparison?.disclaimer ||
+            "The result is generated based on product descriptions currently available in the system."}
+        </p>
+      </section>
+    </div>
+  );
+};
 
-        {recommendations.length > 0 && (
-          <section className="ai-compare-section">
-            <h4>Recommendations by need</h4>
-            <div className="ai-compare-unique-grid">
-              {recommendations.map((recommendation, index) => (
-                <article key={`${recommendation.productId}-${index}`}>
-                  <h5>{recommendation.useCase}</h5>
-                  <p className="ai-compare-empty">
-                    <strong>
-                      {getProductNameById(
-                        comparedProducts,
-                        recommendation.productId,
-                      )}
-                    </strong>
-                    {recommendation.reason ? ` — ${recommendation.reason}` : ""}
-                  </p>
-                </article>
-              ))}
-            </div>
-          </section>
-        )}
-
-        <section className="ai-compare-section">
-          <h4>Note</h4>
-          <p className="ai-compare-empty">
-            {comparison?.disclaimer ||
-              "The result is generated based on product descriptions currently available in the system."}
-          </p>
-        </section>
-      </div>
-    );
-  };
 
   return (
     <div

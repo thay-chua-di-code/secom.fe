@@ -1,4 +1,5 @@
 import "./style.scss";
+import { formatCurrencyVN } from "../../../utils/fncUtils";
 
 export default function OrderBody({ products }) {
   return (
@@ -15,7 +16,7 @@ export default function OrderBody({ products }) {
             <span>x{product.quantity}</span>
           </div>
 
-          <div className="price">{product.price.toLocaleString()} VND</div>
+          <div className="price">{formatCurrencyVN(product.price)}</div>
         </div>
       ))}
     </div>

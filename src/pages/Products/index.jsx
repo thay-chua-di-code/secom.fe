@@ -142,13 +142,13 @@ const formatSortLabel = (value) => {
 
 const formatIntentPrice = (minPrice, maxPrice) => {
   if (minPrice && maxPrice) {
-    return `${formatCurrencyVN(minPrice)} - ${formatCurrencyVN(maxPrice)}₫`;
+    return `${formatCurrencyVN(minPrice)} - ${formatCurrencyVN(maxPrice)}`;
   }
   if (maxPrice) {
-    return `Up to ${formatCurrencyVN(maxPrice)}₫`;
+    return `Up to ${formatCurrencyVN(maxPrice)}`;
   }
   if (minPrice) {
-    return `From ${formatCurrencyVN(minPrice)}₫`;
+    return `From ${formatCurrencyVN(minPrice)}`;
   }
   return null;
 };

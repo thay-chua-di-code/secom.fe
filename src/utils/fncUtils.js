@@ -1,20 +1,17 @@
 export const formatCurrencyVN = (value) => {
   if (value === null || value === undefined || value === "") {
-    return "0 ₫";
+    return "0 VND";
   }
 
-  // Remove commas if present and cast to number
   const amount = Number(String(value).replace(/,/g, ""));
 
   if (Number.isNaN(amount)) {
-    return "0 ₫";
+    return "0 VND";
   }
 
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "VND",
+  return `${amount.toLocaleString("en-US", {
     maximumFractionDigits: 0,
-  }).format(amount);
+  })} VND`;
 };
 
 export const formatDate = (dateString) => {
@@ -29,6 +26,37 @@ export const formatDate = (dateString) => {
     hour: "2-digit",
     minute: "2-digit",
   });
+};
+
+export const formatViewedTime = (dateValue) => {
+  if (!dateValue) return "Viewed recently";
+
+  const viewedTime = new Date(dateValue).getTime();
+
+  if (Number.isNaN(viewedTime)) {
+    return "Viewed recently";
+  }
+
+  const diffMs = Math.max(Date.now() - viewedTime, 0);
+  const diffMinutes = Math.floor(diffMs / 60000);
+
+  if (diffMinutes < 1) return "Viewed just now";
+  if (diffMinutes < 60) return `Viewed ${diffMinutes}m ago`;
+
+  const diffHours = Math.floor(diffMinutes / 60);
+  if (diffHours < 24) return `Viewed ${diffHours}h ago`;
+
+  const diffDays = Math.floor(diffHours / 24);
+  if (diffDays < 7) return `Viewed ${diffDays}d ago`;
+
+  const diffWeeks = Math.floor(diffDays / 7);
+  if (diffWeeks < 5) return `Viewed ${diffWeeks}w ago`;
+
+  const diffMonths = Math.floor(diffDays / 30);
+  if (diffMonths < 12) return `Viewed ${diffMonths}mo ago`;
+
+  const diffYears = Math.floor(diffDays / 365);
+  return `Viewed ${diffYears}y ago`;
 };
 
 // Func: Text length > 12 => .....

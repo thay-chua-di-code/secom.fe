@@ -37,6 +37,11 @@ const getApiErrorMessage = (error) =>
   error?.message ||
   "Something went wrong. Please try again.";
 
+const renderStars = (rating = 0) => {
+  const safeRating = Math.max(0, Math.min(5, Math.round(Number(rating) || 0)));
+  return `${"★".repeat(safeRating)}${"☆".repeat(5 - safeRating)}`;
+};
+
 function ProductDetailSkeleton() {
   return (
     <main className="product-detail-page">
@@ -126,6 +131,7 @@ export default function ProductDetail() {
   const [selectedImage, setSelectedImage] = useState(null);
 
   const [quantity, setQuantity] = useState(1);
+  const [selectedAttributes, setSelectedAttributes] = useState({});
 
   const [wishlistLoading, setWishlistLoading] = useState(false);
 
@@ -147,6 +153,11 @@ export default function ProductDetail() {
 
     return clickedImage || images.find((item) => item.isPrimary) || images[0];
   }, [images, selectedImage]);
+
+  const productAttributes = useMemo(
+    () => (Array.isArray(productDetail?.attributes) ? productDetail.attributes : []),
+    [productDetail],
+  );
 
   const isWishlisted = useMemo(
     () =>
@@ -174,6 +185,20 @@ export default function ProductDetail() {
       document.title = `${productDetail.name} | SECOM`;
     }
   }, [productDetail]);
+
+  useEffect(() => {
+    setSelectedAttributes(() => {
+      const nextSelection = {};
+
+      productAttributes.forEach((attribute) => {
+        if (attribute?.values?.length === 1) {
+          nextSelection[attribute.name] = attribute.values[0];
+        }
+      });
+
+      return nextSelection;
+    });
+  }, [productAttributes]);
 
   const requireLogin = () => {
     if (isAuthenticated) {
@@ -291,6 +316,13 @@ export default function ProductDetail() {
     setQuantity((prev) => prev + 1);
   };
 
+  const handleSelectAttributeValue = (attributeName, value) => {
+    setSelectedAttributes((prev) => ({
+      ...prev,
+      [attributeName]: value,
+    }));
+  };
+
   if (loading) {
     return <ProductDetailSkeleton />;
   }
@@ -355,7 +387,9 @@ export default function ProductDetail() {
           <h1 data-testid="product-detail-name">{productDetail.name}</h1>
 
           <div className="rating">
-            <div className="stars">★★★★☆</div>
+            <div className="stars">{renderStars(productDetail.averageRating)}</div>
+
+            <span className="rating-count">({productDetail.reviewCount ?? 0})</span>
 
             <span>{productDetail.category?.name || "Uncategorized"}</span>
 
@@ -373,6 +407,38 @@ export default function ProductDetail() {
           <p className="description" data-testid="product-detail-description">
             {productDetail.description || "No description available."}
           </p>
+
+          {productAttributes.length > 0 ? (
+            <div className="product-detail__attributes">
+              {productAttributes.map((attribute) => (
+                <div
+                  key={attribute.name}
+                  className="product-detail__attribute-group"
+                >
+                  <span className="product-detail__attribute-label">
+                    {attribute.name}
+                  </span>
+
+                  <div className="product-detail__attribute-values">
+                    {(attribute.values || []).map((value) => {
+                      const isSelected = selectedAttributes[attribute.name] === value;
+
+                      return (
+                        <button
+                          type="button"
+                          key={`${attribute.name}-${value}`}
+                          className={`product-detail__attribute-chip ${isSelected ? "product-detail__attribute-chip--selected" : ""}`}
+                          onClick={() => handleSelectAttributeValue(attribute.name, value)}
+                        >
+                          {value}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : null}
 
           {/* =================================================
               PRODUCT META

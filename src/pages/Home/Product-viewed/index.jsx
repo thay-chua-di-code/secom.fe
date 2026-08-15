@@ -6,26 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 import "./style.scss";
 import { userService } from "../../../service/userService";
 import { ROUTES } from "../../../constants/routes";
-
-function formatCurrency(price) {
-  return new Intl.NumberFormat("en-US").format(price);
-}
-
-function formatViewedTime(date) {
-  const viewedDate = new Date(date);
-  const now = new Date();
-  const diffInMinutes = Math.floor((now - viewedDate) / (1000 * 60));
-
-  if (diffInMinutes < 1) return "Just now";
-  if (diffInMinutes < 60) return `${diffInMinutes} min ago`;
-
-  const diffInHours = Math.floor(diffInMinutes / 60);
-  if (diffInHours < 24) return `${diffInHours}h ago`;
-
-  const diffInDays = Math.floor(diffInHours / 24);
-  if (diffInDays === 1) return "Yesterday";
-  return `${diffInDays} days ago`;
-}
+import { formatCurrencyVN, formatViewedTime } from "../../../utils/fncUtils";
 
 function RecentlyViewed() {
   const dispatch = useDispatch();
@@ -37,7 +18,14 @@ function RecentlyViewed() {
   }, [dispatch]);
 
   const items = useMemo(
-    () => (Array.isArray(viewedProduct) ? viewedProduct.slice(0, 5) : []),
+    () =>
+      (Array.isArray(viewedProduct) ? [...viewedProduct] : [])
+        .sort(
+          (firstItem, secondItem) =>
+            new Date(secondItem?.viewedAtUtc ?? 0).getTime() -
+            new Date(firstItem?.viewedAtUtc ?? 0).getTime(),
+        )
+        .slice(0, 5),
     [viewedProduct],
   );
 
@@ -126,11 +114,11 @@ function RecentlyViewed() {
                 <div className="recent-product__meta">
                   <span className="recent-product__viewed">
                     <Eye size={12} />
-                    Viewed {formatViewedTime(product.viewedAtUtc)}
+                    {formatViewedTime(product.viewedAtUtc)}
                   </span>
                 </div>
                 <h3>{product.name}</h3>
-                <strong>{formatCurrency(product.price)}₫</strong>
+                <strong>{formatCurrencyVN(product.price)}</strong>
               </div>
             </Link>
           ))

@@ -12,6 +12,7 @@ import {
 } from "recharts";
 
 import { adminService } from "../../../../service/adminService";
+import { formatCurrencyVN } from "../../../../utils/fncUtils";
 import "./style.scss";
 
 const tooltipProps = {
@@ -132,7 +133,7 @@ export default function FinanceCharts({ summary }) {
                   borderRadius: "8px",
                   color: "#fff",
                 }}
-                formatter={(value) => [`${Number(value).toLocaleString()} VND`, "Successful Payments"]}
+                formatter={(value) => [formatCurrencyVN(value), "Successful Payments"]}
               />
               <Line type="monotone" dataKey="successfulPayments" name="Successful Payments" stroke="#38bdf8" strokeWidth={2.5} dot={{ r: 3 }} activeDot={{ r: 5 }} />
             </LineChart>
@@ -189,10 +190,7 @@ export default function FinanceCharts({ summary }) {
                 borderRadius: "8px",
                 color: "#fff",
               }}
-              formatter={(value) => [
-                `${Number(value).toLocaleString()} VND`,
-                "Amount",
-              ]}
+              formatter={(value) => [formatCurrencyVN(value), "Amount"]}
             />
 
             <Bar

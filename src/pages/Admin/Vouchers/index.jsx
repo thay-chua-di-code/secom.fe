@@ -14,6 +14,10 @@ import {
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { formatCurrencyVN } from "../../../utils/fncUtils";
+import {
+  formatVoucherDiscountValue,
+  getVoucherDiscountTypeLabel,
+} from "../../../utils/voucherUtils";
 import { useDispatch, useSelector } from "react-redux";
 import {
   approveAdminVoucher,
@@ -256,7 +260,7 @@ const VoucherAdmin = () => {
                       <div className="discount-info">
                         <CircleDollarSign size={14} />
 
-                        <strong>{voucher.discountType}</strong>
+                        <strong>{getVoucherDiscountTypeLabel(voucher.discountType)}</strong>
                       </div>
                     </td>
 
@@ -267,7 +271,7 @@ const VoucherAdmin = () => {
                         <CircleDollarSign size={14} />
 
                         <strong>
-                          {formatCurrencyVN(voucher.discountValue)}
+                          {formatVoucherDiscountValue(voucher)}
                         </strong>
                       </div>
                     </td>

@@ -4,6 +4,10 @@ import AddVoucherModal from "./FormAdd";
 import "./style.scss";
 import { sellerService } from "../../../service/sellerService";
 import { formatCurrencyVN } from "../../../utils/fncUtils";
+import {
+  formatVoucherDiscountValue,
+  VOUCHER_DISCOUNT_TYPES,
+} from "../../../utils/voucherUtils";
 import toast from "react-hot-toast";
 
 const DEFAULT_PAGE_SIZE = 20;
@@ -43,16 +47,7 @@ const getStatusLabel = (status) =>
     pending: "Pending",
   })[status] || status.charAt(0).toUpperCase() + status.slice(1);
 
-const formatDiscount = (voucher) => {
-  const type = normalizeVoucherStatus(voucher?.discountType);
-  const value = Number(voucher?.discountValue || 0);
-
-  if (["percent", "percentage", "percentile"].includes(type)) {
-    return `${value}%`;
-  }
-
-  return formatCurrencyVN(value);
-};
+const formatDiscount = (voucher) => formatVoucherDiscountValue(voucher);
 
 const formatDate = (value) => {
   if (!value) return "-";
@@ -216,7 +211,7 @@ const Vouchers = () => {
           >
             <option value="all">All discount types</option>
             <option value="percentage">Percentage</option>
-            <option value="fixed">Fixed amount</option>
+            <option value={VOUCHER_DISCOUNT_TYPES.FIXED_AMOUNT}>Fixed amount</option>
           </select>
           <select
             value={filters.status}

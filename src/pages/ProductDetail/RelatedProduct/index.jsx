@@ -199,9 +199,7 @@ export default function RelatedProducts({ productId, products = [] }) {
               <div className="related-card__content">
                 <h3>{product.name}</h3>
 
-                <div className="price">
-                  {formatCurrencyVN(product.price)} VND
-                </div>
+                <div className="price">{formatCurrencyVN(product.price)}</div>
 
                 <div className="meta">
                   <span>{product.condition}</span>

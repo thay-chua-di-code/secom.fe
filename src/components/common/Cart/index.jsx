@@ -2,12 +2,8 @@ import { ShoppingBag } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useCart } from "../../../hooks/useCart";
+import { formatCurrencyVN } from "../../../utils/fncUtils";
 import "./style.scss";
-
-const currencyFormatter = new Intl.NumberFormat("en-US", {
-  style: "currency",
-  currency: "USD",
-});
 
 const FALLBACK_IMAGE = "/favicon.svg";
 
@@ -174,14 +170,14 @@ export default function Cart({ open }) {
                   <div className="cart-dropdown-item__meta">
                     <span>Qty {item.quantity || 0}</span>
 
-                    <span>{currencyFormatter.format(item.unitPrice || 0)}</span>
+                    <span>{formatCurrencyVN(item.unitPrice || 0)}</span>
                   </div>
 
                   <div className="cart-dropdown-item__bottom">
                     <span>Subtotal</span>
 
                     <strong>
-                      {currencyFormatter.format(item.subtotal || 0)}
+                      {formatCurrencyVN(item.subtotal || 0)}
                     </strong>
                   </div>
                 </div>

@@ -22,7 +22,7 @@ $border: #e5e7eb;
 // ========================================
 
 .seller-detail {
-  min-height: 100vh;
+  min-height: calc(100dvh - var(--main-navbar-height, 0px));
   padding-bottom: 80px;
 
   background: $background;

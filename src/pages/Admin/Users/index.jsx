@@ -28,6 +28,7 @@ export default function UsersPage() {
 
   const [activeTab, setActiveTab] = useState("users");
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [sellerStatus, setSellerStatus] = useState("all");
 
   const [openDetail, setOpenDetail] = useState(false);
@@ -72,7 +73,13 @@ export default function UsersPage() {
       }
 
       setAccountAction(null);
-      dispatch(fetchAdminUsers({ pageNumber, pageSize }));
+      dispatch(
+        fetchAdminUsers({
+          pageNumber,
+          pageSize,
+          searchTerm: debouncedSearch || undefined,
+        }),
+      );
     } catch (error) {
       toast.error(error || "Update user account status failed");
     }
@@ -82,14 +89,25 @@ export default function UsersPage() {
   // FETCH USERS
   // ============================================
 
-  // useEffect(() => {
-  //   dispatch(
-  //     fetchAdminUsers({
-  //       pageNumber: 1,
-  //       pageSize: 10,
-  //     }),
-  //   );
-  // }, [dispatch]);
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      setDebouncedSearch(search.trim());
+    }, 300);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [search]);
+
+  useEffect(() => {
+    if (activeTab !== "users") return;
+
+    dispatch(
+      fetchAdminUsers({
+        pageNumber: 1,
+        pageSize,
+        searchTerm: debouncedSearch || undefined,
+      }),
+    );
+  }, [activeTab, debouncedSearch, dispatch, pageSize]);
 
   // ============================================
   // FETCH SELLERS
@@ -108,6 +126,7 @@ export default function UsersPage() {
   const handleTabChange = (tab) => {
     setActiveTab(tab);
     setSearch("");
+    setDebouncedSearch("");
     setSellerStatus("all");
   };
 
@@ -122,6 +141,7 @@ export default function UsersPage() {
       fetchAdminUsers({
         pageNumber: page,
         pageSize,
+        searchTerm: debouncedSearch || undefined,
       }),
     );
   };

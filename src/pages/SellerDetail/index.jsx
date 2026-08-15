@@ -774,7 +774,7 @@ export default function SellerDetail() {
                             <h3>{productName}</h3>
 
                             <div className="product-card__bottom">
-                              <strong>{formatCurrencyVN(item.price || item.unitPrice || 0)} ₫</strong>
+                              <strong>{formatCurrencyVN(item.price || item.unitPrice || 0)}</strong>
 
                               <button
                                 type="button"

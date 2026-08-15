@@ -1,5 +1,5 @@
 .compare-page {
-  min-height: calc(100vh - 120px);
+  min-height: calc(100dvh - var(--main-navbar-height, 0px));
   padding: 28px 0 64px;
   color: #f8fafc;
 
@@ -320,6 +320,48 @@
     }
   }
 
+  &__criteria-card--product-guide {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  &__criteria-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  &__status-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 28px;
+    padding: 0 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(148, 163, 184, 0.28);
+    background: rgba(148, 163, 184, 0.12);
+    color: #cbd5e1;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  &__status-badge--same {
+    border-color: rgba(34, 197, 94, 0.24);
+    background: rgba(34, 197, 94, 0.14);
+    color: #86efac;
+  }
+
+  &__status-badge--different {
+    border-color: rgba(251, 191, 36, 0.24);
+    background: rgba(251, 191, 36, 0.14);
+    color: #fde68a;
+  }
+
   &__result-card--recommendation {
     border-color: rgba(59, 130, 246, 0.18);
     background: rgba(59, 130, 246, 0.08);
@@ -369,6 +411,36 @@
       color: #8291aa;
       line-height: 1.7;
     }
+  }
+
+  &__criteria-value {
+    border: 1px solid transparent;
+  }
+
+  &__criteria-value--better {
+    border-color: rgba(59, 130, 246, 0.22);
+    background: rgba(59, 130, 246, 0.08) !important;
+    box-shadow: inset 0 0 0 1px rgba(59, 130, 246, 0.08);
+  }
+
+  &__criteria-note {
+    margin: 14px 0 0;
+    color: #93a4bc;
+    line-height: 1.7;
+  }
+
+  &__guide-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  &__guide-label {
+    color: #bfdbfe;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
   }
 
   &__recommendations {

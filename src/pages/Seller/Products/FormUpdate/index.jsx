@@ -33,6 +33,37 @@ const mapProductToForm = (product) => ({
   isPublic: product?.isPublic ?? true,
 });
 
+const createEmptyAttribute = () => ({
+  name: "",
+  valuesText: "",
+});
+
+const mapProductAttributesToForm = (product) => {
+  const attributes = Array.isArray(product?.attributes) ? product.attributes : [];
+
+  if (!attributes.length) {
+    return [createEmptyAttribute()];
+  }
+
+  return attributes.map((attribute) => ({
+    name: attribute.name || "",
+    valuesText: Array.isArray(attribute.values)
+      ? attribute.values.join("\n")
+      : "",
+  }));
+};
+
+const buildAttributesPayload = (attributes) =>
+  attributes
+    .map((attribute) => ({
+      name: attribute.name.trim(),
+      values: attribute.valuesText
+        .split(/\r?\n|,/)
+        .map((value) => value.trim())
+        .filter(Boolean),
+    }))
+    .filter((attribute) => attribute.name && attribute.values.length > 0);
+
 const normalizeExistingImage = (image, index, isPrimary) => ({
   imageUrl: image?.imageUrl || "",
   publicId: image?.publicId || image?.public_id || undefined,
@@ -47,6 +78,9 @@ const UpdateProductModal = ({ open, product, onClose }) => {
   const productId = product?.id || product?.productId;
 
   const [form, setForm] = useState(() => mapProductToForm(product));
+  const [attributes, setAttributes] = useState(() =>
+    mapProductAttributesToForm(product),
+  );
   const [existingImages, setExistingImages] = useState([]);
   const [pendingImages, setPendingImages] = useState([]);
   const [selectedPrimary, setSelectedPrimary] = useState(null);
@@ -103,6 +137,9 @@ const UpdateProductModal = ({ open, product, onClose }) => {
   useEffect(() => {
     if (!open || !product) return;
 
+    setForm(mapProductToForm(product));
+    setAttributes(mapProductAttributesToForm(product));
+
     getProductImages(productId)
       .then((images) => {
         setExistingImages(images);
@@ -138,6 +175,28 @@ const UpdateProductModal = ({ open, product, onClose }) => {
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }));
+  };
+
+  const handleAttributeChange = (index, field, value) => {
+    setAttributes((prev) =>
+      prev.map((attribute, attributeIndex) =>
+        attributeIndex === index
+          ? { ...attribute, [field]: value }
+          : attribute,
+      ),
+    );
+  };
+
+  const handleAddAttribute = () => {
+    setAttributes((prev) => [...prev, createEmptyAttribute()]);
+  };
+
+  const handleRemoveAttribute = (index) => {
+    setAttributes((prev) =>
+      prev.length === 1
+        ? [createEmptyAttribute()]
+        : prev.filter((_, attributeIndex) => attributeIndex !== index),
+    );
   };
 
   const handleDeleteExistingImage = async (image) => {
@@ -260,6 +319,7 @@ const UpdateProductModal = ({ open, product, onClose }) => {
         condition: form.condition,
         location: form.location,
         isActive: form.isActive,
+        attributes: buildAttributesPayload(attributes),
       };
 
       const images = await buildImagePayload();
@@ -418,16 +478,62 @@ const UpdateProductModal = ({ open, product, onClose }) => {
               </select>
             </div>
 
-            <div className="form-group">
-              <label>Location</label>
-              <input
+          <div className="form-group">
+            <label>Location</label>
+            <input
                 name="location"
                 placeholder="Ha Noi"
                 value={form.location}
                 onChange={handleChange}
+              disabled={isBusy}
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Product Attributes</label>
+            <div className="product-attribute-editor">
+              {attributes.map((attribute, index) => (
+                <div key={`attribute-${index}`} className="product-attribute-editor__item">
+                  <input
+                    placeholder="Attribute name (e.g. Color)"
+                    value={attribute.name}
+                    onChange={(event) =>
+                      handleAttributeChange(index, "name", event.target.value)
+                    }
+                    disabled={isBusy}
+                  />
+
+                  <textarea
+                    placeholder="Values, one per line or comma separated (e.g. Purple, Black, Silver)"
+                    value={attribute.valuesText}
+                    onChange={(event) =>
+                      handleAttributeChange(index, "valuesText", event.target.value)
+                    }
+                    rows={3}
+                    disabled={isBusy}
+                  />
+
+                  <button
+                    type="button"
+                    className="product-attribute-editor__remove"
+                    onClick={() => handleRemoveAttribute(index)}
+                    disabled={isBusy}
+                  >
+                    Remove attribute
+                  </button>
+                </div>
+              ))}
+
+              <button
+                type="button"
+                className="product-attribute-editor__add"
+                onClick={handleAddAttribute}
                 disabled={isBusy}
-              />
+              >
+                + Add attribute
+              </button>
             </div>
+          </div>
           </div>
 
           <div className="product-switch-group">

@@ -350,6 +350,49 @@ $danger: #ef4444;
   }
 }
 
+.product-attribute-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+
+  &__item {
+    padding: 14px;
+    border: 1px solid rgba(59, 130, 246, 0.12);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.02);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  &__add,
+  &__remove {
+    min-height: 38px;
+    width: fit-content;
+    padding: 0 14px;
+    border-radius: 10px;
+    border: 1px solid $border-color;
+    background: $bg-input;
+    color: $text-input;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover:not(:disabled) {
+      border-color: $border-color-focus;
+      background: $bg-input-hover;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  &__remove {
+    color: #fca5a5;
+  }
+}
+
 // ========================================
 // FORM ROW
 // ========================================

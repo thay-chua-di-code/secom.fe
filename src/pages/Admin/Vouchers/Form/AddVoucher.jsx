@@ -6,10 +6,14 @@ import Button from "../../../../components/common/Button/Button";
 import { createAdminVoucher } from "../../../../redux/slice/admin/vouchers/voucherThunk";
 import { useDispatch } from "react-redux";
 import toast from "react-hot-toast";
+import {
+  normalizeVoucherDiscountType,
+  VOUCHER_DISCOUNT_TYPES,
+} from "../../../../utils/voucherUtils";
 
 const initialForm = {
   code: "",
-  discountType: "percentage",
+  discountType: VOUCHER_DISCOUNT_TYPES.PERCENTAGE,
   discountValue: "",
   minOrderAmount: "",
   expiresAtUtc: "",
@@ -36,7 +40,7 @@ const AddVoucher = ({ open, onClose }) => {
     try {
       const payload = {
         code: formData.code.trim().toUpperCase(),
-        discountType: formData.discountType,
+        discountType: normalizeVoucherDiscountType(formData.discountType),
         discountValue: Number(formData.discountValue),
         minOrderAmount: Number(formData.minOrderAmount),
         usageLimit: Number(formData.usageLimit),
@@ -108,8 +112,8 @@ const AddVoucher = ({ open, onClose }) => {
                     value={formData.discountType}
                     onChange={handleChange}
                   >
-                    <option value="percentage">Percentage (%)</option>
-                    <option value="fixed">Fixed Amount ($)</option>
+                    <option value={VOUCHER_DISCOUNT_TYPES.PERCENTAGE}>Percentage</option>
+                    <option value={VOUCHER_DISCOUNT_TYPES.FIXED_AMOUNT}>Fixed Amount</option>
                   </select>
                 </div>
               </div>
@@ -119,9 +123,9 @@ const AddVoucher = ({ open, onClose }) => {
             <div className="form-row">
               <div className="form-group">
                 <label htmlFor="discountValue">
-                  {formData.discountType === "percentage"
-                    ? "DISCOUNT (%)"
-                    : "DISCOUNT ($)"}
+                  {formData.discountType === VOUCHER_DISCOUNT_TYPES.PERCENTAGE
+                    ? "DISCOUNT PERCENTAGE (%)"
+                    : "DISCOUNT AMOUNT (VND)"}
                 </label>
                 <div className="input-wrapper">
                   <input
@@ -138,7 +142,7 @@ const AddVoucher = ({ open, onClose }) => {
               </div>
 
               <div className="form-group">
-                <label htmlFor="minOrderAmount">MIN ORDER ($)</label>
+                <label htmlFor="minOrderAmount">MIN ORDER (VND)</label>
                 <div className="input-wrapper">
                   <input
                     id="minOrderAmount"

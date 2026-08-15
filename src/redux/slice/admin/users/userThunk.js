@@ -3,9 +3,9 @@ import { adminService } from "../../../../service/adminService";
 
 export const fetchAdminUsers = createAsyncThunk(
   "adminUsers/fetchAdminUsers",
-  async ({ pageNumber = 1, pageSize = 20 }, thunkAPI) => {
+  async ({ pageNumber = 1, pageSize = 20, searchTerm } = {}, thunkAPI) => {
     try {
-      const res = await adminService.getUsers(pageNumber, pageSize);
+      const res = await adminService.getUsers(pageNumber, pageSize, searchTerm);
       return res.data.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(

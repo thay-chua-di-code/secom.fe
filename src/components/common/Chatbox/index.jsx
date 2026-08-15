@@ -426,6 +426,7 @@ const ChatBox = () => {
           onSendAI={handleSendAI}
           onRetryAI={handleRetryAI}
           onSendSeller={handleSendSeller}
+          onClose={() => setOpen(false)}
         />
       </div>
     </>

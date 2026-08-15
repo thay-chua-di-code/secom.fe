@@ -72,15 +72,21 @@
   .stars {
     color: #e6b85d;
 
-    font-size: 13px;
+    font-size: 16px;
 
     letter-spacing: 1px;
+  }
+
+  .rating-count {
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 14px;
+    font-weight: 600;
   }
 
   > span {
     color: rgba(255, 255, 255, 0.34);
 
-    font-size: 9px;
+    font-size: 13px;
   }
 
   .divider {
@@ -107,7 +113,7 @@
 
     color: #6edca3 !important;
 
-    font-size: 8px;
+    font-size: 11px;
 
     font-weight: 500;
   }
@@ -148,9 +154,61 @@
   white-space: pre-wrap;
   word-break: break-word;
 
-  font-size: 12px;
+  font-size: 15px;
 
   line-height: 1.75;
+}
+
+.product-detail__attributes {
+  padding: 24px 0;
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.075);
+
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.product-detail__attribute-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.product-detail__attribute-label {
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.product-detail__attribute-values {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.product-detail__attribute-chip {
+  min-height: 38px;
+  padding: 0 16px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.03);
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: rgba(130, 168, 255, 0.4);
+    background: rgba(130, 168, 255, 0.08);
+  }
+}
+
+.product-detail__attribute-chip--selected {
+  border-color: rgba(130, 168, 255, 0.5);
+  background: rgba(130, 168, 255, 0.16);
+  color: #ffffff;
 }
 
 /* =========================================================
@@ -208,7 +266,7 @@
 
     font-family: "Roboto Mono", monospace;
 
-    font-size: 7px;
+    font-size: 11px;
 
     letter-spacing: 0.05em;
 
@@ -220,7 +278,7 @@
 
     color: rgba(255, 255, 255, 0.76);
 
-    font-size: 10px;
+    font-size: 14px;
 
     font-weight: 500;
 
@@ -346,7 +404,7 @@
 
   font-family: "Inter", sans-serif;
 
-  font-size: 9px;
+  font-size: 13px;
 
   font-weight: 600;
 
@@ -514,7 +572,7 @@
 
     color: rgba(255, 255, 255, 0.78);
 
-    font-size: 10px;
+    font-size: 14px;
 
     font-weight: 500;
   }
@@ -524,7 +582,7 @@
 
     color: rgba(255, 255, 255, 0.32);
 
-    font-size: 8px;
+    font-size: 12px;
 
     line-height: 1.45;
   }
@@ -580,6 +638,25 @@
   span {
     color: var(--aidr-text-secondary);
   }
+}
+
+.product-detail__info {
+  h1 {
+    margin: 0 0 18px;
+    color: #ffffff;
+    font-size: clamp(24px, 2.6vw, 32px);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+}
+
+.product-detail__eyebrow {
+  display: inline-block;
+  margin-bottom: 14px;
+  color: rgba(255, 255, 255, 0.48);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
 }
 
 /* =========================================================

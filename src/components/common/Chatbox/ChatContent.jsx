@@ -1,6 +1,6 @@
 import ChatInput from "./ChatInput";
 import ChatMessage from "./ChatMessage";
-import { Bot } from "lucide-react";
+import { Bot, X } from "lucide-react";
 import { useEffect, useRef } from "react";
 
 const ChatContent = ({
@@ -12,6 +12,7 @@ const ChatContent = ({
   onSendAI,
   onRetryAI,
   onSendSeller,
+  onClose,
 }) => {
   const isAI = selectedConversation?.type === "ai";
   const messagesEndRef = useRef(null);
@@ -39,6 +40,17 @@ const ChatContent = ({
             <h4>{selectedConversation.name}</h4>
             <p>{isAI ? "AI Assistant • Always ready to help" : "Is active"}</p>
           </div>
+        </div>
+
+        <div className="chat-header-actions">
+          <button
+            type="button"
+            aria-label="Close chat popup"
+            title="Close chat"
+            onClick={onClose}
+          >
+            <X size={18} />
+          </button>
         </div>
       </div>
 

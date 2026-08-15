@@ -22,6 +22,7 @@ import {
 } from "../../../redux/slice/admin/finance/financeThunk";
 import FinanceCharts from "./Chart";
 import toast from "react-hot-toast";
+import { formatCurrencyVN } from "../../../utils/fncUtils";
 
 const DEFAULT_PAGE_SIZE = 20;
 
@@ -70,7 +71,7 @@ const getMoneyValue = (value) => {
   return Number.isFinite(numberValue) ? numberValue : 0;
 };
 
-const formatCurrency = (value) => `${getMoneyValue(value).toLocaleString()} VND`;
+const formatCurrency = (value) => formatCurrencyVN(getMoneyValue(value));
 
 const getField = (item, keys, fallback = 0) => {
   const value = keys.map((key) => item?.[key]).find((field) => field !== undefined && field !== null);
@@ -260,7 +261,7 @@ export default function Finance() {
                   <div className="content">
                     <span>{item.title}</span>
 
-                    <h3>{Number(item.value || 0).toLocaleString()} VND</h3>
+                    <h3>{formatCurrency(item.value || 0)}</h3>
 
                     <p>{item.description}</p>
                   </div>

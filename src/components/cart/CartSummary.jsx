@@ -1,7 +1,4 @@
-const currencyFormatter = new Intl.NumberFormat("en-US", {
-  style: "currency",
-  currency: "USD",
-});
+import { formatCurrencyVN } from "../../utils/fncUtils";
 
 export default function CartSummary({
   subtotal,
@@ -34,10 +31,10 @@ export default function CartSummary({
               {selectedCount} item{selectedCount !== 1 ? "s" : ""}
             </span>
             <span>
-              Subtotal: <span className="font-medium tabular-nums text-slate-700">{currencyFormatter.format(subtotal || 0)}</span>
+              Subtotal: <span className="font-medium tabular-nums text-slate-700">{formatCurrencyVN(subtotal || 0)}</span>
             </span>
             <span>
-              Discount: <span className="font-medium tabular-nums text-slate-700">{currencyFormatter.format(discountAmount || 0)}</span>
+              Discount: <span className="font-medium tabular-nums text-slate-700">{formatCurrencyVN(discountAmount || 0)}</span>
             </span>
           </div>
 
@@ -45,7 +42,7 @@ export default function CartSummary({
             <div className="text-right">
               <p className="text-xs text-slate-500">Total</p>
               <p className="text-2xl font-bold tabular-nums text-secom-600">
-                {currencyFormatter.format(finalTotal || 0)}
+                {formatCurrencyVN(finalTotal || 0)}
               </p>
             </div>
 

@@ -22,6 +22,7 @@ import AddAddressModal from "../Profile/Address/Form/FormAdd";
 import "./style.scss";
 import "../../components/cart/CartEmpty.scss";
 import { formatCurrencyVN } from "../../utils/fncUtils";
+import { isPercentageVoucher } from "../../utils/voucherUtils";
 function CartEmpty() {
   return (
     <section className="cart-empty">
@@ -151,8 +152,7 @@ export default function CartPage() {
     }
 
     const discountValue = Number(activeVoucher.discountValue || 0);
-    const discountType = String(activeVoucher.discountType || "").toLowerCase();
-    const rawDiscount = discountType.includes("percent")
+    const rawDiscount = isPercentageVoucher(activeVoucher.discountType)
       ? (selectedSubtotal * discountValue) / 100
       : discountValue;
     const maxDiscountAmount = Number(activeVoucher.maxDiscountAmount || 0);

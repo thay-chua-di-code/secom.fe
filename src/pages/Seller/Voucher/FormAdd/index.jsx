@@ -2,10 +2,14 @@ import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import "./style.scss";
 import { sellerService } from "../../../../service/sellerService";
+import {
+  normalizeVoucherDiscountType,
+  VOUCHER_DISCOUNT_TYPES,
+} from "../../../../utils/voucherUtils";
 
 const createInitialForm = () => ({
   code: "",
-  discountType: "percentage",
+  discountType: VOUCHER_DISCOUNT_TYPES.PERCENTAGE,
   discountValue: "",
   minOrderAmount: "",
   quantity: "",
@@ -51,7 +55,9 @@ const AddVoucherModal = ({
     if (isEditMode && initialVoucher) {
       setForm({
         code: initialVoucher.code || "",
-        discountType: initialVoucher.discountType || "percentage",
+        discountType:
+          normalizeVoucherDiscountType(initialVoucher.discountType) ||
+          VOUCHER_DISCOUNT_TYPES.PERCENTAGE,
         discountValue: String(initialVoucher.discountValue ?? ""),
         minOrderAmount: String(initialVoucher.minOrderAmount ?? ""),
         quantity: String(initialVoucher.quantity ?? ""),
@@ -86,7 +92,7 @@ const AddVoucherModal = ({
     }
 
     if (
-      form.discountType === "percentage" &&
+      form.discountType === VOUCHER_DISCOUNT_TYPES.PERCENTAGE &&
       Number(form.discountValue) > 100
     ) {
       toast.error("Percentage discount cannot exceed 100%");
@@ -107,6 +113,7 @@ const AddVoucherModal = ({
       code: form.code.trim(),
       name: form.code.trim(),
       description: null,
+      discountType: normalizeVoucherDiscountType(form.discountType),
       discountValue: Number(form.discountValue),
       minOrderAmount: Number(form.minOrderAmount || 0),
       maxDiscountAmount: null,
@@ -184,13 +191,17 @@ const AddVoucherModal = ({
                 value={form.discountType}
                 onChange={handleChange}
               >
-                <option value="percentage">Percent (%)</option>
-                <option value="fixed">Fixed Amount</option>
+                <option value={VOUCHER_DISCOUNT_TYPES.PERCENTAGE}>Percentage</option>
+                <option value={VOUCHER_DISCOUNT_TYPES.FIXED_AMOUNT}>Fixed Amount</option>
               </select>
             </div>
 
             <div className="form-group">
-              <label>Discount Value</label>
+              <label>
+                {form.discountType === VOUCHER_DISCOUNT_TYPES.PERCENTAGE
+                  ? "Discount Percentage (%)"
+                  : "Discount Amount (VND)"}
+              </label>
 
               <input
                 type="number"
@@ -204,7 +215,7 @@ const AddVoucherModal = ({
 
           <div className="row">
             <div className="form-group">
-              <label>Minimum Order</label>
+              <label>Minimum Order (VND)</label>
 
               <input
                 type="number"
