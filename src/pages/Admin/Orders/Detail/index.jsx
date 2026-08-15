@@ -13,15 +13,20 @@ import {
   getOrderItemTotalPrice,
 } from "../../../../components/order/orderItemAdapter";
 
-export default function OrderDetailModal({ open, onClose, order, loading = false, error = null }) {
+export default function OrderDetailModal({
+  open,
+  onClose,
+  order,
+  loading = false,
+  error = null,
+}) {
   if (!open || !order) return null;
-
+  console.log(order);
   const items = getOrderItems(order);
 
   return (
     <div className="order-detail-overlay" onClick={onClose}>
       <div className="order-detail-modal" onClick={(e) => e.stopPropagation()}>
-
         <div className="modal-header">
           <h2>Order Details</h2>
           <button className="close-btn" onClick={onClose}>
@@ -30,7 +35,6 @@ export default function OrderDetailModal({ open, onClose, order, loading = false
         </div>
 
         <div className="modal-body">
-       
           <div className="info-grid">
             <div className="info-card">
               <label>Order ID</label>
@@ -40,7 +44,6 @@ export default function OrderDetailModal({ open, onClose, order, loading = false
             <div className="info-card">
               <label>Date</label>
               <p>{new Date(order.createdAtUtc).toLocaleDateString("en-CA")}</p>
-             
             </div>
 
             <div className="info-card">
@@ -54,7 +57,6 @@ export default function OrderDetailModal({ open, onClose, order, loading = false
             </div>
           </div>
 
-         
           <div className="info-card full-width">
             <label>Products</label>
             {loading ? (
@@ -68,12 +70,19 @@ export default function OrderDetailModal({ open, onClose, order, loading = false
                   const productPath = getOrderItemProductPath(item);
                   const productName = getOrderItemName(item);
                   const productImage = (
-                    <OrderProductImage item={item} className="order-detail-product__image" alt={productName} />
+                    <OrderProductImage
+                      item={item}
+                      className="order-detail-product__image"
+                      alt={productName}
+                    />
                   );
                   return (
                     <div className="order-detail-product" key={itemId}>
                       {productPath ? (
-                        <Link to={productPath} aria-label={`View product ${productName}`}>
+                        <Link
+                          to={productPath}
+                          aria-label={`View product ${productName}`}
+                        >
                           {productImage}
                         </Link>
                       ) : (
@@ -81,7 +90,10 @@ export default function OrderDetailModal({ open, onClose, order, loading = false
                       )}
                       <div>
                         {productPath ? (
-                          <Link to={productPath} className="order-detail-product__link">
+                          <Link
+                            to={productPath}
+                            className="order-detail-product__link"
+                          >
                             <p>{productName}</p>
                           </Link>
                         ) : (
@@ -89,9 +101,13 @@ export default function OrderDetailModal({ open, onClose, order, loading = false
                         )}
                         <span>Product ID: {getOrderItemProductId(item)}</span>
                         <span>Quantity: {getOrderItemQuantity(item)}</span>
-                        <span>Seller: {item.sellerName || item.shopName || "--"}</span>
+                        <span>
+                          Seller: {item.sellerName || item.shopName || "--"}
+                        </span>
                       </div>
-                      <strong>{formatCurrencyVN(getOrderItemTotalPrice(item))}</strong>
+                      <strong>
+                        {formatCurrencyVN(getOrderItemTotalPrice(item))}
+                      </strong>
                     </div>
                   );
                 })}
@@ -101,11 +117,12 @@ export default function OrderDetailModal({ open, onClose, order, loading = false
             )}
           </div>
 
-         
           <div className="info-card full-width total-row">
             <div>
               <label>Total Amount</label>
-              <p className="price-amount">{formatCurrencyVN(order.finalTotal)}</p>
+              <p className="price-amount">
+                {formatCurrencyVN(order.finalTotal)}
+              </p>
             </div>
             <span
               className={`status-badge ${order.status?.toLowerCase() || ""}`}

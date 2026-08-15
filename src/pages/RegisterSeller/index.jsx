@@ -8,28 +8,24 @@ import useReveal from "../../hooks/useReveal";
 const RegisterSeller = () => {
   const formRef = useRef(null);
 
+  // Chỉ dùng reveal cho HERO.
+  // Registration form KHÔNG phụ thuộc reveal nữa.
   const heroReveal = useReveal({
     threshold: 0.08,
     rootMargin: "0px 0px -60px 0px",
-    once: false,
+    once: true,
   });
 
   const imageReveal = useReveal({
     threshold: 0.08,
     rootMargin: "0px 0px -60px 0px",
-    once: false,
+    once: true,
   });
 
   const featuresReveal = useReveal({
     threshold: 0.08,
     rootMargin: "0px 0px -60px 0px",
-    once: false,
-  });
-
-  const formReveal = useReveal({
-    threshold: 0.08,
-    rootMargin: "0px 0px -60px 0px",
-    once: false,
+    once: true,
   });
 
   const handleScrollToForm = () => {
@@ -85,6 +81,9 @@ const RegisterSeller = () => {
             </Button>
           </div>
 
+          {/* =================================================
+              FEATURES
+          ================================================= */}
           <div
             ref={featuresReveal.ref}
             className={`seller-banner__features seller-banner__features-reveal ${
@@ -195,34 +194,103 @@ const RegisterSeller = () => {
       </section>
 
       {/* =====================================================
-          FORM
+          SELLER REGISTRATION
+          
+          QUAN TRỌNG:
+          Không dùng useReveal ở section này nữa.
+          Form luôn visible.
       ===================================================== */}
       <section
-        ref={(node) => {
-          formRef.current = node;
-          formReveal.ref.current = node;
-        }}
-        className={`seller-registration-wrapper ${
-          formReveal.visible ? "is-visible" : ""
-        }`}
+        ref={formRef}
+        id="seller-registration"
+        className="seller-registration-wrapper"
       >
         <div className="seller-registration-wrapper__inner">
+          {/* =================================================
+              HEADING
+          ================================================= */}
           <div className="seller-registration-wrapper__heading">
-            <span>SELLER REGISTRATION</span>
+            <div className="seller-registration-wrapper__badge">
+              <span />
+              SELLER REGISTRATION
+            </div>
 
             <h2>
-              Start building your
-              <br />
-              <strong>Secom store.</strong>
+              Build your store on
+              <strong> Secom.</strong>
             </h2>
 
             <p>
-              Complete the registration form below and start selling your
-              products on Secom.
+              Tell us a little about your business. After submitting your
+              application, our team will review your information before
+              activating seller features.
             </p>
           </div>
 
-          <SellerRegistration />
+          {/* =================================================
+              REGISTRATION CONTENT
+          ================================================= */}
+          <div className="seller-registration-content">
+            {/* LEFT */}
+            <div className="seller-registration-content__aside">
+              <span className="seller-registration-content__step">
+                APPLICATION
+              </span>
+
+              <h3>You're one step away from becoming a Secom seller.</h3>
+
+              <p>
+                Provide accurate store information and a verification document
+                to help us review your seller application.
+              </p>
+
+              <div className="seller-registration-benefits">
+                <div>
+                  <span>01</span>
+
+                  <section>
+                    <strong>Store information</strong>
+
+                    <p>Tell us about your shop and contact information.</p>
+                  </section>
+                </div>
+
+                <div>
+                  <span>02</span>
+
+                  <section>
+                    <strong>Verification</strong>
+
+                    <p>Upload a document for seller verification.</p>
+                  </section>
+                </div>
+
+                <div>
+                  <span>03</span>
+
+                  <section>
+                    <strong>Admin review</strong>
+
+                    <p>Your application will be reviewed before approval.</p>
+                  </section>
+                </div>
+              </div>
+
+              <div className="seller-registration-security">
+                <span>✓</span>
+
+                <p>
+                  Your information is only used for seller verification and
+                  account management.
+                </p>
+              </div>
+            </div>
+
+            {/* RIGHT - FORM */}
+            <div className="seller-registration-content__form">
+              <SellerRegistration />
+            </div>
+          </div>
         </div>
       </section>
     </div>
