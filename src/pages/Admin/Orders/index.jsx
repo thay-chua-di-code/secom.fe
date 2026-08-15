@@ -7,6 +7,7 @@ import { formatCurrencyVN, formatDate } from "../../../utils/fncUtils";
 import { Eye, Search, ShoppingCart, Calendar, DollarSign } from "lucide-react";
 import OrderDetailModal from "./Detail";
 import { getOrderItems, getOrderItemName } from "../../../components/order/orderItemAdapter";
+import UserPagination from "../Users/components/Pagination";
 
 const Orders = () => {
   const { orders, loading, pagination } = useSelector(
@@ -148,9 +149,20 @@ const Orders = () => {
           </table>
         </div>
 
-        <div className="pagination">
-          Page {pagination.pageNumber} / {pagination.totalPages}
-        </div>
+        {/* Pagination */}
+        <UserPagination
+          pageNumber={pagination.pageNumber}
+          totalPages={pagination.totalPages}
+          onChange={(newPage) => {
+            // keep the same pageSize from the current pagination state
+            dispatch(
+              fetchOrders({
+                page: newPage,
+                pageSize: pagination.pageSize,
+              }),
+            );
+          }}
+        />
       </div>
       <OrderDetailModal
         open={openDetail}
