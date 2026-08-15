@@ -35,7 +35,8 @@ export const useCart = () => {
     dispatch(updateCartItemQuantity({ cartItemId, quantity }));
   const applyVoucher = (code) => dispatch(applyCartVoucher(code));
   const removeVoucher = () => dispatch(removeCartVoucher());
-  const calculateCheckout = () => dispatch(calculateCheckoutSummary());
+  const calculateCheckout = (cartItemIds) =>
+    dispatch(calculateCheckoutSummary({ cartItemIds }));
 
   return {
     // State

@@ -59,6 +59,7 @@ const Products = () => {
   const [approveTarget, setApproveTarget] = useState(null);
   const [rejectTarget, setRejectTarget] = useState(null);
   const [rejectReason, setRejectReason] = useState("");
+  const [detailTarget, setDetailTarget] = useState(null);
   const [historyTarget, setHistoryTarget] = useState(null);
   const [historyItems, setHistoryItems] = useState([]);
   const [historyLoading, setHistoryLoading] = useState(false);
@@ -363,8 +364,8 @@ const Products = () => {
                         <div className="action-buttons">
                           <Button
                             className="action-btn view-btn"
-                            title="View moderation history"
-                            onClick={() => handleViewHistory(product)}
+                            title="View product detail"
+                            onClick={() => setDetailTarget(product)}
                           >
                             <Eye size={16} />
                           </Button>
@@ -457,6 +458,88 @@ const Products = () => {
                 onClick={handleApprove}
               >
                 {actionLoading ? "Approving..." : "Approve"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {detailTarget && (
+        <div className="admin-products__modal-backdrop" role="presentation">
+          <div
+            className="admin-products__modal admin-products__modal--wide"
+            role="dialog"
+            aria-modal="true"
+          >
+            <h3>Product detail</h3>
+            <p>
+              Product: <strong>{detailTarget.name}</strong>
+            </p>
+
+            <div className="admin-products__detail-grid">
+              <article>
+                <span>Name</span>
+                <strong>{detailTarget.name || "--"}</strong>
+              </article>
+              <article>
+                <span>Category</span>
+                <strong>{detailTarget.categoryName || "--"}</strong>
+              </article>
+              <article>
+                <span>Seller</span>
+                <strong>{detailTarget.sellerFullName || "--"}</strong>
+              </article>
+              <article>
+                <span>Price</span>
+                <strong>{formatCurrencyVN(detailTarget.price || 0)}</strong>
+              </article>
+              <article>
+                <span>Stock</span>
+                <strong>{detailTarget.stockQuantity ?? 0}</strong>
+              </article>
+              <article>
+                <span>Status</span>
+                <strong>
+                  {moderationStatusLabels[
+                    getProductModerationStatus(detailTarget)
+                  ] || "Pending"}
+                </strong>
+              </article>
+              <article>
+                <span>Visibility</span>
+                <strong>
+                  {detailTarget.isActive ? "Active" : "Inactive"}
+                  {" / "}
+                  {detailTarget.isPublic ? "Public" : "Private"}
+                </strong>
+              </article>
+              <article>
+                <span>Location</span>
+                <strong>{detailTarget.location || "--"}</strong>
+              </article>
+              <article className="admin-products__detail-grid-full">
+                <span>Description</span>
+                <strong>{detailTarget.description || "No description"}</strong>
+              </article>
+            </div>
+
+            <div className="admin-products__modal-actions">
+              <button
+                type="button"
+                className="admin-products__modal-btn admin-products__modal-btn--neutral"
+                onClick={() => setDetailTarget(null)}
+              >
+                Close
+              </button>
+              <button
+                type="button"
+                className="admin-products__modal-btn admin-products__modal-btn--neutral"
+                onClick={() => {
+                  setDetailTarget(null);
+                  handleViewHistory(detailTarget);
+                }}
+              >
+                View history
               </button>
             </div>
           </div>

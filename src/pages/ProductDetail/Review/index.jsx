@@ -4,6 +4,7 @@ import Button from "../../../components/common/Button/Button";
 import "./style.scss";
 import { reviewService } from "../../../service/reviewSevice";
 import { useDispatch, useSelector } from "react-redux";
+import { fetchProductDetailThunk } from "../../../redux/slice/productSlice";
 
 const formatReviewDate = (dateString) => {
   if (!dateString) return "--";
@@ -63,7 +64,10 @@ function ProductReview({ productId }) {
       setIsSubmitting(true);
       await reviewService.createReview(productId, payload);
       setReviewData((prev) => ({ ...prev, comment: "" }));
-      await handleGetReviews();
+      await Promise.all([
+        handleGetReviews(),
+        dispatch(fetchProductDetailThunk(productId)),
+      ]);
       toast.success("Review submitted successfully");
     } catch (submitError) {
       toast.error(submitError.message || "Cannot submit review");
@@ -116,7 +120,10 @@ function ProductReview({ productId }) {
       });
       toast.success("Review updated successfully");
       setEditingReview(null);
-      await handleGetReviews();
+      await Promise.all([
+        handleGetReviews(),
+        dispatch(fetchProductDetailThunk(productId)),
+      ]);
     } catch (updateError) {
       toast.error(updateError.message || "Cannot update review");
     } finally {
@@ -132,7 +139,10 @@ function ProductReview({ productId }) {
       await reviewService.deleteReview(deleteTarget.id);
       toast.success("Review deleted successfully");
       setDeleteTarget(null);
-      await handleGetReviews();
+      await Promise.all([
+        handleGetReviews(),
+        dispatch(fetchProductDetailThunk(productId)),
+      ]);
     } catch (deleteError) {
       toast.error(deleteError.message || "Cannot delete review");
     } finally {

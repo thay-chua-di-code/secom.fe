@@ -1,5 +1,6 @@
 .seller-manage {
   padding: 30px;
+  min-width: 0;
 
   &__header {
     display: flex;
@@ -45,6 +46,7 @@
   }
 
   &__table {
+    min-width: 0;
     background: #111827;
     border: 1px solid #262c3f;
     border-radius: 12px;
@@ -54,6 +56,7 @@
     table {
       width: 100%;
       border-collapse: collapse;
+      table-layout: fixed;
     }
 
     th {
@@ -73,6 +76,34 @@
       padding: 18px;
       border-top: 1px solid #202b3d;
       color: #dbe4f1;
+      overflow: hidden;
+    }
+
+    th:nth-child(1),
+    td:nth-child(1) {
+      width: 34%;
+    }
+
+    th:nth-child(2),
+    td:nth-child(2) {
+      width: 24%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    th:nth-child(3),
+    td:nth-child(3),
+    th:nth-child(4),
+    td:nth-child(4) {
+      width: 14%;
+      white-space: nowrap;
+    }
+
+    th:nth-child(5),
+    td:nth-child(5) {
+      width: 180px;
+      white-space: nowrap;
     }
 
     tbody tr {
@@ -90,6 +121,7 @@
   display: flex;
   align-items: center;
   gap: 15px;
+  min-width: 0;
 
   img {
     width: 55px;
@@ -100,12 +132,19 @@
 
   h4 {
     margin: 0;
+    overflow: hidden;
     color: #f1f5f9;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   span {
+    display: block;
+    overflow: hidden;
     color: #94a3b8;
     font-size: 14px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }
 

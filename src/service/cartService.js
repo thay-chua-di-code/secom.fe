@@ -49,8 +49,22 @@ export const cartService = {
     return response.data;
   },
 
-  calculateCheckout: async () => {
-    const response = await axiosClient.get(API_ENDPOINTS.CHECKOUT.CALCULATE);
+  calculateCheckout: async (cartItemIds = []) => {
+    const normalizedCartItemIds = Array.isArray(cartItemIds)
+      ? cartItemIds.filter(Boolean)
+      : [];
+
+    const searchParams = new URLSearchParams();
+
+    normalizedCartItemIds.forEach((cartItemId) => {
+      searchParams.append("cartItemIds", cartItemId);
+    });
+
+    const url = searchParams.toString()
+      ? `${API_ENDPOINTS.CHECKOUT.CALCULATE}?${searchParams.toString()}`
+      : API_ENDPOINTS.CHECKOUT.CALCULATE;
+
+    const response = await axiosClient.get(url);
     return response.data;
   },
 };

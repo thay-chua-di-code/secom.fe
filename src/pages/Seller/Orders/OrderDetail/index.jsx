@@ -9,6 +9,7 @@ import {
   Mail,
   Phone,
   User,
+  MapPin,
 } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -27,7 +28,7 @@ import {
   normalizeOrderStatus,
 } from "../sellerOrderActions";
 
-const OrderDetail = ({ open, onClose, order }) => {
+const OrderDetail = ({ open, onClose, order, loading = false }) => {
   const dispatch = useDispatch();
   const [pendingAction, setPendingAction] = useState(null);
   const { confirmLoading } = useSelector((state) => state.sellerOrder);
@@ -65,6 +66,15 @@ const OrderDetail = ({ open, onClose, order }) => {
       toast.error(result.payload || "Update order status failed.");
     }
   };
+
+  const shippingSnapshot = order.shippingAddress || {};
+  const buyerFullName =
+    shippingSnapshot.receiverName || order.buyerFullName || "Not available";
+  const buyerPhoneNumber =
+    shippingSnapshot.receiverPhone || order.buyerPhoneNumber || "Not available";
+  const buyerEmail = order.buyerEmail || "Not available";
+  const buyerShippingAddress =
+    shippingSnapshot.shippingAddress || order.shippingAddressText || "Not available";
 
   return (
     <div className="seller-order-detail-overlay" onClick={handleClose}>
@@ -173,7 +183,7 @@ const OrderDetail = ({ open, onClose, order }) => {
 
               <div>
                 <span>Full name</span>
-                <strong>{order.buyerFullName || "Not available"}</strong>
+                <strong>{buyerFullName}</strong>
               </div>
             </div>
 
@@ -184,7 +194,7 @@ const OrderDetail = ({ open, onClose, order }) => {
 
               <div>
                 <span>Email</span>
-                <strong>{order.buyerEmail || "Not available"}</strong>
+                <strong>{buyerEmail}</strong>
               </div>
             </div>
 
@@ -195,11 +205,24 @@ const OrderDetail = ({ open, onClose, order }) => {
 
               <div>
                 <span>Phone number</span>
-                <strong>{order.buyerPhoneNumber || "Not available"}</strong>
+                <strong>{buyerPhoneNumber}</strong>
+              </div>
+            </div>
+
+            <div className="seller-order-detail-buyer-item">
+              <div className="seller-order-detail-buyer-icon">
+                <MapPin size={18} />
+              </div>
+
+              <div>
+                <span>Shipping address</span>
+                <strong>{buyerShippingAddress}</strong>
               </div>
             </div>
           </div>
         </section>
+
+        {loading && <p className="seller-order-detail-loading">Loading latest order detail...</p>}
 
         {/* PRODUCTS */}
         <section className="seller-order-detail-products">

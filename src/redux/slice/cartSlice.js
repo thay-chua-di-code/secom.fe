@@ -131,9 +131,9 @@ export const removeCartVoucher = createAsyncThunk(
 // CHECKOUT
 export const calculateCheckoutSummary = createAsyncThunk(
   "cart/calculateCheckoutSummary",
-  async (_, thunkAPI) => {
+  async (payload, thunkAPI) => {
     try {
-      return await cartService.calculateCheckout();
+      return await cartService.calculateCheckout(payload?.cartItemIds);
     } catch (error) {
       return thunkAPI.rejectWithValue(
         getErrorMessage(error, "Failed to calculate checkout summary"),
@@ -298,6 +298,8 @@ const cartSlice = createSlice({
       })
       .addCase(calculateCheckoutSummary.fulfilled, (state, action) => {
         const summary = unwrapResponseData(action.payload);
+        const hasSelectedCartItemIds = Array.isArray(action.meta.arg?.cartItemIds)
+          && action.meta.arg.cartItemIds.length > 0;
 
         state.actionLoading = false;
         state.checkoutSummary = summary;
@@ -306,7 +308,7 @@ const cartSlice = createSlice({
         state.discountAmount = summary?.discountAmount ?? 0;
         state.finalTotal = summary?.finalTotal ?? state.finalTotal;
 
-        if (Array.isArray(summary?.items)) {
+        if (!hasSelectedCartItemIds && Array.isArray(summary?.items)) {
           state.items = summary.items;
         }
       })

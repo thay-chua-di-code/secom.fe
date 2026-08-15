@@ -22,7 +22,6 @@ import AddAddressModal from "../Profile/Address/Form/FormAdd";
 import "./style.scss";
 import "../../components/cart/CartEmpty.scss";
 import { formatCurrencyVN } from "../../utils/fncUtils";
-import { isPercentageVoucher } from "../../utils/voucherUtils";
 function CartEmpty() {
   return (
     <section className="cart-empty">
@@ -87,6 +86,9 @@ export default function CartPage() {
     error,
     voucherCode,
     subtotal,
+    discountAmount,
+    finalTotal,
+    checkoutSummary,
     updateQuantity,
     applyVoucher,
     removeVoucher,
@@ -129,8 +131,12 @@ export default function CartPage() {
   );
 
   const activeVoucherCode = appliedVoucher || voucherCode;
+  const cartSubtotal = items.reduce(
+    (total, item) => total + (item?.subtotal || 0),
+    0,
+  );
   const cartSubtotalForVoucherValidation = Number(
-    subtotal ?? items.reduce((total, item) => total + (item?.subtotal || 0), 0),
+    validSelectedItemIds.length ? selectedSubtotal : cartSubtotal,
   );
   const activeVoucher = useMemo(
     () =>
@@ -140,29 +146,23 @@ export default function CartPage() {
     [activeVoucherCode, vouchers],
   );
 
-  const summaryDiscountAmount = useMemo(() => {
-    if (!activeVoucher || selectedSubtotal <= 0) {
-      return 0;
+  useEffect(() => {
+    if (!isAuthenticated || !items.length || !validSelectedItemIds.length) {
+      return;
     }
 
-    const minOrderAmount = Number(activeVoucher.minOrderAmount || 0);
+    dispatch(calculateCheckoutSummary({ cartItemIds: validSelectedItemIds }));
+  }, [activeVoucherCode, dispatch, isAuthenticated, items.length, validSelectedItemIds]);
 
-    if (selectedSubtotal < minOrderAmount) {
-      return 0;
-    }
-
-    const discountValue = Number(activeVoucher.discountValue || 0);
-    const rawDiscount = isPercentageVoucher(activeVoucher.discountType)
-      ? (selectedSubtotal * discountValue) / 100
-      : discountValue;
-    const maxDiscountAmount = Number(activeVoucher.maxDiscountAmount || 0);
-    const cappedDiscount =
-      maxDiscountAmount > 0
-        ? Math.min(rawDiscount, maxDiscountAmount)
-        : rawDiscount;
-
-    return Math.min(Math.max(cappedDiscount, 0), selectedSubtotal);
-  }, [activeVoucher, selectedSubtotal]);
+  const summarySubtotal = validSelectedItemIds.length
+    ? Number(checkoutSummary?.subtotal ?? subtotal ?? selectedSubtotal ?? 0)
+    : selectedSubtotal;
+  const summaryDiscountAmount = validSelectedItemIds.length
+    ? Number(checkoutSummary?.discountAmount ?? discountAmount ?? 0)
+    : 0;
+  const summaryFinalTotal = validSelectedItemIds.length
+    ? Number(checkoutSummary?.finalTotal ?? finalTotal ?? Math.max(selectedSubtotal - summaryDiscountAmount, 0))
+    : 0;
 
   const getVoucherApplyValidationMessage = useMemo(
     () => (voucher) => {
@@ -213,11 +213,6 @@ export default function CartPage() {
     return Object.fromEntries(entries.filter(([code]) => Boolean(code)));
   }, [getVoucherApplyValidationMessage, vouchers]);
 
-  const summarySubtotal = selectedSubtotal;
-  const summaryFinalTotal = Math.max(
-    selectedSubtotal - summaryDiscountAmount,
-    0,
-  );
   const resolvedSelectedAddressId = useMemo(() => {
     if (!addresses.length) {
       return null;

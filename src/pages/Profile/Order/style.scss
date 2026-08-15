@@ -737,12 +737,15 @@
 .return-refund-badge {
   width: fit-content;
 
-  min-height: 27px;
+  min-height: 32px;
 
-  padding: 0 9px;
+  max-width: 100%;
+
+  padding: 0 12px;
 
   display: inline-flex;
   align-items: center;
+  justify-content: center;
 
   border: 1px solid rgba(255, 255, 255, 0.08);
 
@@ -752,9 +755,15 @@
 
   color: rgba(255, 255, 255, 0.65);
 
-  font-size: 8px;
+  font-size: 11px;
 
-  font-weight: 600;
+  font-weight: 700;
+
+  line-height: 1.3;
+
+  white-space: normal;
+
+  overflow-wrap: anywhere;
 
   text-transform: capitalize;
 }
@@ -762,6 +771,8 @@
 /* pending */
 
 .status-badge--pending,
+.status-badge--waiting_payment,
+.status-badge--waiting,
 .return-refund-badge.pending {
   border-color: rgba(255, 191, 76, 0.16);
 
@@ -773,6 +784,8 @@
 /* SUCCESS */
 
 .status-badge--paid,
+.status-badge--success,
+.status-badge--approved,
 .status-badge--completed,
 .status-badge--delivered,
 .status-badge--received,
@@ -792,9 +805,13 @@
 
 .status-badge--packed,
 .status-badge--shipping,
+.status-badge--processing,
 .return-refund-badge.processing,
 .return-refund-badge.refund-processing,
-.return-refund-badge.item-returned {
+.return-refund-badge.item-returned,
+.return-refund-badge.waiting-buyer-return,
+.return-refund-badge.seller-received-return,
+.return-refund-badge.replacement-shipped {
   border-color: rgba(93, 145, 255, 0.17);
 
   background: rgba(72, 130, 255, 0.07);
@@ -805,10 +822,12 @@
 /* DANGER */
 
 .status-badge--cancelled,
+.status-badge--rejected,
 .status-badge--failed,
 .status-badge--expired,
 .return-refund-badge.rejected,
-.return-refund-badge.cancelled {
+.return-refund-badge.cancelled,
+.return-refund-badge.inspection-failed {
   border-color: rgba(255, 83, 83, 0.16);
 
   background: rgba(255, 70, 70, 0.055);
@@ -824,6 +843,72 @@
   background: rgba(145, 90, 255, 0.065);
 
   color: #ba96ff;
+}
+
+.return-request-items {
+  display: grid;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.return-request-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.return-request-item__image {
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.return-request-item__image--placeholder {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px dashed rgba(255, 255, 255, 0.08);
+}
+
+.return-request-item__content {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  strong {
+    color: #ffffff;
+    font-size: 14px;
+  }
+
+  span {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 12px;
+  }
+}
+
+.return-request-evidence {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+
+  a {
+    display: block;
+  }
+
+  img {
+    width: 88px;
+    height: 88px;
+    border-radius: 12px;
+    object-fit: cover;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.03);
+  }
 }
 
 /* =========================================================

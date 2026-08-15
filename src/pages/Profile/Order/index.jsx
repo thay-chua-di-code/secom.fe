@@ -153,8 +153,10 @@ const canRequestReturn = (order) => {
   return status === "delivered" || status === "completed";
 };
 
-const canConfirmBuyerReturned = (request) =>
-  normalizeReturnStatus(request?.status) === "waiting_buyer_return";
+const canConfirmBuyerReturned = (request) => {
+  const status = normalizeReturnStatus(request?.status);
+  return status === "approved" || status === "waiting_buyer_return";
+};
 
 const canConfirmReplacementReceived = (request) =>
   normalizeReturnStatus(request?.status) === "replacement_shipped";
@@ -223,7 +225,22 @@ const getReturnRequestReviewedAt = (request) =>
     "ReviewedAtUtc",
     "reviewedAt",
     "ReviewedAt",
-  );
+  ) ||
+  (Array.isArray(getField(request, "histories", "Histories"))
+    ? getField(request, "histories", "Histories").find(
+        (history) => normalizeReturnStatus(history?.newStatus) !== "pending",
+      )?.createdAtUtc
+    : undefined);
+
+const getReturnRequestItems = (request) => {
+  const items = getField(request, "items", "Items");
+  return Array.isArray(items) ? items : [];
+};
+
+const getReturnRequestEvidenceImages = (request) => {
+  const images = getField(request, "evidenceImages", "EvidenceImages");
+  return Array.isArray(images) ? images : [];
+};
 
 const getLatestReturnRefundRequest = (order) => {
   const directRequest = getField(
@@ -294,9 +311,15 @@ const getReturnRequestReason = (request) =>
 
 function StatusBadge({ status }) {
   const normalized = normalizeStatus(status);
+  const label =
+    ORDER_STATUS_LABELS[normalized] ||
+    String(status || "--")
+      .replace(/_/g, " ")
+      .replace(/\b\w/g, (char) => char.toUpperCase());
+
   return (
     <span className={`status-badge status-badge--${normalized}`}>
-      {ORDER_STATUS_LABELS[normalized] || status || "--"}
+      {label}
     </span>
   );
 }
@@ -307,6 +330,8 @@ function OrderDetailModal({ order, payment, loading, actionLoading, onClose, onC
   const items = getOrderItems(order);
   const returnRefundRequest = getLatestReturnRefundRequest(order);
   const returnRefundStatus = getReturnRequestStatus(returnRefundRequest, order);
+  const returnRefundItems = getReturnRequestItems(returnRefundRequest);
+  const returnEvidenceImages = getReturnRequestEvidenceImages(returnRefundRequest);
   const orderStatus = normalizeStatus(order.status);
   const canRateSeller = orderStatus === "completed";
 
@@ -471,7 +496,7 @@ function OrderDetailModal({ order, payment, loading, actionLoading, onClose, onC
                         disabled={actionLoading}
                         onClick={() => onConfirmBuyerReturned?.(order)}
                       >
-                        {actionLoading ? "Processing..." : "Confirm item returned"}
+                        {actionLoading ? "Processing..." : "Send return / Confirm returned"}
                       </button>
                     )}
 
@@ -485,6 +510,71 @@ function OrderDetailModal({ order, payment, loading, actionLoading, onClose, onC
                         {actionLoading ? "Processing..." : "Confirm replacement received"}
                       </button>
                     )}
+                  </div>
+                </div>
+              )}
+
+              {returnRefundItems.length > 0 && (
+                <div className="return-refund-grid__full">
+                  <span>Affected Items</span>
+
+                  <div className="return-request-items">
+                    {returnRefundItems.map((requestItem) => {
+                      const matchedOrderItem = items.find(
+                        (item) =>
+                          String(getAdapterOrderItemId(item)) ===
+                          String(requestItem.orderItemId || requestItem.id),
+                      );
+
+                      return (
+                        <article
+                          className="return-request-item"
+                          key={requestItem.id || requestItem.orderItemId}
+                        >
+                          {matchedOrderItem ? (
+                            <OrderProductImage
+                              item={matchedOrderItem}
+                              className="return-request-item__image"
+                              alt={requestItem.productName || getOrderItemName(matchedOrderItem)}
+                            />
+                          ) : (
+                            <div className="return-request-item__image return-request-item__image--placeholder" />
+                          )}
+
+                          <div className="return-request-item__content">
+                            <strong>
+                              {requestItem.productName ||
+                                (matchedOrderItem
+                                  ? getOrderItemName(matchedOrderItem)
+                                  : "Product")}
+                            </strong>
+                            <span>
+                              Qty {requestItem.quantity || 0}
+                              {requestItem.reason ? ` · ${requestItem.reason}` : ""}
+                            </span>
+                          </div>
+                        </article>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {returnEvidenceImages.length > 0 && (
+                <div className="return-refund-grid__full">
+                  <span>Evidence Images</span>
+
+                  <div className="return-request-evidence">
+                    {returnEvidenceImages.map((image) => (
+                      <a
+                        key={image.id || image.imageUrl}
+                        href={image.imageUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        <img src={image.imageUrl} alt="Return evidence" />
+                      </a>
+                    ))}
                   </div>
                 </div>
               )}

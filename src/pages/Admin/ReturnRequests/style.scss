@@ -1,6 +1,7 @@
 .admin-return-requests {
   display: grid;
   gap: 18px;
+  min-width: 0;
   color: #f8fafc;
 
   &__header,
@@ -62,13 +63,15 @@
   }
 
   &__table-wrap {
+    min-width: 0;
     overflow-x: auto;
   }
 
   &__table {
     width: 100%;
-    min-width: 980px;
+    min-width: 0;
     border-collapse: collapse;
+    table-layout: fixed;
 
     thead,
     thead tr,
@@ -97,6 +100,7 @@
       padding: 14px 12px;
       border-bottom: 1px solid #263247;
       text-align: left;
+      overflow: hidden;
     }
 
     th {
@@ -107,25 +111,83 @@
     }
   }
 
+  &__table th:nth-child(1),
+  &__table td:nth-child(1),
+  &__table th:nth-child(2),
+  &__table td:nth-child(2),
+  &__table th:nth-child(3),
+  &__table td:nth-child(3),
+  &__table th:nth-child(4),
+  &__table td:nth-child(4),
+  &__table th:nth-child(6),
+  &__table td:nth-child(6),
+  &__table th:nth-child(7),
+  &__table td:nth-child(7) {
+    white-space: nowrap;
+  }
+
+  &__table th:nth-child(5),
+  &__table td:nth-child(5) {
+    width: 22%;
+  }
+
+  &__table th:nth-child(8),
+  &__table td:nth-child(8) {
+    width: 90px;
+    white-space: nowrap;
+  }
+
   &__badge {
     display: inline-flex;
-    padding: 6px 10px;
+    align-items: center;
+    justify-content: center;
+    max-width: 100%;
+    min-height: 32px;
+    padding: 0 12px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 999px;
-    background: #334155;
-    color: #f8fafc;
+    background: rgba(255, 255, 255, 0.05);
+    color: #cbd5e1;
     font-size: 12px;
     font-weight: 800;
+    line-height: 1.35;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    text-align: center;
 
-    &.approved,
-    &.refunded,
-    &.closed {
-      background: #064e3b;
-      color: #a7f3d0;
+    &.pending,
+    &.waiting-buyer-return {
+      border-color: rgba(255, 191, 76, 0.16);
+      background: rgba(255, 185, 60, 0.07);
+      color: #e9b860;
     }
 
-    &.rejected {
-      background: #7f1d1d;
-      color: #fecaca;
+    &.approved,
+    &.completed,
+    &.refunded,
+    &.closed {
+      border-color: rgba(77, 212, 140, 0.15);
+      background: rgba(50, 200, 120, 0.065);
+      color: #72d9a2;
+    }
+
+    &.item-returned,
+    &.seller-received-return,
+    &.inspection-passed,
+    &.replacement-shipped,
+    &.refund-processing,
+    &.processing {
+      border-color: rgba(93, 145, 255, 0.17);
+      background: rgba(72, 130, 255, 0.07);
+      color: #86aaff;
+    }
+
+    &.rejected,
+    &.inspection-failed,
+    &.cancelled {
+      border-color: rgba(255, 83, 83, 0.16);
+      background: rgba(255, 70, 70, 0.055);
+      color: #ff8181;
     }
   }
 
@@ -166,6 +228,10 @@
     margin-top: 6px;
     color: #f8fafc;
     word-break: break-word;
+  }
+
+  .admin-return-requests__badge {
+    width: fit-content;
   }
 }
 

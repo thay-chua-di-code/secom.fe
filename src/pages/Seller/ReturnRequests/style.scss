@@ -514,9 +514,11 @@
   align-items: center;
   justify-content: center;
 
-  min-height: 28px;
+  min-height: 32px;
 
-  padding: 0 10px;
+  max-width: 100%;
+
+  padding: 0 12px;
 
   border: 1px solid #273149;
   border-radius: 999px;
@@ -524,10 +526,16 @@
   background: #151c2c;
   color: #cbd5e1;
 
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 800;
 
-  white-space: nowrap;
+  line-height: 1.3;
+
+  white-space: normal;
+
+  overflow-wrap: anywhere;
+
+  text-align: center;
 
   &.pending {
     border-color: rgba(245, 158, 11, 0.26);
@@ -538,7 +546,7 @@
   }
 
   &.approved,
-  &.item-returned,
+  &.completed,
   &.refunded,
   &.closed {
     border-color: rgba(34, 197, 94, 0.24);
@@ -556,12 +564,26 @@
     color: #fca5a5;
   }
 
+  &.waiting-buyer-return,
+  &.item-returned,
+  &.seller-received-return,
+  &.inspection-passed,
+  &.replacement-shipped,
   &.refund-processing {
     border-color: rgba(59, 130, 246, 0.28);
 
     background: rgba(37, 99, 235, 0.12);
 
     color: #93c5fd;
+  }
+
+  &.inspection-failed,
+  &.cancelled {
+    border-color: rgba(248, 113, 113, 0.25);
+
+    background: rgba(127, 29, 29, 0.18);
+
+    color: #fca5a5;
   }
 }
 

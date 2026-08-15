@@ -4,15 +4,18 @@ import { PackageOpen, ShoppingBag } from "lucide-react";
 import { getSellerOrdersThunk } from "../../../redux/slice/seller/order/slice";
 import { formatDate, formatCurrencyVN } from "../../../utils/fncUtils";
 import OrderDetail from "./OrderDetail";
+import { orderService } from "../../../service/orderService";
 import {
   getSellerOrderStatusLabel,
   normalizeOrderStatus,
 } from "./sellerOrderActions";
+import toast from "react-hot-toast";
 
 import "./style.scss";
 
 const Orders = () => {
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [detailLoading, setDetailLoading] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -23,6 +26,24 @@ const Orders = () => {
       dispatch(getSellerOrdersThunk());
     }
   }, [dispatch, loaded]);
+
+  const handleOpenOrder = async (order) => {
+    setSelectedOrder(order);
+    setDetailLoading(true);
+
+    try {
+      const response = await orderService.getOrderDetail(order.orderId);
+      const detail = response?.data?.order || response?.data || response?.order || response;
+
+      setSelectedOrder((prev) =>
+        prev && prev.orderId === order.orderId ? { ...prev, ...detail } : prev,
+      );
+    } catch (error) {
+      toast.error(error?.message || "Load order detail failed");
+    } finally {
+      setDetailLoading(false);
+    }
+  };
 
   return (
     <div className="orders">
@@ -67,7 +88,7 @@ const Orders = () => {
               type="button"
               className="order-card"
               key={order.orderId}
-              onClick={() => setSelectedOrder(order)}
+              onClick={() => handleOpenOrder(order)}
             >
               <div className="order-card__header">
                 <div className="order-card__identity">
@@ -120,6 +141,7 @@ const Orders = () => {
       <OrderDetail
         open={!!selectedOrder}
         order={selectedOrder}
+        loading={detailLoading}
         onClose={() => setSelectedOrder(null)}
       />
     </div>
