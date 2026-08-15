@@ -910,7 +910,11 @@
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 20px;
   background:
-    radial-gradient(circle at 100% 0%, rgba(59, 130, 246, 0.14), transparent 30%),
+    radial-gradient(
+      circle at 100% 0%,
+      rgba(59, 130, 246, 0.14),
+      transparent 30%
+    ),
     linear-gradient(180deg, rgba(16, 22, 36, 0.95), rgba(10, 15, 26, 0.98));
 
   &__header {
@@ -1007,7 +1011,10 @@
     font-size: 12px;
     font-weight: 600;
     cursor: pointer;
-    transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+    transition:
+      transform 0.2s ease,
+      background 0.2s ease,
+      border-color 0.2s ease;
 
     &:disabled {
       opacity: 0.6;
@@ -1259,6 +1266,236 @@
     &__head {
       flex-direction: column;
       align-items: flex-start;
+    }
+  }
+}
+
+/* =========================================================
+   PRODUCTS RESULTS INFO
+========================================================= */
+
+.products-results-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  width: 100%;
+
+  gap: 14px;
+
+  margin-bottom: 18px;
+
+  padding: 12px 14px;
+
+  border: 1px solid rgba(255, 255, 255, 0.065);
+  border-radius: 13px;
+
+  background: rgba(255, 255, 255, 0.025);
+
+  color: rgba(255, 255, 255, 0.46);
+
+  font-family: "Inter", sans-serif;
+  font-size: 11px;
+  font-weight: 400;
+
+  box-sizing: border-box;
+
+  span {
+    display: inline-flex;
+    align-items: center;
+
+    min-width: 0;
+
+    gap: 4px;
+
+    white-space: nowrap;
+  }
+
+  strong {
+    color: rgba(255, 255, 255, 0.9);
+
+    font-weight: 600;
+  }
+
+  // Left side: Showing 1 – 8 of 20
+
+  span:first-child {
+    position: relative;
+
+    padding-left: 13px;
+
+    &::before {
+      content: "";
+
+      position: absolute;
+
+      top: 50%;
+      left: 0;
+
+      width: 5px;
+      height: 5px;
+
+      border-radius: 50%;
+
+      background: #82a8ff;
+
+      transform: translateY(-50%);
+
+      box-shadow: 0 0 0 4px rgba(130, 168, 255, 0.08);
+    }
+  }
+
+  // Right side: Page 1 of 3
+
+  span:last-child {
+    min-height: 28px;
+
+    padding: 0 10px;
+
+    border: 1px solid rgba(255, 255, 255, 0.065);
+    border-radius: 999px;
+
+    background: rgba(255, 255, 255, 0.025);
+
+    color: rgba(255, 255, 255, 0.4);
+
+    strong {
+      color: #ffffff;
+    }
+  }
+}
+
+/* =========================================================
+   RESULTS INFO - LARGE SCREEN
+========================================================= */
+
+@media (min-width: 1440px) {
+  .products-results-info {
+    min-height: 48px;
+
+    padding: 12px 16px;
+
+    font-size: 12px;
+
+    span:last-child {
+      min-height: 30px;
+
+      padding: 0 12px;
+    }
+  }
+}
+
+/* =========================================================
+   RESULTS INFO - FULL HD / TV
+========================================================= */
+
+@media (min-width: 1920px) {
+  .products-results-info {
+    min-height: 52px;
+
+    margin-bottom: 22px;
+
+    padding: 13px 18px;
+
+    border-radius: 15px;
+
+    font-size: 13px;
+
+    span:first-child {
+      padding-left: 15px;
+
+      &::before {
+        width: 6px;
+        height: 6px;
+      }
+    }
+
+    span:last-child {
+      min-height: 32px;
+
+      padding: 0 13px;
+    }
+  }
+}
+
+/* =========================================================
+   RESULTS INFO - 2K / 4K
+========================================================= */
+
+@media (min-width: 2560px) {
+  .products-results-info {
+    min-height: 58px;
+
+    padding: 15px 20px;
+
+    font-size: 14px;
+
+    span:last-child {
+      min-height: 36px;
+
+      padding: 0 15px;
+    }
+  }
+}
+
+/* =========================================================
+   RESULTS INFO - TABLET
+========================================================= */
+
+@media (max-width: 768px) {
+  .products-results-info {
+    gap: 10px;
+
+    margin-bottom: 16px;
+
+    padding: 10px 12px;
+
+    border-radius: 11px;
+
+    font-size: 10px;
+
+    span:last-child {
+      min-height: 26px;
+
+      padding: 0 9px;
+    }
+  }
+}
+
+/* =========================================================
+   RESULTS INFO - MOBILE
+========================================================= */
+
+@media (max-width: 520px) {
+  .products-results-info {
+    align-items: stretch;
+
+    flex-direction: column;
+
+    gap: 8px;
+
+    padding: 10px;
+
+    span {
+      width: 100%;
+
+      white-space: normal;
+    }
+
+    span:first-child {
+      min-height: 28px;
+
+      align-items: center;
+    }
+
+    span:last-child {
+      justify-content: center;
+
+      width: fit-content;
+
+      min-height: 28px;
+
+      align-self: flex-start;
     }
   }
 }
