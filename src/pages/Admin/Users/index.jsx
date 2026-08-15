@@ -17,48 +17,176 @@ import {
   fetchAdminUsers,
   unBanUser,
 } from "../../../redux/slice/admin/users/userThunk";
+
 import { fetchAdminSellers } from "../../../redux/slice/admin/seller/thunk";
 
 import SellerDetailModal from "../Seller/Detail";
 
 import "./style.scss";
 
+const USERS_PER_PAGE = 7;
+
 export default function UsersPage() {
   const dispatch = useDispatch();
 
   const [activeTab, setActiveTab] = useState("users");
+
   const [search, setSearch] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [sellerStatus, setSellerStatus] = useState("all");
+
+  const [userPage, setUserPage] = useState(1);
 
   const [openDetail, setOpenDetail] = useState(false);
   const [sellerId, setSellerId] = useState(null);
+
   const [accountAction, setAccountAction] = useState(null);
+
+  // =====================================================
+  // REDUX
+  // =====================================================
 
   const usersState = useSelector((state) => state?.usersAdmin);
 
-  const {
-    users = [],
-    loading: usersLoading,
-    pageNumber = 1,
-    pageSize = 10,
-    totalPages = 1,
-  } = usersState;
+  const { users = [], loading: usersLoading } = usersState || {};
 
   const sellersState = useSelector((state) => state?.sellersAdmin);
 
-  const {
-    sellers = [],
-    loading: sellersLoading,
-    pageNumber: sellerPageNumber = 1,
-    totalPages: sellerTotalPages = 1,
-  } = sellersState;
+  const { sellers = [], loading: sellersLoading } = sellersState || {};
+
+  // =====================================================
+  // USER LOCK STATUS
+  // =====================================================
 
   const isUserLocked = (user) =>
-    user.isLocked ||
-    user.locked ||
-    user.status === "Locked" ||
-    user.isActive === false;
+    user?.isLocked ||
+    user?.locked ||
+    user?.status === "Locked" ||
+    user?.isActive === false;
+
+  // =====================================================
+  // FETCH ALL USERS
+  // =====================================================
+  //
+  // KHÔNG truyền pageNumber.
+  // KHÔNG dùng pagination backend.
+  //
+  // Quan trọng:
+  // fetchAdminUsers của bạn phải có khả năng request endpoint
+  // lấy full data khi không truyền pageNumber/pageSize.
+  //
+  // =====================================================
+
+  useEffect(() => {
+    if (activeTab !== "users") return;
+
+    dispatch(fetchAdminUsers({}));
+  }, [activeTab, dispatch]);
+
+  // =====================================================
+  // FETCH SELLERS
+  // =====================================================
+
+  useEffect(() => {
+    if (activeTab !== "sellers") return;
+
+    dispatch(fetchAdminSellers());
+  }, [activeTab, dispatch]);
+
+  // =====================================================
+  // TAB CHANGE
+  // =====================================================
+
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+
+    setSearch("");
+    setSellerStatus("all");
+
+    setUserPage(1);
+  };
+
+  // =====================================================
+  // FILTER USERS ON FE
+  // =====================================================
+
+  const filteredUsers = useMemo(() => {
+    const keyword = search.trim().toLowerCase();
+
+    if (!keyword) {
+      return users;
+    }
+
+    return users.filter((user) => {
+      const fullName = String(user?.fullName || "").toLowerCase();
+      const email = String(user?.email || "").toLowerCase();
+      const role = String(user?.role || "").toLowerCase();
+      const id = String(user?.id || "").toLowerCase();
+
+      return (
+        fullName.includes(keyword) ||
+        email.includes(keyword) ||
+        role.includes(keyword) ||
+        id.includes(keyword)
+      );
+    });
+  }, [users, search]);
+
+  // =====================================================
+  // USER FE PAGINATION
+  // =====================================================
+
+  const userTotalPages = useMemo(() => {
+    return Math.max(Math.ceil(filteredUsers.length / USERS_PER_PAGE), 1);
+  }, [filteredUsers.length]);
+
+  const paginatedUsers = useMemo(() => {
+    const startIndex = (userPage - 1) * USERS_PER_PAGE;
+
+    const endIndex = startIndex + USERS_PER_PAGE;
+
+    return filteredUsers.slice(startIndex, endIndex);
+  }, [filteredUsers, userPage]);
+
+  // =====================================================
+  // RESET PAGE WHEN SEARCH
+  // =====================================================
+
+  useEffect(() => {
+    setUserPage(1);
+  }, [search]);
+
+  // =====================================================
+  // FIX PAGE IF DATA CHANGES
+  // =====================================================
+  //
+  // Ví dụ:
+  // đang page 3
+  // sau search/filter chỉ còn 1 page
+  // => tự về page 1
+  //
+  // =====================================================
+
+  useEffect(() => {
+    if (userPage > userTotalPages) {
+      setUserPage(userTotalPages);
+    }
+  }, [userPage, userTotalPages]);
+
+  // =====================================================
+  // USER PAGINATION ACTIONS
+  // =====================================================
+
+  const handleUserPrevPage = () => {
+    setUserPage((prev) => Math.max(prev - 1, 1));
+  };
+
+  const handleUserNextPage = () => {
+    setUserPage((prev) => Math.min(prev + 1, userTotalPages));
+  };
+
+  // =====================================================
+  // LOCK / UNLOCK
+  // =====================================================
 
   const handleAccountStatus = async () => {
     if (!accountAction?.user?.id) return;
@@ -66,95 +194,34 @@ export default function UsersPage() {
     try {
       if (accountAction.type === "lock") {
         await dispatch(banUser(accountAction.user.id)).unwrap();
+
         toast.success("User account locked");
       } else {
         await dispatch(unBanUser(accountAction.user.id)).unwrap();
+
         toast.success("User account unlocked");
       }
 
       setAccountAction(null);
-      dispatch(
-        fetchAdminUsers({
-          pageNumber,
-          pageSize,
-          searchTerm: debouncedSearch || undefined,
-        }),
-      );
+
+      // Refresh lại TOÀN BỘ users.
+      // Không truyền page.
+      await dispatch(fetchAdminUsers({}));
     } catch (error) {
       toast.error(error || "Update user account status failed");
     }
   };
 
-  // ============================================
-  // FETCH USERS
-  // ============================================
-
-  useEffect(() => {
-    const timeoutId = window.setTimeout(() => {
-      setDebouncedSearch(search.trim());
-    }, 300);
-
-    return () => window.clearTimeout(timeoutId);
-  }, [search]);
-
-  useEffect(() => {
-    if (activeTab !== "users") return;
-
-    dispatch(
-      fetchAdminUsers({
-        pageNumber: 1,
-        pageSize,
-        searchTerm: debouncedSearch || undefined,
-      }),
-    );
-  }, [activeTab, debouncedSearch, dispatch, pageSize]);
-
-  // ============================================
-  // FETCH SELLERS
-  // ============================================
-
-  useEffect(() => {
-    if (activeTab === "sellers") {
-      dispatch(fetchAdminSellers());
-    }
-  }, [activeTab, dispatch]);
-
-  // ============================================
-  // TAB CHANGE
-  // ============================================
-
-  const handleTabChange = (tab) => {
-    setActiveTab(tab);
-    setSearch("");
-    setDebouncedSearch("");
-    setSellerStatus("all");
-  };
-
-  // ============================================
-  // USER PAGINATION
-  // ============================================
-
-  const handleUserPageChange = (page) => {
-    if (page < 1 || page > totalPages) return;
-
-    dispatch(
-      fetchAdminUsers({
-        pageNumber: page,
-        pageSize,
-        searchTerm: debouncedSearch || undefined,
-      }),
-    );
-  };
-
-  // ============================================
+  // =====================================================
   // SELLER FILTER
-  // ============================================
+  // =====================================================
 
   const filteredSellers = useMemo(() => {
     const keyword = search.toLowerCase().trim();
 
     return sellers.filter((seller) => {
       const matchSearch =
+        !keyword ||
         seller.shopName?.toLowerCase().includes(keyword) ||
         seller.userFullName?.toLowerCase().includes(keyword) ||
         seller.userEmail?.toLowerCase().includes(keyword);
@@ -167,17 +234,60 @@ export default function UsersPage() {
     });
   }, [sellers, search, sellerStatus]);
 
+  // =====================================================
+  // SELLER PAGINATION FE
+  // =====================================================
+  //
+  // Mình handle luôn seller phía FE để cùng một cơ chế.
+  //
+  // =====================================================
+
+  const sellerTotalPages = useMemo(() => {
+    return Math.max(Math.ceil(filteredSellers.length / USERS_PER_PAGE), 1);
+  }, [filteredSellers.length]);
+
+  const [sellerPage, setSellerPage] = useState(1);
+
+  const paginatedSellers = useMemo(() => {
+    const startIndex = (sellerPage - 1) * USERS_PER_PAGE;
+
+    return filteredSellers.slice(startIndex, startIndex + USERS_PER_PAGE);
+  }, [filteredSellers, sellerPage]);
+
+  useEffect(() => {
+    setSellerPage(1);
+  }, [sellerStatus, search]);
+
+  useEffect(() => {
+    if (sellerPage > sellerTotalPages) {
+      setSellerPage(sellerTotalPages);
+    }
+  }, [sellerPage, sellerTotalPages]);
+
+  // =====================================================
+  // PENDING SELLERS
+  // =====================================================
+
   const pendingSellers = useMemo(() => {
     return sellers.filter((seller) => seller.statusText === "PendingApproval")
       .length;
   }, [sellers]);
 
+  // =====================================================
+  // RENDER
+  // =====================================================
+
   return (
     <div className="users-page">
       <div className="users-page__card">
+        {/* =================================================
+            TOOLBAR
+        ================================================= */}
+
         <div className="users-page__toolbar">
           <div className="users-page__tabs">
             <button
+              type="button"
               className={activeTab === "users" ? "active" : ""}
               onClick={() => handleTabChange("users")}
             >
@@ -189,6 +299,7 @@ export default function UsersPage() {
             </button>
 
             <button
+              type="button"
               className={activeTab === "sellers" ? "active" : ""}
               onClick={() => handleTabChange("sellers")}
             >
@@ -207,8 +318,11 @@ export default function UsersPage() {
                 onChange={(e) => setSellerStatus(e.target.value)}
               >
                 <option value="all">All Status</option>
+
                 <option value="pendingapproval">Pending</option>
+
                 <option value="approved">Approved</option>
+
                 <option value="rejected">Rejected</option>
               </select>
             )}
@@ -230,6 +344,10 @@ export default function UsersPage() {
           </div>
         </div>
 
+        {/* =================================================
+            USERS TABLE
+        ================================================= */}
+
         {activeTab === "users" && (
           <div className="users-page__table-wrapper">
             {usersLoading ? (
@@ -248,36 +366,46 @@ export default function UsersPage() {
                 </thead>
 
                 <tbody>
-                  {users.length === 0 ? (
-                    <tr>
-                      <td colSpan="6">
+                  {paginatedUsers.length === 0 ? (
+                    <tr className="users-page__empty-row">
+                      <td colSpan={6}>
                         <div className="empty-state">No users found.</div>
                       </td>
                     </tr>
                   ) : (
-                    users.map((user) => (
+                    paginatedUsers.map((user) => (
                       <tr key={user.id}>
+                        {/* USER */}
+
                         <td>
                           <div className="user-info">
                             <div className="user-avatar">
-                              {user.fullName?.charAt(0)?.toUpperCase()}
+                              {user.fullName?.charAt(0)?.toUpperCase() || "U"}
                             </div>
 
                             <div>
-                              <strong>{user.fullName}</strong>
+                              <strong>{user.fullName || "Unknown"}</strong>
 
-                              <span>{user.id}</span>
+                              <span title={user.id}>{user.id}</span>
                             </div>
                           </div>
                         </td>
 
+                        {/* EMAIL */}
+
                         <td>
-                          <span className="user-email">{user.email}</span>
+                          <span className="user-email" title={user.email}>
+                            {user.email}
+                          </span>
                         </td>
+
+                        {/* ROLE */}
 
                         <td>
                           <span className="role-badge">{user.role}</span>
                         </td>
+
+                        {/* STATUS */}
 
                         <td>
                           <span
@@ -291,23 +419,26 @@ export default function UsersPage() {
                           </span>
                         </td>
 
+                        {/* CREATED */}
+
                         <td>
                           <span className="created-date">
-                            {new Date(user.createdAtUtc).toLocaleDateString(
-                              "en-US",
-                            )}
+                            {user.createdAtUtc
+                              ? new Date(user.createdAtUtc).toLocaleDateString(
+                                  "en-US",
+                                )
+                              : "--"}
                           </span>
                         </td>
 
+                        {/* ACTION */}
+
                         <td>
                           <div className="user-actions">
-                            {/* <button className="action-btn edit">
-                              <Eye size={14} />
-                            </button> */}
                             <button
                               type="button"
                               className={`action-btn ${
-                                isUserLocked(user) ? "approve" : "reject"
+                                isUserLocked(user) ? "approve" : "delete"
                               }`}
                               disabled={usersLoading}
                               onClick={() =>
@@ -337,9 +468,9 @@ export default function UsersPage() {
           </div>
         )}
 
-        {/* ============================================
-            SELLERS TABLE
-        ============================================ */}
+        {/* =================================================
+            SELLER TABLE
+        ================================================= */}
 
         {activeTab === "sellers" && (
           <div className="users-page__table-wrapper">
@@ -358,16 +489,16 @@ export default function UsersPage() {
                 </thead>
 
                 <tbody>
-                  {filteredSellers.length === 0 ? (
-                    <tr>
-                      <td colSpan="5">
+                  {paginatedSellers.length === 0 ? (
+                    <tr className="users-page__empty-row">
+                      <td colSpan={5}>
                         <div className="empty-state">
                           No seller applications found.
                         </div>
                       </td>
                     </tr>
                   ) : (
-                    filteredSellers.map((seller) => (
+                    paginatedSellers.map((seller) => (
                       <tr key={seller.id}>
                         <td>
                           <div className="user-info seller-info">
@@ -376,7 +507,7 @@ export default function UsersPage() {
                                 seller.verificationImageUrl ||
                                 "https://i.pravatar.cc/100"
                               }
-                              alt={seller.shopName}
+                              alt={seller.shopName || "Seller"}
                             />
 
                             <div>
@@ -388,14 +519,18 @@ export default function UsersPage() {
                         </td>
 
                         <td>
-                          <span className="user-email">{seller.userEmail}</span>
+                          <span className="user-email" title={seller.userEmail}>
+                            {seller.userEmail}
+                          </span>
                         </td>
 
                         <td>
                           <span
-                            className={`status-badge ${seller.statusText
-                              ?.toLowerCase()
-                              .replace("pendingapproval", "pending")}`}
+                            className={`status-badge ${
+                              seller.statusText
+                                ?.toLowerCase()
+                                .replace("pendingapproval", "pending") || ""
+                            }`}
                           >
                             <span />
 
@@ -405,15 +540,18 @@ export default function UsersPage() {
 
                         <td>
                           <span className="created-date">
-                            {new Date(seller.submittedAtUtc).toLocaleDateString(
-                              "en-US",
-                            )}
+                            {seller.submittedAtUtc
+                              ? new Date(
+                                  seller.submittedAtUtc,
+                                ).toLocaleDateString("en-US")
+                              : "--"}
                           </span>
                         </td>
 
                         <td>
                           <div className="user-actions">
                             <button
+                              type="button"
                               className="action-btn edit"
                               onClick={() => {
                                 setSellerId(seller.id);
@@ -422,18 +560,6 @@ export default function UsersPage() {
                             >
                               <Eye size={14} />
                             </button>
-
-                            {/* {seller.statusText === "PendingApproval" && (
-                              <>
-                                <button className="action-btn approve">
-                                  <Check size={14} />
-                                </button>
-
-                                <button className="action-btn delete">
-                                  <X size={14} />
-                                </button>
-                              </>
-                            )} */}
                           </div>
                         </td>
                       </tr>
@@ -445,24 +571,25 @@ export default function UsersPage() {
           </div>
         )}
 
-        {/* ============================================
-            PAGINATION
-        ============================================ */}
+        {/* =================================================
+            FE PAGINATION
+        ================================================= */}
 
         <div className="users-page__pagination">
           <span>
-            Page <b>{activeTab === "users" ? pageNumber : sellerPageNumber}</b>{" "}
-            of <b>{activeTab === "users" ? totalPages : sellerTotalPages}</b>
+            Page <b>{activeTab === "users" ? userPage : sellerPage}</b> of{" "}
+            <b>{activeTab === "users" ? userTotalPages : sellerTotalPages}</b>
           </span>
 
           <div>
             <button
-              disabled={
-                activeTab === "users" ? pageNumber <= 1 : sellerPageNumber <= 1
-              }
+              type="button"
+              disabled={activeTab === "users" ? userPage <= 1 : sellerPage <= 1}
               onClick={() => {
                 if (activeTab === "users") {
-                  handleUserPageChange(pageNumber - 1);
+                  handleUserPrevPage();
+                } else {
+                  setSellerPage((prev) => Math.max(prev - 1, 1));
                 }
               }}
             >
@@ -470,14 +597,17 @@ export default function UsersPage() {
             </button>
 
             <button
+              type="button"
               disabled={
                 activeTab === "users"
-                  ? pageNumber >= totalPages
-                  : sellerPageNumber >= sellerTotalPages
+                  ? userPage >= userTotalPages
+                  : sellerPage >= sellerTotalPages
               }
               onClick={() => {
                 if (activeTab === "users") {
-                  handleUserPageChange(pageNumber + 1);
+                  handleUserNextPage();
+                } else {
+                  setSellerPage((prev) => Math.min(prev + 1, sellerTotalPages));
                 }
               }}
             >
@@ -487,9 +617,9 @@ export default function UsersPage() {
         </div>
       </div>
 
-      {/* ============================================
-          SELLER DETAIL MODAL
-      ============================================ */}
+      {/* =================================================
+          SELLER DETAIL
+      ================================================= */}
 
       <SellerDetailModal
         open={openDetail}
@@ -500,18 +630,25 @@ export default function UsersPage() {
         }}
       />
 
+      {/* =================================================
+          LOCK / UNLOCK
+      ================================================= */}
+
       {accountAction && (
-        <div className="users-page__modal-backdrop" role="presentation">
+        <div className="users-page__modal-backdrop">
           <div className="users-page__confirm" role="dialog" aria-modal="true">
             <h3>
               {accountAction.type === "lock" ? "Lock user?" : "Unlock user?"}
             </h3>
+
             <p>
               {accountAction.type === "lock"
                 ? "This user will not be able to access protected features."
                 : "This user will regain access according to their role."}
             </p>
+
             <strong>{accountAction.user.email}</strong>
+
             <div className="users-page__modal-actions">
               <button
                 type="button"
@@ -520,6 +657,7 @@ export default function UsersPage() {
               >
                 Cancel
               </button>
+
               <button
                 type="button"
                 disabled={usersLoading}

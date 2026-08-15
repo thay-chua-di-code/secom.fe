@@ -1,209 +1,351 @@
+// =====================================================
+// FINANCE PAGE
+// RESPONSIVE: MOBILE -> TABLET -> DESKTOP -> TV -> 4K
+// =====================================================
+
 .finance-page {
-  padding: 30px;
-  background: transparent !important;
-  min-height: 100%;
+  width: 100%;
+  max-width: 100%;
   min-width: 0;
+  min-height: 100%;
+
+  padding: 30px;
+
+  box-sizing: border-box;
+
+  background: transparent !important;
+
+  color: #e2e8f0;
+
+  // ===================================================
+  // HEADER
+  // ===================================================
 
   .finance-header {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
+
+    width: 100%;
+    min-width: 0;
+
+    gap: 20px;
+
     margin-bottom: 30px;
 
     h2 {
-      color: #0369a1;
-      font-size: 32px;
+      margin: 0;
+
+      color: #e2e8f0;
+
+      font-size: 30px;
       font-weight: 700;
+
+      letter-spacing: -0.03em;
     }
 
     p {
+      margin: 7px 0 0;
+
       color: #64748b;
-      margin-top: 8px;
+
+      font-size: 14px;
     }
 
     button {
-      display: flex;
+      display: inline-flex;
       align-items: center;
+      justify-content: center;
+
+      flex-shrink: 0;
+
       gap: 8px;
 
-      border: none;
+      min-height: 40px;
 
-      padding: 12px 20px;
+      padding: 0 18px;
+
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      border-radius: 10px;
 
       background: #0369a1;
-      color: white;
 
-      border-radius: 10px;
+      color: #ffffff;
+
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
 
       cursor: pointer;
 
-      transition: 0.25s;
+      transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
 
       &:hover {
+        border-color: rgba(96, 165, 250, 0.55);
+
         background: #075985;
+
+        transform: translateY(-1px);
+      }
+
+      svg {
+        flex-shrink: 0;
       }
     }
   }
 
+  // ===================================================
+  // SUMMARY GRID
+  // ===================================================
+
   .finance-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 22px;
+
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+
+    gap: 18px;
+
+    width: 100%;
   }
 
+  // ===================================================
+  // FINANCE CARD
+  // ===================================================
+
   .finance-card {
-    background: #111622;
-
-    border-radius: 18px;
-
-    padding: 25px;
-
     display: flex;
-
     align-items: center;
 
-    gap: 20px;
-    color: #414040;
-    transition: 0.3s;
+    min-width: 0;
 
-    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.08);
+    gap: 18px;
+
+    padding: 22px;
+
+    border: 1px solid #202b3d;
+    border-radius: 16px;
+
+    background: #111622;
+
+    color: #e2e8f0;
+
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+
+    transition:
+      transform 0.2s ease,
+      border-color 0.2s ease,
+      box-shadow 0.2s ease;
 
     &:hover {
-      transform: translateY(-6px);
+      border-color: #2f405c;
+
+      transform: translateY(-3px);
+
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
     }
 
     .icon {
-      width: 65px;
-      height: 65px;
-
-      border-radius: 16px;
-
-      background: #0369a1;
-
-      color: white;
-
       display: flex;
-
       align-items: center;
-
       justify-content: center;
 
+      flex: 0 0 58px;
+
+      width: 58px;
+      height: 58px;
+
+      border-radius: 15px;
+
+      background: linear-gradient(135deg, #0369a1, #2563eb);
+
+      color: #ffffff;
+
       svg {
-        width: 30px;
-        height: 30px;
+        width: 27px;
+        height: 27px;
       }
     }
 
     .content {
       flex: 1;
 
+      min-width: 0;
+
       span {
-        color: #dde3ee;
-        font-size: 14px;
+        display: block;
+
+        color: #94a3b8;
+
+        font-size: 13px;
       }
 
       h3 {
-        margin-top: 10px;
-        font-size: 26px;
-        color: #dde3ee;
+        margin: 8px 0 0;
+
+        overflow: hidden;
+
+        color: #f1f5f9;
+
+        font-size: 22px;
+        font-weight: 700;
+
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
 
       p {
-        margin-top: 8px;
-        color: #94a3b8;
-        font-size: 12px;
+        margin: 7px 0 0;
+
+        color: #64748b;
+
+        font-size: 11px;
         line-height: 1.5;
       }
     }
   }
 
+  // ===================================================
+  // LOADING
+  // ===================================================
+
   .loading {
     display: flex;
+    align-items: center;
     justify-content: center;
-    padding: 100px;
-    font-size: 24px;
+
+    min-height: 300px;
+
+    color: #94a3b8;
+
+    font-size: 16px;
   }
 }
 
-@media (max-width: 768px) {
-  .finance-page {
-    padding: 20px;
-
-    .finance-header {
-      flex-direction: column;
-
-      align-items: flex-start;
-
-      gap: 20px;
-
-      button {
-        width: 100%;
-
-        justify-content: center;
-      }
-    }
-
-    .finance-grid {
-      grid-template-columns: 1fr;
-    }
-  }
-}
-
-/* ===========================
-   Withdrawal Section
-=========================== */
+// =====================================================
+// WITHDRAWAL SECTION
+// =====================================================
 
 .withdraw-section {
-  margin-top: 35px;
-  border-radius: 18px;
-  padding: 24px;
-  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
-  background-color: transparent !important;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+
+  margin-top: 34px;
+
+  padding: 22px;
+
+  box-sizing: border-box;
+
+  border: 1px solid #202b3d;
+  border-radius: 16px;
+
+  background: #0f1522 !important;
+
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+
+  // ===================================================
+  // SECTION HEADER
+  // ===================================================
+
   .section-header {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    justify-content: space-between;
+
+    gap: 16px;
+
+    width: 100%;
+
+    margin-bottom: 18px;
 
     h3 {
-      font-size: 22px;
+      margin: 0;
+
+      color: #e2e8f0;
+
+      font-size: 20px;
       font-weight: 700;
-      color: #0369a1;
     }
 
     select {
-      border: 1px solid #262c3f;
-      border-radius: 8px;
-      padding: 8px 12px;
-      color: #dbe4f1;
+      flex-shrink: 0;
+
+      width: 180px;
+      height: 40px;
+
+      padding: 0 12px;
+
+      border: 1px solid #29344a;
+      border-radius: 9px;
+
+      outline: none;
+
       background: #111827;
+
+      color: #dbe4f1;
+
+      font-family: inherit;
+      font-size: 13px;
+
+      cursor: pointer;
+
+      transition:
+        border-color 0.2s ease,
+        background 0.2s ease;
 
       &:hover,
       &:focus {
-        border-color: #343d55;
+        border-color: #3b82f6;
+
         background: #151f31;
-        outline: none;
+      }
+
+      option {
+        background: #111827;
+
+        color: #e2e8f0;
       }
     }
   }
 
+  // ===================================================
+  // TABLE WRAPPER
+  // ===================================================
+
   .table-wrapper {
+    width: 100%;
+    max-width: 100%;
     min-width: 0;
+
     overflow-x: auto;
-    overflow-y: auto;
-    max-height: 450px;
+    overflow-y: visible;
+
     border: 1px solid #262c3f;
     border-radius: 12px;
+
     background: #111827;
 
+    -webkit-overflow-scrolling: touch;
+
+    scrollbar-width: thin;
+    scrollbar-color: #475569 #0b0f18;
+
     &::-webkit-scrollbar {
-      width: 8px;
-      height: 8px;
+      width: 7px;
+      height: 7px;
     }
 
     &::-webkit-scrollbar-thumb {
-      background: #94a3b8;
-      border-radius: 20px;
+      border-radius: 999px;
+
+      background: #475569;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+      background: #64748b;
     }
 
     &::-webkit-scrollbar-track {
@@ -211,97 +353,223 @@
     }
   }
 
-  table {
+  // ===================================================
+  // TABLE
+  // ===================================================
+
+  .table-wrapper table {
     width: 100%;
-    min-width: 0;
+
+    // Quan trọng:
+    // Không cho table bị ép xuống quá nhỏ.
+    min-width: 1250px;
+
+    border: 0;
+    border-spacing: 0;
     border-collapse: collapse;
+
     table-layout: fixed;
 
+    background: #111827;
+
+    // =================================================
+    // COMMON CELL
+    // =================================================
+
+    th,
+    td {
+      min-width: 0;
+
+      box-sizing: border-box;
+
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    // =================================================
+    // HEADER
+    // =================================================
+
     thead {
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      background: #0b0f18;
+      background: #0d131f;
+
+      tr {
+        height: 46px;
+
+        background: #0d131f;
+      }
 
       th {
-        background: #0b0f18;
-        color: #94a3b8;
-        font-weight: 600;
-        padding: 16px;
-        text-align: left;
-        font-size: 14px;
+        height: 46px;
+
+        padding: 0 12px;
+
         border-bottom: 1px solid #262c3f;
 
+        background: #0d131f;
+
+        color: #94a3b8;
+
+        font-size: 11px;
+        font-weight: 700;
+
+        line-height: 46px;
+
+        letter-spacing: 0.05em;
+
+        text-transform: uppercase;
+
+        white-space: nowrap;
+
         &:hover {
-          background: #0f172a;
+          background: #111827;
+
           color: #f1f5f9;
         }
       }
     }
 
+    // =================================================
+    // BODY
+    // =================================================
+
     tbody {
+      background: #111827;
+
       tr {
-        transition: 0.25s;
+        height: 64px;
+
         border-bottom: 1px solid #202b3d;
+
         background: #111827;
+
+        transition: background 0.2s ease;
 
         &:hover {
           background: #151f31;
         }
 
-        td {
-          padding: 15px 16px;
-          color: #dbe4f1;
-          font-size: 14px;
-          vertical-align: middle;
-          overflow: hidden;
+        &:last-child {
+          border-bottom: 0;
+
+          td {
+            border-bottom: 0;
+          }
         }
       }
+
+      td {
+        height: 64px;
+
+        padding: 0 12px;
+
+        overflow: hidden;
+
+        border-bottom: 1px solid #202b3d;
+
+        color: #dbe4f1;
+
+        font-size: 13px;
+
+        text-overflow: ellipsis;
+      }
+    }
+
+    // =================================================
+    // COLUMN WIDTHS
+    //
+    // Không dùng % hỗn hợp với 180px nữa.
+    // Định nghĩa pixel rõ ràng để Status không bị ép.
+    // =================================================
+
+    th:nth-child(1),
+    td:nth-child(1) {
+      width: 190px;
+    }
+
+    th:nth-child(2),
+    td:nth-child(2) {
+      width: 160px;
+    }
+
+    th:nth-child(3),
+    td:nth-child(3) {
+      width: 150px;
+    }
+
+    th:nth-child(4),
+    td:nth-child(4) {
+      width: 190px;
+    }
+
+    th:nth-child(5),
+    td:nth-child(5) {
+      width: 150px;
+    }
+
+    th:nth-child(6),
+    td:nth-child(6) {
+      width: 150px;
+    }
+
+    // STATUS:
+    // Luôn dành riêng đủ chiều rộng.
+    th:nth-child(7),
+    td:nth-child(7) {
+      width: 140px;
+
+      overflow: visible;
+
+      white-space: nowrap;
+    }
+
+    // ACTION:
+    // Đủ cho Approve + Reject.
+    th:nth-child(8),
+    td:nth-child(8) {
+      width: 200px;
+
+      overflow: visible;
+
+      white-space: nowrap;
+    }
+
+    // =================================================
+    // ELLIPSIS CELLS
+    // =================================================
+
+    td:nth-child(1),
+    td:nth-child(3),
+    td:nth-child(4),
+    td:nth-child(5),
+    td:nth-child(6) {
+      overflow: hidden;
+
+      text-overflow: ellipsis;
+
+      white-space: nowrap;
     }
   }
 
-  table th:nth-child(1),
-  table td:nth-child(1) {
-    width: 18%;
+  // ===================================================
+  // EMPTY / LOADING ROW
+  // ===================================================
+
+  .table-wrapper table tbody {
+    td[colspan] {
+      height: 180px;
+
+      color: #64748b;
+
+      text-align: center;
+
+      vertical-align: middle;
+    }
   }
 
-  table th:nth-child(2),
-  table td:nth-child(2),
-  table th:nth-child(6),
-  table td:nth-child(6),
-  table th:nth-child(7),
-  table td:nth-child(7) {
-    white-space: nowrap;
-  }
-
-  table th:nth-child(3),
-  table td:nth-child(3),
-  table th:nth-child(4),
-  table td:nth-child(4) {
-    width: 16%;
-  }
-
-  table th:nth-child(5),
-  table td:nth-child(5) {
-    width: 14%;
-    white-space: nowrap;
-  }
-
-  table th:nth-child(8),
-  table td:nth-child(8) {
-    width: 180px;
-    white-space: nowrap;
-  }
-
-  table td:nth-child(1),
-  table td:nth-child(3),
-  table td:nth-child(4) {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  /* Status */
+  // ===================================================
+  // STATUS BADGES
+  // ===================================================
 
   .pending,
   .approved,
@@ -313,159 +581,948 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 90px;
-    padding: 6px 14px;
+
+    min-width: 92px;
+    max-width: 120px;
+
+    height: 28px;
+
+    padding: 0 12px;
+
+    box-sizing: border-box;
+
+    overflow: hidden;
+
+    border: 1px solid transparent;
     border-radius: 999px;
-    font-size: 13px;
-    font-weight: 600;
+
+    font-size: 11px;
+    font-weight: 700;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
   }
+
+  // PENDING
 
   .pending {
-    background: #fef3c7;
-    color: #b45309;
+    border-color: rgba(245, 158, 11, 0.28);
+
+    background: rgba(245, 158, 11, 0.12);
+
+    color: #fbbf24;
   }
+
+  // APPROVED
 
   .approved {
-    background: #dcfce7;
-    color: #15803d;
+    border-color: rgba(34, 197, 94, 0.28);
+
+    background: rgba(34, 197, 94, 0.12);
+
+    color: #4ade80;
   }
+
+  // REJECTED
 
   .rejected {
-    background: #fee2e2;
-    color: #dc2626;
+    border-color: rgba(239, 68, 68, 0.28);
+
+    background: rgba(239, 68, 68, 0.12);
+
+    color: #f87171;
   }
+
+  // PROCESSING
 
   .processing {
-    background: #dbeafe;
-    color: #1d4ed8;
+    border-color: rgba(59, 130, 246, 0.28);
+
+    background: rgba(59, 130, 246, 0.12);
+
+    color: #60a5fa;
   }
+
+  // COMPLETED
 
   .completed {
-    background: #dcfce7;
-    color: #15803d;
+    border-color: rgba(16, 185, 129, 0.28);
+
+    background: rgba(16, 185, 129, 0.12);
+
+    color: #34d399;
   }
+
+  // FAILED
 
   .failed {
-    background: #fee2e2;
-    color: #dc2626;
+    border-color: rgba(244, 63, 94, 0.28);
+
+    background: rgba(244, 63, 94, 0.12);
+
+    color: #fb7185;
   }
+
+  // UNKNOWN
 
   .unknown {
-    background: #e2e8f0;
-    color: #475569;
+    border-color: rgba(148, 163, 184, 0.25);
+
+    background: rgba(148, 163, 184, 0.1);
+
+    color: #94a3b8;
   }
 
-  /* Buttons */
+  // ===================================================
+  // ACTION BUTTONS
+  // ===================================================
 
-  td:last-child {
-    display: flex;
-    gap: 8px;
-    align-items: center;
+  // KHÔNG dùng:
+  //
+  // td:last-child {
+  //   display: flex;
+  // }
+  //
+  // vì display:flex trực tiếp trên td có thể phá
+  // table layout / column alignment.
+
+  .table-wrapper table td:last-child {
+    overflow: visible;
+
+    white-space: nowrap;
+
+    button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+
+      vertical-align: middle;
+    }
+
+    button + button {
+      margin-left: 6px;
+    }
   }
 
   .approve,
   .reject {
-    border: none;
-    padding: 8px 14px;
+    min-width: 76px;
+    height: 32px;
+
+    padding: 0 11px;
+
+    border: 1px solid transparent;
     border-radius: 8px;
-    color: white;
-    font-size: 13px;
+
+    color: #ffffff;
+
+    font-family: inherit;
+    font-size: 11px;
     font-weight: 600;
+
     cursor: pointer;
-    transition: all 0.25s ease;
+
+    transition:
+      background 0.2s ease,
+      border-color 0.2s ease,
+      transform 0.2s ease,
+      opacity 0.2s ease;
+
+    &:disabled {
+      opacity: 0.45;
+
+      cursor: not-allowed;
+
+      transform: none;
+    }
   }
 
   .approve {
+    border-color: rgba(14, 165, 233, 0.3);
+
     background: #0284c7;
 
-    &:hover {
+    &:hover:not(:disabled) {
       background: #0369a1;
+
       transform: translateY(-1px);
     }
   }
 
   .reject {
+    border-color: rgba(239, 68, 68, 0.3);
+
     background: #ef4444;
 
-    &:hover {
+    &:hover:not(:disabled) {
       background: #dc2626;
+
       transform: translateY(-1px);
     }
   }
+
+  // ===================================================
+  // PAGINATION
+  // ===================================================
 
   .withdraw-pagination {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
-    padding-top: 16px;
-    color: #64748b;
-    font-size: 14px;
 
-    div {
+    width: 100%;
+
+    gap: 14px;
+
+    padding-top: 16px;
+
+    color: #64748b;
+
+    font-size: 13px;
+
+    > span {
+      min-width: 0;
+    }
+
+    > div {
       display: flex;
+      align-items: center;
+
+      flex-shrink: 0;
+
       gap: 8px;
     }
 
     button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+
+      min-width: 80px;
+      height: 34px;
+
+      padding: 0 12px;
+
       border: 1px solid #262c3f;
       border-radius: 8px;
-      padding: 8px 12px;
+
       background: #111827;
+
       color: #dbe4f1;
+
+      font-family: inherit;
+      font-size: 12px;
+
       cursor: pointer;
 
+      transition:
+        border-color 0.2s ease,
+        background 0.2s ease,
+        color 0.2s ease;
+
       &:hover:not(:disabled) {
-        border-color: #343d55;
+        border-color: #3b82f6;
+
         background: #151f31;
-        color: #f1f5f9;
+
+        color: #60a5fa;
       }
 
       &:disabled {
+        opacity: 0.4;
+
         cursor: not-allowed;
-        opacity: 0.55;
       }
     }
   }
 }
 
-/* ===========================
-   Responsive
-=========================== */
+// =====================================================
+// LAPTOP LARGE
+// =====================================================
 
-@media (max-width: 992px) {
+@media (max-width: 1440px) {
+  .finance-page {
+    padding: 24px;
+
+    .finance-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .withdraw-section {
+    padding: 20px;
+
+    .table-wrapper table {
+      min-width: 1200px;
+    }
+  }
+}
+
+// =====================================================
+// LAPTOP
+// =====================================================
+
+@media (max-width: 1200px) {
+  .finance-page {
+    padding: 20px;
+
+    .finance-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .finance-header {
+      h2 {
+        font-size: 26px;
+      }
+    }
+  }
+
   .withdraw-section {
     padding: 18px;
 
-    .section-header h3 {
-      font-size: 20px;
-    }
-
-    table {
-      min-width: 850px;
+    .table-wrapper table {
+      min-width: 1180px;
     }
   }
 }
 
-@media (max-width: 768px) {
+// =====================================================
+// TABLET
+// =====================================================
+
+@media (max-width: 992px) {
+  .finance-page {
+    .finance-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
   .withdraw-section {
-    margin-top: 25px;
+    margin-top: 28px;
+
+    .section-header {
+      h3 {
+        font-size: 18px;
+      }
+    }
+
+    .table-wrapper table {
+      min-width: 1150px;
+    }
+  }
+}
+
+// =====================================================
+// SMALL TABLET
+// =====================================================
+
+@media (max-width: 768px) {
+  .finance-page {
     padding: 16px;
 
-    table {
-      min-width: 780px;
+    .finance-header {
+      align-items: flex-start;
+      flex-direction: column;
 
-      th,
-      td {
-        padding: 12px;
+      gap: 14px;
+
+      margin-bottom: 22px;
+
+      h2 {
+        font-size: 24px;
+      }
+
+      p {
         font-size: 13px;
       }
+
+      button {
+        width: 100%;
+
+        justify-content: center;
+      }
+    }
+
+    .finance-grid {
+      grid-template-columns: 1fr;
+
+      gap: 14px;
+    }
+
+    .finance-card {
+      padding: 18px;
+
+      .icon {
+        flex-basis: 52px;
+
+        width: 52px;
+        height: 52px;
+
+        svg {
+          width: 24px;
+          height: 24px;
+        }
+      }
+
+      .content {
+        h3 {
+          font-size: 20px;
+        }
+      }
+    }
+  }
+
+  .withdraw-section {
+    margin-top: 24px;
+
+    padding: 14px;
+
+    border-radius: 13px;
+
+    .section-header {
+      align-items: stretch;
+      flex-direction: column;
+
+      gap: 10px;
+
+      select {
+        width: 100%;
+      }
+    }
+
+    .table-wrapper {
+      border-radius: 10px;
+    }
+
+    .table-wrapper table {
+      min-width: 1100px;
+
+      thead {
+        tr,
+        th {
+          height: 42px;
+        }
+
+        th {
+          padding: 0 10px;
+
+          line-height: 42px;
+
+          font-size: 10px;
+        }
+      }
+
+      tbody {
+        tr,
+        td {
+          height: 60px;
+        }
+
+        td {
+          padding: 0 10px;
+
+          font-size: 12px;
+        }
+      }
+
+      th:nth-child(1),
+      td:nth-child(1) {
+        width: 165px;
+      }
+
+      th:nth-child(2),
+      td:nth-child(2) {
+        width: 145px;
+      }
+
+      th:nth-child(3),
+      td:nth-child(3) {
+        width: 130px;
+      }
+
+      th:nth-child(4),
+      td:nth-child(4) {
+        width: 165px;
+      }
+
+      th:nth-child(5),
+      td:nth-child(5) {
+        width: 135px;
+      }
+
+      th:nth-child(6),
+      td:nth-child(6) {
+        width: 130px;
+      }
+
+      // STATUS vẫn được giữ riêng
+      th:nth-child(7),
+      td:nth-child(7) {
+        width: 125px;
+      }
+
+      // ACTION vẫn đủ 2 button
+      th:nth-child(8),
+      td:nth-child(8) {
+        width: 180px;
+      }
+    }
+
+    .pending,
+    .approved,
+    .rejected,
+    .processing,
+    .completed,
+    .failed,
+    .unknown {
+      min-width: 82px;
+
+      height: 25px;
+
+      padding: 0 9px;
+
+      font-size: 10px;
     }
 
     .approve,
     .reject {
-      padding: 7px 12px;
-      font-size: 12px;
+      min-width: 70px;
+
+      height: 30px;
+
+      padding: 0 9px;
+
+      font-size: 10px;
+    }
+
+    .withdraw-pagination {
+      align-items: stretch;
+      flex-direction: column;
+
+      gap: 10px;
+
+      > div {
+        justify-content: flex-end;
+      }
+    }
+  }
+}
+
+// =====================================================
+// MOBILE
+// =====================================================
+
+@media (max-width: 576px) {
+  .finance-page {
+    padding: 10px;
+
+    .finance-header {
+      h2 {
+        font-size: 21px;
+      }
+
+      button {
+        min-height: 38px;
+
+        font-size: 12px;
+      }
+    }
+
+    .finance-card {
+      gap: 13px;
+
+      padding: 15px;
+
+      border-radius: 13px;
+
+      .icon {
+        flex-basis: 46px;
+
+        width: 46px;
+        height: 46px;
+
+        border-radius: 12px;
+
+        svg {
+          width: 21px;
+          height: 21px;
+        }
+      }
+
+      .content {
+        span {
+          font-size: 11px;
+        }
+
+        h3 {
+          margin-top: 5px;
+
+          font-size: 17px;
+        }
+
+        p {
+          font-size: 10px;
+        }
+      }
+    }
+  }
+
+  .withdraw-section {
+    margin-top: 20px;
+
+    padding: 10px;
+
+    .section-header {
+      margin-bottom: 12px;
+
+      h3 {
+        font-size: 16px;
+      }
+
+      select {
+        height: 38px;
+
+        font-size: 12px;
+      }
+    }
+
+    .table-wrapper table {
+      /*
+        Mobile không ép table vừa màn hình.
+        Giữ width để Status + Action không bao giờ biến mất.
+      */
+      width: 1060px;
+      min-width: 1060px;
+
+      th:nth-child(1),
+      td:nth-child(1) {
+        width: 150px;
+      }
+
+      th:nth-child(2),
+      td:nth-child(2) {
+        width: 135px;
+      }
+
+      th:nth-child(3),
+      td:nth-child(3) {
+        width: 120px;
+      }
+
+      th:nth-child(4),
+      td:nth-child(4) {
+        width: 150px;
+      }
+
+      th:nth-child(5),
+      td:nth-child(5) {
+        width: 130px;
+      }
+
+      th:nth-child(6),
+      td:nth-child(6) {
+        width: 120px;
+      }
+
+      th:nth-child(7),
+      td:nth-child(7) {
+        width: 115px;
+      }
+
+      th:nth-child(8),
+      td:nth-child(8) {
+        width: 170px;
+      }
+    }
+
+    .withdraw-pagination {
+      padding-top: 12px;
+
+      font-size: 11px;
+
+      > div {
+        width: 100%;
+
+        button {
+          flex: 1;
+        }
+      }
+    }
+  }
+}
+
+// =====================================================
+// VERY SMALL MOBILE
+// =====================================================
+
+@media (max-width: 380px) {
+  .finance-page {
+    padding: 8px;
+  }
+
+  .withdraw-section {
+    padding: 8px;
+
+    .table-wrapper table {
+      width: 1040px;
+      min-width: 1040px;
+    }
+  }
+}
+
+// =====================================================
+// FULL HD / TV
+// =====================================================
+
+@media (min-width: 1920px) {
+  .finance-page {
+    max-width: 2200px;
+
+    margin: 0 auto;
+
+    padding: 36px;
+
+    .finance-header {
+      h2 {
+        font-size: 34px;
+      }
+
+      p {
+        font-size: 15px;
+      }
+    }
+
+    .finance-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+
+      gap: 22px;
+    }
+
+    .finance-card {
+      padding: 26px;
+
+      .content {
+        h3 {
+          font-size: 25px;
+        }
+
+        span {
+          font-size: 14px;
+        }
+
+        p {
+          font-size: 12px;
+        }
+      }
+    }
+  }
+
+  .withdraw-section {
+    padding: 26px;
+
+    .section-header {
+      h3 {
+        font-size: 23px;
+      }
+
+      select {
+        width: 210px;
+        height: 44px;
+
+        font-size: 14px;
+      }
+    }
+
+    .table-wrapper table {
+      width: 100%;
+      min-width: 100%;
+
+      th {
+        font-size: 12px;
+      }
+
+      tbody td {
+        font-size: 14px;
+      }
+
+      th:nth-child(1),
+      td:nth-child(1) {
+        width: 16%;
+      }
+
+      th:nth-child(2),
+      td:nth-child(2) {
+        width: 13%;
+      }
+
+      th:nth-child(3),
+      td:nth-child(3) {
+        width: 12%;
+      }
+
+      th:nth-child(4),
+      td:nth-child(4) {
+        width: 15%;
+      }
+
+      th:nth-child(5),
+      td:nth-child(5) {
+        width: 12%;
+      }
+
+      th:nth-child(6),
+      td:nth-child(6) {
+        width: 12%;
+      }
+
+      th:nth-child(7),
+      td:nth-child(7) {
+        width: 9%;
+      }
+
+      th:nth-child(8),
+      td:nth-child(8) {
+        width: 11%;
+      }
+    }
+  }
+}
+
+// =====================================================
+// 2K / 4K TV
+// =====================================================
+
+@media (min-width: 2560px) {
+  .finance-page {
+    max-width: 2500px;
+
+    padding: 44px;
+
+    .finance-header {
+      h2 {
+        font-size: 38px;
+      }
+
+      p {
+        font-size: 17px;
+      }
+
+      button {
+        min-height: 46px;
+
+        padding: 0 22px;
+
+        font-size: 16px;
+      }
+    }
+
+    .finance-grid {
+      gap: 26px;
+    }
+
+    .finance-card {
+      min-height: 120px;
+
+      padding: 30px;
+
+      .icon {
+        flex-basis: 68px;
+
+        width: 68px;
+        height: 68px;
+
+        svg {
+          width: 32px;
+          height: 32px;
+        }
+      }
+
+      .content {
+        span {
+          font-size: 16px;
+        }
+
+        h3 {
+          font-size: 28px;
+        }
+
+        p {
+          font-size: 13px;
+        }
+      }
+    }
+  }
+
+  .withdraw-section {
+    padding: 30px;
+
+    .section-header {
+      h3 {
+        font-size: 26px;
+      }
+    }
+
+    .table-wrapper table {
+      thead {
+        tr,
+        th {
+          height: 52px;
+        }
+
+        th {
+          line-height: 52px;
+
+          font-size: 14px;
+        }
+      }
+
+      tbody {
+        tr,
+        td {
+          height: 70px;
+        }
+
+        td {
+          font-size: 16px;
+        }
+      }
+    }
+
+    .pending,
+    .approved,
+    .rejected,
+    .processing,
+    .completed,
+    .failed,
+    .unknown {
+      min-width: 105px;
+
+      height: 32px;
+
+      font-size: 13px;
+    }
+
+    .approve,
+    .reject {
+      min-width: 84px;
+
+      height: 36px;
+
+      font-size: 13px;
+    }
+
+    .withdraw-pagination {
+      font-size: 15px;
+
+      button {
+        min-width: 92px;
+
+        height: 38px;
+
+        font-size: 14px;
+      }
     }
   }
 }

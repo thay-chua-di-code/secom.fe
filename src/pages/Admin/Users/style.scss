@@ -238,7 +238,8 @@
   &__table-wrapper {
     min-width: 0;
     width: 100%;
-
+    min-height: 504px;
+    height: 504px;
     overflow-x: auto;
 
     background: #111827;
@@ -253,7 +254,6 @@
 
     &::-webkit-scrollbar-thumb {
       border-radius: 999px;
-
       background: #29344a;
     }
 

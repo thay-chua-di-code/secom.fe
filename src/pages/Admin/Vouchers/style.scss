@@ -1,57 +1,30 @@
+// =====================================================
+// VOUCHER ADMIN
+// =====================================================
+
 .voucher-admin {
+  width: 100%;
+  max-width: 100%;
   min-width: 0;
 
   min-height: 100%;
 
   color: #e5e7eb;
-  // ========================================
-  // ADD BUTTON
-  // ========================================
 
-  &__heading {
-    display: flex;
-    width: 100%;
-    justify-content: flex-end;
-    margin-bottom: 10px;
-  }
+  box-sizing: border-box;
 
-  &__add-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    gap: 8px;
-
-    height: 36px;
-
-    padding: 0 14px;
-
-    border: none;
-    border-radius: 8px;
-
-    background: #3b82f6;
-
-    color: white;
-
-    font-size: 16px;
-    font-weight: 600;
-
-    cursor: pointer;
-
-    transition: 0.2s ease;
-
-    &:hover {
-      background: #2563eb;
-
-      transform: translateY(-1px);
-    }
-  }
-
-  // ========================================
+  // ===================================================
   // CARD
-  // ========================================
+  // ===================================================
 
   &__card {
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+
     overflow: hidden;
 
     border: 1px solid #202b3d;
@@ -60,65 +33,88 @@
     background: #111827;
   }
 
-  // ========================================
+  // ===================================================
   // TOOLBAR
-  // ========================================
+  // ===================================================
 
   &__toolbar {
     display: flex;
     align-items: center;
     justify-content: space-between;
 
-    min-height: 76px;
+    flex: 0 0 72px;
+
+    width: 100%;
+    min-width: 0;
+    min-height: 72px;
+
+    gap: 16px;
 
     padding: 0 20px;
 
+    box-sizing: border-box;
+
     border-bottom: 1px solid #202b3d;
+
+    background: #111827;
   }
 
-  // ========================================
+  // ===================================================
   // TABS
-  // ========================================
+  // ===================================================
 
   &__tabs {
     display: flex;
     align-items: center;
 
+    min-width: 0;
+
     gap: 8px;
 
     button {
-      display: flex;
+      display: inline-flex;
       align-items: center;
+
+      flex-shrink: 0;
 
       gap: 7px;
 
-      height: 32px;
+      height: 34px;
 
       padding: 0 11px;
 
-      border: none;
+      border: 0;
       border-radius: 7px;
+
+      outline: none;
 
       background: transparent;
 
       color: #6d82a2;
 
-      font-size: 16px;
+      font-family: inherit;
+      font-size: 14px;
       font-weight: 500;
 
       cursor: pointer;
 
-      transition: 0.2s ease;
+      transition:
+        color 0.2s ease,
+        background 0.2s ease;
+
+      svg {
+        flex-shrink: 0;
+      }
 
       b {
-        display: flex;
+        display: inline-flex;
         align-items: center;
         justify-content: center;
 
         min-width: 18px;
-        height: 17px;
+        height: 18px;
 
-        padding: 0 4px;
+        padding: 0 5px;
 
         border-radius: 5px;
 
@@ -126,7 +122,8 @@
 
         color: #7184a3;
 
-        font-size: 9px;
+        font-size: 10px;
+        font-weight: 700;
       }
 
       &:hover {
@@ -136,40 +133,52 @@
       &.active {
         background: #3b82f6;
 
-        color: white;
+        color: #ffffff;
 
         b {
           background: rgba(255, 255, 255, 0.18);
 
-          color: white;
+          color: #ffffff;
         }
       }
     }
   }
 
-  // ========================================
+  // ===================================================
   // SEARCH
-  // ========================================
+  // ===================================================
 
   &__search {
     display: flex;
     align-items: center;
 
-    width: 208px;
-    height: 38px;
+    flex: 0 1 270px;
+
+    width: 270px;
+    min-width: 180px;
+
+    height: 40px;
 
     gap: 8px;
 
     padding: 0 12px;
 
+    box-sizing: border-box;
+
     border: 1px solid #29344a;
-    border-radius: 11px;
+    border-radius: 10px;
 
     background: #171f31;
 
     color: #5e7190;
 
-    transition: 0.2s ease;
+    transition:
+      border-color 0.2s ease,
+      box-shadow 0.2s ease;
+
+    svg {
+      flex-shrink: 0;
+    }
 
     &:focus-within {
       border-color: #3b82f6;
@@ -178,16 +187,24 @@
     }
 
     input {
-      width: 100%;
+      flex: 1;
 
-      border: none;
-      outline: none;
+      width: 100%;
+      min-width: 0;
+
+      height: 100%;
+
+      padding: 0;
+
+      border: 0;
+      outline: 0;
 
       background: transparent;
 
       color: #e5e7eb;
 
-      font-size: 16px;
+      font-family: inherit;
+      font-size: 14px;
 
       &::placeholder {
         color: #5d6f8c;
@@ -195,148 +212,283 @@
     }
   }
 
-  // ========================================
+  // ===================================================
   // TABLE WRAPPER
-  // ========================================
+  // ===================================================
 
   &__table-wrapper {
+    width: 100%;
+    max-width: 100%;
     min-width: 0;
+
+    /*
+      Table header = 44px
+      7 rows x 66px = 462px
+      ---------------------
+      Total = 506px
+    */
+
+    height: 506px;
+    min-height: 506px;
+
+    flex: 0 0 506px;
+
     overflow-x: auto;
+    overflow-y: hidden;
 
     background: #111827;
+
+    -webkit-overflow-scrolling: touch;
+
+    scrollbar-width: thin;
+
+    scrollbar-color: #29344a transparent;
+
+    &::-webkit-scrollbar {
+      height: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      border-radius: 999px;
+
+      background: #29344a;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+      background: #3a4962;
+    }
   }
 
-  // ========================================
+  // ===================================================
   // TABLE
-  // ========================================
+  // ===================================================
 
   &__table {
     width: 100%;
+    min-width: 1120px;
 
-    min-width: 0;
-    table-layout: fixed;
+    border: 0;
 
-    border-collapse: separate;
+    border-collapse: collapse;
     border-spacing: 0;
 
+    table-layout: fixed;
+
+    background: #111827;
+
+    th,
+    td {
+      min-width: 0;
+
+      box-sizing: border-box;
+
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    // =================================================
+    // THEAD
+    // =================================================
+
     thead {
+      height: 44px;
+
       background: #151e2d;
 
-      th {
-        height: 48px;
-
-        padding: 20px 20px;
+      tr {
+        height: 44px;
 
         background: #151e2d;
+      }
 
+      th {
+        height: 44px;
+
+        padding: 0 12px;
+
+        border: 0;
         border-bottom: 1px solid #27344a;
+
+        background: #151e2d;
 
         color: #8294ae;
 
         font-size: 10px;
         font-weight: 700;
 
-        text-align: left;
-        text-transform: uppercase;
+        line-height: 44px;
 
         letter-spacing: 0.65px;
+
+        text-transform: uppercase;
 
         white-space: nowrap;
 
         &:hover {
           background: #1b2638;
+
           color: #f1f5f9;
         }
       }
     }
 
+    // =================================================
+    // BODY
+    // =================================================
+
     tbody {
       background: #111827;
+
+      tr:not(.voucher-admin__empty-row) {
+        height: 66px;
+
+        background: #111827;
+
+        transition: background 0.2s ease;
+
+        &:hover {
+          background: #151f31;
+
+          td {
+            border-bottom-color: #2b3a52;
+          }
+        }
+
+        &:last-child td {
+          border-bottom: 0;
+        }
+      }
+
+      td {
+        height: 66px;
+
+        padding: 0 12px;
+
+        overflow: hidden;
+
+        border: 0;
+        border-bottom: 1px solid #202b3d;
+
+        background: transparent;
+
+        color: #dbe4f1;
+
+        font-size: 13px;
+      }
     }
+
+    // =================================================
+    // WIDTH
+    // =================================================
+
+    th:nth-child(1),
+    td:nth-child(1) {
+      width: 18%;
+    }
+
+    th:nth-child(2),
+    td:nth-child(2) {
+      width: 11%;
+    }
+
+    th:nth-child(3),
+    td:nth-child(3) {
+      width: 12%;
+    }
+
+    th:nth-child(4),
+    td:nth-child(4) {
+      width: 13%;
+    }
+
+    th:nth-child(5),
+    td:nth-child(5) {
+      width: 13%;
+    }
+
+    th:nth-child(6),
+    td:nth-child(6) {
+      width: 18%;
+    }
+
+    th:nth-child(7),
+    td:nth-child(7) {
+      width: 9%;
+    }
+
+    th:nth-child(8),
+    td:nth-child(8) {
+      width: 100px;
+
+      white-space: nowrap;
+    }
+  }
+
+  // ===================================================
+  // EMPTY ROW
+  // ===================================================
+
+  &__empty-row {
+    height: 462px !important;
 
     td {
-      height: 72px;
+      height: 462px !important;
 
-      padding: 25px 10px;
+      padding: 0 !important;
 
-      border-bottom: 1px solid #202b3d;
+      border-bottom: 0 !important;
 
-      color: #dbe4f1;
-
-      font-size: 16px;
-      overflow: hidden;
-    }
-
-    tbody tr {
-      background: #111827;
-
-      transition: 0.2s ease;
-
-      &:hover {
-        background: #151f31;
-
-        td {
-          border-bottom-color: #2b3a52;
-        }
-      }
-
-      &:last-child {
-        td {
-          border-bottom: none;
-        }
-      }
+      text-align: center !important;
     }
   }
 
-  &__table th:nth-child(1),
-  &__table td:nth-child(1) {
-    width: 20%;
+  // ===================================================
+  // LOADING / EMPTY
+  // ===================================================
+
+  &__loading,
+  &__empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    height: 462px;
+    min-height: 462px;
+
+    gap: 10px;
+
+    color: #617491;
+
+    font-size: 14px;
   }
 
-  &__table th:nth-child(2),
-  &__table td:nth-child(2),
-  &__table th:nth-child(3),
-  &__table td:nth-child(3),
-  &__table th:nth-child(4),
-  &__table td:nth-child(4),
-  &__table th:nth-child(6),
-  &__table td:nth-child(6),
-  &__table th:nth-child(7),
-  &__table td:nth-child(7) {
-    white-space: nowrap;
-  }
-
-  &__table th:nth-child(5),
-  &__table td:nth-child(5) {
-    width: 18%;
-  }
-
-  &__table th:nth-child(8),
-  &__table td:nth-child(8) {
-    width: 96px;
-    white-space: nowrap;
-  }
-
-  // ========================================
+  // ===================================================
   // VOUCHER INFO
-  // ========================================
+  // ===================================================
 
   .voucher-info {
     display: flex;
     align-items: center;
 
-    gap: 11px;
+    width: 100%;
     min-width: 0;
+
+    gap: 10px;
 
     .voucher-icon {
       display: flex;
       align-items: center;
       justify-content: center;
 
+      flex: 0 0 34px;
+
       width: 34px;
       height: 34px;
-
-      flex-shrink: 0;
 
       border-radius: 10px;
 
@@ -345,14 +497,24 @@
       color: #60a5fa;
     }
 
+    &__content {
+      flex: 1;
+
+      min-width: 0;
+    }
+
     strong {
       display: block;
+
+      width: 100%;
+
       overflow: hidden;
 
       color: #f1f5f9;
 
-      font-size: 16px;
+      font-size: 13px;
       font-weight: 600;
+
       text-overflow: ellipsis;
       white-space: nowrap;
     }
@@ -360,40 +522,62 @@
     span {
       display: block;
 
-      margin-top: 4px;
+      margin-top: 3px;
+
+      overflow: hidden;
 
       color: #536783;
 
-      font-size: 9px;
+      font-size: 10px;
+
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
   }
 
-  // ========================================
+  // ===================================================
   // DISCOUNT
-  // ========================================
+  // ===================================================
 
   .discount-info {
     display: flex;
     align-items: center;
 
-    gap: 6px;
+    width: 100%;
+    min-width: 0;
+
+    gap: 5px;
 
     color: #60a5fa;
 
+    svg {
+      flex-shrink: 0;
+    }
+
     strong {
+      display: block;
+
+      min-width: 0;
+
+      overflow: hidden;
+
       color: #dbe4f1;
 
-      font-size: 16px;
+      font-size: 12px;
       font-weight: 600;
+
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
   }
 
-  // ========================================
+  // ===================================================
   // USAGE
-  // ========================================
+  // ===================================================
 
   .usage-info {
-    width: 120px;
+    width: 100%;
+    max-width: 120px;
 
     .usage-number {
       display: flex;
@@ -405,7 +589,11 @@
 
       color: #7185a4;
 
-      font-size: 10px;
+      font-size: 11px;
+
+      svg {
+        flex-shrink: 0;
+      }
     }
 
     .usage-progress {
@@ -418,7 +606,7 @@
 
       background: #1d2940;
 
-      span {
+      > span {
         display: block;
 
         height: 100%;
@@ -430,15 +618,17 @@
     }
   }
 
-  // ========================================
+  // ===================================================
   // DATE
-  // ========================================
+  // ===================================================
 
   .date-info {
     display: flex;
     align-items: center;
 
-    gap: 6px;
+    min-width: 0;
+
+    gap: 5px;
 
     color: #7185a4;
 
@@ -448,78 +638,163 @@
       display: flex;
       align-items: center;
 
-      gap: 5px;
+      min-width: 0;
+
+      gap: 4px;
+
+      svg {
+        flex-shrink: 0;
+      }
+
+      span {
+        overflow: hidden;
+
+        text-overflow: ellipsis;
+
+        white-space: nowrap;
+      }
     }
 
     small {
+      flex-shrink: 0;
+
       color: #43536c;
 
       font-size: 9px;
     }
   }
 
-  // ========================================
+  // ===================================================
   // STATUS
-  // ========================================
+  // ===================================================
 
   .status-badge {
     display: inline-flex;
     align-items: center;
 
+    max-width: 100%;
+
     gap: 6px;
 
-    padding: 5px 9px;
+    min-height: 26px;
 
+    padding: 0 9px;
+
+    border: 1px solid transparent;
     border-radius: 999px;
 
     font-size: 10px;
     font-weight: 600;
 
-    span {
+    white-space: nowrap;
+
+    > span {
+      flex: 0 0 5px;
+
       width: 5px;
       height: 5px;
 
       border-radius: 50%;
     }
 
+    // ACTIVE
+
     &.active {
-      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-color: rgba(16, 185, 129, 0.25);
 
       background: rgba(16, 185, 129, 0.1);
 
       color: #10b981;
 
-      span {
+      > span {
         background: #10b981;
       }
     }
 
+    // INACTIVE
+
     &.inactive {
-      border: 1px solid rgba(239, 68, 68, 0.25);
+      border-color: rgba(239, 68, 68, 0.25);
 
       background: rgba(239, 68, 68, 0.1);
 
       color: #ef4444;
 
-      span {
+      > span {
         background: #ef4444;
+      }
+    }
+
+    // PENDING
+
+    &.pending {
+      border-color: rgba(245, 158, 11, 0.25);
+
+      background: rgba(245, 158, 11, 0.1);
+
+      color: #f59e0b;
+
+      > span {
+        background: #f59e0b;
+      }
+    }
+
+    // APPROVED
+
+    &.approved {
+      border-color: rgba(16, 185, 129, 0.25);
+
+      background: rgba(16, 185, 129, 0.1);
+
+      color: #34d399;
+
+      > span {
+        background: #34d399;
+      }
+    }
+
+    // REJECTED
+
+    &.rejected {
+      border-color: rgba(239, 68, 68, 0.25);
+
+      background: rgba(239, 68, 68, 0.1);
+
+      color: #f87171;
+
+      > span {
+        background: #f87171;
       }
     }
   }
 
-  // ========================================
-  // ACTION
-  // ========================================
+  // ===================================================
+  // ACTIONS
+  // ===================================================
 
-  .action-btn {
+  &__actions {
     display: flex;
     align-items: center;
+
+    width: max-content;
+
+    gap: 6px;
+  }
+
+  .action-btn {
+    display: inline-flex;
+    align-items: center;
     justify-content: center;
+
+    flex: 0 0 30px;
 
     width: 30px;
     height: 30px;
 
+    padding: 0;
+
     border: 1px solid rgba(59, 130, 246, 0.2);
+
     border-radius: 7px;
 
     background: rgba(59, 130, 246, 0.1);
@@ -528,62 +803,158 @@
 
     cursor: pointer;
 
-    transition: 0.2s ease;
+    transition:
+      background 0.2s ease,
+      border-color 0.2s ease,
+      color 0.2s ease;
 
-    &:hover {
-      background: rgba(59, 130, 246, 0.2);
+    &:disabled {
+      opacity: 0.5;
+
+      cursor: not-allowed;
+    }
+
+    &.approve {
+      border-color: rgba(34, 197, 94, 0.25);
+
+      background: rgba(34, 197, 94, 0.1);
+
+      color: #4ade80;
+
+      &:hover:not(:disabled) {
+        background: rgba(34, 197, 94, 0.2);
+      }
+    }
+
+    &.reject {
+      border-color: rgba(239, 68, 68, 0.25);
+
+      background: rgba(239, 68, 68, 0.1);
+
+      color: #f87171;
+
+      &:hover:not(:disabled) {
+        background: rgba(239, 68, 68, 0.2);
+      }
     }
   }
 
-  // ========================================
+  // ===================================================
+  // REVIEWED
+  // ===================================================
+
+  &__no-action {
+    display: inline-block;
+
+    color: #64748b;
+
+    font-size: 11px;
+    font-weight: 600;
+
+    white-space: nowrap;
+  }
+
+  // ===================================================
   // PAGINATION
-  // ========================================
+  // ===================================================
 
   &__pagination {
     display: flex;
     align-items: center;
     justify-content: space-between;
 
-    min-height: 58px;
+    flex: 0 0 60px;
+
+    width: 100%;
+    min-height: 60px;
+
+    gap: 16px;
 
     padding: 0 20px;
 
+    box-sizing: border-box;
+
     border-top: 1px solid #202b3d;
+
+    background: #0f1522;
 
     color: #637795;
 
-    font-size: 16px;
+    font-size: 12px;
+  }
+
+  // ===================================================
+  // PAGINATION INFO
+  // ===================================================
+
+  &__pagination-info {
+    display: flex;
+    align-items: center;
+
+    gap: 14px;
+
+    min-width: 0;
+
+    span,
+    small {
+      white-space: nowrap;
+    }
 
     b {
       color: #a9bad1;
+
+      font-weight: 600;
     }
 
-    > div {
-      display: flex;
+    small {
+      color: #566b88;
 
-      gap: 6px;
+      font-size: 11px;
     }
+  }
+
+  // ===================================================
+  // PAGINATION BUTTONS
+  // ===================================================
+
+  &__pagination-buttons {
+    display: flex;
+    align-items: center;
+
+    flex-shrink: 0;
+
+    gap: 6px;
 
     button {
-      display: flex;
+      display: inline-flex;
       align-items: center;
       justify-content: center;
 
       width: 30px;
       height: 30px;
 
+      padding: 0;
+
       border: 1px solid #29344a;
       border-radius: 7px;
+
+      outline: none;
 
       background: #171f31;
 
       color: #8da0bc;
 
+      font-family: inherit;
+
       cursor: pointer;
 
-      transition: 0.2s ease;
+      transition:
+        border-color 0.2s ease,
+        background 0.2s ease,
+        color 0.2s ease,
+        opacity 0.2s ease;
 
-      &:hover {
+      &:hover:not(:disabled) {
         border-color: #3b82f6;
 
         color: #60a5fa;
@@ -594,214 +965,503 @@
 
         background: #3b82f6;
 
-        color: white;
+        color: #ffffff;
       }
-    }
-  }
 
-  // ========================================
-  // LOADING / EMPTY
-  // ========================================
+      &:disabled:not(.active) {
+        opacity: 0.3;
 
-  &__loading,
-  &__empty {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    gap: 10px;
-
-    min-height: 220px;
-
-    color: #617491;
-
-    font-size: 16px;
-  }
-
-  // ========================================
-  // RESPONSIVE
-  // ========================================
-
-  @media (max-width: 768px) {
-    &__heading {
-      align-items: flex-end;
-
-      flex-direction: column;
-
-      gap: 16px;
-
-      .voucher-admin__add-btn {
-        width: 100%;
+        cursor: not-allowed;
       }
-    }
 
-    &__toolbar {
-      align-items: stretch;
+      &.active:disabled {
+        opacity: 1;
 
-      flex-direction: column;
-
-      gap: 14px;
-
-      padding: 16px 20px;
-    }
-
-    &__tabs {
-      overflow-x: auto;
-
-      button {
-        flex-shrink: 0;
-      }
-    }
-
-    &__search {
-      width: 100%;
-    }
-
-    &__pagination {
-      align-items: flex-start;
-
-      flex-direction: column;
-
-      gap: 12px;
-
-      padding: 16px 20px;
-    }
-  }
-
-  @media (max-width: 480px) {
-    &__heading {
-      h1 {
-        font-size: 20px;
-      }
-    }
-
-    &__tabs {
-      button {
-        padding: 0 9px;
-
-        span {
-          display: none;
-        }
+        cursor: default;
       }
     }
   }
 }
 
-.voucher-admin__actions {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.action-btn.delete {
-  border-color: #fecdd3;
-  background: #fff1f2;
-  color: #e11d48;
-
-  &:hover {
-    background: #ffe4e6;
-  }
-}
+// =====================================================
+// MODAL
+// =====================================================
 
 .voucher-admin__modal-backdrop {
   position: fixed;
+
   inset: 0;
-  z-index: 50;
+
+  z-index: 999;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
   padding: 20px;
-  background: rgba(15, 23, 42, 0.42);
+
+  background: rgba(5, 9, 17, 0.78);
+
+  backdrop-filter: blur(4px);
 }
 
 .voucher-admin__confirm {
   width: min(100%, 430px);
+
   padding: 24px;
+
+  box-sizing: border-box;
+
+  border: 1px solid #2b3449;
   border-radius: 18px;
-  background: #ffffff;
-  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.22);
+
+  background: #111827;
+
+  color: #f8fafc;
+
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.4);
 
   h3 {
     margin: 0 0 10px;
-    color: #171717;
+
+    color: #f8fafc;
+
     font-size: 20px;
     font-weight: 800;
   }
 
   p {
     margin: 0 0 18px;
-    color: #525252;
+
+    color: #94a3b8;
+
     font-size: 14px;
     line-height: 1.55;
   }
+
+  textarea {
+    width: 100%;
+
+    min-height: 110px;
+
+    margin-bottom: 16px;
+
+    padding: 12px;
+
+    box-sizing: border-box;
+
+    border: 1px solid #334155;
+    border-radius: 12px;
+
+    outline: none;
+
+    background: #0f172a;
+
+    color: #f8fafc;
+
+    font: inherit;
+
+    resize: vertical;
+
+    &:focus {
+      border-color: #3b82f6;
+    }
+  }
 }
+
+// =====================================================
+// MODAL ACTIONS
+// =====================================================
 
 .voucher-admin__modal-actions {
   display: flex;
   justify-content: flex-end;
+
   gap: 10px;
+
   margin-top: 20px;
 }
 
 .voucher-admin__modal-btn {
   min-height: 40px;
+
   padding: 0 16px;
-  border: 1px solid #e5e7eb;
+
+  border: 1px solid #334155;
   border-radius: 10px;
-  background: #ffffff;
-  color: #374151;
-  font-weight: 800;
+
+  background: #1e293b;
+
+  color: #f8fafc;
+
+  font-weight: 700;
+
   cursor: pointer;
 
   &:disabled {
-    cursor: not-allowed;
     opacity: 0.65;
+
+    cursor: not-allowed;
   }
+}
+
+.voucher-admin__modal-btn--primary {
+  border-color: #16a34a;
+
+  background: #16a34a;
+
+  color: #ffffff;
 }
 
 .voucher-admin__modal-btn--danger {
   border-color: #e11d48;
+
   background: #e11d48;
+
   color: #ffffff;
 }
 
-.action-btn.approve {
-  border-color: #bbf7d0;
-  background: #f0fdf4;
-  color: #16a34a;
+// =====================================================
+// LAPTOP
+// =====================================================
 
-  &:hover {
-    background: #dcfce7;
+@media (max-width: 1200px) {
+  .voucher-admin {
+    &__table {
+      min-width: 1050px;
+    }
   }
 }
 
-.action-btn.reject {
-  border-color: #fecdd3;
-  background: #fff1f2;
-  color: #e11d48;
+// =====================================================
+// TABLET
+// =====================================================
 
-  &:hover {
-    background: #ffe4e6;
+@media (max-width: 900px) {
+  .voucher-admin {
+    &__toolbar {
+      align-items: stretch;
+      flex-direction: column;
+
+      height: auto;
+      min-height: auto;
+
+      gap: 12px;
+
+      padding: 14px;
+    }
+
+    &__tabs {
+      width: 100%;
+
+      overflow-x: auto;
+
+      padding-bottom: 2px;
+    }
+
+    &__search {
+      flex: none;
+
+      width: 100%;
+      max-width: 100%;
+    }
+
+    &__table {
+      min-width: 1000px;
+    }
   }
 }
 
-.voucher-admin__no-action {
-  color: #64748b;
-  font-size: 16px;
-  font-weight: 700;
+// =====================================================
+// MOBILE
+// =====================================================
+
+@media (max-width: 600px) {
+  .voucher-admin {
+    &__card {
+      border-radius: 11px;
+    }
+
+    &__toolbar {
+      gap: 10px;
+
+      padding: 12px;
+    }
+
+    &__tabs {
+      gap: 5px;
+
+      button {
+        height: 32px;
+
+        padding: 0 9px;
+
+        font-size: 11px;
+
+        b {
+          min-width: 16px;
+          height: 16px;
+
+          padding: 0 4px;
+
+          font-size: 9px;
+        }
+      }
+    }
+
+    &__search {
+      height: 40px;
+
+      input {
+        font-size: 13px;
+      }
+    }
+
+    &__table-wrapper {
+      width: 100%;
+
+      height: 506px;
+      min-height: 506px;
+
+      flex-basis: 506px;
+
+      overflow-x: auto;
+      overflow-y: hidden;
+
+      overscroll-behavior-x: contain;
+
+      touch-action: pan-x pan-y;
+    }
+
+    &__table {
+      width: 950px;
+      min-width: 950px;
+
+      thead {
+        height: 40px;
+
+        tr,
+        th {
+          height: 40px;
+        }
+
+        th {
+          padding: 0 8px;
+
+          line-height: 40px;
+
+          font-size: 9px;
+        }
+      }
+
+      tbody {
+        td {
+          padding: 0 8px;
+
+          font-size: 11px;
+        }
+      }
+
+      th:nth-child(1),
+      td:nth-child(1) {
+        width: 160px;
+      }
+
+      th:nth-child(2),
+      td:nth-child(2) {
+        width: 100px;
+      }
+
+      th:nth-child(3),
+      td:nth-child(3) {
+        width: 105px;
+      }
+
+      th:nth-child(4),
+      td:nth-child(4) {
+        width: 125px;
+      }
+
+      th:nth-child(5),
+      td:nth-child(5) {
+        width: 115px;
+      }
+
+      th:nth-child(6),
+      td:nth-child(6) {
+        width: 175px;
+      }
+
+      th:nth-child(7),
+      td:nth-child(7) {
+        width: 90px;
+      }
+
+      th:nth-child(8),
+      td:nth-child(8) {
+        width: 80px;
+      }
+    }
+
+    &__pagination {
+      align-items: center;
+
+      flex-direction: row;
+
+      flex: 0 0 58px;
+
+      min-height: 58px;
+
+      gap: 8px;
+
+      padding: 0 10px;
+    }
+
+    &__pagination-info {
+      gap: 5px;
+
+      span {
+        font-size: 11px;
+      }
+
+      small {
+        display: none;
+      }
+    }
+
+    &__pagination-buttons {
+      gap: 4px;
+
+      button {
+        width: 28px;
+        height: 28px;
+      }
+    }
+  }
+
+  .voucher-admin__confirm {
+    padding: 18px;
+  }
+
+  .voucher-admin__modal-actions {
+    flex-direction: column-reverse;
+
+    button {
+      width: 100%;
+    }
+  }
 }
 
-.voucher-admin__confirm textarea {
-  width: 100%;
-  margin-bottom: 16px;
-  padding: 12px;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  color: #0f172a;
-  resize: vertical;
+// =====================================================
+// VERY SMALL MOBILE
+// =====================================================
+
+@media (max-width: 380px) {
+  .voucher-admin {
+    &__tabs {
+      button {
+        span {
+          display: none;
+        }
+      }
+    }
+
+    &__pagination {
+      padding: 0 8px;
+    }
+
+    &__pagination-info {
+      span {
+        font-size: 10px;
+      }
+    }
+  }
 }
 
-.voucher-admin__modal-btn--primary {
-  background: #16a34a;
-  color: #ffffff;
+// =====================================================
+// FULL HD / TV
+// =====================================================
+
+@media (min-width: 1920px) {
+  .voucher-admin {
+    max-width: 2200px;
+
+    margin: 0 auto;
+
+    &__toolbar {
+      min-height: 80px;
+
+      padding: 0 24px;
+    }
+
+    &__search {
+      width: 320px;
+
+      flex-basis: 320px;
+
+      height: 44px;
+    }
+
+    &__table {
+      min-width: 100%;
+
+      thead th {
+        font-size: 11px;
+      }
+
+      tbody td {
+        font-size: 14px;
+      }
+    }
+
+    &__pagination {
+      padding: 0 24px;
+    }
+  }
+}
+
+// =====================================================
+// 2K / 4K TV
+// =====================================================
+
+@media (min-width: 2560px) {
+  .voucher-admin {
+    max-width: 2500px;
+
+    &__toolbar {
+      min-height: 88px;
+
+      padding: 0 28px;
+    }
+
+    &__tabs {
+      button {
+        height: 38px;
+
+        font-size: 16px;
+      }
+    }
+
+    &__search {
+      width: 380px;
+
+      flex-basis: 380px;
+
+      height: 48px;
+
+      input {
+        font-size: 16px;
+      }
+    }
+
+    &__table {
+      thead th {
+        font-size: 13px;
+      }
+
+      tbody td {
+        font-size: 16px;
+      }
+    }
+  }
 }
