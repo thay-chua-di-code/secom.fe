@@ -1,4 +1,11 @@
-import { Clock3, PackageCheck, Search, ShoppingBag, Truck } from "lucide-react";
+import {
+  Clock3,
+  PackageCheck,
+  Search,
+  ShoppingBag,
+  Truck,
+  RotateCcw,
+} from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -156,6 +163,28 @@ const canRequestReturn = (order) => {
 const canConfirmBuyerReturned = (request) => {
   const status = normalizeReturnStatus(request?.status);
   return status === "approved" || status === "waiting_buyer_return";
+};
+
+const canSendReturn = (order) => {
+  if (!order) return false;
+
+  const orderStatus = normalizeStatus(order?.status);
+
+  const request = getLatestReturnRefundRequest(order);
+
+  const returnStatus = normalizeReturnStatus(
+    getReturnRequestStatus(request, order),
+  );
+
+  if (returnStatus === "approved" || returnStatus === "waiting_buyer_return") {
+    return true;
+  }
+
+  if (orderStatus === "return_approved") {
+    return true;
+  }
+
+  return false;
 };
 
 const canConfirmReplacementReceived = (request) =>
@@ -318,20 +347,27 @@ function StatusBadge({ status }) {
       .replace(/\b\w/g, (char) => char.toUpperCase());
 
   return (
-    <span className={`status-badge status-badge--${normalized}`}>
-      {label}
-    </span>
+    <span className={`status-badge status-badge--${normalized}`}>{label}</span>
   );
 }
 
-function OrderDetailModal({ order, payment, loading, actionLoading, onClose, onConfirmBuyerReturned, onCompleteReturnRequest }) {
+function OrderDetailModal({
+  order,
+  payment,
+  loading,
+  actionLoading,
+  onClose,
+  onConfirmBuyerReturned,
+  onCompleteReturnRequest,
+}) {
   if (!order) return null;
 
   const items = getOrderItems(order);
   const returnRefundRequest = getLatestReturnRefundRequest(order);
   const returnRefundStatus = getReturnRequestStatus(returnRefundRequest, order);
   const returnRefundItems = getReturnRequestItems(returnRefundRequest);
-  const returnEvidenceImages = getReturnRequestEvidenceImages(returnRefundRequest);
+  const returnEvidenceImages =
+    getReturnRequestEvidenceImages(returnRefundRequest);
   const orderStatus = normalizeStatus(order.status);
   const canRateSeller = orderStatus === "completed";
 
@@ -471,10 +507,9 @@ function OrderDetailModal({ order, payment, loading, actionLoading, onClose, onC
                 <strong>{getReturnRequestReason(returnRefundRequest)}</strong>
               </div>
 
-              {[
-                "rejected",
-                "inspection_failed",
-              ].includes(normalizeReturnStatus(returnRefundStatus)) && (
+              {["rejected", "inspection_failed"].includes(
+                normalizeReturnStatus(returnRefundStatus),
+              ) && (
                 <div className="return-refund-grid__full">
                   <span>Reject Reason</span>
 
@@ -496,7 +531,9 @@ function OrderDetailModal({ order, payment, loading, actionLoading, onClose, onC
                         disabled={actionLoading}
                         onClick={() => onConfirmBuyerReturned?.(order)}
                       >
-                        {actionLoading ? "Processing..." : "Send return / Confirm returned"}
+                        {actionLoading
+                          ? "Processing..."
+                          : "Send return / Confirm returned"}
                       </button>
                     )}
 
@@ -507,7 +544,9 @@ function OrderDetailModal({ order, payment, loading, actionLoading, onClose, onC
                         disabled={actionLoading}
                         onClick={() => onCompleteReturnRequest?.(order)}
                       >
-                        {actionLoading ? "Processing..." : "Confirm replacement received"}
+                        {actionLoading
+                          ? "Processing..."
+                          : "Confirm replacement received"}
                       </button>
                     )}
                   </div>
@@ -535,7 +574,10 @@ function OrderDetailModal({ order, payment, loading, actionLoading, onClose, onC
                             <OrderProductImage
                               item={matchedOrderItem}
                               className="return-request-item__image"
-                              alt={requestItem.productName || getOrderItemName(matchedOrderItem)}
+                              alt={
+                                requestItem.productName ||
+                                getOrderItemName(matchedOrderItem)
+                              }
                             />
                           ) : (
                             <div className="return-request-item__image return-request-item__image--placeholder" />
@@ -550,7 +592,9 @@ function OrderDetailModal({ order, payment, loading, actionLoading, onClose, onC
                             </strong>
                             <span>
                               Qty {requestItem.quantity || 0}
-                              {requestItem.reason ? ` · ${requestItem.reason}` : ""}
+                              {requestItem.reason
+                                ? ` · ${requestItem.reason}`
+                                : ""}
                             </span>
                           </div>
                         </article>
@@ -991,6 +1035,71 @@ export default function OrderHistory() {
     [activeStatus, debouncedOrderKeyword, pagination.pageSize],
   );
 
+  // ============================================================
+  // SEND RETURN FROM ORDER CARD
+  // ============================================================
+
+  const handleSendReturn = async (order) => {
+    const orderId = getOrderId(order);
+
+    if (!orderId) {
+      toast.error("Order id is missing");
+      return;
+    }
+
+    if (!canSendReturn(order)) {
+      toast.error("This return request has not been approved yet.");
+      return;
+    }
+
+    try {
+      setActionLoading(orderId);
+
+      const response = await orderApi.getOrderDetail(orderId);
+
+      const detailOrder = unwrapOrder(response);
+
+      const request = getLatestReturnRefundRequest(detailOrder);
+
+      const requestId = getReturnRequestId(request);
+
+      if (!request || !requestId) {
+        toast.error("Approved return request could not be found.");
+        return;
+      }
+
+      const returnStatus = normalizeReturnStatus(
+        getReturnRequestStatus(request, detailOrder),
+      );
+
+      if (
+        returnStatus !== "approved" &&
+        returnStatus !== "waiting_buyer_return"
+      ) {
+        toast.error("This return request is not ready for buyer return.");
+        return;
+      }
+
+
+      await orderApi.confirmBuyerReturned(orderId, requestId, {});
+
+      toast.success("Return shipment confirmed successfully");
+
+      await refreshAfterOrderAction(orderId);
+
+      if (selectedOrder && getOrderId(selectedOrder) === orderId) {
+        await loadDetail(orderId);
+      }
+    } catch (actionError) {
+      const message = getApiErrorMessage(actionError);
+
+      setError(message);
+
+      toast.error(message);
+    } finally {
+      setActionLoading("");
+    }
+  };
   useEffect(() => {
     const timeoutId = window.setTimeout(() => {
       setDebouncedOrderKeyword(orderKeyword.trim());
@@ -1453,6 +1562,21 @@ export default function OrderHistory() {
                       onClick={() => handleOpenReturnRequest(order)}
                     >
                       {isLoading ? "Loading..." : "Return/Refund"}
+                    </button>
+                  )}
+
+                  {canSendReturn(order) && (
+                    <button
+                      className="return-btn"
+                      type="button"
+                      disabled={isLoading}
+                      onClick={() => handleSendReturn(order)}
+                    >
+                      <RotateCcw size={14} />
+
+                      <span>
+                        {isLoading ? "Processing..." : "Refund order"}
+                      </span>
                     </button>
                   )}
                 </div>

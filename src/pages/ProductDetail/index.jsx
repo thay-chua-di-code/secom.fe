@@ -127,7 +127,6 @@ export default function ProductDetail() {
   });
 
   const { productDetail, loading } = useSelector((state) => state.products);
-
   const [selectedImage, setSelectedImage] = useState(null);
 
   const [quantity, setQuantity] = useState(1);
@@ -155,7 +154,8 @@ export default function ProductDetail() {
   }, [images, selectedImage]);
 
   const productAttributes = useMemo(
-    () => (Array.isArray(productDetail?.attributes) ? productDetail.attributes : []),
+    () =>
+      Array.isArray(productDetail?.attributes) ? productDetail.attributes : [],
     [productDetail],
   );
 
@@ -387,9 +387,13 @@ export default function ProductDetail() {
           <h1 data-testid="product-detail-name">{productDetail.name}</h1>
 
           <div className="rating">
-            <div className="stars">{renderStars(productDetail.averageRating)}</div>
+            <div className="stars">
+              {renderStars(productDetail.averageRating)}
+            </div>
 
-            <span className="rating-count">({productDetail.reviewCount ?? 0})</span>
+            <span className="rating-count">
+              ({productDetail.reviewCount ?? 0})
+            </span>
 
             <span>{productDetail.category?.name || "Uncategorized"}</span>
 
@@ -421,14 +425,17 @@ export default function ProductDetail() {
 
                   <div className="product-detail__attribute-values">
                     {(attribute.values || []).map((value) => {
-                      const isSelected = selectedAttributes[attribute.name] === value;
+                      const isSelected =
+                        selectedAttributes[attribute.name] === value;
 
                       return (
                         <button
                           type="button"
                           key={`${attribute.name}-${value}`}
                           className={`product-detail__attribute-chip ${isSelected ? "product-detail__attribute-chip--selected" : ""}`}
-                          onClick={() => handleSelectAttributeValue(attribute.name, value)}
+                          onClick={() =>
+                            handleSelectAttributeValue(attribute.name, value)
+                          }
                         >
                           {value}
                         </button>

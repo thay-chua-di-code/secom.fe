@@ -49,7 +49,7 @@ const RegisterSeller = () => {
         >
           <div className="seller-banner__eyebrow">
             <span className="seller-banner__eyebrow-dot" />
-            SELL ON SECOM
+            SELL ON AIDR
           </div>
 
           <h1>
@@ -59,7 +59,7 @@ const RegisterSeller = () => {
           </h1>
 
           <p className="seller-banner__description">
-            Join Secom and connect your products with customers who are looking
+            Join AIDR and connect your products with customers who are looking
             for quality electronics. Build your store, grow your brand, and sell
             with confidence.
           </p>
@@ -119,7 +119,7 @@ const RegisterSeller = () => {
 
               <div>
                 <strong>More customers</strong>
-                <p>Reach shoppers across Secom</p>
+                <p>Reach shoppers across AIDR</p>
               </div>
             </div>
 
@@ -150,7 +150,7 @@ const RegisterSeller = () => {
           <div className="seller-banner__image-card">
             <div className="seller-banner__image-top">
               <span className="seller-banner__image-label">
-                SECOM MARKETPLACE
+                AIDR MARKETPLACE
               </span>
 
               <span className="seller-banner__image-status">
@@ -160,13 +160,13 @@ const RegisterSeller = () => {
             </div>
 
             <div className="seller-banner__image">
-              <img src={bannerSide} alt="Become a seller on Secom" />
+              <img src={bannerSide} alt="Become a seller on AIDR" />
             </div>
 
             <div className="seller-banner__image-bottom">
               <div>
                 <span>Grow your store</span>
-                <strong>with Secom</strong>
+                <strong>with AIDR</strong>
               </div>
 
               <div className="seller-banner__arrow">↗</div>
@@ -217,7 +217,7 @@ const RegisterSeller = () => {
 
             <h2>
               Build your store on
-              <strong> Secom.</strong>
+              <strong> AIDR.</strong>
             </h2>
 
             <p>
@@ -237,7 +237,7 @@ const RegisterSeller = () => {
                 APPLICATION
               </span>
 
-              <h3>You're one step away from becoming a Secom seller.</h3>
+              <h3>You're one step away from becoming a AIDR seller.</h3>
 
               <p>
                 Provide accurate store information and a verification document

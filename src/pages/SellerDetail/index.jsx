@@ -145,6 +145,7 @@ export default function SellerDetail() {
 
   const sellerDisplayName =
     shopProfile?.shopName || shopProfile?.sellerName || "Seller Shop";
+  const sellerSubName = shopProfile?.sellerName || "Seller name";
   const sellerSubtitle =
     shopProfile?.description?.trim() || "Trusted seller on AIDR Marketplace.";
   const sellerAvatar =
@@ -234,11 +235,14 @@ export default function SellerDetail() {
         setSellerProductsLoading(true);
         setSellerProductsError("");
 
-        const response = await dicoveryService.getSellerShopProducts(shopProfile.id, {
-          page: sellerProductsPage,
-          pageSize: PRODUCTS_PAGE_SIZE,
-          sort: "newest",
-        });
+        const response = await dicoveryService.getSellerShopProducts(
+          shopProfile.id,
+          {
+            page: sellerProductsPage,
+            pageSize: PRODUCTS_PAGE_SIZE,
+            sort: "newest",
+          },
+        );
 
         if (!isMounted) return;
 
@@ -262,7 +266,10 @@ export default function SellerDetail() {
         setSellerProductsError(
           error?.response?.status === 404
             ? "Unable to load products from this shop."
-            : getApiErrorMessage(error, "Unable to load products from this shop."),
+            : getApiErrorMessage(
+                error,
+                "Unable to load products from this shop.",
+              ),
         );
       } finally {
         if (isMounted) {
@@ -291,9 +298,7 @@ export default function SellerDetail() {
       setRatingSummary(normalizeSellerRatingSummary(summaryResponse));
       setRatings(normalizeSellerRatings(ratingsResponse).items);
     } catch (error) {
-      toast.error(
-        getApiErrorMessage(error, "Cannot load seller ratings"),
-      );
+      toast.error(getApiErrorMessage(error, "Cannot load seller ratings"));
     } finally {
       setRatingsLoading(false);
     }
@@ -350,7 +355,10 @@ export default function SellerDetail() {
 
     return () => {
       isMounted = false;
-      window.removeEventListener("secom:seller-follow-changed", handleFollowChanged);
+      window.removeEventListener(
+        "secom:seller-follow-changed",
+        handleFollowChanged,
+      );
     };
   }, [sellerId, isAuthenticated]);
 
@@ -361,7 +369,9 @@ export default function SellerDetail() {
     }
 
     if (!isAuthenticated) {
-      navigate(`/login?returnUrl=${encodeURIComponent(window.location.pathname)}`);
+      navigate(
+        `/login?returnUrl=${encodeURIComponent(window.location.pathname)}`,
+      );
       return;
     }
 
@@ -398,10 +408,13 @@ export default function SellerDetail() {
   };
 
   const handleToggleFollow = async () => {
-    if (!sellerId || followLoading || followStatusLoading || isOwnSeller) return;
+    if (!sellerId || followLoading || followStatusLoading || isOwnSeller)
+      return;
 
     if (!isAuthenticated) {
-      navigate(`/login?returnUrl=${encodeURIComponent(window.location.pathname)}`);
+      navigate(
+        `/login?returnUrl=${encodeURIComponent(window.location.pathname)}`,
+      );
       return;
     }
 
@@ -463,7 +476,9 @@ export default function SellerDetail() {
     }
 
     if (!isAuthenticated) {
-      navigate(`/login?returnUrl=${encodeURIComponent(window.location.pathname)}`);
+      navigate(
+        `/login?returnUrl=${encodeURIComponent(window.location.pathname)}`,
+      );
       return;
     }
 
@@ -512,7 +527,9 @@ export default function SellerDetail() {
   const productsValue =
     isLoadingStatistics || statisticsError
       ? "--"
-      : formatCompactNumber(statistics?.totalProducts ?? sellerProductsState.totalCount ?? 0);
+      : formatCompactNumber(
+          statistics?.totalProducts ?? sellerProductsState.totalCount ?? 0,
+        );
   const followersValue =
     isLoadingStatistics || statisticsError
       ? "--"
@@ -524,7 +541,9 @@ export default function SellerDetail() {
   const ratingValue =
     isLoadingStatistics || statisticsError
       ? "--"
-      : formatRating(ratingSummary?.averageRating ?? statistics?.averageRating ?? 0);
+      : formatRating(
+          ratingSummary?.averageRating ?? statistics?.averageRating ?? 0,
+        );
 
   return (
     <div className="seller-detail">
@@ -536,7 +555,9 @@ export default function SellerDetail() {
 
       <main className="seller-container">
         {shopStateMessage ? (
-          <section className={`seller-page-state${shopError ? " seller-page-state--error" : ""}`}>
+          <section
+            className={`seller-page-state${shopError ? " seller-page-state--error" : ""}`}
+          >
             <h1>{shopError ? "Shop not found" : "Loading shop"}</h1>
             <p>
               {shopError
@@ -558,9 +579,11 @@ export default function SellerDetail() {
               <div className="seller-profile__content">
                 <div className="seller-profile__heading">
                   <div>
-                    <span className="seller-profile__eyebrow">OFFICIAL SELLER</span>
+                    <span className="seller-profile__eyebrow">
+                      OFFICIAL SELLER
+                    </span>
                     <h1>
-                      {sellerDisplayName}
+                      {sellerDisplayName} ({sellerSubName})
                       <BadgeCheck size={22} />
                     </h1>
                     <p>{sellerSubtitle}</p>
@@ -570,7 +593,9 @@ export default function SellerDetail() {
                     <button
                       className="btn-follow"
                       onClick={handleToggleFollow}
-                      disabled={followLoading || followStatusLoading || isOwnSeller}
+                      disabled={
+                        followLoading || followStatusLoading || isOwnSeller
+                      }
                       type="button"
                     >
                       <Users size={17} />
@@ -659,22 +684,33 @@ export default function SellerDetail() {
                   <span className="seller-products__eyebrow">SHOP RATING</span>
                   <h2>Customer feedback</h2>
                   <p>
-                    Average {formatRating(ratingSummary?.averageRating ?? 0)} from {ratingSummary?.totalRatings ?? ratings.length} ratings
+                    Average {formatRating(ratingSummary?.averageRating ?? 0)}{" "}
+                    from {ratingSummary?.totalRatings ?? ratings.length} ratings
                   </p>
                 </div>
-                <button type="button" onClick={loadSellerRatings} disabled={ratingsLoading}>
+                <button
+                  type="button"
+                  onClick={loadSellerRatings}
+                  disabled={ratingsLoading}
+                >
                   {ratingsLoading ? "Loading..." : "Refresh"}
                 </button>
               </div>
 
               <div className="seller-ratings__grid">
-                <form className="seller-rating-form" onSubmit={handleSubmitSellerRating}>
+                <form
+                  className="seller-rating-form"
+                  onSubmit={handleSubmitSellerRating}
+                >
                   <h3>Rate this seller</h3>
                   <input
                     value={ratingForm.orderId}
                     placeholder="Completed order ID"
                     onChange={(event) =>
-                      setRatingForm((prev) => ({ ...prev, orderId: event.target.value }))
+                      setRatingForm((prev) => ({
+                        ...prev,
+                        orderId: event.target.value,
+                      }))
                     }
                   />
                   <div className="seller-rating-stars">
@@ -695,10 +731,16 @@ export default function SellerDetail() {
                     value={ratingForm.comment}
                     placeholder="Share your seller experience"
                     onChange={(event) =>
-                      setRatingForm((prev) => ({ ...prev, comment: event.target.value }))
+                      setRatingForm((prev) => ({
+                        ...prev,
+                        comment: event.target.value,
+                      }))
                     }
                   />
-                  <button type="submit" disabled={ratingSubmitting || isOwnSeller}>
+                  <button
+                    type="submit"
+                    disabled={ratingSubmitting || isOwnSeller}
+                  >
                     {ratingSubmitting ? "Submitting..." : "Submit rating"}
                   </button>
                 </form>
@@ -718,7 +760,9 @@ export default function SellerDetail() {
                         <p>{item.comment || "No comment."}</p>
                         <small>
                           {item.createdAtUtc
-                            ? new Date(item.createdAtUtc).toLocaleString("en-US")
+                            ? new Date(item.createdAtUtc).toLocaleString(
+                                "en-US",
+                              )
                             : "--"}
                         </small>
                       </article>
@@ -731,7 +775,9 @@ export default function SellerDetail() {
             <section className="seller-products">
               <div className="seller-products__header">
                 <div>
-                  <span className="seller-products__eyebrow">EXPLORE THE SHOP</span>
+                  <span className="seller-products__eyebrow">
+                    EXPLORE THE SHOP
+                  </span>
                   <h2>Products from this shop</h2>
                 </div>
 
@@ -741,7 +787,9 @@ export default function SellerDetail() {
               </div>
 
               {sellerProductsLoading ? (
-                <div className="seller-products__state">Loading products from this shop...</div>
+                <div className="seller-products__state">
+                  Loading products from this shop...
+                </div>
               ) : sellerProductsError ? (
                 <div className="seller-products__state seller-products__state--error">
                   {sellerProductsError}
@@ -758,27 +806,45 @@ export default function SellerDetail() {
                       const productName = getProductName(item);
 
                       return (
-                        <div className="product-card" key={productId || productName}>
+                        <div
+                          className="product-card"
+                          key={productId || productName}
+                        >
                           <button
                             type="button"
                             className="product-card__image"
-                            onClick={() => productId && navigate(`/product-detail/${productId}`)}
+                            onClick={() =>
+                              productId &&
+                              navigate(`/product-detail/${productId}`)
+                            }
                             disabled={!productId}
                             aria-label={`View product ${productName}`}
                           >
-                            <img src={getProductImageUrl(item)} alt={productName} />
-                            <span className="product-card__badge">Official</span>
+                            <img
+                              src={getProductImageUrl(item)}
+                              alt={productName}
+                            />
+                            <span className="product-card__badge">
+                              Official
+                            </span>
                           </button>
 
                           <div className="product-card__body">
                             <h3>{productName}</h3>
 
                             <div className="product-card__bottom">
-                              <strong>{formatCurrencyVN(item.price || item.unitPrice || 0)}</strong>
+                              <strong>
+                                {formatCurrencyVN(
+                                  item.price || item.unitPrice || 0,
+                                )}
+                              </strong>
 
                               <button
                                 type="button"
-                                onClick={() => productId && navigate(`/product-detail/${productId}`)}
+                                onClick={() =>
+                                  productId &&
+                                  navigate(`/product-detail/${productId}`)
+                                }
                                 disabled={!productId}
                               >
                                 View
@@ -794,7 +860,9 @@ export default function SellerDetail() {
                     <div className="seller-products__pagination">
                       <button
                         type="button"
-                        onClick={() => handleSellerProductsPageChange(sellerProductsPage - 1)}
+                        onClick={() =>
+                          handleSellerProductsPageChange(sellerProductsPage - 1)
+                        }
                         disabled={sellerProductsPage <= 1}
                       >
                         <ChevronLeft size={16} />
@@ -802,13 +870,18 @@ export default function SellerDetail() {
                       </button>
 
                       <span>
-                        Page {sellerProductsState.pageNumber} of {sellerProductsState.totalPages}
+                        Page {sellerProductsState.pageNumber} of{" "}
+                        {sellerProductsState.totalPages}
                       </span>
 
                       <button
                         type="button"
-                        onClick={() => handleSellerProductsPageChange(sellerProductsPage + 1)}
-                        disabled={sellerProductsPage >= sellerProductsState.totalPages}
+                        onClick={() =>
+                          handleSellerProductsPageChange(sellerProductsPage + 1)
+                        }
+                        disabled={
+                          sellerProductsPage >= sellerProductsState.totalPages
+                        }
                       >
                         Next
                         <ChevronRight size={16} />

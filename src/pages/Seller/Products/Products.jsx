@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import {
@@ -21,6 +21,8 @@ import {
   Boxes,
   Upload,
   Download,
+  Search,
+  X,
 } from "lucide-react";
 import { formatCurrencyVN } from "../../../utils/fncUtils";
 import "./style.scss";
@@ -102,6 +104,17 @@ const getErrorDetails = (error) => {
   };
 };
 
+// ============================================================
+// SEARCH HELPER
+// ============================================================
+
+const normalizeSearchValue = (value) =>
+  String(value ?? "")
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+
 const Products = () => {
   const dispatch = useDispatch();
 
@@ -114,6 +127,12 @@ const Products = () => {
   } = useSelector((state) => state.sellerProduct);
 
   const [currentPage, setCurrentPage] = useState(1);
+
+  // ==========================================================
+  // SEARCH
+  // ==========================================================
+
+  const [searchKeyword, setSearchKeyword] = useState("");
 
   const [openAdd, setOpenAdd] = useState(false);
 
@@ -150,6 +169,63 @@ const Products = () => {
   );
 
   // ========================================
+  // PRODUCT HELPERS
+  // ========================================
+
+  const getProductId = (product) => product?.productId || product?.id;
+
+  const getProductStock = (product) =>
+    Number(product?.stockQuantity ?? product?.stock ?? product?.quantity ?? 0);
+
+  // ==========================================================
+  // FRONT-END SEARCH
+  // ==========================================================
+
+  const filteredProducts = useMemo(() => {
+    const keyword = normalizeSearchValue(searchKeyword);
+
+    if (!keyword) {
+      return products;
+    }
+
+    return products.filter((product) => {
+      const productId = getProductId(product);
+
+      const stock = getProductStock(product);
+
+      const status = product?.isActive ? "active" : "inactive";
+
+      const searchableValues = [
+        product?.name,
+        productId,
+        product?.categoryName,
+        product?.category?.name,
+        product?.price,
+        formatCurrencyVN(product?.price || 0),
+        stock,
+        status,
+        product?.description,
+      ];
+
+      return searchableValues.some((value) =>
+        normalizeSearchValue(value).includes(keyword),
+      );
+    });
+  }, [products, searchKeyword]);
+
+  const hasSearchKeyword = searchKeyword.trim().length > 0;
+
+  const searchResultCount = filteredProducts.length;
+
+  const handleSearchChange = (event) => {
+    setSearchKeyword(event.target.value);
+  };
+
+  const handleClearSearch = () => {
+    setSearchKeyword("");
+  };
+
+  // ========================================
   // LOAD PRODUCTS
   // ========================================
 
@@ -172,15 +248,6 @@ const Products = () => {
       }),
     );
   }, [currentPage, dispatch]);
-
-  // ========================================
-  // PRODUCT HELPERS
-  // ========================================
-
-  const getProductId = (product) => product?.productId || product?.id;
-
-  const getProductStock = (product) =>
-    Number(product?.stockQuantity ?? product?.stock ?? product?.quantity ?? 0);
 
   // ========================================
   // ADD PRODUCT
@@ -413,6 +480,8 @@ const Products = () => {
 
       setCurrentPage(1);
 
+      setSearchKeyword("");
+
       refreshProducts(1);
     } catch (err) {
       setImportError(getErrorDetails(err));
@@ -529,7 +598,7 @@ const Products = () => {
           >
             <Upload size={18} />
 
-{importing ? "Importing products..." : "Import Products"}
+            {importing ? "Importing products..." : "Import Products"}
           </Button>
 
           <Button
@@ -539,7 +608,7 @@ const Products = () => {
           >
             <Download size={18} />
 
-{exporting ? "Downloading template..." : "Download Template"}
+            {exporting ? "Downloading template..." : "Download Template"}
           </Button>
 
           <Button
@@ -594,6 +663,68 @@ const Products = () => {
         </div>
       </div>
 
+      {/* =====================================================
+          FRONT-END SEARCH
+      ===================================================== */}
+
+      <div className="seller-products__search-section">
+        <div className="seller-products__search-content">
+          <div className="seller-products__search-icon">
+            <Search size={18} />
+          </div>
+
+          <div className="seller-products__search-input-wrapper">
+            <input
+              type="text"
+              value={searchKeyword}
+              placeholder="Search by product name, ID, category, price, stock or status..."
+              onChange={handleSearchChange}
+              aria-label="Search products"
+              autoComplete="off"
+            />
+
+            {hasSearchKeyword && (
+              <button
+                type="button"
+                className="seller-products__search-clear"
+                onClick={handleClearSearch}
+                aria-label="Clear search"
+                title="Clear search"
+              >
+                <X size={16} />
+              </button>
+            )}
+          </div>
+        </div>
+
+        <div className="seller-products__search-meta">
+          {hasSearchKeyword ? (
+            <>
+              <span className="seller-products__search-result">
+                <Search size={13} />
+
+                <span>
+                  Found <strong>{searchResultCount}</strong>{" "}
+                  {searchResultCount === 1 ? "product" : "products"}
+                </span>
+              </span>
+
+              <button
+                type="button"
+                className="seller-products__search-reset"
+                onClick={handleClearSearch}
+              >
+                Clear search
+              </button>
+            </>
+          ) : (
+            <span className="seller-products__search-hint">
+              Search within the products loaded on this page
+            </span>
+          )}
+        </div>
+      </div>
+
       {/* =========================
           PRODUCTS CARD
       ========================= */}
@@ -605,12 +736,22 @@ const Products = () => {
               Product Inventory
             </span>
 
-            <h2>Your Products</h2>
+            <h2>{hasSearchKeyword ? "Search Results" : "Your Products"}</h2>
 
-            <p>View and manage your product inventory.</p>
+            <p>
+              {hasSearchKeyword
+                ? `Showing products matching "${searchKeyword.trim()}".`
+                : "View and manage your product inventory."}
+            </p>
           </div>
 
-          <span className="seller-products__count">{totalCount} Products</span>
+          <span className="seller-products__count">
+            {hasSearchKeyword
+              ? `${searchResultCount} Result${
+                  searchResultCount === 1 ? "" : "s"
+                }`
+              : `${totalCount} Products`}
+          </span>
         </div>
 
         {/* =========================
@@ -636,7 +777,7 @@ const Products = () => {
             </thead>
 
             <tbody>
-              {products.map((item) => {
+              {filteredProducts.map((item) => {
                 const productId = getProductId(item);
 
                 return (
@@ -726,7 +867,46 @@ const Products = () => {
                 );
               })}
 
-              {!loading && products.length === 0 && (
+              {/* =================================================
+                  SEARCH EMPTY
+              ================================================= */}
+
+              {!loading &&
+                hasSearchKeyword &&
+                filteredProducts.length === 0 && (
+                  <tr>
+                    <td colSpan={6}>
+                      <div className="seller-products__empty seller-products__empty--search">
+                        <div className="seller-products__empty-icon seller-products__empty-icon--search">
+                          <Search size={32} />
+                        </div>
+
+                        <h3>No matching products</h3>
+
+                        <p>
+                          We couldn't find anything matching{" "}
+                          <strong>"{searchKeyword.trim()}"</strong> on this
+                          page.
+                        </p>
+
+                        <button
+                          type="button"
+                          className="seller-products__empty-btn seller-products__empty-btn--secondary"
+                          onClick={handleClearSearch}
+                        >
+                          <X size={15} />
+                          Clear Search
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                )}
+
+              {/* =================================================
+                  NORMAL EMPTY
+              ================================================= */}
+
+              {!loading && !hasSearchKeyword && products.length === 0 && (
                 <tr>
                   <td colSpan={6}>
                     <div className="seller-products__empty">
@@ -771,10 +951,18 @@ const Products = () => {
               <span>Previous</span>
             </button>
 
-            <span className="seller-products__pagination-info">
-              Page <strong>{currentPage}</strong> of{" "}
-              <strong>{totalPages}</strong>
-            </span>
+            <div className="seller-products__pagination-center">
+              <span className="seller-products__pagination-info">
+                Page <strong>{currentPage}</strong> of{" "}
+                <strong>{totalPages}</strong>
+              </span>
+
+              {hasSearchKeyword && (
+                <span className="seller-products__pagination-search-info">
+                  {searchResultCount} matching on this page
+                </span>
+              )}
+            </div>
 
             <button
               type="button"

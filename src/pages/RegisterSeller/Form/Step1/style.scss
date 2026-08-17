@@ -52,6 +52,14 @@ $border-hover: rgba(96, 165, 250, 0.35);
   box-shadow:
     0 24px 70px rgba(0, 0, 0, 0.18),
     inset 0 1px 0 rgba(255, 255, 255, 0.025);
+
+  // ==========================================================
+  // IMPORTANT:
+  // Cho browser biết form này đang nằm trong dark theme.
+  // Giúp Chrome / Edge / Safari render autofill hợp lý hơn.
+  // ==========================================================
+
+  color-scheme: dark;
 }
 
 // ============================================================
@@ -218,8 +226,6 @@ $border-hover: rgba(96, 165, 250, 0.35);
 // ============================================================
 // FORM CONTROL
 //
-// QUAN TRỌNG:
-// ICON KHÔNG DÙNG position:absolute NỮA.
 // ICON VÀ INPUT LÀ 2 VÙNG RIÊNG.
 // ============================================================
 
@@ -283,6 +289,13 @@ $border-hover: rgba(96, 165, 250, 0.35);
 
     color: var(--aidr-text, #f8fafc) !important;
 
+    // Chrome / Edge / Safari cần property này
+    // để không tự đổi text thành màu đen.
+    -webkit-text-fill-color: var(--aidr-text, #f8fafc);
+
+    // Màu con trỏ nhập liệu.
+    caret-color: var(--aidr-text, #f8fafc);
+
     font-family: inherit;
 
     font-size: 13px;
@@ -291,10 +304,13 @@ $border-hover: rgba(96, 165, 250, 0.35);
 
     transition:
       color 0.2s ease,
-      opacity 0.2s ease;
+      opacity 0.2s ease,
+      background-color 999999s ease-out 0s;
 
     &::placeholder {
-      color: #64748b;
+      color: #64748b !important;
+
+      -webkit-text-fill-color: #64748b;
 
       opacity: 1;
     }
@@ -303,6 +319,10 @@ $border-hover: rgba(96, 165, 250, 0.35);
       border: 0 !important;
 
       background: transparent !important;
+
+      color: var(--aidr-text, #f8fafc) !important;
+
+      -webkit-text-fill-color: var(--aidr-text, #f8fafc);
 
       box-shadow: none !important;
     }
@@ -314,6 +334,12 @@ $border-hover: rgba(96, 165, 250, 0.35);
 
       background: transparent !important;
 
+      color: var(--aidr-text, #f8fafc) !important;
+
+      -webkit-text-fill-color: var(--aidr-text, #f8fafc);
+
+      caret-color: #ffffff;
+
       box-shadow: none !important;
     }
 
@@ -322,6 +348,73 @@ $border-hover: rgba(96, 165, 250, 0.35);
 
       cursor: not-allowed;
     }
+  }
+
+  // ==========================================================
+  // CHROME / EDGE / SAFARI AUTOFILL FIX
+  //
+  // Fix trường hợp browser:
+  // - tự điền Shop Name
+  // - tự điền Phone
+  // - tự điền Address
+  // - click chọn suggestion đã lưu
+  // - focus sau khi autofill
+  // - hover sau khi autofill
+  // ==========================================================
+
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active,
+  textarea:-webkit-autofill,
+  textarea:-webkit-autofill:hover,
+  textarea:-webkit-autofill:focus,
+  textarea:-webkit-autofill:active {
+    // Ép chữ autofill luôn sáng.
+    -webkit-text-fill-color: var(--aidr-text, #f8fafc) !important;
+
+    color: var(--aidr-text, #f8fafc) !important;
+
+    // Giữ caret sáng.
+    caret-color: var(--aidr-text, #f8fafc) !important;
+
+    // Chrome / Edge thường tự tô background autofill.
+    // Phủ lại bằng màu tối đồng bộ với form.
+    -webkit-box-shadow: 0 0 0 1000px #0d121d inset !important;
+
+    box-shadow: 0 0 0 1000px #0d121d inset !important;
+
+    background-color: transparent !important;
+
+    background-image: none !important;
+
+    border: 0 !important;
+
+    outline: 0 !important;
+
+    // Tránh browser flash background vàng / trắng / đen.
+    transition:
+      background-color 999999s ease-out 0s,
+      color 999999s ease-out 0s !important;
+  }
+
+  // ==========================================================
+  // FIREFOX AUTOFILL
+  // ==========================================================
+
+  input:autofill,
+  textarea:autofill {
+    color: var(--aidr-text, #f8fafc) !important;
+
+    -webkit-text-fill-color: var(--aidr-text, #f8fafc) !important;
+
+    caret-color: var(--aidr-text, #f8fafc) !important;
+
+    box-shadow: 0 0 0 1000px #0d121d inset !important;
+
+    background-color: transparent !important;
+
+    background-image: none !important;
   }
 
   input {
